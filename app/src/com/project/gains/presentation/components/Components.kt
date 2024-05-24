@@ -290,7 +290,7 @@ fun SelectContentPopup(onItemClickPlan: (Plan) -> Unit,onItemClickWorkout: (Work
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = { showDialog = false },
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier.size(300.dp),
                 title = { androidx.compose.material.Text("Choose an Option", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.headlineSmall) },
                 text = {
                     Column {
@@ -803,7 +803,7 @@ fun WorkoutDialog(items: List<Workout>, onDismiss: () -> Unit,onItemClick: (Work
         },
         confirmButton = {
             Row(horizontalArrangement = Arrangement.Center){
-                androidx.compose.material.Text("Select a Plan to Share", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelMedium,modifier = Modifier.padding(end=55.dp,bottom = 40.dp))
+                androidx.compose.material.Text("Select a Workout to Share", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelMedium,modifier = Modifier.padding(end=55.dp,bottom = 40.dp))
             }
         },
         shape = RoundedCornerShape(16.dp)
@@ -825,7 +825,7 @@ fun ExerciseDialog(items: List<Exercise>, onDismiss: () -> Unit,onItemClick: (Ex
         },
         confirmButton = {
             Row(horizontalArrangement = Arrangement.Center){
-                androidx.compose.material.Text("Select a Plan to Share", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelMedium,modifier = Modifier.padding(end=55.dp,bottom = 40.dp))
+                androidx.compose.material.Text("Select an Exercise to Share", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelMedium,modifier = Modifier.padding(end=55.dp,bottom = 40.dp))
             }
         },
         shape = RoundedCornerShape(16.dp)
@@ -1329,8 +1329,9 @@ fun SocialMediaIcon(icon: Int, onClick: () -> Unit,isSelected:Boolean) {
             painter = painterResource(id = icon),
             contentDescription = null,
             modifier = Modifier
-                .size(50.dp)
-                .background(if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent)
+                .size(60.dp)
+                .background(color= if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent, shape = CircleShape)
+                .clip(CircleShape)
 
         )
     }
