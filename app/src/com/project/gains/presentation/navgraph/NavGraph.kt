@@ -140,7 +140,7 @@ fun NavGraph(
                 route = Route.ProgressDetailsScreen.route
             ) {
                 // set screen as the node state
-                ProgressDetailsScreen(navController = navController, shareHandler = generalViewModel::onShareContentEvent)
+                ProgressDetailsScreen(navController = navController, shareHandler = generalViewModel::onShareContentEvent, generalViewModel)
             }
             composable(
                 route = Route.ExerciseDetailsScreen.route
