@@ -48,6 +48,7 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Edit
@@ -122,6 +123,7 @@ import com.project.gains.data.TrainingType
 import com.project.gains.data.UserProfileBundle
 import com.project.gains.data.Workout
 import com.project.gains.data.bottomNavItems
+import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.events.SaveSessionEvent
 import com.project.gains.presentation.events.ShareContentEvent
@@ -331,6 +333,7 @@ fun SelectContentPopup(onItemClickPlan: (Plan) -> Unit,onItemClickWorkout: (Work
 }
 @Composable
 fun MetricPopup(
+    selectedMetricMap: MutableList<TrainingMetricType>?,
     popupVisible: Boolean,
     onDismiss: () -> Unit,
     onOptionSelected: (TrainingMetricType) -> Unit,
@@ -356,7 +359,7 @@ fun MetricPopup(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    TrainingMetricType.entries.forEach { metric ->
+                    selectedMetricMap?.forEach { metric ->
                         androidx.compose.material.Text(
                             modifier = Modifier
                                 .clickable { onOptionSelected(metric) },
@@ -415,6 +418,7 @@ fun TrainingTypePopup(
 }
 @Composable
 fun PeriodPopup(
+    selectedPeriodMap: MutableList<PeriodMetricType>?,
     popupVisible: Boolean,
     onDismiss: () -> Unit,
     onOptionSelected: (PeriodMetricType) -> Unit,
@@ -440,7 +444,7 @@ fun PeriodPopup(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    PeriodMetricType.entries.forEach { metric ->
+                    selectedPeriodMap?.forEach { metric ->
                         androidx.compose.material.Text(
                             modifier = Modifier
                                 .clickable { onOptionSelected(metric) },
@@ -1363,7 +1367,7 @@ fun OptionCheckbox(
     }
 }
 @Composable
-fun AnimatedSessionDetails(
+fun AnimatedSessionDetails(plan:Int,workout:Int,
     show: Boolean,
     saveSessionHandler: (SaveSessionEvent.SaveSession) -> Unit
 ) {
@@ -1401,7 +1405,7 @@ fun AnimatedSessionDetails(
         Row {
             SaveSessionButton(onClick = {
                 saveSessionHandler(
-                    SaveSessionEvent.SaveSession(
+                    SaveSessionEvent.SaveSession(plan,workout,
                         Session(
                             animatedCalories.value.toInt(),
                             animatedBpm.value.toInt(),
@@ -1513,7 +1517,7 @@ fun ProgressChartList(
 @Composable
 fun TrainingOverviewChart(
     trainingData: List<TrainingData>, selectedMetric: TrainingMetricType, selectedPeriod: PeriodMetricType,
-    shareHandler:(ShareContentEvent.SharePlot)->Unit) {
+    shareHandler:(ShareContentEvent.SharePlot)->Unit, selectedPlotType: ProgressChartPreview) {
     val filteredData = trainingData.filter { it.type == selectedMetric }
 
     val rowColors = listOf(Color.Red, Color.Blue, Color.Green) // Example colors, you can customize as needed
@@ -1534,16 +1538,37 @@ fun TrainingOverviewChart(
                     text = "$selectedPeriod ${index + 1}", style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
+                if (selectedPlotType.imageResId == R.drawable.plo1) {
+                    Box(
+                        modifier = Modifier
+                            .height(20.dp)
+                            .width((data.value * 20).dp)
+                            .background(
+                                color = color,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                    )
+                }
+                else if (selectedPlotType.imageResId == R.drawable.plot2) {
+                    Box(
+                        modifier = Modifier
+                            .height((data.value * 20).dp)
+                            .width(20.dp)
+                            .background(
+                                color = color,
+                                shape = RoundedCornerShape(10.dp)
+                            )
+                    ) {
 
-                Box(
-                    modifier = Modifier
-                        .height(20.dp)
-                        .width((data.value * 20).dp)
-                        .background(
-                            color = color,
-                            shape = RoundedCornerShape(10.dp)
-                        )
-                )
+                    }
+                }
+                else{
+                    Box(
+                        modifier = Modifier
+                            .size((data.value * 20).dp)
+                            .background(color = color, shape = CircleShape)
+                    )
+                }
             }
         }
         Row ( modifier = Modifier
@@ -1562,6 +1587,42 @@ fun DialogOption(text: String, onClick: () -> Unit) {
         Text(text, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
     }
 }
+
+@Composable
+fun SocialMediaRow(
+    icon: Int,
+    isLinked: Boolean,
+    linkHandler: (LinkAppEvent) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        SocialMediaIcon(icon = icon, onClick = { /* Handle icon click */ }, isSelected = isLinked)
+        Spacer(modifier = Modifier.width(50.dp))
+        if (isLinked) {
+            androidx.compose.material.Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Linked Icon",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        } else {
+            Button(
+                onClick = { linkHandler(LinkAppEvent.LinkApp(icon)) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                ),
+                modifier = Modifier.padding(bottom = 16.dp)
+            ) {
+                androidx.compose.material.Icon(Icons.Default.Add, contentDescription = "Add Icon")
+                androidx.compose.material.Text("Link")
+            }
+        }
+    }
+}
+
 
 
 

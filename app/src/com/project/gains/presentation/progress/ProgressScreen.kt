@@ -25,6 +25,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
+import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.generateRandomTrainingData
 import com.project.gains.presentation.components.TopBar
@@ -69,7 +70,7 @@ fun ProgressScreen(
                         }
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        ProgressChartList(plots?: mutableListOf()) { preview ->
+                        ProgressChartList(plots?: mutableListOf(Plot(ProgressChartPreview("",R.drawable.plo1), data = listOf()))) { preview ->
                             // Navigate to the details screen when the card is clicked
                             selectHandler(
                                 SelectEvent.SelectPlotPreview(

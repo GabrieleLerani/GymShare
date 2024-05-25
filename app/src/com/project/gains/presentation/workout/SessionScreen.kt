@@ -21,7 +21,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.project.gains.GeneralViewModel
-import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.MuscleGroup
@@ -53,7 +52,11 @@ fun SessionScreen(
     val elapsedTime = remember { mutableLongStateOf(0L) }
     val progress = remember{ Animatable(0F) }
     val terminatedSession = remember { mutableStateOf(false) }
-    val showMusicPopup by generalViewModel.showMusic.observeAsState()
+    val selectedPlan by generalViewModel.selectedPlan.observeAsState()
+    val selectedWorkout by generalViewModel.selectedWorkout.observeAsState()
+    var showMusicPopup = generalViewModel._selectedMusicsMap.get(selectedPlan?.id)
+    var showBackupPopup = generalViewModel._selectedBackupsMap.get(selectedPlan?.id)
+    val selectedApps by generalViewModel.linkedApps.observeAsState()
     val currentSong by generalViewModel.currentSong.observeAsState()
 
     GainsAppTheme {
@@ -99,20 +102,28 @@ fun SessionScreen(
                             item { if (showMusicPopup == true) {
                                 MusicPopup(popup = true, musicHandler = musicHandler,currentSong ?: "")
                             } }
-                            item { if (terminatedSession.value) {
+                            item { if (terminatedSession.value && showBackupPopup==true) {
                                 BackupPopup(popup = terminatedSession, shareHandler = shareHandler)
                             } }
                             item { if (terminatedSession.value) {
-                                SharePopup(popup = terminatedSession, icon = R.drawable.tiktok_logo_icon, shareHandler = shareHandler)
+                                selectedApps?.random()?.let { SharePopup(popup = terminatedSession, icon = it, shareHandler = shareHandler) }
                             }}
                             item { ExerciseGif(exercise = currExercise ?: Exercise("", 0, "", ExerciseType.BALANCE, TrainingType.STRENGTH, MuscleGroup.ARMS)) { exercise ->
                                 selectHandler(SelectEvent.SelectExercise(exercise))
                                 navController.navigate(Route.ExerciseDetailsScreen.route)
                             } }
-                            item { AnimatedSessionDetails(
-                                terminatedSession.value,
-                                saveSessionHandler
-                            ) }
+                            item {
+                                selectedWorkout?.id?.let {
+                                    selectedPlan?.id?.let { it1 ->
+                                        AnimatedSessionDetails(
+                                            it1,
+                                            it,
+                                            terminatedSession.value,
+                                            saveSessionHandler
+                                        )
+                                    }
+                                }
+                            }
                             item {  Spacer(modifier = Modifier.height(20.dp)) }
                             // Timer displaying elapsed time
                             item { Text(

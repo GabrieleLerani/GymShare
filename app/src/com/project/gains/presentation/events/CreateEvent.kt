@@ -2,8 +2,10 @@ package com.project.gains.presentation.events
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.project.gains.data.Exercise
+import com.project.gains.data.ExerciseType
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
+import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 
@@ -16,7 +18,12 @@ sealed class CreateEvent {
     data class CreatePlan(
         val selectedOptions: SnapshotStateList<Option>,
         val selectedPeriod: PeriodMetricType,
-        val selectedTrainingType: TrainingType
+        val selectedExerciseType: List<ExerciseType>,
+        val selectedMetricType: MutableList<TrainingMetricType>,
+        val selectedTrainingType: TrainingType,
+        val selectedMusic: Boolean,
+        val selectedBackup: Boolean
+
     ) : CreateEvent()
 
 

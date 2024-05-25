@@ -25,7 +25,7 @@ data class TrainingData(
     val type: TrainingMetricType,
     val value: Int
 )
-@Entity(tableName = "session")
+@Entity(tableName = "xn")
 data class TrainingData(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -222,7 +222,7 @@ enum class TrainingMetricType {
     DURATION, BPM, KCAL, INTENSITY, DISTANCE, REST
 }
 enum class PeriodMetricType {
-    MONTH, YEAR, WEEK
+    WEEK,MONTH, YEAR
 }
 
 data class Exercise(
@@ -559,7 +559,7 @@ val bottomNavItems = listOf(
 
 fun generateRandomPlan(
     trainingType: TrainingType,
-    exerciseType: ExerciseType,
+    exerciseType: MutableList<ExerciseType>,
     numberOfWorkouts: Int,
     numberOfMuscleGroups: Int
 ): List<Workout> {
@@ -569,7 +569,7 @@ fun generateRandomPlan(
 
         repeat(numberOfMuscleGroups) { muscle ->
             val muscleGroup = availableMuscleGroups[muscle]
-            val exerciseList = trainingTypeExercises[trainingType]?.get(trainingType)?.get(exerciseType)!![muscle]
+            val exerciseList = trainingTypeExercises[trainingType]?.get(trainingType)?.get(exerciseType.random())!![muscle]
 
             val exerciseName = exerciseList.second.randomOrNull()
 
@@ -577,7 +577,7 @@ fun generateRandomPlan(
                 Exercise(
                     name = exerciseName ?: "Unknown",
                     description = "$exerciseType exercise targeting $muscleGroup",
-                    type = exerciseType,
+                    type = exerciseType.random(),
                     gifResId = null,
                     muscle = muscleGroup,
                     training = trainingType
@@ -755,18 +755,20 @@ fun generateRandomTrainingData(months: Int): List<TrainingData> {
 // Function to generate a random Plot object
 fun generateRandomPlot(): Plot {
     val names = mutableListOf(PeriodMetricType.WEEK.toString(),PeriodMetricType.MONTH.toString(),PeriodMetricType.YEAR.toString())
+    // List of drawable resource IDs
+    val drawableResources = listOf(
+        R.drawable.plo1,
+        R.drawable.plot2,
+        R.drawable.plot3,
+    )
+
     val preview = ProgressChartPreview(
         name = names.random(),
-        imageResId = Random.nextInt(1, 100)  // Assuming drawable resources are in the range 1 to 100
+        imageResId = drawableResources.random()  // Assuming drawable resources are in the range 1 to 100
     )
 
     val trainingTypes = TrainingMetricType.entries.toTypedArray()
-    val trainingData = List(Random.nextInt(3, 10)) {  // Generate between 3 and 10 training data entries
-        TrainingData(
-            type = trainingTypes.random(),
-            value = Random.nextInt(0, 100)  // Assuming training values range from 0 to 100
-        )
-    }
+    val trainingData = generateRandomTrainingData(4)
 
     return Plot(preview, trainingData)
 }

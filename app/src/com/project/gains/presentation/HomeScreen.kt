@@ -106,7 +106,6 @@ fun GainsHomeScreen(
                          item {plots?.forEach {plot ->
                              UserContentCard(title = "Your Progress", icon = Icons.Default.Analytics) {
                                  // Navigate to the progress screen when clicked
-                                 selectHandler(SelectEvent.SelectPlot(1, plot.data))
 
                                  navController.navigate(Route.ProgressScreen.route)
                              }

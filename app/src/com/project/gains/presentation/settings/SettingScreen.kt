@@ -18,6 +18,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -46,6 +47,7 @@ import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.BottomNavigationBar
 
 import com.project.gains.presentation.components.SocialMediaIcon
+import com.project.gains.presentation.components.SocialMediaRow
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 
@@ -61,8 +63,7 @@ fun SettingScreen(
     saveLinkHandler: (SaveSharingPreferencesEvent) -> Unit,
     generalViewModel: GeneralViewModel
 ) {
-   val linkedApps by generalViewModel.linkedApps.observeAsState()
-
+    val linkedApps by generalViewModel.linkedApps.observeAsState()
 
     GainsAppTheme {
         Scaffold(
@@ -83,7 +84,7 @@ fun SettingScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         BackButton(
-                            onClick = {navController.popBackStack()}
+                            onClick = { navController.popBackStack() }
                         )
                         androidx.compose.material3.Text(
                             text = "Sharing Options",
@@ -95,134 +96,23 @@ fun SettingScreen(
                         )
                     }
                     Spacer(modifier = Modifier.height(50.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        SocialMediaIcon(icon = R.drawable.instagram_icon, onClick = { /* Handle Facebook click */ }, isSelected = linkedApps?.contains(
-                            R.drawable.instagram_icon
-                        ) == true )
-                        Spacer(modifier = Modifier.width(50.dp))
-                        Button(
-                            onClick = {
-                                linkHandler(LinkAppEvent.LinkApp(R.drawable.instagram_icon)) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                            Text("Link")
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        SocialMediaIcon(icon = R.drawable.facebook_icon, onClick = { /* Handle Facebook click */ }, isSelected = linkedApps?.contains(
-                            R.drawable.facebook_icon
-                        ) == true )
-                        Spacer(modifier = Modifier.width(50.dp))
-                        Button(
-                            onClick = {
-                                linkHandler(LinkAppEvent.LinkApp(R.drawable.facebook_icon)) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                            Text("Link")
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        SocialMediaIcon(icon = R.drawable.x_logo_icon, onClick = { /* Handle Facebook click */ }, isSelected = linkedApps?.contains(
-                            R.drawable.x_logo_icon
-                        ) == true )
-                        Spacer(modifier = Modifier.width(50.dp))
-                        Button(
-                            onClick = {
-                                linkHandler(LinkAppEvent.LinkApp(R.drawable.x_logo_icon)) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                            Text("Link")
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        SocialMediaIcon(icon = R.drawable.drive_google_icon, onClick = { /* Handle Facebook click */ }, isSelected = linkedApps?.contains(
-                            R.drawable.drive_google_icon
-                        ) == true )
-                        Spacer(modifier = Modifier.width(50.dp))
-                        Button(
-                            onClick = {
-                                linkHandler(LinkAppEvent.LinkApp(R.drawable.drive_google_icon)) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                            Text("Link")
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        SocialMediaIcon(icon = R.drawable.spotify_icon, onClick = { /* Handle Facebook click */ }, isSelected = linkedApps?.contains(
-                            R.drawable.spotify_icon
-                        ) == true )
-                        Spacer(modifier = Modifier.width(50.dp))
-                        Button(
-                            onClick = {
-                                linkHandler(LinkAppEvent.LinkApp(R.drawable.spotify_icon))},
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                            Text("Link")
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        SocialMediaIcon(icon = R.drawable.tiktok_logo_icon, onClick = { /* Handle Facebook click */ }, isSelected = linkedApps?.contains(
-                            R.drawable.tiktok_logo_icon
-                        ) == true )
-                        Spacer(modifier = Modifier.width(50.dp))
-                        Button(
-                            onClick = {
-                                linkHandler(LinkAppEvent.LinkApp(R.drawable.tiktok_logo_icon)) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                            Text("Link")
-                        }
-                    }
 
-                    // Add more checkboxes for other options as needed
+                    val icons = listOf(
+                        R.drawable.instagram_icon,
+                        R.drawable.facebook_icon,
+                        R.drawable.x_logo_icon,
+                        R.drawable.drive_google_icon,
+                        R.drawable.spotify_icon,
+                        R.drawable.tiktok_logo_icon
+                    )
+
+                    icons.forEach { icon ->
+                        SocialMediaRow(
+                            icon = icon,
+                            isLinked = linkedApps?.contains(icon) == true,
+                            linkHandler = linkHandler
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(30.dp))
 
@@ -242,7 +132,6 @@ fun SettingScreen(
                             Text("Save")
                         }
                     }
-
                 }
             }
         }

@@ -36,8 +36,10 @@ import androidx.compose.ui.unit.dp
 
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.project.gains.data.ExerciseType
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
+import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.data.generateOptions
 
@@ -64,6 +66,10 @@ fun NewPlanScreen(
     var popupVisible by remember { mutableStateOf(false) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
     var selectedTraining by remember { mutableStateOf(TrainingType.STRENGTH) }
+    val selectedExerciseTypes = remember { mutableStateListOf<ExerciseType>() } // List to store selected options
+    val selectedMetrics = remember { mutableStateListOf<TrainingMetricType>() } // List to store selected options
+    val selectedMusic = remember { mutableStateOf(false) } // List to store selected options
+    val selectedBackup = remember { mutableStateOf(false) } // List to store selected options
 
     // Function to handle checkbox state change
     fun onOptionSelected(option: Option, isChecked: Boolean) {
@@ -108,6 +114,7 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[0],
                             onOptionSelected = { isChecked ->
+                                selectedMusic.value = true
                                 onOptionSelected(
                                     options[0],
                                     isChecked
@@ -127,6 +134,7 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[1],
                             onOptionSelected = { isChecked ->
+                                selectedBackup.value = true
                                 onOptionSelected(
                                     options[1],
                                     isChecked
@@ -146,8 +154,9 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[2],
                             onOptionSelected = { isChecked ->
+                                selectedExerciseTypes.add(ExerciseType.STRENGTH)
                                 onOptionSelected(
-                                    options[0],
+                                    options[2],
                                     isChecked
                                 )
                             }
@@ -157,8 +166,10 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[3],
                             onOptionSelected = { isChecked ->
+                                selectedExerciseTypes.add(ExerciseType.FLEXIBILITY)
+
                                 onOptionSelected(
-                                    options[1],
+                                    options[3],
                                     isChecked
                                 )
                             }
@@ -168,8 +179,10 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[4],
                             onOptionSelected = { isChecked ->
+                                selectedExerciseTypes.add(ExerciseType.CARDIO)
+
                                 onOptionSelected(
-                                    options[0],
+                                    options[4],
                                     isChecked
                                 )
                             }
@@ -179,6 +192,8 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[5],
                             onOptionSelected = { isChecked ->
+                                selectedExerciseTypes.add(ExerciseType.BALANCE)
+
                                 onOptionSelected(
                                     options[5],
                                     isChecked
@@ -252,6 +267,8 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[6],
                             onOptionSelected = { isChecked ->
+                                selectedMetrics.add(TrainingMetricType.BPM)
+
                                 onOptionSelected(
                                     options[6],
                                     isChecked
@@ -263,6 +280,8 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[7],
                             onOptionSelected = { isChecked ->
+                                selectedMetrics.add(TrainingMetricType.KCAL)
+
                                 onOptionSelected(
                                     options[7],
                                     isChecked
@@ -274,6 +293,8 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[8],
                             onOptionSelected = { isChecked ->
+                                selectedMetrics.add(TrainingMetricType.INTENSITY)
+
                                 onOptionSelected(
                                     options[8],
                                     isChecked
@@ -285,6 +306,8 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[9],
                             onOptionSelected = { isChecked ->
+                                selectedMetrics.add(TrainingMetricType.DURATION)
+
                                 onOptionSelected(
                                     options[9],
                                     isChecked
@@ -296,6 +319,8 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[10],
                             onOptionSelected = { isChecked ->
+                                selectedMetrics.add(TrainingMetricType.DISTANCE)
+
                                 onOptionSelected(
                                     options[10],
                                     isChecked
@@ -305,6 +330,7 @@ fun NewPlanScreen(
                     }
                     item {
                         PeriodPopup(
+                            selectedPeriodMap = selectedPeriodMap,
                             popupVisible = popupVisible,
                             onDismiss = { popupVisible = false },
                             onOptionSelected = { period ->
@@ -331,7 +357,8 @@ fun NewPlanScreen(
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Button(
-                                onClick = { createHandler(CreateEvent.CreatePlan(options,selectedPeriod,selectedTraining))
+                                onClick = {
+                                    createHandler(CreateEvent.CreatePlan(options,selectedPeriod,selectedExerciseTypes,selectedMetrics,selectedTraining,selectedMusic.value,selectedBackup.value))
                                     navController.navigate(Route.PlanScreen.route) },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = MaterialTheme.colorScheme.primaryContainer,

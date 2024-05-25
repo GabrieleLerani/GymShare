@@ -33,7 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
+import com.project.gains.R
 import com.project.gains.data.PeriodMetricType
+import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.presentation.components.BottomNavigationBar
@@ -52,10 +54,17 @@ fun ProgressDetailsScreen(
     generalViewModel: GeneralViewModel
 ) {
     var popupVisible by remember { mutableStateOf(false) }
-    var selectedMetric by remember { mutableStateOf(TrainingMetricType.DURATION) }
+    val selectedPlan by generalViewModel.selectedPlan.observeAsState()
+    var selectedMusicMap = generalViewModel._selectedMusicsMap.get(selectedPlan?.id)
+    var selectedBackupMap = generalViewModel._selectedBackupsMap.get(selectedPlan?.id)
+    var selectedMetricMap = generalViewModel._selectedMetricsMap.get(selectedPlan?.id)
+    var selectedPeriodMap = generalViewModel._selectedPeriodsMap.get(selectedPlan?.id)
+
+    var selectedMetric by remember { mutableStateOf(TrainingMetricType.BPM) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
     val sessions by generalViewModel.currentSessions.observeAsState()
     var training_data: MutableList<TrainingData> = mutableListOf()
+    val progressChartPreview by generalViewModel.selectedPlotPreview.observeAsState()
 
     sessions?.let { sessionList ->
         val kcalValuesInts = sessionList.map { it.kcal }
@@ -77,34 +86,34 @@ fun ProgressDetailsScreen(
             }
             TrainingMetricType.DURATION -> {
                 training_data = mutableListOf()
-                intensitiesInts.forEach {
+                durationsInts.forEach {
                     training_data.add(TrainingData(TrainingMetricType.DURATION,it))
                 }
 
             }
             TrainingMetricType.DISTANCE -> {
                 training_data = mutableListOf()
-                intensitiesInts.forEach {
+                distancesInts.forEach {
                     training_data.add(TrainingData(TrainingMetricType.DISTANCE,it))
                 }
             }
             TrainingMetricType.KCAL -> {
                 training_data = mutableListOf()
-                intensitiesInts.forEach {
+                kcalValuesInts.forEach {
                     training_data.add(TrainingData(TrainingMetricType.KCAL,it))
                 }
 
             }
             TrainingMetricType.BPM -> {
                 training_data = mutableListOf()
-                intensitiesInts.forEach {
+                bpmsInts.forEach {
                     training_data.add(TrainingData(TrainingMetricType.BPM,it))
                 }
 
             }
             TrainingMetricType.REST -> {
                 training_data = mutableListOf()
-                intensitiesInts.forEach {
+                kcalValuesInts.forEach {
                     training_data.add(TrainingData(TrainingMetricType.REST,it))
                 }
 
@@ -156,17 +165,21 @@ fun ProgressDetailsScreen(
                                 Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Metric")
                             }
                         }
-                        MetricPopup(
-                            popupVisible = popupVisible,
-                            onDismiss = { popupVisible = false },
-                            onOptionSelected = { metric ->
-                                selectedMetric = metric
-                                popupVisible = false
-                            },
-                            selectedMetric = selectedMetric
-                        )
+
+                            MetricPopup(
+                                selectedMetricMap = selectedMetricMap,
+                                popupVisible = popupVisible,
+                                onDismiss = { popupVisible = false },
+                                onOptionSelected = { metric ->
+                                    selectedMetric = metric
+                                    popupVisible = false
+                                },
+                                selectedMetric = selectedMetric
+                            )
+
 
                         PeriodPopup(
+                            selectedPeriodMap,
                             popupVisible = popupVisible,
                             onDismiss = { popupVisible = false },
                             onOptionSelected = { period ->
@@ -180,7 +193,8 @@ fun ProgressDetailsScreen(
                             trainingData =training_data ,
                             selectedMetric = selectedMetric,
                             selectedPeriod = selectedPeriod,
-                            shareHandler = shareHandler
+                            shareHandler = shareHandler,
+                            selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plo1)
                         )
                     }
                 }
