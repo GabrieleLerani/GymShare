@@ -330,7 +330,7 @@ fun NewPlanScreen(
                     }
                     item {
                         PeriodPopup(
-                            selectedPeriodMap = selectedPeriodMap,
+                            selectedPeriodMap = PeriodMetricType.entries.toMutableList(),
                             popupVisible = popupVisible,
                             onDismiss = { popupVisible = false },
                             onOptionSelected = { period ->
