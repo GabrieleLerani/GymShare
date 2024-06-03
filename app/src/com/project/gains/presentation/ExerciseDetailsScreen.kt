@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
+import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.MuscleGroup
@@ -83,7 +84,8 @@ fun ExerciseDetailsScreen(
                             )
                         }
 
-                        ExerciseCard(exercise ?: Exercise("",0,"",ExerciseType.BALANCE,TrainingType.STRENGTH,MuscleGroup.ARMS))
+                        ExerciseCard(exercise ?: Exercise("",
+                            R.drawable.gi,"",ExerciseType.BALANCE,TrainingType.STRENGTH,MuscleGroup.ARMS))
                     }
                 }
             }

@@ -110,7 +110,8 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
         _exercises.value = generateSampleExercises()
         _plots.value = generateRandomPlots()
         _posts.value = generateRandomGymPost(10).toMutableList()
-
+        _currentSessions.value = mutableListOf()
+        _linkedApps.value = mutableListOf()
 
     }
 

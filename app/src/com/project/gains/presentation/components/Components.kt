@@ -1334,7 +1334,10 @@ fun SocialMediaIcon(icon: Int, onClick: () -> Unit,isSelected:Boolean) {
             contentDescription = null,
             modifier = Modifier
                 .size(60.dp)
-                .background(color= if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent, shape = CircleShape)
+                .background(
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent,
+                    shape = CircleShape
+                )
                 .clip(CircleShape)
 
         )
@@ -1583,8 +1586,17 @@ fun TrainingOverviewChart(
 }
 @Composable
 fun DialogOption(text: String, onClick: () -> Unit) {
-    TextButton(onClick = onClick) {
-        Text(text, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary)
+    ) {
+        TextButton(onClick = onClick) {
+            Text(text, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
+        }
     }
 }
 
