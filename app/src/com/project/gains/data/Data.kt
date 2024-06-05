@@ -578,7 +578,7 @@ fun generateRandomPlan(
                     name = exerciseName ?: "Unknown",
                     description = "$exerciseType exercise targeting $muscleGroup",
                     type = exerciseType.random(),
-                    gifResId = null,
+                    gifResId = R.drawable.gi,
                     muscle = muscleGroup,
                     training = trainingType
                 )

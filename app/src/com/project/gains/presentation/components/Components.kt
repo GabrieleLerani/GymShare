@@ -943,7 +943,7 @@ fun ExerciseCard(exercise: Exercise){
             // Display GIF of the exercise
             item {
                 Image(
-                painter = painterResource(id = exercise.gifResId ?: 1),
+                painter = painterResource(id = exercise.gifResId ?: R.drawable.gi),
                 contentDescription = "Exercise image",
                 modifier = Modifier
                     .fillMaxWidth()
