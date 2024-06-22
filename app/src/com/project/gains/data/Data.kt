@@ -5,190 +5,12 @@ import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.project.gains.R
 import com.project.gains.presentation.navgraph.Route
 import kotlin.random.Random
-
-
-
-// DB
-/*import android.content.Context
-import androidx.room.*
-
-// Step 1: Define Entity Classes
-@Entity(tableName = "training_data")
-data class TrainingData(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val type: TrainingMetricType,
-    val value: Int
-)
-@Entity(tableName = "xn")
-data class TrainingData(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val calories: Int, val bpm: Int, val restTime: Int, val timeOfTraining: Int
-)
-@Entity(tableName = "players")
-data class Player(
-    @PrimaryKey
-    val username: String,
-    var location: Location,
-    var distance: Double
-)
-
-@Entity(tableName = "exercises")
-data class Exercise(
-    @PrimaryKey
-    val name: String,
-    val gifResId: Int?,
-    val description: String,
-    val type: ExerciseType,
-    val training: TrainingType,
-    val muscle: MuscleGroup
-)
-
-@Entity(tableName = "plans")
-data class Plan(
-    @PrimaryKey
-    val id: Int,
-    val name: String,
-    val period: PeriodMetricType
-)
-
-@Entity(tableName = "workouts")
-data class Workout(
-    @PrimaryKey
-    val id: Int,
-    val name: String
-)
-
-@Entity(tableName = "user_profiles")
-data class UserProfileBundle(
-    @PrimaryKey
-    val displayName: String,
-    var email: String
-)
-
-@Entity(tableName = "gym_posts")
-data class GymPost(
-    @PrimaryKey
-    val id: String,
-    val imageResourceId: Int,
-    val username: String,
-    val randomSocialId: Int
-)
-
-@Entity(tableName = "chart_previews")
-data class ProgressChartPreview(
-    @PrimaryKey
-    val name: String,
-    @DrawableRes
-    val imageResId: Int
-)
-
-@Entity(tableName = "chart_data")
-data class ChartData(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val values: List<Float>
-)
-
-@Entity(tableName = "options")
-data class Option(
-    @PrimaryKey
-    val name: String,
-    var isChecked: Boolean = false
-)
-
-// Step 2: Define Data Access Object (DAO) Interfaces
-@Dao
-interface TrainingDataDao {
-    @Insert
-    suspend fun insertTrainingData(trainingData: TrainingData)
-
-    @Query("SELECT * FROM training_data")
-    suspend fun getAllTrainingData(): List<TrainingData>
-
-    @Delete
-    suspend fun deleteTrainingData(trainingData: TrainingData)
-
-    @Update
-    suspend fun updateTrainingData(trainingData: TrainingData)
-}
-
-@Dao
-interface PlayerDao {
-    @Insert
-    suspend fun insertPlayer(player: Player)
-
-    @Query("SELECT * FROM players")
-    suspend fun getAllPlayers(): List<Player>
-
-    @Delete
-    suspend fun deletePlayer(player: Player)
-
-    @Update
-    suspend fun updatePlayer(player: Player)
-}
-
-@Dao
-interface ExerciseDao {
-    @Insert
-    suspend fun insertExercise(exercise: Exercise)
-
-    @Query("SELECT * FROM exercises")
-    suspend fun getAllExercises(): List<Exercise>
-
-    @Delete
-    suspend fun deleteExercise(exercise: Exercise)
-
-    @Update
-    suspend fun updateExercise(exercise: Exercise)
-}
-
-// Define DAO interfaces for other data classes similarly
-
-// Step 3: Create a Room Database
-@Database(entities = [TrainingData::class, Player::class, Exercise::class, Plan::class, Workout::class,
-    UserProfileBundle::class, GymPost::class, ProgressChartPreview::class, ChartData::class, Option::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun trainingDataDao(): TrainingDataDao
-    abstract fun playerDao(): PlayerDao
-    abstract fun exerciseDao(): ExerciseDao
-    // Define DAO abstract functions for other data classes similarly
-}
-
-// Step 4: Initialize Room Database
-object DatabaseBuilder {
-    fun build(context: Context): AppDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java, "app-database"
-        ).build()
-    }
-}
-
-// Step 5: Perform Database Operations
-suspend fun insertTrainingData(trainingData: TrainingData) {
-    appDatabase.trainingDataDao().insertTrainingData(trainingData)
-}
-
-suspend fun getAllTrainingData(): List<TrainingData> {
-    return appDatabase.trainingDataDao().getAllTrainingData()
-}
-
-suspend fun deleteTrainingData(trainingData: TrainingData) {
-    appDatabase.trainingDataDao().deleteTrainingData(trainingData)
-}
-
-suspend fun updateTrainingData(trainingData: TrainingData) {
-    appDatabase.trainingDataDao().updateTrainingData(trainingData)
-}*/
-
-// Define functions for other database operations similarly
 
 
 // structures
@@ -279,15 +101,15 @@ data class Option(val name: String, var isChecked: Boolean = false)
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Default.Home, "Home")
-    data object Workout : BottomNavItem(Route.WorkoutScreen.route, Icons.Default.FitnessCenter, "Workout")
     data object Progress : BottomNavItem(Route.ProgressScreen.route, Icons.Default.Analytics, "Progress")
     data object Plan : BottomNavItem(Route.PlansScreen.route, Icons.Default.Event, "Plans")
     data object Share : BottomNavItem(Route.ShareScreen.route, Icons.Default.Share, "Share")
+    data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Search, "Explore")
 }
 
 
 // init data and functions
-// TODO LOAD GIF NOT IMAGE
+
 fun generateSampleExercises(): MutableList<Exercise> {
     return mutableListOf(
         Exercise("Exercise 1", description = "Exercise: Dumbbell Bicep Curl\n" +
@@ -549,9 +371,9 @@ fun generateRandomSongTitle(): String {
 }
 val bottomNavItems = listOf(
     BottomNavItem.Share,
-    BottomNavItem.Plan,
-    BottomNavItem.Workout,
+    BottomNavItem.Explore,
     BottomNavItem.Home,
+    BottomNavItem.Plan,
     BottomNavItem.Progress
 )
 
@@ -767,7 +589,6 @@ fun generateRandomPlot(): Plot {
         imageResId = drawableResources.random()  // Assuming drawable resources are in the range 1 to 100
     )
 
-    val trainingTypes = TrainingMetricType.entries.toTypedArray()
     val trainingData = generateRandomTrainingData(4)
 
     return Plot(preview, trainingData)

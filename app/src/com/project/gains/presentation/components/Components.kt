@@ -460,77 +460,6 @@ fun PeriodPopup(
     }
 }
 @Composable
-fun ExitPopup(popup: MutableState<Boolean>) {
-    if (popup.value) {
-        Dialog(
-            onDismissRequest = {
-                popup.value = false
-            },
-            properties = DialogProperties(
-                dismissOnClickOutside = true,
-                dismissOnBackPress = false
-            )
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 10.dp
-                ),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        text = "Do you really want to exit the application?"
-                    )
-
-                    Row {
-                        ElevatedButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(bottom = 16.dp),
-                            onClick = {
-                                exitProcess(0)
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
-                        ) {
-                            Text(
-                                color = Color.White,
-                                text = "Yes"
-                            )
-                        }
-
-                        ElevatedButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(start = 10.dp, bottom = 16.dp),
-                            onClick = {
-                                popup.value = false
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
-                        ) {
-                            Text(
-                                color = Color.White,
-                                text = "No"
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-@Composable
 fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:String) {
     if (popup) {
         val play = remember {
@@ -1085,19 +1014,19 @@ fun ExerciseItem(exercise: Exercise, onDelete: (Exercise) -> Unit,onItemClick: (
         ) {
             androidx.compose.material.Text(
                 text = exercise.name,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.weight(1f)
             )
             androidx.compose.material.IconButton(
                 onClick = {
                     onItemClick(exercise) },
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 2.dp)
             ) {
                 androidx.compose.material.Icon(Icons.Default.Edit, contentDescription = "Edit Icon")
             }
             androidx.compose.material.IconButton(
                 onClick = { onDelete(exercise) },
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 2.dp)
             ) {
                 androidx.compose.material.Icon(
                     Icons.Default.Delete,
@@ -1169,18 +1098,18 @@ fun WorkoutItem(workout: Workout, onItemClick: (Workout) -> Unit, onDelete: (Wor
         ) {
             androidx.compose.material.Text(
                 text = workout.name,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.weight(1f)
             )
             androidx.compose.material.IconButton(
                 onClick = { onItemClick(workout) },
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 2.dp)
             ) {
                 androidx.compose.material.Icon(Icons.Default.Edit, contentDescription = "Edit Icon")
             }
             androidx.compose.material.IconButton(
                 onClick = {  onDelete(workout) },
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 2.dp)
             ) {
                 androidx.compose.material.Icon(
                     Icons.Default.Delete,
@@ -1371,7 +1300,7 @@ fun OptionCheckbox(
 }
 @Composable
 fun AnimatedSessionDetails(plan:Int,workout:Int,
-    show: Boolean,
+    submit: Boolean,
     saveSessionHandler: (SaveSessionEvent.SaveSession) -> Unit
 ) {
     val animatedCalories = remember { Animatable(0f) }
@@ -1380,12 +1309,14 @@ fun AnimatedSessionDetails(plan:Int,workout:Int,
     val animatedDuration = remember { Animatable(0f) }
     val animatedIntensity = remember { Animatable(0f) }
     val animatedDistance = remember { Animatable(0f) }
+    val progress = remember{ Animatable(0F) }
 
     val duration = 20000 // 20 seconds for the sake of example
-    val targetCalories = 5f
-    val targetBpm = 5f
-    val targetRestTime = 5f
-    val targetTimeOfTrying = 5f
+    val targetCalories = 100f
+    val targetBpm = 100f
+    val targetRestTime = 100f
+    val targetTimeOfTrying = 100f
+    val targetTime = 100f
 
     LaunchedEffect(Unit) {
         launch { animatedCalories.animateTo(targetValue = targetCalories, animationSpec = tween(durationMillis = duration)) }
@@ -1394,6 +1325,8 @@ fun AnimatedSessionDetails(plan:Int,workout:Int,
         launch { animatedDuration.animateTo(targetValue = targetTimeOfTrying, animationSpec = tween(durationMillis = duration)) }
         launch { animatedIntensity.animateTo(targetValue = targetTimeOfTrying, animationSpec = tween(durationMillis = duration)) }
         launch { animatedDistance.animateTo(targetValue = targetTimeOfTrying, animationSpec = tween(durationMillis = duration)) }
+        launch { progress.animateTo(targetValue = targetTime, animationSpec = tween(durationMillis = duration)) }
+
     }
 
     SessionDetails(
@@ -1402,44 +1335,72 @@ fun AnimatedSessionDetails(plan:Int,workout:Int,
         restTime = "${animatedRestTime.value.toInt()} min",
         intensity = "${animatedIntensity.value.toInt()} min",
         distance = "${animatedDistance.value.toInt()} min",
-        duration = "${animatedDuration.value.toInt()} min"
+        duration = "${animatedDuration.value.toInt()} min",
+        time="${progress.value.toInt()} min",
     )
-    if (show) {
-        Row {
-            SaveSessionButton(onClick = {
-                saveSessionHandler(
-                    SaveSessionEvent.SaveSession(plan,workout,
-                        Session(
-                            animatedCalories.value.toInt(),
-                            animatedBpm.value.toInt(),
-                            animatedRestTime.value.toInt(),
-                            animatedDuration.value.toInt(),
-                            animatedDistance.value.toInt(),
-                            animatedIntensity.value.toInt()
-                        )
-                    )
+    if (submit) {
+        saveSessionHandler(
+            SaveSessionEvent.SaveSession(plan,workout,
+                Session(
+                    animatedCalories.value.toInt(),
+                    animatedBpm.value.toInt(),
+                    animatedRestTime.value.toInt(),
+                    animatedDuration.value.toInt(),
+                    animatedDistance.value.toInt(),
+                    animatedIntensity.value.toInt()
                 )
-            }, isEnabled = true)
-        }
+            )
+        )
+
     }
 
 }
 @Composable
-fun SessionDetails(calories: String, bpm: String, restTime: String, duration: String, intensity :String,distance:String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+fun SessionDetails(
+    calories: String,
+    bpm: String,
+    restTime: String,
+    duration: String,
+    intensity: String,
+    distance: String,
+    time: String
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2), // Adjust the number of columns as needed
+        contentPadding = PaddingValues(10.dp) // Add padding around the grid
     ) {
-        MetricRow(icon = Icons.Default.LocalFireDepartment, label = "Calories", value = calories)
-        MetricRow(icon = Icons.Default.Favorite, label = "BPM", value = bpm)
-        MetricRow(icon = Icons.Default.Timer, label = "Rest Time", value = restTime)
-        MetricRow(icon = Icons.Default.Timelapse, label = "Until Rest Time", value = restTime)
-        MetricRow(icon = Icons.Default.AccessTime, label = "Training time", value = duration)
-        MetricRow(icon = Icons.Default.Speed, label = "Intensity", value = intensity)
-        MetricRow(icon = Icons.AutoMirrored.Filled.DirectionsRun, label = "Distance m", value = distance)
+        item{
+            MetricRow(icon = Icons.Default.LocalFireDepartment, label = "Calories", value = calories)
+
+        }
+        item{
+            MetricRow(icon = Icons.Default.Favorite, label = "BPM", value = bpm)
+
+        }
+        item{
+            MetricRow(icon = Icons.Default.Timer, label = "Rest Time", value = restTime)
+
+        }
+        item{
+            MetricRow(icon = Icons.Default.Timelapse, label = "Until Rest Time", value = restTime)
+
+        }
+        item{
+            MetricRow(icon = Icons.Default.AccessTime, label = "Training time", value = duration)
+
+        }
+        item{
+            MetricRow(icon = Icons.Default.Speed, label = "Intensity", value = intensity)
+
+        }
+        item{
+            MetricRow(icon = Icons.AutoMirrored.Filled.DirectionsRun, label = "Distance m", value = distance)
+
+        }
+        item{
+            MetricRow(icon = Icons.Default.Timelapse, label = "Time", value = time)
+
+        }
     }
 }
 @Composable
@@ -1448,13 +1409,14 @@ fun MetricRow(icon: ImageVector, label: String, value: String) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
+            .padding(5.dp)
             .fillMaxWidth()
-            .size(40.dp)
+            .size(50.dp)
     ) {
         Icon(icon, contentDescription = label, modifier = Modifier.size(24.dp))
         Text(
             text = "$label: $value",
-            fontSize = 20.sp,
+            fontSize = 15.sp,
             fontWeight = FontWeight.Bold
         )
     }
@@ -1474,7 +1436,7 @@ fun ExerciseGif(exercise: Exercise,onClick: (Exercise) -> Unit) {
             .build(),
         contentDescription = "Exercise GIF",
         modifier = Modifier
-            .size(100.dp)
+            .size(200.dp)
             .clickable { onClick(exercise) }
             .graphicsLayer {
                 // Add any additional transformations or animations if needed
@@ -1489,17 +1451,8 @@ fun GymPostsList(posts: MutableList<GymPost>?, shareHandler: (ShareContentEvent)
         contentPadding = PaddingValues(8.dp) // Add padding around the grid
     ) {
         items(posts ?: emptyList()) { post ->
+
             GymPostItem(post = post,shareHandler)
-        }
-    }
-}
-@Composable
-fun WorkoutList(workouts: MutableList<Workout>?, onItemClick: (Workout) -> Unit, onDelete: (Workout) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(workouts ?: emptyList()) { workout ->
-            WorkoutItem(workout = workout, onItemClick = onItemClick, onDelete = onDelete)
         }
     }
 }
@@ -1524,7 +1477,6 @@ fun TrainingOverviewChart(
     val filteredData = trainingData.filter { it.type == selectedMetric }
 
     val rowColors = listOf(Color.Red, Color.Blue, Color.Green) // Example colors, you can customize as needed
-
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -1561,9 +1513,7 @@ fun TrainingOverviewChart(
                                 color = color,
                                 shape = RoundedCornerShape(10.dp)
                             )
-                    ) {
-
-                    }
+                    )
                 }
                 else{
                     Box(

@@ -31,7 +31,6 @@ import com.project.gains.presentation.share.ShareScreen
 import com.project.gains.presentation.workout.AddExerciseScreen
 import com.project.gains.presentation.workout.SessionScreen
 import com.project.gains.presentation.workout.WorkoutScreen
-import com.project.gains.presentation.workout.WorkoutSelectionScreen
 
 
 @Composable
@@ -157,19 +156,6 @@ fun NavGraph(
                     selectHandler = generalViewModel::onSelectEvent,
                     shareHandler = generalViewModel::onShareContentEvent,
                     generalViewModel = generalViewModel
-                )
-            }
-            composable(
-                route = Route.WorkoutSelectionScreen.route
-            ) {
-                // set screen as the node state
-                WorkoutSelectionScreen(
-                    navController = navController,
-                    selectHandler = generalViewModel::onSelectEvent,
-                    deleteHandler = generalViewModel::onDeleteEvent,
-                    createHandler = generalViewModel::onCreateEvent,
-                    generalViewModel = generalViewModel
-
                 )
             }
 

@@ -38,6 +38,7 @@ import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
+import com.project.gains.data.generateRandomTrainingData
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.MetricPopup
 import com.project.gains.presentation.components.PeriodPopup
@@ -55,8 +56,6 @@ fun ProgressDetailsScreen(
 ) {
     var popupVisible by remember { mutableStateOf(false) }
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
-    var selectedMusicMap = generalViewModel._selectedMusicsMap.get(selectedPlan?.id)
-    var selectedBackupMap = generalViewModel._selectedBackupsMap.get(selectedPlan?.id)
     var selectedMetricMap = generalViewModel._selectedMetricsMap.get(selectedPlan?.id)
     var selectedPeriodMap = generalViewModel._selectedPeriodsMap.get(selectedPlan?.id)
 
@@ -65,7 +64,6 @@ fun ProgressDetailsScreen(
     val sessions by generalViewModel.currentSessions.observeAsState()
     var training_data: MutableList<TrainingData> = mutableListOf()
     val progressChartPreview by generalViewModel.selectedPlotPreview.observeAsState()
-
     sessions?.let { sessionList ->
         val kcalValuesInts = sessionList.map { it.kcal }
 
@@ -113,7 +111,7 @@ fun ProgressDetailsScreen(
             }
             TrainingMetricType.REST -> {
                 training_data = mutableListOf()
-                kcalValuesInts.forEach {
+                restTimesInts.forEach {
                     training_data.add(TrainingData(TrainingMetricType.REST,it))
                 }
 

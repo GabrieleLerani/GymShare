@@ -39,8 +39,6 @@ fun FeedScreen(
 
     // Assuming you have a function to fetch gym posts from an API or elsewhere
     // You'll need to implement this function accordingly
-
-
     GainsAppTheme {
         Scaffold(
             bottomBar = { BottomNavigationBar(navController = navController) }

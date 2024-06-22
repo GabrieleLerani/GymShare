@@ -87,13 +87,13 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     // FOR EACH PLAN
 
     val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
-     val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
+    val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
     val _selectedPeriodsMap = HashMap<Int,MutableList<PeriodMetricType>>()
 
 
-     val _selectedMusicsMap = HashMap<Int,Boolean>()
+    val _selectedMusicsMap = HashMap<Int,Boolean>()
 
-     val _selectedBackupsMap = HashMap<Int,Boolean>()
+    val _selectedBackupsMap = HashMap<Int,Boolean>()
 
 
     private var int = 0
@@ -286,12 +286,4 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
 
         }
     }
-
-
-
-
-
-
-
-
 }
