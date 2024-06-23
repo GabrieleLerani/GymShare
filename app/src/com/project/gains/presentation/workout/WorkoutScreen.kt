@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -97,8 +98,8 @@ fun WorkoutScreen(
                     // Horizontal separator around the post
                     Spacer(modifier = Modifier.height(100.dp))
                     Box(
-                        modifier = Modifier.weight(0.5f)
-                            .padding(10.dp)
+                        modifier = Modifier.fillMaxHeight(0.7f)
+                            .padding(5.dp)
                             .border(
                                 border = BorderStroke(
                                     width = 2.dp,
@@ -149,7 +150,7 @@ fun WorkoutScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(120.dp),
+                            .padding(top=10.dp,start=128.dp),
                         horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {

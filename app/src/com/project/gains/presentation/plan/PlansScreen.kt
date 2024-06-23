@@ -1,19 +1,31 @@
 package com.project.gains.presentation.plan
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +47,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
+import com.project.gains.data.Workout
+import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.PlanItem
@@ -70,34 +84,25 @@ fun PlansScreen(
 
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                        modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TopBar(navController = navController, userProfile = null,message ="Your Plans")
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        androidx.compose.material3.Text(
-                            text = "Your Plans",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontSize = 22.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 10.dp)
-                        )
+                        TopBar(navController = navController, userProfile = null,message =" Plans")
                     }
 
                     // Horizontal separator around the post
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                            .background(Color.White) // Background color of the separator
-                    ) {
+                        modifier = Modifier.fillMaxHeight(0.7f)
+                            .padding(5.dp)
+                            .border(
+                                border = BorderStroke(
+                                    width = 2.dp,
+                                    color = Color.Black
+                                ),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    )  {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2), // Adjust the number of columns as needed
                             contentPadding = PaddingValues(2.dp) // Add padding around the grid
@@ -122,6 +127,34 @@ fun PlansScreen(
                                     }
                                 }
                             }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top=10.dp,start=128.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BackButton {
+                            navController.popBackStack()
+                        }
+                        Spacer(modifier = Modifier.width(20.dp))
+                        IconButton(
+                            onClick =  {
+                                navController.popBackStack()
+                            },
+                            modifier = Modifier.size(60.dp),
+                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowForward,
+                                contentDescription = "Share Icon",
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .padding(10.dp),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         }
                     }
                 }

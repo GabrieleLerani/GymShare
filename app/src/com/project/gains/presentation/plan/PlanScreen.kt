@@ -1,16 +1,21 @@
 package com.project.gains.presentation.plan
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -20,8 +25,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,6 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
+import com.project.gains.data.Workout
 import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.BottomNavigationBar
@@ -78,44 +88,27 @@ fun PlanScreen(
 
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top=5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TopBar(navController = navController, userProfile = null,message=selectedPlan?.name ?: "Your Plan")
-                    }
-                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 26.dp),
+                            .padding(5.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            BackButton {
-                                navController.popBackStack()
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Button(
-                            onClick = { navController.navigate(Route.NewPlanScreen.route) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-                            ),
-                            modifier = Modifier.padding(bottom = 10.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                        }
+                        TopBar(navController = navController, userProfile = null,message= selectedPlan?.name?:"Plan")
                     }
+                    Spacer(modifier = Modifier.height(100.dp))
+
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                            .background(Color.White) // Background color of the separator
-                    ) {
+                        modifier = Modifier.fillMaxHeight(0.7f)
+                            .padding(5.dp)
+                            .border(
+                                border = BorderStroke(
+                                    width = 2.dp,
+                                    color = Color.Black
+                                ),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    )  {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2), // Adjust the number of columns as needed
                             contentPadding = PaddingValues(2.dp) // Add padding around the grid
@@ -145,6 +138,34 @@ fun PlanScreen(
                                     }
                                 }
                             }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top=10.dp,start=128.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BackButton {
+                            navController.popBackStack()
+                        }
+                        Spacer(modifier = Modifier.width(20.dp))
+                        IconButton(
+                            onClick =  {
+                                navController.navigate(Route.NewPlanScreen.route)
+                            },
+                            modifier = Modifier.size(60.dp),
+                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            androidx.compose.material3.Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Share Icon",
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .padding(10.dp),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         }
                     }
                 }
