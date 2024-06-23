@@ -1,6 +1,8 @@
 package com.project.gains.presentation.workout
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,23 +11,24 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Analytics
-import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -50,7 +53,6 @@ import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.ExerciseItem
-import com.project.gains.presentation.components.UserContentCard
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 
@@ -86,38 +88,25 @@ fun WorkoutScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 4.dp),
+                            .padding(5.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TopBar(userProfile = null, navController = navController)
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BackButton {
-                            navController.popBackStack()
-                        }
-                        Spacer(modifier = Modifier.padding(horizontal = 40.dp))
-                        // Title
-                        Text(
-                            text = "Your Workout",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontSize = 22.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            textAlign = TextAlign.Center,
-                        )
+                        TopBar(navController = navController, userProfile = null,message= workout?.name?:"Workout")
                     }
                     // Horizontal separator around the post
+                    Spacer(modifier = Modifier.height(100.dp))
                     Box(
-                        modifier = Modifier
-                            .weight(2f)
-                            .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                            .background(Color.White) // Background color of the separator
-                    ) {
+                        modifier = Modifier.weight(0.5f)
+                            .padding(10.dp)
+                            .border(
+                                border = BorderStroke(
+                                    width = 2.dp,
+                                    color = Color.Black
+                                ),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    )  {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2), // Adjust the number of columns as needed
                             contentPadding = PaddingValues(2.dp) // Add padding around the grid
@@ -157,14 +146,19 @@ fun WorkoutScreen(
                             }
                         }
                     }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 40.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.Bottom
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(120.dp),
+                        horizontalArrangement = Arrangement.Start,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Button(
-                            onClick = {
+                        BackButton {
+                            navController.popBackStack()
+                        }
+                        Spacer(modifier = Modifier.width(20.dp))
+                        IconButton(
+                            onClick =  {
                                 selectHandler(
                                     SelectEvent.SelectWorkout(
                                         workout ?: Workout(1, "", mutableListOf())
@@ -172,11 +166,17 @@ fun WorkoutScreen(
                                 )
                                 navController.navigate(Route.SessionScreen.route)
                             },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-                            )) {
-                            Text("Start Workout")
+                            modifier = Modifier.size(60.dp),
+                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "Share Icon",
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .padding(10.dp),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
                         }
                     }
                 }

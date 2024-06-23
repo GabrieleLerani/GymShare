@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,20 +52,19 @@ import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.IosShare
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PostAdd
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -73,6 +73,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
@@ -158,73 +159,38 @@ fun CustomBackHandler(
 // Buttons
 @Composable
 fun BackButton(onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                //shape = RoundedCornerShape(20.dp)
-            )
-    ){
-        IconButton(
-            onClick = onClick,
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.size(60.dp),
+        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = "Share Icon",
             modifier = Modifier
-                .padding(8.dp)
-                .background(MaterialTheme.colorScheme.surface)
-        ) {
-            BackIcon()
-        }
+                .size(60.dp)
+                .padding(10.dp),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
     }
 }
-@Composable
-fun BackIcon() {
-    Icon(
-        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-        contentDescription = "Back",
-        tint = MaterialTheme.colorScheme.onSurface, // Change the color as needed
-        modifier = Modifier.size(24.dp)
-    )
-}
+
 
 @Composable
 fun SharingPreferencesButton(navController: NavController) {
-    ExtendedFloatingActionButton(
-        text = { Text("Sharing Preferences") },
-        icon = {Icon(
-            imageVector = Icons.Outlined.Share,
-            contentDescription = "preferences",
-            tint = MaterialTheme.colorScheme.onPrimaryContainer)},
+    IconButton(
         onClick = { navController.navigate(Route.SettingScreen.route) },
-    )
-}
-@Composable
-fun SaveSessionButton(
-    onClick: () -> Unit,
-    isEnabled: Boolean
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.size(50.dp),
+        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.tertiary)
     ) {
-        Box(
+        Icon(
+            imageVector = Icons.Outlined.Settings,
+            contentDescription = "Share Icon",
             modifier = Modifier
-                .size(80.dp)
-                .background(
-                    color = if (isEnabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground.copy(
-                        alpha = 0.2f
-                    ),
-                    shape = CircleShape
-                )
-                .clickable(enabled = isEnabled) { onClick() }
-                .padding(5.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Save,
-                contentDescription = "Save Icon",
-                modifier = Modifier.size(60.dp),
-                tint = if (isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
-            )
-        }
+                .size(50.dp)
+                .padding(10.dp),
+            tint = MaterialTheme.colorScheme.onTertiary
+        )
     }
 }
 @Composable
@@ -232,42 +198,95 @@ fun ShareButton(
     onClick: () -> Unit,
     isEnabled: Boolean
 ) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    IconButton(
+        onClick = { onClick() },
+        modifier=Modifier.size(60.dp),
+        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
     ) {
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .background(
-                    color = if (isEnabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onBackground.copy(
-                        alpha = 0.2f
-                    ),
-                    shape = CircleShape
-                )
-                .clickable(enabled = isEnabled) { onClick() }
-                .padding(5.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.IosShare,
-                contentDescription = "Share Icon",
-                modifier = Modifier.size(60.dp),
-                tint = if (isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
-            )
-        }
+        Icon(
+            imageVector = Icons.Default.Share,
+            contentDescription = "Share Icon",
+            modifier = Modifier.size(60.dp).padding(10.dp),
+            tint = if (isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 // popup
-@Composable
-fun SelectContentPopup(onItemClickPlan: (Plan) -> Unit,onItemClickWorkout: (Workout) -> Unit,onItemClickExercise: (Exercise) -> Unit) {
-    var showDialog by remember { mutableStateOf(false) }
-    var showItemsDialog by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("") }
 
+@Composable
+fun FeedbackAlertDialog(
+    title: String,
+    message: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+    confirmButtonText: String,
+    dismissButtonText: String
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text(
+                    text = confirmButtonText,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(
+                    text = dismissButtonText,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        shape = RoundedCornerShape(20.dp),
+    )
+}
+@Composable
+fun DialogOption(text: String, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+        )
+    }
+}
+
+@Composable
+fun SelectContentPopup(
+    onItemClickPlan: (Plan) -> Unit,
+    onItemClickWorkout: (Workout) -> Unit,
+    onItemClickExercise: (Exercise) -> Unit,
+    showDialog: MutableState<Boolean>
+) {
+    var selectedOption by remember { mutableStateOf<String?>(null) }
     val exercises = listOf(
-        Exercise("Exercise 1", null, "Description 1", ExerciseType.CARDIO, TrainingType.RUNNING, MuscleGroup.BACK),
-        Exercise("Exercise 2", null, "Description 2", ExerciseType.BALANCE, TrainingType.STRENGTH, MuscleGroup.ARMS)
+        Exercise("Exercise 1", R.drawable.gi, "Description 1", ExerciseType.CARDIO, TrainingType.RUNNING, MuscleGroup.BACK),
+        Exercise("Exercise 2", R.drawable.gi, "Description 2", ExerciseType.BALANCE, TrainingType.STRENGTH, MuscleGroup.ARMS)
     )
 
     val workouts = listOf(
@@ -276,61 +295,64 @@ fun SelectContentPopup(onItemClickPlan: (Plan) -> Unit,onItemClickWorkout: (Work
     )
 
     val plans = listOf(
-        Plan(1, "Plan 1",PeriodMetricType.WEEK, workouts.toMutableList()),
-        Plan(2, "Plan 2",PeriodMetricType.MONTH, workouts.toMutableList())
+        Plan(1, "Plan 1", PeriodMetricType.WEEK, workouts.toMutableList()),
+        Plan(2, "Plan 2", PeriodMetricType.MONTH, workouts.toMutableList())
     )
-
-    Column(
-        modifier = Modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(onClick = { showDialog = true }, colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)) {
-            androidx.compose.material.Text("Choose Content", color = MaterialTheme.colorScheme.onPrimaryContainer)
-        }
-
-        if (showDialog) {
             AlertDialog(
-                onDismissRequest = { showDialog = false },
-                modifier = Modifier.size(300.dp),
-                title = { androidx.compose.material.Text("Choose an Option", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.headlineSmall) },
-                text = {
-                    Column {
-                        DialogOption("Share Plan") {
+                onDismissRequest = { showDialog.value = false },
+                shape = RoundedCornerShape(20.dp),
+                confirmButton =
+                {
+                    Button(
+                        onClick = { showDialog.value = false },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ),
+                        modifier = Modifier.padding(5.dp)
+                    ) {
+                        Text(
+                            text = "Confirm",
+                            style = MaterialTheme.typography.displaySmall,
+                            color = MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
+                },
+                title= {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = "Choose an option",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onBackground,
+                        )
+                        DialogOption(text = "Show Plans") {
                             selectedOption = "Plan"
-                            showItemsDialog = true
-                            showDialog = false
-                        }
-                        DialogOption("Share Workout") {
-                            selectedOption = "Workout"
-                            showItemsDialog = true
-                            showDialog = false
-                        }
-                        DialogOption("Share Exercise") {
-                            selectedOption = "Exercise"
-                            showItemsDialog = true
-                            showDialog = false
-                        }
-                    }
-                },
-                confirmButton = {
-                    TextButton(onClick = { showDialog = false }) {
-                        androidx.compose.material.Text("Close", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.labelMedium)
-                    }
-                },
-                shape = RoundedCornerShape(16.dp)
-            )
-        }
 
-        if (showItemsDialog) {
-            when (selectedOption) {
-                "Plan" -> PlanDialog(items = plans, onDismiss = { showItemsDialog = false }, onItemClickPlan)
-                "Workout" -> WorkoutDialog(items = workouts,onDismiss = { showItemsDialog = false },onItemClickWorkout)
-                "Exercise" -> ExerciseDialog(items = exercises, onDismiss = { showItemsDialog = false },onItemClickExercise)
+                        }
+                        DialogOption(text = "Show Workouts") {
+                            selectedOption = "Workout"
+
+                        }
+                        DialogOption(text = "Show Exercises") {
+                            selectedOption = "Exercise"
+
+                        }
+                    }
+                },
+            )
+
+        selectedOption?.let { option ->
+            when (option) {
+                "Plan" -> PlanDialog(items = plans, onDismiss = { selectedOption = null }, onItemClickPlan)
+                "Workout" -> WorkoutDialog(items = workouts, onDismiss = { selectedOption = null }, onItemClickWorkout)
+                "Exercise" -> ExerciseDialog(items = exercises, onDismiss = { selectedOption = null }, onItemClickExercise)
             }
         }
     }
-}
+
+
 @Composable
 fun MetricPopup(
     selectedMetricMap: MutableList<TrainingMetricType>?,
@@ -701,67 +723,134 @@ fun BackupPopup(popup: MutableState<Boolean>,shareHandler: (ShareContentEvent) -
 @Composable
 fun PlanDialog(items: List<Plan>, onDismiss: () -> Unit,onItemClick: (Plan) -> Unit) {
     AlertDialog(
-        modifier= Modifier.padding(start=30.dp, end = 30.dp),
         onDismissRequest = onDismiss,
         title = {
-            },
-        text = {
-            LazyColumn {
-                items(items) { plan ->
-                    SelectPlanItem(plan = plan,
-                        onCloseDialog = onDismiss,onItemClick)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Choose a plan",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                LazyColumn {
+                    items(items) { plan ->
+                        SelectPlanItem(
+                            plan = plan,
+                            onCloseDialog = onDismiss, onItemClick
+                        )
+                    }
                 }
             }
-        },
+            },
         confirmButton = {
-            Row(horizontalArrangement = Arrangement.Center){
-                androidx.compose.material.Text("Select a Plan to Share", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelMedium,modifier = Modifier.padding(end=55.dp,bottom = 40.dp))
-            }
         },
-        shape = RoundedCornerShape(16.dp)
+        dismissButton = {  Button(
+            onClick = { onDismiss() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            modifier = Modifier.padding(5.dp)
+        ) {
+            Text(
+                text = "Close",
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+        }},
+        shape = RoundedCornerShape(20.dp)
     )
 }
 @Composable
 fun WorkoutDialog(items: List<Workout>, onDismiss: () -> Unit,onItemClick: (Workout) -> Unit) {
     AlertDialog(
-        modifier= Modifier.padding(start=30.dp, end = 30.dp),
         onDismissRequest = onDismiss,
-        title = {  },
-        text = {
-            LazyColumn {
-                items(items) { workout ->
-                    SelectWorkoutItem(workout = workout, onItemClick = onItemClick, onCloseDialog = onDismiss)
+        title = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+
+            ) {
+                Text(
+                    text = "Choose a plan",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                LazyColumn {
+                    items(items) { workout ->
+                        SelectWorkoutItem(
+                            workout = workout,
+                            onCloseDialog = onDismiss, onItemClick = onItemClick
+                        )
+                    }
                 }
             }
         },
         confirmButton = {
-            Row(horizontalArrangement = Arrangement.Center){
-                androidx.compose.material.Text("Select a Workout to Share", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelMedium,modifier = Modifier.padding(end=55.dp,bottom = 40.dp))
-            }
         },
-        shape = RoundedCornerShape(16.dp)
+        dismissButton = {  Button(
+            onClick = { onDismiss() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            modifier = Modifier.padding(5.dp)
+        ) {
+            Text(
+                text = "Close",
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+        }},
+        shape = RoundedCornerShape(20.dp)
     )
 }
 @Composable
 fun ExerciseDialog(items: List<Exercise>, onDismiss: () -> Unit,onItemClick: (Exercise) -> Unit) {
     AlertDialog(
-        modifier= Modifier.padding(start=30.dp, end = 30.dp),
         onDismissRequest = onDismiss,
-        title = {  },
-        text = {
-            LazyColumn {
-                items(items) { exercise ->
-                    SelectExerciseItem(exercise = exercise,
-                        onCloseDialog = onDismiss,onItemClick)
+        title = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Choose a plan",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                LazyColumn {
+                    items(items) { exercise ->
+                        SelectExerciseItem(
+                            exercise = exercise,
+                            onCloseDialog = onDismiss, onItemClick
+                        )
+                    }
                 }
             }
         },
         confirmButton = {
-            Row(horizontalArrangement = Arrangement.Center){
-                androidx.compose.material.Text("Select an Exercise to Share", color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.labelMedium,modifier = Modifier.padding(end=55.dp,bottom = 40.dp))
-            }
         },
-        shape = RoundedCornerShape(16.dp)
+        dismissButton = {  Button(
+            onClick = { onDismiss() },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            modifier = Modifier.padding(5.dp)
+        ) {
+            Text(
+                text = "Close",
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+        }},
+        shape = RoundedCornerShape(20.dp)
     )
 }
 // bars
@@ -809,12 +898,12 @@ fun currentRoute(navController: NavController): String? {
     return navBackStackEntry?.destination?.route
 }
 @Composable
-fun TopBar(navController:NavController,userProfile:UserProfileBundle?) {
+fun TopBar(navController: NavController, userProfile: UserProfileBundle?, message: String) {
     LogoUserImage(name = userProfile?.displayName ?: "", modifier = Modifier.size(50.dp)
     ) { navController.navigate(Route.SettingsScreen.route) }
     Text(
-        text = "Gains",
-        style = MaterialTheme.typography.headlineLarge.copy( // Using a smaller typography style
+        text = message,
+        style = MaterialTheme.typography.displayLarge.copy( // Using a smaller typography style
             fontWeight = FontWeight.Bold,
             shadow = Shadow(
                 color = Color.Black,
@@ -1000,81 +1089,65 @@ fun GymPostItem(post: GymPost, shareHandler: (ShareContentEvent) -> Unit) {
 fun ExerciseItem(exercise: Exercise, onDelete: (Exercise) -> Unit,onItemClick: (Exercise) -> Unit) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        onClick = {onItemClick(exercise)},
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        )
+            .padding(8.dp)
+            .clickable(onClick = {
+                onItemClick(exercise)
+            }),
+        shape = RoundedCornerShape(16.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
             androidx.compose.material.Text(
                 text = exercise.name,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
             androidx.compose.material.IconButton(
-                onClick = {
-                    onItemClick(exercise) },
-                modifier = Modifier.padding(start = 2.dp)
+                onClick = {onItemClick(exercise)},
+                modifier = Modifier.padding(start = 8.dp)
             ) {
-                androidx.compose.material.Icon(Icons.Default.Edit, contentDescription = "Edit Icon")
+                androidx.compose.material.Icon(Icons.Default.Share, contentDescription = "Edit Icon")
             }
             androidx.compose.material.IconButton(
-                onClick = { onDelete(exercise) },
-                modifier = Modifier.padding(start = 2.dp)
+                onClick = {onDelete(exercise)},
+                modifier = Modifier.padding(start = 8.dp)
             ) {
-                androidx.compose.material.Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Delete Icon"
-                )
+                androidx.compose.material.Icon(Icons.Default.Delete, contentDescription = "Delete Icon")
             }
         }
     }
-}
+        }
+
 @Composable
 fun PlanItem(plan: Plan, onDelete: (Plan) -> Unit, onItemClick: (Plan) -> Unit) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clickable {
+            .padding(8.dp)
+            .clickable(onClick = {
                 onItemClick(plan)
-            }
-            .clip(RoundedCornerShape(8.dp)),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        )
+            }),
+        shape = RoundedCornerShape(16.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
             androidx.compose.material.Text(
                 text = plan.name,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
             androidx.compose.material.IconButton(
-                onClick = {
-                    onItemClick(plan) },
+                onClick = {onItemClick(plan)},
                 modifier = Modifier.padding(start = 8.dp)
             ) {
-                androidx.compose.material.Icon(Icons.Default.Edit, contentDescription = "Edit Icon")
+                androidx.compose.material.Icon(Icons.Default.Share, contentDescription = "Edit Icon")
             }
             androidx.compose.material.IconButton(
-                onClick = { onDelete(plan) },
+                onClick = {onDelete(plan)},
                 modifier = Modifier.padding(start = 8.dp)
             ) {
-                androidx.compose.material.Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Delete Icon"
-                )
+                androidx.compose.material.Icon(Icons.Default.Delete, contentDescription = "Delete Icon")
             }
         }
     }
@@ -1083,38 +1156,31 @@ fun PlanItem(plan: Plan, onDelete: (Plan) -> Unit, onItemClick: (Plan) -> Unit) 
 fun WorkoutItem(workout: Workout, onItemClick: (Workout) -> Unit, onDelete: (Workout) -> Unit) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        onClick = { onItemClick(workout)
-        },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        )
+            .padding(8.dp)
+            .clickable(onClick = {
+                onItemClick(workout)
+            }),
+        shape = RoundedCornerShape(16.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
             androidx.compose.material.Text(
                 text = workout.name,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
             androidx.compose.material.IconButton(
-                onClick = { onItemClick(workout) },
-                modifier = Modifier.padding(start = 2.dp)
+                onClick = {onItemClick(workout)},
+                modifier = Modifier.padding(start = 8.dp)
             ) {
-                androidx.compose.material.Icon(Icons.Default.Edit, contentDescription = "Edit Icon")
+                androidx.compose.material.Icon(Icons.Default.Share, contentDescription = "Edit Icon")
             }
             androidx.compose.material.IconButton(
-                onClick = {  onDelete(workout) },
-                modifier = Modifier.padding(start = 2.dp)
+                onClick = {onDelete(workout)},
+                modifier = Modifier.padding(start = 8.dp)
             ) {
-                androidx.compose.material.Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Delete Icon"
-                )
+                androidx.compose.material.Icon(Icons.Default.Delete, contentDescription = "Delete Icon")
             }
         }
     }
@@ -1154,65 +1220,57 @@ fun AddExerciseItem(exercise: Exercise, onAdd: (Exercise) -> Unit,isSelected: Bo
 }
 @Composable
 fun SelectWorkoutItem(workout: Workout, onItemClick: (Workout) -> Unit,onCloseDialog: () -> Unit) {
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clip(RoundedCornerShape(8.dp))
-            ,
-        onClick = { onItemClick(workout)
-            onCloseDialog()
-        },
-        colors = CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-    )
+            .padding(8.dp)
+            .clickable(onClick = {
+                onItemClick(workout)
+                onCloseDialog()
+            }),
+        shape = RoundedCornerShape(16.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
             androidx.compose.material.Text(
                 text = workout.name,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
             androidx.compose.material.IconButton(
-                onClick = {  onItemClick(workout)
-                    onCloseDialog() },
+                onClick = {onItemClick(workout)
+                    onCloseDialog()},
                 modifier = Modifier.padding(start = 8.dp)
             ) {
-                androidx.compose.material.Icon(Icons.Default.Share, contentDescription = "Select Icon")
+                androidx.compose.material.Icon(Icons.Default.Share, contentDescription = "Edit Icon")
             }
         }
     }
 }
 @Composable
 fun SelectExerciseItem(exercise: Exercise, onCloseDialog: () -> Unit, onItemClick: (Exercise) -> Unit ) {
+
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clip(RoundedCornerShape(8.dp)),
-        onClick = {onItemClick(exercise)
-                  onCloseDialog()},
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        )
+            .padding(8.dp)
+            .clickable(onClick = {
+                onItemClick(exercise)
+                onCloseDialog()
+            }),
+        shape = RoundedCornerShape(16.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
             androidx.compose.material.Text(
                 text = exercise.name,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
             androidx.compose.material.IconButton(
-                onClick = { onItemClick(exercise)
-                    onCloseDialog() },
+                onClick = {onItemClick(exercise)
+                    onCloseDialog()},
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 androidx.compose.material.Icon(Icons.Default.Share, contentDescription = "Edit Icon")
@@ -1224,26 +1282,20 @@ fun SelectExerciseItem(exercise: Exercise, onCloseDialog: () -> Unit, onItemClic
 fun SelectPlanItem(plan: Plan,onCloseDialog: () -> Unit,onItemClick: (Plan) -> Unit ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .clickable {
+            .padding(8.dp)
+            .clickable(onClick = {
                 onItemClick(plan)
                 onCloseDialog()
-            },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        )
+            }),
+        shape = RoundedCornerShape(16.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
             androidx.compose.material.Text(
                 text = plan.name,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
             androidx.compose.material.IconButton(
                 onClick = {onItemClick(plan)
@@ -1254,24 +1306,32 @@ fun SelectPlanItem(plan: Plan,onCloseDialog: () -> Unit,onItemClick: (Plan) -> U
             }
         }
     }
-}
+    }
+
 @Composable
-fun SocialMediaIcon(icon: Int, onClick: () -> Unit,isSelected:Boolean) {
+fun SocialMediaIcon(icon: Int, onClick: () -> Unit, isSelected: Boolean) {
     androidx.compose.material.IconButton(onClick = onClick) {
-        androidx.compose.material.Icon(
-            painter = painterResource(id = icon),
-            contentDescription = null,
+        Box(
             modifier = Modifier
-                .size(60.dp)
+                .size(50.dp)
                 .background(
                     color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent,
                     shape = CircleShape
                 )
                 .clip(CircleShape)
-
-        )
+                .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                .padding(6.dp) // Add padding between the border and the image icon
+        ) {
+            androidx.compose.material.Icon(
+                painter = painterResource(id = icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(38.dp) // Adjust the size of the icon to fit within the padding
+            )
+        }
     }
 }
+
 @Composable
 fun OptionCheckbox(
     option: Option,
@@ -1534,44 +1594,30 @@ fun TrainingOverviewChart(
         }
     }
 }
-@Composable
-fun DialogOption(text: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary)
-    ) {
-        TextButton(onClick = onClick) {
-            Text(text, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurface)
-        }
-    }
-}
 
 @Composable
 fun SocialMediaRow(
     icon: Int,
     isLinked: Boolean,
-    linkHandler: (LinkAppEvent) -> Unit
-) {
+    linkHandler: (LinkAppEvent) -> Unit,
+    clickedApps: MutableState<MutableList<Int>>) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        SocialMediaIcon(icon = icon, onClick = { /* Handle icon click */ }, isSelected = isLinked)
+        SocialMediaIcon(icon = icon, onClick = {  }, isSelected = isLinked)
         Spacer(modifier = Modifier.width(50.dp))
-        if (isLinked) {
+        if (isLinked || clickedApps.value.contains(icon)) {
             androidx.compose.material.Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Linked Icon",
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.padding(20.dp)
             )
-        } else {
+        } else if (!isLinked && !clickedApps.value.contains(icon)){
             Button(
-                onClick = { linkHandler(LinkAppEvent.LinkApp(icon)) },
+                onClick = {
+                    clickedApps.value = clickedApps.value.toMutableList().apply { add(icon) }
+                    linkHandler(LinkAppEvent.LinkApp(icon)) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer

@@ -1,10 +1,6 @@
 package com.project.gains.presentation.workout
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -26,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
@@ -36,17 +31,14 @@ import com.project.gains.data.MuscleGroup
 import com.project.gains.data.TrainingType
 import com.project.gains.presentation.components.BackupPopup
 import com.project.gains.presentation.components.ExerciseGif
-import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.MusicPopup
 import com.project.gains.presentation.components.SharePopup
-import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.MusicEvent
 
 import com.project.gains.presentation.events.SaveSessionEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
-import kotlinx.coroutines.delay
 
 @Composable
 fun SessionScreen(
@@ -85,13 +77,11 @@ fun SessionScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 4.dp),
+                            modifier = Modifier.fillMaxWidth().padding(5.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TopBar(userProfile = null, navController = navController)
+                            TopBar(navController = navController, userProfile = null,message="Session")
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))

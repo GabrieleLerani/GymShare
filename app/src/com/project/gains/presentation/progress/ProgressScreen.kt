@@ -1,6 +1,5 @@
 package com.project.gains.presentation.progress
 
-import android.provider.MediaStore.Audio.Genres
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,11 +26,9 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
-import com.project.gains.data.generateRandomTrainingData
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.ProgressChartList
-import com.project.gains.presentation.events.SaveSessionEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
@@ -66,7 +63,7 @@ fun ProgressScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TopBar(userProfile = null, navController = navController)
+                            TopBar(navController = navController, userProfile = null,message="Progress")
                         }
                         Spacer(modifier = Modifier.height(16.dp))
 

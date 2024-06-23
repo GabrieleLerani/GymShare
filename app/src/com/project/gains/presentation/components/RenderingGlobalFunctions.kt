@@ -35,18 +35,6 @@ import androidx.lifecycle.ViewModel
 
 
 @Composable
-fun UserGreeting(name:String) {
-    // Greetings for the user
-    Text(
-        text = "Hello, ${name}!",
-        color = MaterialTheme.colorScheme.onSecondaryContainer,
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(16.dp)
-    )
-}
-
-@Composable
 fun LogoUserImage(
     name: String,
     modifier: Modifier = Modifier,
@@ -56,7 +44,7 @@ fun LogoUserImage(
 
     Box(
         modifier = modifier.
-            size(10.dp)
+            size(30.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.tertiary)
             .clickable(onClick = onClick) // Make the Box clickable
@@ -77,7 +65,7 @@ fun LogoUserImage(
                 imageVector = Icons.Default.Person,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onTertiary,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(50.dp)
             )
         }
     }

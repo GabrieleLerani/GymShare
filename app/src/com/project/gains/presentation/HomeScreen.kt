@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +24,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.FitnessCenter
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -94,25 +91,11 @@ fun GainsHomeScreen(
 
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top=4.dp),
+                        modifier = Modifier.fillMaxWidth().padding(5.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TopBar(userProfile = null, navController = navController)
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        androidx.compose.material3.Text(
-                            text = "Your Suggestions",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontSize = 22.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 10.dp)
-                        )
+                        TopBar(navController = navController, userProfile = null, message = "Gains")
                     }
 
                         // Horizontal separator around the post

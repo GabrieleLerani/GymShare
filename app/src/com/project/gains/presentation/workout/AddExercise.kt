@@ -83,7 +83,7 @@ fun AddExerciseScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        TopBar(navController, null)
+                        TopBar(navController, null,message="Edit Workout")
                     }
 
                     // Search Bar

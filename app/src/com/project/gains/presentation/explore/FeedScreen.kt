@@ -55,11 +55,11 @@ fun FeedScreen(
 
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(5.dp),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TopBar(userProfile = null, navController = navController)
+                            TopBar(navController = navController, userProfile = null, message = "Feed")
                         }
                         Row(modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,

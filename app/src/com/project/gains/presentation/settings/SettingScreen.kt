@@ -1,5 +1,6 @@
 package com.project.gains.presentation.settings
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +18,6 @@ import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,9 +27,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,17 +50,19 @@ import com.project.gains.R
 import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.FeedbackAlertDialog
 
-import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.components.SocialMediaRow
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
+import com.project.gains.presentation.navgraph.Route
 
 
 import com.project.gains.theme.GainsAppTheme
 
 
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun SettingScreen(
     navController: NavController,
@@ -64,6 +71,18 @@ fun SettingScreen(
     generalViewModel: GeneralViewModel
 ) {
     val linkedApps by generalViewModel.linkedApps.observeAsState()
+    val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
+
+    val showDialog = remember { mutableStateOf(false) }
+    val icons = listOf(
+        R.drawable.instagram_icon,
+        R.drawable.facebook_icon,
+        R.drawable.x_logo_icon,
+        R.drawable.drive_google_icon,
+        R.drawable.spotify_icon,
+        R.drawable.tiktok_logo_icon
+    )
+
 
     GainsAppTheme {
         Scaffold(
@@ -80,15 +99,24 @@ fun SettingScreen(
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         BackButton(
                             onClick = { navController.popBackStack() }
                         )
-                        androidx.compose.material3.Text(
+                        Spacer(modifier = Modifier.width(20.dp))
+
+                        Text(
                             text = "Sharing Options",
-                            style = MaterialTheme.typography.displayMedium,
+                            style = MaterialTheme.typography.displayLarge.copy( // Using a smaller typography style
+                                fontWeight = FontWeight.Bold,
+                                shadow = Shadow(
+                                    color = Color.Black,
+                                    offset = Offset(4f, 4f),
+                                    blurRadius = 8f
+                                )
+                            ),
                             fontSize = 25.sp,
                             color = MaterialTheme.colorScheme.onPrimary,
                             textAlign = TextAlign.Center,
@@ -97,20 +125,12 @@ fun SettingScreen(
                     }
                     Spacer(modifier = Modifier.height(50.dp))
 
-                    val icons = listOf(
-                        R.drawable.instagram_icon,
-                        R.drawable.facebook_icon,
-                        R.drawable.x_logo_icon,
-                        R.drawable.drive_google_icon,
-                        R.drawable.spotify_icon,
-                        R.drawable.tiktok_logo_icon
-                    )
-
                     icons.forEach { icon ->
                         SocialMediaRow(
                             icon = icon,
                             isLinked = linkedApps?.contains(icon) == true,
-                            linkHandler = linkHandler
+                            linkHandler = linkHandler,
+                            clickedApps=clickedApps
                         )
                     }
 
@@ -121,7 +141,9 @@ fun SettingScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(
-                            onClick = { saveLinkHandler(SaveSharingPreferencesEvent.SaveSharingPreferences(linkedApps ?: mutableListOf())) },
+                            onClick = {
+                                showDialog.value=true
+                                saveLinkHandler(SaveSharingPreferencesEvent.SaveSharingPreferences(linkedApps ?: mutableListOf())) },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -131,6 +153,18 @@ fun SettingScreen(
                             Icon(Icons.Default.Done, contentDescription = "Add Icon")
                             Text("Save")
                         }
+                    }
+                    if (showDialog.value) {
+                        FeedbackAlertDialog(
+                            title = "",
+                            message = "You have successfully updated your sharing preferences!",
+                            onDismissRequest = { showDialog.value = false },
+                            onConfirm = { showDialog.value = false
+                                navController.navigate(Route.HomeScreen.route)
+                                        },
+                            confirmButtonText = "Ok",
+                            dismissButtonText = ""
+                        )
                     }
                 }
             }

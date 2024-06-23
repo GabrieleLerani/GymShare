@@ -61,7 +61,7 @@ val Typography = Typography(
         lineHeight = 19.sp,
     ),
     displayLarge = TextStyle(
-        fontSize = 80.sp,
+        fontSize = 50.sp,
         fontFamily = SecondPoppins,
         fontWeight = FontWeight.Normal,
         lineHeight = 19.sp,

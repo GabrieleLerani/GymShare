@@ -78,11 +78,11 @@ fun PlanScreen(
 
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(top=4.dp),
+                        modifier = Modifier.fillMaxWidth().padding(top=5.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TopBar(userProfile = null, navController = navController)
+                        TopBar(navController = navController, userProfile = null,message=selectedPlan?.name ?: "Your Plan")
                     }
                     Row(
                         modifier = Modifier
@@ -98,15 +98,6 @@ fun PlanScreen(
                                 navController.popBackStack()
                             }
                         }
-                        // Title
-                        Text(
-                            text = "Your ${selectedPlan?.period} Plan",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontSize = 22.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 10.dp)
-                        )
                         Spacer(modifier = Modifier.width(6.dp))
                         Button(
                             onClick = { navController.navigate(Route.NewPlanScreen.route) },
