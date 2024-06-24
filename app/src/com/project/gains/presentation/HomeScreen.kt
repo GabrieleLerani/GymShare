@@ -56,6 +56,7 @@ import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
+import p
 
 @Composable
 fun GainsHomeScreen(
@@ -76,8 +77,9 @@ fun GainsHomeScreen(
     ) {
         openPopup.value = true
     }
+    p()
 
-    GainsAppTheme {
+  /*  GainsAppTheme {
         Scaffold(
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
@@ -153,7 +155,7 @@ fun GainsHomeScreen(
                     }
                 }
             }
-        }
+        }*/
     }
 
 @Composable
