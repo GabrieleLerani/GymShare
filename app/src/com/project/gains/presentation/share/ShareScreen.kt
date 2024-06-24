@@ -103,7 +103,7 @@ fun ShareScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TopBar(navController = navController, userProfile = null,message="Share")
+                        TopBar(navController = navController, message="Share")
                     }
                     // Horizontal separator around the post
                     Box(

@@ -81,7 +81,7 @@ fun SessionScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TopBar(navController = navController, userProfile = null,message="Session")
+                            TopBar(navController = navController, message="Session")
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))

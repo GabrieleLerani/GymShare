@@ -1,5 +1,7 @@
 package com.project.gains.presentation
 
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +30,7 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -46,7 +49,6 @@ import androidx.navigation.NavController
 import com.project.gains.GeneralViewModel
 
 import com.project.gains.presentation.components.BottomNavigationBar
-import com.project.gains.presentation.components.CustomBackHandler
 import com.project.gains.presentation.components.UserContentCard
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.SelectEvent
@@ -62,7 +64,6 @@ fun GainsHomeScreen(
     generalViewModel: GeneralViewModel,
     selectHandler: (SelectEvent) -> Unit,
 ) {
-    val userProfile by viewModel.userProfile.observeAsState()
     val openPopup = remember { mutableStateOf(false) }
     val workouts by generalViewModel.workouts.observeAsState()
     val plans by generalViewModel.plans.observeAsState()
@@ -95,7 +96,7 @@ fun GainsHomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TopBar(navController = navController, userProfile = null, message = "Gains")
+                        TopBar(navController = navController,  message = "Gains")
                     }
 
                         // Horizontal separator around the post
@@ -154,6 +155,30 @@ fun GainsHomeScreen(
             }
         }
     }
+
+@Composable
+fun CustomBackHandler(
+    onBackPressedDispatcher: OnBackPressedDispatcher,
+    enabled: Boolean = true,
+    onBackPressed: () -> Unit
+) {
+    val backCallback = remember {
+        object : OnBackPressedCallback(enabled) {
+            override fun handleOnBackPressed() {
+                onBackPressed()
+            }
+        }
+    }
+
+    androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher?.addCallback(backCallback)
+
+    DisposableEffect(onBackPressedDispatcher) {
+        backCallback.isEnabled = enabled
+        onDispose {
+            backCallback.remove()
+        }
+    }
+}
 
 
 

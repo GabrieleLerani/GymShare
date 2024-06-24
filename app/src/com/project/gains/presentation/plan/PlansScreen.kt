@@ -88,7 +88,7 @@ fun PlansScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TopBar(navController = navController, userProfile = null,message =" Plans")
+                        TopBar(navController = navController, message =" Plans")
                     }
 
                     // Horizontal separator around the post

@@ -63,7 +63,7 @@ fun ProgressScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TopBar(navController = navController, userProfile = null,message="Progress")
+                            TopBar(navController = navController, message="Progress")
                         }
                         Spacer(modifier = Modifier.height(16.dp))
 

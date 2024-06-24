@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +26,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -38,8 +41,11 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries,
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Divider
+import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
+import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
@@ -48,8 +54,11 @@ import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FastForward
@@ -67,6 +76,7 @@ import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -74,6 +84,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
@@ -101,9 +112,12 @@ import androidx.compose.runtime.setValue
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
@@ -132,67 +146,8 @@ import com.project.gains.presentation.navgraph.Route
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
-//  Back Handler
-@Composable
-fun CustomBackHandler(
-    onBackPressedDispatcher: OnBackPressedDispatcher,
-    enabled: Boolean = true,
-    onBackPressed: () -> Unit
-) {
-    val backCallback = remember {
-        object : OnBackPressedCallback(enabled) {
-            override fun handleOnBackPressed() {
-                onBackPressed()
-            }
-        }
-    }
-
-    androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher?.addCallback(backCallback)
-
-    DisposableEffect(onBackPressedDispatcher) {
-        backCallback.isEnabled = enabled
-        onDispose {
-            backCallback.remove()
-        }
-    }
-}
 // Buttons
-@Composable
-fun BackButton(onClick: () -> Unit) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.size(60.dp),
-        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Share Icon",
-            modifier = Modifier
-                .size(60.dp)
-                .padding(10.dp),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-        )
-    }
-}
 
-
-@Composable
-fun SharingPreferencesButton(navController: NavController) {
-    IconButton(
-        onClick = { navController.navigate(Route.SettingScreen.route) },
-        modifier = Modifier.size(50.dp),
-        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.tertiary)
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Settings,
-            contentDescription = "Share Icon",
-            modifier = Modifier
-                .size(50.dp)
-                .padding(10.dp),
-            tint = MaterialTheme.colorScheme.onTertiary
-        )
-    }
-}
 @Composable
 fun ShareButton(
     onClick: () -> Unit,
@@ -206,7 +161,9 @@ fun ShareButton(
         Icon(
             imageVector = Icons.Default.Share,
             contentDescription = "Share Icon",
-            modifier = Modifier.size(60.dp).padding(10.dp),
+            modifier = Modifier
+                .size(60.dp)
+                .padding(10.dp),
             tint = if (isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
         )
     }
@@ -298,7 +255,7 @@ fun SelectContentPopup(
         Plan(1, "Plan 1", PeriodMetricType.WEEK, workouts.toMutableList()),
         Plan(2, "Plan 2", PeriodMetricType.MONTH, workouts.toMutableList())
     )
-            AlertDialog(
+        AlertDialog(
                 onDismissRequest = { showDialog.value = false },
                 shape = RoundedCornerShape(20.dp),
                 confirmButton =
@@ -854,70 +811,7 @@ fun ExerciseDialog(items: List<Exercise>, onDismiss: () -> Unit,onItemClick: (Ex
     )
 }
 // bars
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    val currentRoute = currentRoute(navController)
 
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        modifier = Modifier.height(64.dp) // Adjust the height of the BottomNavigation
-    ) {
-        bottomNavItems.forEach { item ->
-            BottomNavigationItem(
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title,
-                            modifier = Modifier.size(32.dp) // Adjust the size of the icon
-                        )
-                        Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
-                    }
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        fontSize = 12.sp, // Set the desired text size here
-                        maxLines = 1 // Limit to one line to prevent overflow
-                    )
-                },
-                selected = currentRoute == item.route,
-                onClick = {
-                    navController.navigate(item.route) {
-                    }
-                }
-            )
-        }
-    }
-}
-@Composable
-fun currentRoute(navController: NavController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
-}
-@Composable
-fun TopBar(navController: NavController, userProfile: UserProfileBundle?, message: String) {
-    LogoUserImage(name = userProfile?.displayName ?: "", modifier = Modifier.size(50.dp)
-    ) { navController.navigate(Route.SettingsScreen.route) }
-    Text(
-        text = message,
-        style = MaterialTheme.typography.displayLarge.copy( // Using a smaller typography style
-            fontWeight = FontWeight.Bold,
-            shadow = Shadow(
-                color = Color.Black,
-                offset = Offset(4f, 4f),
-                blurRadius = 8f
-            )
-        ),
-        color = MaterialTheme.colorScheme.onPrimary,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.padding(top = 6.dp) // Adjust padding as needed
-    )
-    SharingPreferencesButton(navController = navController)
-}
-// cards
 @Composable
 fun UserContentCard(title: String, icon: ImageVector, onClick: () -> Unit) {
     Card(
@@ -1563,6 +1457,15 @@ fun TrainingOverviewChart(
                                 shape = RoundedCornerShape(10.dp)
                             )
                     )
+
+                        var progress = 0.7f // Assuming progress is a value between 0 and 1
+                        LinearProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            progress = progress,
+                            color = Color.Blue,
+                        )
+
                 }
                 else if (selectedPlotType.imageResId == R.drawable.plot2) {
                     Box(
@@ -1631,10 +1534,549 @@ fun SocialMediaRow(
     }
 }
 
+//// CHECKED
+
+@Composable
+fun GeneralCard(imageResId: Int, title: String) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .height(150.dp)
+            .background(Color.Gray, RoundedCornerShape(16.dp))
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp)) // Clip to the rounded corners
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black),
+                        startY = 300f
+                    ),
+                    RoundedCornerShape(16.dp)
+                )
+        )
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+        )
+    }
+}
+
+@Composable
+fun BottomNavigationBar(navController: NavController) {
+    val currentRoute = currentRoute(navController)
+
+    BottomNavigation(
+        backgroundColor = MaterialTheme.colorScheme.onSurface,
+        contentColor = MaterialTheme.colorScheme.surface,
+        modifier = Modifier.height(64.dp) // Adjust the height of the BottomNavigation
+    ) {
+        bottomNavItems.forEach { item ->
+            val isSelected = currentRoute == item.route
+            val iconColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.surface
+            val iconSize = 32.dp
+            val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.surface
+
+            BottomNavigationItem(
+                icon = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
+                        Icon(
+                            imageVector = item.icon,
+                            contentDescription = item.title,
+                            modifier = Modifier.size(iconSize), // Adjust the size of the icon
+                            tint = iconColor
+                        )
+                        //Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
+                    }
+                },
+                label = {
+                    Text(
+                        text = item.title,
+                        fontSize = 12.sp, // Set the desired text size here
+                        maxLines = 1, // Limit to one line to prevent overflow
+                        color = textColor
+                    )
+                },
+                selected = isSelected,
+                onClick = {
+                    navController.navigate(item.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                    }
+                },
+                alwaysShowLabel = true // This will hide labels when not selected
+            )
+        }
+    }
+}
+
+@Composable
+fun TopBar(navController: NavController, message: String) {
+    TopAppBar(
+        backgroundColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        elevation = 4.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            SharingPreferencesButton(navController = navController)
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp,
+                    shadow = Shadow(
+                        color = Color.Black,
+                        offset = Offset(2f, 2f),
+                        blurRadius = 4f
+                    )
+                ),
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+            )
+
+            LogoUser(
+                modifier = Modifier.size(60.dp)
+            ) { navController.navigate(Route.SettingsScreen.route) }
+        }
+    }
+}
+
+@Composable
+fun TopBar2(navController: NavController, message: String) {
+    TopAppBar(
+        backgroundColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        elevation = 4.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            BackButton {
+
+            }
+            Text(
+                text = message,
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp,
+                    shadow = Shadow(
+                        color = Color.Black,
+                        offset = Offset(2f, 2f),
+                        blurRadius = 4f
+                    )
+                ),
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+            )
+
+        }
+    }
+}
+
+@Composable
+fun LogoUser(modifier: Modifier, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .padding(8.dp)
+            .size(70.dp)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.pexels5),
+            contentDescription = "User Profile Image",
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(35.dp)),  // Half of the size to make it fully rounded
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+fun SharingPreferencesButton(navController: NavController) {
+    IconButton(
+        onClick = { navController.navigate(Route.SettingScreen.route) },
+        modifier = Modifier.size(50.dp),
+        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.onSurface)
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Settings,
+            contentDescription = "Share Icon",
+            modifier = Modifier
+                .size(50.dp)
+                .padding(10.dp),
+            tint = MaterialTheme.colorScheme.surface
+        )
+    }
+}
 
 
+@Composable
+fun PagePopup(showPopup : MutableState<Boolean>,workouts:MutableList<Workout>) {
+    if (showPopup.value) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 40.dp)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                RoundedCornerShape(20.dp)
+            )
+    ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(40.dp)
+                ) {
+                    item {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 290.dp),
+                        horizontalArrangement = Arrangement.Center) {
+                        IconButton(onClick = { showPopup.value=false }) {
+                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
+                        }
+                    }  }
+
+                    item { Text(
+                        text = "Add Pre-Made Workout",
+                        style = MaterialTheme.typography.headlineMedium
+                    ) }
+                    item {
+                        Text(
+                        text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
+                        style = MaterialTheme.typography.bodySmall,
+                    ) }
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                    item {
+                        Button(
+                            onClick = { showPopup.value = false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp),
+                   //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+
+                        ) {
+                            Text(text = "USE WORKOUT BUILDER")
+                        }
+                    }
+
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
 
 
+                    item {
+                        Button(
+                            onClick = { showPopup.value=false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp),
+                           // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                        ) {
+                            Text(text = "ADD PRE-MADE WORKOUT")
+                        }
+                    }
 
+                    workouts.forEach{workout ->
+                        item {
+                            GeneralCard(imageResId = R.drawable.logo, title = "Workout1")
+                        }
 
+                    }
+
+                }
+            }
+        }
+    }
+
+@Composable
+fun ChoicePopup(){
+    var showPopup = remember { mutableStateOf(true) }
+    if (showPopup.value) {
+        Card(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable {
+                    showPopup.value = false
+                }
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                    RoundedCornerShape(20.dp)
+                )
+        ) {
+            // Your main screen content here
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .background(Color.White, shape = RoundedCornerShape(10.dp),)
+            ) {
+                Text(text = "Hammer Strength", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Are you sure you want to finish workout?",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = { showPopup.value = false },
+                    ) {
+                        Text(text = "No")
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Button(
+                        onClick = { /* on yes click */ },
+                    ) {
+                        Text(text = "Yes")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MuscleGroupItem(imageResId: Int, title: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(Color.DarkGray, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = title,
+            modifier = Modifier.size(64.dp),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Row( modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.DarkGray, RoundedCornerShape(8.dp)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        )  {
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button")
+
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationCard(
+    message: String,
+    onClose: () -> Unit
+) {
+    androidx.compose.material.Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(
+                androidx.compose.material.MaterialTheme.colors.secondary,
+                RoundedCornerShape(16.dp)
+            ),
+        elevation = 4.dp,
+        shape = RoundedCornerShape(16.dp),
+        backgroundColor = androidx.compose.material.MaterialTheme.colors.secondary
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            androidx.compose.material.Text(
+                text = message,
+                style = androidx.compose.material.MaterialTheme.typography.body2,
+                color = Color.Black,
+                modifier = Modifier.weight(1f)
+            )
+            androidx.compose.material.IconButton(onClick = onClose) {
+                androidx.compose.material.Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Close Icon",
+                    tint = Color.Black
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun FeedPost() {
+    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp)
+    ) {
+        // Header Row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            // User Info Section
+            LogoUser(modifier = Modifier.size(60.dp)) {
+                // Placeholder for user logo
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Column {
+                androidx.compose.material.Text(
+                    text = "Chip Crayton",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                androidx.compose.material.Text(
+                    text = "Today 13:13",
+                    fontSize = 14.sp,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Image Section
+        Image(
+            painter = painterResource(id = R.drawable.pexels3),
+            contentDescription = "Post Image",
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Text Content Section
+        androidx.compose.material.Text(
+            text = "Good morning Fit-Family. Happy Sunday to you and your families. " +
+                    "I hope you have the best day and the most amazing week ahead. " +
+                    "I love you and stay blessed 🏋🏽‍♂️🤸🏽‍♀️🏋🏽‍♀️🤸🏽‍♂️, now let’s get MOVING 😁😁😃😄🙂😊😌🤗👍🏽👏🏽👊🏽✊🏽✌🏽🙏🏽",
+            fontSize = 16.sp,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        // Separator
+
+        // Interaction Section (Likes and Comments)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+        ) {
+            // Likes Section
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                androidx.compose.material.Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Like Icon",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                androidx.compose.material.Text(
+                    text = "123 Likes",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            // Comments Section
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                androidx.compose.material.Icon(
+                    imageVector = Icons.Default.Comment,
+                    contentDescription = "Comment Icon",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                androidx.compose.material.Text(
+                    text = "25 Comments",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+        }
+    }
+    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+
+}
+
+@Composable
+fun currentRoute(navController: NavController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
+}
+
+@Composable
+fun BackButton(onClick: () -> Unit) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.size(60.dp),
+        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = "Share Icon",
+            modifier = Modifier
+                .size(60.dp)
+                .padding(10.dp),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+    }
+}
 

@@ -23,29 +23,16 @@ private val darkColorScheme = darkColorScheme(
     primary = GWhite,
     onPrimary = GOrange,
     primaryContainer = GOrange,
-    onPrimaryContainer = GWhite,
-    inversePrimary = Green40,
-    secondary = Color.Blue,
-    onSecondary = DarkGreen20,
-    secondaryContainer = DarkGreen30,
-    onSecondaryContainer = DarkGreen90,
-    tertiary = Grey10,
-    onTertiary = GWhite,
-    tertiaryContainer = Violet30,
-    onTertiaryContainer = Violet90,
-    error = Red80,
-    onError = Red20,
-    errorContainer = Red30,
-    onErrorContainer = Red90,
-    background = Grey10,
-    onBackground = Grey90,
+    onPrimaryContainer = GBlack,
     surface = GBlack,
     onSurface = GWhite,
-    inverseSurface = Grey90,
-    inverseOnSurface = Grey10,
-    surfaceVariant = GreenGrey30,
-    onSurfaceVariant = GreenGrey80,
-    outline = GreenGrey80
+    onError = GRed,
+    secondary = GGreen,
+    tertiary = GBlue,
+    errorContainer = GWarning,
+    onSecondary = GWater
+
+
 )
 
 private val lightColorScheme = lightColorScheme(
@@ -53,28 +40,16 @@ private val lightColorScheme = lightColorScheme(
     onPrimary = GOrange,
     primaryContainer = GOrange,
     onPrimaryContainer = GBlack,
-    inversePrimary = Green80,
-    secondary = Color.Blue,
-    onSecondary = GWhite,
-    secondaryContainer = DarkGreen90,
-    onSecondaryContainer = DarkGreen10,
-    tertiary = GBlack,
-    onTertiary = GWhite,
-    tertiaryContainer = Violet90,
-    onTertiaryContainer = Violet10,
-    error = Red40,
-    onError = Color.White,
-    errorContainer = Red90,
-    onErrorContainer = Red10,
-    background = Grey99,
-    onBackground = Grey10,
     surface = GWhite,
     onSurface = GBlack,
-    inverseSurface = Grey20,
-    inverseOnSurface = Grey95,
-    surfaceVariant = GreenGrey90,
-    onSurfaceVariant = GreenGrey30,
-    outline = GreenGrey50
+    onError = GRed,
+    errorContainer = GWarning,
+    secondary = GGreen,
+    tertiary = GBlue,
+    onSecondary = GWater
+
+
+
 )
 
 

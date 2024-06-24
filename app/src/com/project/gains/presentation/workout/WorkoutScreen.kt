@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,120 +74,93 @@ fun WorkoutScreen(
     val workout by generalViewModel.selectedWorkout.observeAsState()
     GainsAppTheme {
         Scaffold(
+            topBar = {
+                TopBar(navController = navController, message = "Workout")
+            },
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
+            Box(
                 modifier = Modifier
-                    .padding(paddingValues)
                     .fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center
 
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TopBar(navController = navController, userProfile = null,message= workout?.name?:"Workout")
-                    }
-                    // Horizontal separator around the post
-                    Spacer(modifier = Modifier.height(100.dp))
-                    Box(
-                        modifier = Modifier.fillMaxHeight(0.7f)
-                            .padding(5.dp)
-                            .border(
-                                border = BorderStroke(
-                                    width = 2.dp,
-                                    color = Color.Black
-                                ),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                    )  {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2), // Adjust the number of columns as needed
-                            contentPadding = PaddingValues(2.dp) // Add padding around the grid
-                        ) {
-                            exercises?.forEach { exercise ->
-                                item {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                                            .background(Color.White) // Background color of the separator
-                                    ) {
-                                        ExerciseItem(
-                                            exercise = exercise,
-                                            onDelete = { exerciseToDelete ->
-                                                deleteHandler(
-                                                    DeleteEvent.DeleteExercise(
-                                                        exerciseToDelete
-                                                    )
-                                                )
-                                                // Update exercises list safely
-                                                exercises?.toMutableList()
-                                                    ?.apply { remove(exerciseToDelete) }
-                                            },
-                                            onItemClick = { exerciseToSelect ->
-                                                selectHandler(
-                                                    SelectEvent.SelectExercise(
-                                                        exerciseToSelect
-                                                    )
-                                                )
-                                                navController.navigate(Route.ExerciseDetailsScreen.route)
-                                            }
-                                        )
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top=10.dp,start=128.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BackButton {
-                            navController.popBackStack()
-                        }
-                        Spacer(modifier = Modifier.width(20.dp))
-                        IconButton(
-                            onClick =  {
-                                selectHandler(
-                                    SelectEvent.SelectWorkout(
-                                        workout ?: Workout(1, "", mutableListOf())
-                                    )
-                                )
-                                navController.navigate(Route.SessionScreen.route)
-                            },
-                            modifier = Modifier.size(60.dp),
-                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Share Icon",
+                    exercises?.forEach { exercise ->
+                        item {
+                            Box(
                                 modifier = Modifier
-                                    .size(60.dp)
-                                    .padding(10.dp),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                                    .padding(4.dp)
+                                    .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
+                                    .background(Color.White) // Background color of the separator
+                            ) {
+                                ExerciseItem(
+                                    exercise = exercise,
+                                    onDelete = { exerciseToDelete ->
+                                        deleteHandler(
+                                            DeleteEvent.DeleteExercise(
+                                                exerciseToDelete
+                                            )
+                                        )
+                                        // Update exercises list safely
+                                        exercises?.toMutableList()
+                                            ?.apply { remove(exerciseToDelete) }
+                                    },
+                                    onItemClick = { exerciseToSelect ->
+                                        selectHandler(
+                                            SelectEvent.SelectExercise(
+                                                exerciseToSelect
+                                            )
+                                        )
+                                        navController.navigate(Route.ExerciseDetailsScreen.route)
+                                    }
+                                )
+
+                            }
                         }
                     }
                 }
             }
-        }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, start = 128.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BackButton {
+                    navController.popBackStack()
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                IconButton(
+                    onClick = {
+                        selectHandler(
+                            SelectEvent.SelectWorkout(
+                                workout ?: Workout(1, "", mutableListOf())
+                            )
+                        )
+                        navController.navigate(Route.SessionScreen.route)
+                    },
+                    modifier = Modifier.size(60.dp),
+                    colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = "Share Icon",
+                        modifier = Modifier
+                            .size(60.dp)
+                            .padding(10.dp),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            }
         }
     }
-
-
+}
 
 
 

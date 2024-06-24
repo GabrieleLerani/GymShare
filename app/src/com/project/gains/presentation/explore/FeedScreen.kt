@@ -59,7 +59,7 @@ fun FeedScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            TopBar(navController = navController, userProfile = null, message = "Feed")
+                            TopBar(navController = navController, message = "Feed")
                         }
                         Row(modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,

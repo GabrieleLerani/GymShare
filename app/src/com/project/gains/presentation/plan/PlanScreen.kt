@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +39,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +58,7 @@ import com.project.gains.data.Workout
 import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.PagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WorkoutItem
 import com.project.gains.presentation.events.DeleteEvent
@@ -73,106 +77,67 @@ fun PlanScreen(
 ) {
     // Sample list of workouts
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
+    var showPopup = remember { mutableStateOf(false) }
+    val workouts by generalViewModel.workouts.observeAsState()
+
 
     GainsAppTheme {
+
         Scaffold(
+            topBar = {
+                TopBar(navController = navController ,  message = "Gains")
+            },
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
-                modifier = Modifier.padding(paddingValues).fillMaxSize()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-
-                ) {
-                    Row(
+                    LazyColumn(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center
+
                     ) {
-                        TopBar(navController = navController, userProfile = null,message= selectedPlan?.name?:"Plan")
-                    }
-                    Spacer(modifier = Modifier.height(100.dp))
-
-                    Box(
-                        modifier = Modifier.fillMaxHeight(0.7f)
-                            .padding(5.dp)
-                            .border(
-                                border = BorderStroke(
-                                    width = 2.dp,
-                                    color = Color.Black
-                                ),
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                    )  {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2), // Adjust the number of columns as needed
-                            contentPadding = PaddingValues(2.dp) // Add padding around the grid
+                        item {
+                            Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            selectedPlan?.workouts?.forEach { workout ->
-                                item {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(4.dp)
-                                            .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                                            .background(Color.White) // Background color of the separator
-                                    ) {
-                                        WorkoutItem(
-                                            workout = workout,
-                                            onItemClick = {
-                                                selectHandler(
-                                                    SelectEvent.SelectWorkout(workout)
-                                                )
-                                                navController.navigate(Route.WorkoutScreen.route)
-                                            },
-                                            onDelete = {
-                                                deleteHandler(
-                                                    DeleteEvent.DeleteWorkout(workout)
-                                                )
-                                            })
-
-                                    }
-                                }
+                            BackButton {
+                                navController.popBackStack()
                             }
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top=10.dp,start=128.dp),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BackButton {
-                            navController.popBackStack()
-                        }
-                        Spacer(modifier = Modifier.width(20.dp))
-                        IconButton(
-                            onClick =  {
-                                navController.navigate(Route.NewPlanScreen.route)
-                            },
-                            modifier = Modifier.size(60.dp),
-                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                        ) {
-                            androidx.compose.material3.Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Share Icon",
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    .padding(10.dp),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
+                            Spacer(modifier = Modifier.width(20.dp))
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Route.NewPlanScreen.route)
+                                },
+                                modifier = Modifier.size(60.dp),
+                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Share Icon",
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .padding(10.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        } }
+
                     }
                 }
             }
+            // Page popup covering the bottom part of the screen
+
+        workouts?.let { PagePopup(showPopup, it) }
+
         }
     }
-}
 
 
 
