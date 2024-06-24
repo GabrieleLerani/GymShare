@@ -301,6 +301,7 @@ fun NewPlanScreen(
                                 )
                             }
                         )
+                        // TODO all
                     }
                     item {
                         OptionCheckbox(

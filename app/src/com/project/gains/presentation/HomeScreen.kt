@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,8 +48,15 @@ import androidx.compose.ui.unit.sp
 
 import androidx.navigation.NavController
 import com.project.gains.GeneralViewModel
+import com.project.gains.R
+import com.project.gains.data.Exercise
+import com.project.gains.data.ExerciseType
+import com.project.gains.data.MuscleGroup
+import com.project.gains.data.TrainingType
 
 import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.ExerciseGif
+import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.components.UserContentCard
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.SelectEvent
@@ -56,7 +64,7 @@ import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
-import p
+
 
 @Composable
 fun GainsHomeScreen(
@@ -77,86 +85,48 @@ fun GainsHomeScreen(
     ) {
         openPopup.value = true
     }
-    p()
 
-  /*  GainsAppTheme {
-        Scaffold(
-            bottomBar = { BottomNavigationBar(navController = navController) }
-        ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
-                modifier = Modifier.padding(paddingValues).fillMaxSize()
-            ) {
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
+   GainsAppTheme {
 
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth().padding(5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TopBar(navController = navController,  message = "Gains")
-                    }
+       Scaffold(
+           topBar = {
+               TopBar(navController = navController, message = "Gains")
+           },
+           bottomBar = { BottomNavigationBar(navController = navController) }
+       ) { paddingValues ->
+           Box(
+               modifier = Modifier
+                   .fillMaxSize()
+                   .padding(paddingValues)
+           ) {
+               LazyColumn(
+                   modifier = Modifier
+                       .fillMaxSize(),
+                   verticalArrangement = Arrangement.Center
 
-                        // Horizontal separator around the post
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                                .background(Color.White) // Background color of the separator
-                        ) {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2), // Adjust the number of columns as needed
-                                contentPadding = PaddingValues(2.dp) // Add padding around the grid
-                            ) {
-                                plots?.forEach { plot ->
-                                    item {
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(4.dp)
-                                                .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                                                .background(Color.White) // Background color of the separator
-                                        ) {
-                                            UserContentCard(
-                                                title = "Your Progress",
-                                                icon = Icons.Default.Analytics
-                                            ) {
-                                                // Navigate to the progress screen when clicked
-                                                navController.navigate(Route.ProgressScreen.route)
-                                            }
-                                        }
-                                    }
-                                }
-                                // Plans
-                                plans?.forEach { plan ->
-                                    item {
-                                        Box(
-                                            modifier = Modifier
-                                                .padding(4.dp)
-                                                .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                                                .background(Color.White) // Background color of the separator
-                                        ) {
-                                            UserContentCard(
-                                                title = "Your Plans",
-                                                icon = Icons.Default.Event
-                                            ) {
-                                                // Navigate to the plans screen when clicked
-                                                selectHandler(SelectEvent.SelectPlan(plan))
-                                                navController.navigate(Route.PlanScreen.route)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
-    }
+               ) {
+                   workouts?.forEach{ workout ->
+                       item {
+                           GeneralCard(imageResId = R.drawable.pexels1, title = workout.name)
+                       }
+                   }
+                   plans?.forEach{ plan ->
+                       item {
+                           GeneralCard(imageResId = R.drawable.pexels1, title = plan.name)
+                       }
+                   }
+                   plots?.forEach{ plot ->
+                       item {
+                           GeneralCard(imageResId = R.drawable.pexels1, title = "plot")
+                       }
+                   }
+               }
+           }
+
+       }
+   }
+}
 
 @Composable
 fun CustomBackHandler(

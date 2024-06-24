@@ -23,7 +23,6 @@ import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
-import com.project.gains.presentation.plan.PlansScreen
 import com.project.gains.presentation.progress.ProgressDetailsScreen
 import com.project.gains.presentation.progress.ProgressScreen
 import com.project.gains.presentation.settings.SettingScreen
@@ -80,8 +79,7 @@ fun NavGraph(
                 route = Route.SessionScreen.route
             ) {
                 // set screen as the node state
-                SessionScreen(navController = navController, saveSessionHandler = generalViewModel::onSaveSessionEvent, selectHandler = generalViewModel::onSelectEvent,shareHandler = generalViewModel::onShareContentEvent, musicHandler = generalViewModel::onMusicEvent,
-                    generalViewModel = generalViewModel
+                SessionScreen(
                 )
             }
             composable(
@@ -111,14 +109,6 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 PlanScreen(navController = navController, deleteHandler = generalViewModel::onDeleteEvent, selectHandler = generalViewModel::onSelectEvent,
-                    generalViewModel = generalViewModel
-                )
-            }
-            composable(
-                route = Route.PlansScreen.route
-            ) {
-                // set screen as the node state
-                PlansScreen(navController =navController, deleteHandler = generalViewModel::onDeleteEvent, selectHandler = generalViewModel::onSelectEvent,
                     generalViewModel = generalViewModel
                 )
             }

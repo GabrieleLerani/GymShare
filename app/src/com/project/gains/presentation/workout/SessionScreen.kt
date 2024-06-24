@@ -1,218 +1,182 @@
 package com.project.gains.presentation.workout
+
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.project.gains.presentation.components.AnimatedSessionDetails
-import com.project.gains.presentation.components.BottomNavigationBar
-import com.project.gains.presentation.components.TopBar
-import com.project.gains.theme.GainsAppTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.project.gains.GeneralViewModel
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.R
-import com.project.gains.data.Exercise
-import com.project.gains.data.ExerciseType
-import com.project.gains.data.MuscleGroup
-import com.project.gains.data.TrainingType
-import com.project.gains.presentation.components.BackupPopup
-import com.project.gains.presentation.components.ExerciseGif
-import com.project.gains.presentation.components.MusicPopup
-import com.project.gains.presentation.components.SharePopup
-import com.project.gains.presentation.events.MusicEvent
+import com.project.gains.presentation.components.WarningCard
 
-import com.project.gains.presentation.events.SaveSessionEvent
-import com.project.gains.presentation.events.SelectEvent
-import com.project.gains.presentation.events.ShareContentEvent
-import com.project.gains.presentation.navgraph.Route
+import com.project.gains.theme.GainsAppTheme
+import kotlinx.coroutines.delay
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SessionScreen(
-    navController: NavController,
-    saveSessionHandler: (SaveSessionEvent.SaveSession) -> Unit,
-    shareHandler: (ShareContentEvent) -> Unit,
-    selectHandler: (SelectEvent) -> Unit,
-    musicHandler: (MusicEvent) -> Unit,
-    generalViewModel: GeneralViewModel
-) {
-    val currExercise by generalViewModel.selectedExercise.observeAsState()
-    val currWorkout by generalViewModel.selectedWorkout.observeAsState()
+fun SessionScreen() {
+    // State for the timer
+    var timerState by remember { mutableStateOf(0) }
+    var isTimerRunning by remember { mutableStateOf(false) }
 
-    val terminatedSession = remember { mutableStateOf(false) }
-    val selectedPlan by generalViewModel.selectedPlan.observeAsState()
-    val selectedWorkout by generalViewModel.selectedWorkout.observeAsState()
-    var showMusicPopup = generalViewModel._selectedMusicsMap.get(selectedPlan?.id)
-    var showBackupPopup = generalViewModel._selectedBackupsMap.get(selectedPlan?.id)
-    val selectedApps by generalViewModel.linkedApps.observeAsState()
-    val currentSong by generalViewModel.currentSong.observeAsState()
+    // Function to start the timer
+    if (isTimerRunning) {
+        LaunchedEffect(Unit) {
+            while (isTimerRunning) {
+                delay(1000) // Update timer every second
+                timerState++
+            }
+        }
+    }
 
-    GainsAppTheme {
-        Scaffold(
-            bottomBar = { BottomNavigationBar(navController = navController) }
-        ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+    // Formatting the timer as MM:SS
+    val minutes = timerState / 60
+    val seconds = timerState % 60
+    val formattedTime = String.format("%02d:%02d", minutes, seconds)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .padding(16.dp)
+    ) {
+        // Top App Bar
+        TopAppBar(
+            title = { Text("1/12 Arms") },
+            navigationIcon = {
+                IconButton(onClick = { /* handle back */ }) {
+                    Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = "Back")
+                }
+            },
+            actions = {
+                Text(
+                    text = "12:21",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(end = 16.dp)
+                )
+            },
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Exercise Image (Animated GIF)
+        Image(
+            painter = painterResource(id = R.drawable.exercise2), // Ensure this is a GIF resource
+            contentDescription = "Curl",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(200.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(16.dp))
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Exercise Title
+        Text(
+            text = "Curl",
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        // Exercise Details
+        Text(
+            text = "Recommended time: 8 min, 110 - 140 bpm",
+            color = Color.White,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Counters Section
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Repetitions Counter
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("8", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("Repeats required", color = Color.Gray, fontSize = 12.sp)
+            }
+
+            // Dynamic Counter for Minutes
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(formattedTime, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("Minutes made", color = Color.Gray, fontSize = 12.sp)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Action Row (Start/Stop Button)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = {
+                    isTimerRunning = !isTimerRunning
+                },
+                modifier = Modifier.padding(bottom = 16.dp)
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(5.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            TopBar(navController = navController, message="Session")
-                        }
+                if (isTimerRunning){
+                    Icon(imageVector = Icons.Default.Stop, contentDescription = "Stop", modifier = Modifier.size(60.dp))
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                }else{
+                    Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Start",modifier = Modifier.size(60.dp))
 
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            if (showMusicPopup == true) {
-                                MusicPopup(popup = true, musicHandler = musicHandler, currentSong ?: "")
-                            }
-                            if (terminatedSession.value && showBackupPopup == true) {
-                                BackupPopup(popup = terminatedSession, shareHandler = shareHandler)
-                            }
-                            if (terminatedSession.value && selectedApps?.isNotEmpty() == true) {
-                                selectedApps?.random()?.let {
-                                    SharePopup(popup = terminatedSession, icon = it, shareHandler = shareHandler)
-                                }
-                            }
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                ExerciseGif(exercise = currExercise
-                                    ?: Exercise("", R.drawable.gi, "", ExerciseType.BALANCE, TrainingType.STRENGTH, MuscleGroup.ARMS)) { exercise ->
-                                    selectHandler(SelectEvent.SelectExercise(exercise))
-                                    navController.navigate(Route.ExerciseDetailsScreen.route)
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                                .background(Color.White) // Background color of the separator
-                                .padding(16.dp)
-                        ) {
-                            selectedWorkout?.id?.let {
-                                selectedPlan?.id?.let { it1 ->
-                                    AnimatedSessionDetails(
-                                        it1,
-                                        it,
-                                        terminatedSession.value,
-                                        saveSessionHandler
-                                    )
-                                }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 10.dp),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.Bottom
-                            ) {
-                                Button(
-                                    onClick = { selectHandler(SelectEvent.SelectExercise(
-                                        selectedWorkout?.exercises!![0])) },
-                                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
-                                ) {
-                                    Icon(
-                                        Icons.Default.ArrowBackIosNew,
-                                        contentDescription = "Save session",
-                                        modifier = Modifier.size(21.dp),
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }
-                                Spacer(modifier = Modifier.width(10.dp))
-
-                                Button(
-                                    onClick = { selectHandler(SelectEvent.SelectExercise(
-                                        selectedWorkout?.exercises!![0])) },
-                                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
-                                ) {
-                                    Icon(
-                                        Icons.Default.ArrowForwardIos,
-                                        contentDescription = "Save session",
-                                        modifier = Modifier.size(20.dp),
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }
-                            }
-                            Button(
-                                onClick = { terminatedSession.value = true },
-                                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                Icon(
-                                    Icons.Default.Check,
-                                    contentDescription = "Save session",
-                                    modifier = Modifier.size(24.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                        }
-                    }
                 }
             }
+        }
+
+        // Spacer between button and error cards
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Error Warning Section
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            WarningCard(message = "Keep your back straight.")
+            WarningCard(message = "Avoid locking your elbows.")
+            WarningCard(message = "Maintain a consistent speed.")
         }
     }
 }
 
 
 
-
 @Preview(showBackground = true)
 @Composable
-fun SessionPreview() {
-    val navController = rememberNavController()
-    val generalViewModel:GeneralViewModel = hiltViewModel()
-    SessionScreen(
-        navController = navController,
-        saveSessionHandler = {},
-        shareHandler = {  },
-        selectHandler = {},
-        musicHandler = {},
-        generalViewModel = generalViewModel
-
-    )
+fun DefaultPreview() {
+    GainsAppTheme {
+        SessionScreen()
+    }
 }
-
-
-

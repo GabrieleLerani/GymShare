@@ -66,7 +66,7 @@ fun ProgressDetailsScreen(
     val progressChartPreview by generalViewModel.selectedPlotPreview.observeAsState()
     sessions?.let { sessionList ->
         val kcalValuesInts = sessionList.map { it.kcal }
-
+// TODO ALL comsistent with new plan
 
         val bpmsInts = sessionList.map { it.bpm }
 

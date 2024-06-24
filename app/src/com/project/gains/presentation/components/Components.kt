@@ -2,8 +2,6 @@ package com.project.gains.presentation.components
 
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 
@@ -17,8 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,12 +22,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,7 +36,6 @@ import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries,
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
-import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
@@ -57,6 +50,7 @@ import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Delete
@@ -65,29 +59,26 @@ import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PostAdd
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -113,18 +104,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.zIndex
+import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import coil.size.Size
+import coil.transform.CircleCropTransformation
 import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
-import com.project.gains.data.GymPost
 import com.project.gains.data.MuscleGroup
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
@@ -135,7 +127,6 @@ import com.project.gains.data.Session
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
-import com.project.gains.data.UserProfileBundle
 import com.project.gains.data.Workout
 import com.project.gains.data.bottomNavItems
 import com.project.gains.presentation.events.LinkAppEvent
@@ -255,7 +246,7 @@ fun SelectContentPopup(
         Plan(1, "Plan 1", PeriodMetricType.WEEK, workouts.toMutableList()),
         Plan(2, "Plan 2", PeriodMetricType.MONTH, workouts.toMutableList())
     )
-        AlertDialog(
+    AlertDialog(
                 onDismissRequest = { showDialog.value = false },
                 shape = RoundedCornerShape(20.dp),
                 confirmButton =
@@ -843,46 +834,6 @@ fun UserContentCard(title: String, icon: ImageVector, onClick: () -> Unit) {
     }
 }
 @Composable
-fun ExerciseCard(exercise: Exercise){
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-    ) {
-        LazyColumn(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            // Display GIF of the exercise
-            item {
-                Image(
-                painter = painterResource(id = exercise.gifResId ?: R.drawable.gi),
-                contentDescription = "Exercise image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            )
-            }
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-
-            item {   // Display exercise name
-                Text(
-                    text = exercise.name,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) }
-            item {
-                // Display description of the exercise execution
-                Text(
-                    text = exercise.description,
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) }
-        }
-    }
-}
-@Composable
 fun ProgressChartCard(
     chartPreview: ProgressChartPreview,
     onItemClick: (ProgressChartPreview) -> Unit
@@ -917,68 +868,7 @@ fun ProgressChartCard(
     }
 }
 // items
-@Composable
-fun GymPostItem(post: GymPost, shareHandler: (ShareContentEvent) -> Unit) {
-    Box(
-        modifier = Modifier
-            .padding(4.dp) // Add padding around the post
-            .aspectRatio(1f) // Set aspect ratio to maintain square shape
-    ) {
-        // Horizontal separator around the post
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                .background(Color.White) // Background color of the separator
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable { shareHandler(ShareContentEvent.ShareLink(post)) },
-                shape = RectangleShape,
-                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onPrimary)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxSize()
-                ) {
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = post.randomSocialId),
-                            contentDescription = "Exercise GIF",
-                            modifier = Modifier
-                                .size(15.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Image(
-                        painter = painterResource(id = post.imageResourceId),
-                        contentDescription = "Exercise GIF",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
 
-                    Text(
-                        text = post.username,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    Text(
-                        text = "Just finished an intense workout session! 💪",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
-    }
-}
 @Composable
 fun ExerciseItem(exercise: Exercise, onDelete: (Exercise) -> Unit,onItemClick: (Exercise) -> Unit) {
     Card(
@@ -1252,111 +1142,7 @@ fun OptionCheckbox(
         )
     }
 }
-@Composable
-fun AnimatedSessionDetails(plan:Int,workout:Int,
-    submit: Boolean,
-    saveSessionHandler: (SaveSessionEvent.SaveSession) -> Unit
-) {
-    val animatedCalories = remember { Animatable(0f) }
-    val animatedBpm = remember { Animatable(0f) }
-    val animatedRestTime = remember { Animatable(0f) }
-    val animatedDuration = remember { Animatable(0f) }
-    val animatedIntensity = remember { Animatable(0f) }
-    val animatedDistance = remember { Animatable(0f) }
-    val progress = remember{ Animatable(0F) }
 
-    val duration = 20000 // 20 seconds for the sake of example
-    val targetCalories = 100f
-    val targetBpm = 100f
-    val targetRestTime = 100f
-    val targetTimeOfTrying = 100f
-    val targetTime = 100f
-
-    LaunchedEffect(Unit) {
-        launch { animatedCalories.animateTo(targetValue = targetCalories, animationSpec = tween(durationMillis = duration)) }
-        launch { animatedBpm.animateTo(targetValue = targetBpm, animationSpec = tween(durationMillis = duration)) }
-        launch { animatedRestTime.animateTo(targetValue = targetRestTime, animationSpec = tween(durationMillis = duration)) }
-        launch { animatedDuration.animateTo(targetValue = targetTimeOfTrying, animationSpec = tween(durationMillis = duration)) }
-        launch { animatedIntensity.animateTo(targetValue = targetTimeOfTrying, animationSpec = tween(durationMillis = duration)) }
-        launch { animatedDistance.animateTo(targetValue = targetTimeOfTrying, animationSpec = tween(durationMillis = duration)) }
-        launch { progress.animateTo(targetValue = targetTime, animationSpec = tween(durationMillis = duration)) }
-
-    }
-
-    SessionDetails(
-        calories = "${animatedCalories.value.toInt()} kcal",
-        bpm = "${animatedBpm.value.toInt()} bpm",
-        restTime = "${animatedRestTime.value.toInt()} min",
-        intensity = "${animatedIntensity.value.toInt()} min",
-        distance = "${animatedDistance.value.toInt()} min",
-        duration = "${animatedDuration.value.toInt()} min",
-        time="${progress.value.toInt()} min",
-    )
-    if (submit) {
-        saveSessionHandler(
-            SaveSessionEvent.SaveSession(plan,workout,
-                Session(
-                    animatedCalories.value.toInt(),
-                    animatedBpm.value.toInt(),
-                    animatedRestTime.value.toInt(),
-                    animatedDuration.value.toInt(),
-                    animatedDistance.value.toInt(),
-                    animatedIntensity.value.toInt()
-                )
-            )
-        )
-
-    }
-
-}
-@Composable
-fun SessionDetails(
-    calories: String,
-    bpm: String,
-    restTime: String,
-    duration: String,
-    intensity: String,
-    distance: String,
-    time: String
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // Adjust the number of columns as needed
-        contentPadding = PaddingValues(10.dp) // Add padding around the grid
-    ) {
-        item{
-            MetricRow(icon = Icons.Default.LocalFireDepartment, label = "Calories", value = calories)
-
-        }
-        item{
-            MetricRow(icon = Icons.Default.Favorite, label = "BPM", value = bpm)
-
-        }
-        item{
-            MetricRow(icon = Icons.Default.Timer, label = "Rest Time", value = restTime)
-
-        }
-        item{
-            MetricRow(icon = Icons.Default.Timelapse, label = "Until Rest Time", value = restTime)
-
-        }
-        item{
-            MetricRow(icon = Icons.Default.AccessTime, label = "Training time", value = duration)
-
-        }
-        item{
-            MetricRow(icon = Icons.Default.Speed, label = "Intensity", value = intensity)
-
-        }
-        item{
-            MetricRow(icon = Icons.AutoMirrored.Filled.DirectionsRun, label = "Distance m", value = distance)
-
-        }
-        item{
-            MetricRow(icon = Icons.Default.Timelapse, label = "Time", value = time)
-
-        }
-    }
-}
 @Composable
 fun MetricRow(icon: ImageVector, label: String, value: String) {
     Row(
@@ -1375,41 +1161,7 @@ fun MetricRow(icon: ImageVector, label: String, value: String) {
         )
     }
 }
-@Composable
-fun ExerciseGif(exercise: Exercise,onClick: (Exercise) -> Unit) {
-    val context = LocalContext.current
-    val gifResourceId = R.drawable.gi
 
-    AsyncImage(
-        model = ImageRequest.Builder(context)
-            .data(gifResourceId)
-            .size(Size.ORIGINAL)
-            .parameters(coil.request.Parameters.Builder()
-                .set("coil-request-animated", true)
-                .build())
-            .build(),
-        contentDescription = "Exercise GIF",
-        modifier = Modifier
-            .size(200.dp)
-            .clickable { onClick(exercise) }
-            .graphicsLayer {
-                // Add any additional transformations or animations if needed
-            },
-    )
-}
-// list
-@Composable
-fun GymPostsList(posts: MutableList<GymPost>?, shareHandler: (ShareContentEvent) -> Unit) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // Adjust the number of columns as needed
-        contentPadding = PaddingValues(8.dp) // Add padding around the grid
-    ) {
-        items(posts ?: emptyList()) { post ->
-
-            GymPostItem(post = post,shareHandler)
-        }
-    }
-}
 @Composable
 fun ProgressChartList(
     plots: List<Plot>,
@@ -1541,7 +1293,7 @@ fun GeneralCard(imageResId: Int, title: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp, horizontal = 8.dp)
             .height(150.dp)
             .background(Color.Gray, RoundedCornerShape(16.dp))
     ) {
@@ -1755,7 +1507,7 @@ fun SharingPreferencesButton(navController: NavController) {
 
 
 @Composable
-fun PagePopup(showPopup : MutableState<Boolean>,workouts:MutableList<Workout>) {
+fun PlansPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>) {
     if (showPopup.value) {
     Box(
         modifier = Modifier
@@ -1831,6 +1583,85 @@ fun PagePopup(showPopup : MutableState<Boolean>,workouts:MutableList<Workout>) {
             }
         }
     }
+
+
+@Composable
+fun NewPlanPagePopup(showPopup : MutableState<Boolean>,  workouts: MutableList<Workout>) {
+    if (showPopup.value) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 40.dp)
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                    RoundedCornerShape(20.dp)
+                )
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(40.dp)
+            ) {
+                item {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 290.dp),
+                        horizontalArrangement = Arrangement.Center) {
+                        IconButton(onClick = { showPopup.value=false }) {
+                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
+                        }
+                    }  }
+
+                item { Text(
+                    text = "Add Pre-Made Workout",
+                    style = MaterialTheme.typography.headlineMedium
+                ) }
+                item {
+                    Text(
+                        text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
+                        style = MaterialTheme.typography.bodySmall,
+                    ) }
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                item {
+                    Button(
+                        onClick = { showPopup.value = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp),
+                        //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+
+                    ) {
+                        Text(text = "USE WORKOUT BUILDER")
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+
+
+                item {
+                    Button(
+                        onClick = { showPopup.value=false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp),
+                        // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                    ) {
+                        Text(text = "ADD PRE-MADE WORKOUT")
+                    }
+                }
+
+                workouts.forEach{workout ->
+                    item {
+                        GeneralCard(imageResId = R.drawable.logo, title = "Workout1")
+                    }
+
+                }
+
+            }
+        }
+    }
+}
 
 @Composable
 fun ChoicePopup(){
@@ -2080,3 +1911,195 @@ fun BackButton(onClick: () -> Unit) {
     }
 }
 
+@Composable
+fun WorkoutHeader() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter= painterResource(id = R.drawable.pexels1),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp).clip(RoundedCornerShape(16.dp)),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        androidx.compose.material.Text(
+            text = "GENERAL MUSCLE BUILDING",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+        )
+        androidx.compose.material.Text(
+            text = "For gym • Expert",
+            fontSize = 16.sp,
+
+            )
+        androidx.compose.material.Text(
+            text = "32 workout days (3 sessions per week)",
+            fontSize = 14.sp,
+        )
+        androidx.compose.material.Text(
+            text = "Workouts done: 0",
+            fontSize = 14.sp,
+        )
+    }
+}
+
+@Composable
+fun WorkoutDaysList() {
+    val workoutDays = listOf(
+        "chest",
+        "back",
+        "legs",
+        "arms+shoulders"
+    )
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        androidx.compose.material.Text(
+            text = "Workout days",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        workoutDays.forEachIndexed { index, day ->
+            androidx.compose.material.Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                elevation = 4.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    androidx.compose.material.Icon(
+                        imageVector = if (index == 0) Icons.Default.Circle else Icons.Default.Lock,
+                        contentDescription = null,
+                        tint = if (index == 0) Color.Red else Color.Gray,
+                        modifier = Modifier.size(40.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column {
+                        androidx.compose.material.Text(
+                            text = "${index + 1} workout day",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        androidx.compose.material.Text(
+                            text = day,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GifLoader(gif: Int) {
+
+    val context = LocalContext.current
+
+
+    val imageLoader = ImageLoader.Builder(context)
+        .components {
+            add(GifDecoder.Factory()) // Use built-in decoder for Android P+
+        }
+        .build()
+    val painter = // Adjust the size as needed
+        rememberAsyncImagePainter(ImageRequest // Optional: Apply transformations
+            .Builder(LocalContext.current).data(data = gif).apply(block = fun ImageRequest.Builder.() {
+                size(Size.ORIGINAL) // Adjust the size as needed
+                transformations(CircleCropTransformation()) // Optional: Apply transformations
+            }).build(), imageLoader = imageLoader
+        )
+
+    Image(
+        painter = painter,
+        contentDescription = null, // Provide content description if necessary
+        modifier = Modifier.size(200.dp) // Example: Set image size
+    )
+}
+
+@Composable
+fun InstructionCard(text: String) {
+    androidx.compose.material.Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth(),
+        elevation = 4.dp,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            androidx.compose.material.Text(
+                text = text,
+                style = androidx.compose.material.MaterialTheme.typography.body1
+            )
+        }
+    }
+}
+
+@Composable
+fun WarningCard(message: String) {
+    androidx.compose.material.Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.errorContainer,
+                RoundedCornerShape(16.dp)
+            ),
+        backgroundColor = MaterialTheme.colorScheme.errorContainer
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.WarningAmber,
+                contentDescription = "Warning",
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun ExerciseGif(exercise: Exercise,onClick: (Exercise) -> Unit) {
+    val context = LocalContext.current
+    val gifResourceId = R.drawable.gi
+
+    AsyncImage(
+        model = ImageRequest.Builder(context)
+            .data(gifResourceId)
+            .size(Size.ORIGINAL)
+            .parameters(coil.request.Parameters.Builder()
+                .set("coil-request-animated", true)
+                .build())
+            .build(),
+        contentDescription = "Exercise GIF",
+        modifier = Modifier
+            .size(200.dp)
+            .clickable { onClick(exercise) }
+            .graphicsLayer {
+                // Add any additional transformations or animations if needed
+            },
+    )
+}
