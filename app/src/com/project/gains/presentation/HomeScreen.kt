@@ -108,17 +108,25 @@ fun GainsHomeScreen(
                ) {
                    workouts?.forEach{ workout ->
                        item {
-                           GeneralCard(imageResId = R.drawable.pexels1, title = workout.name)
+                           GeneralCard(imageResId = R.drawable.pexels1, title = workout.name){
+                               navController.navigate(Route.ExerciseTypeScreen.route)
+                           }
                        }
                    }
                    plans?.forEach{ plan ->
                        item {
-                           GeneralCard(imageResId = R.drawable.pexels1, title = plan.name)
+                           GeneralCard(imageResId = R.drawable.pexels1, title = plan.name){
+                               selectHandler(SelectEvent.SelectPlan(plan))
+                               navController.navigate(Route.PlanScreen.route)
+                           }
                        }
                    }
                    plots?.forEach{ plot ->
                        item {
-                           GeneralCard(imageResId = R.drawable.pexels1, title = "plot")
+                           GeneralCard(imageResId = R.drawable.pexels1, title = "plot"){
+                               selectHandler(SelectEvent.SelectPlotPreview(plot.preview))
+                               navController.navigate(Route.ProgressDetailsScreen.route)
+                           }
                        }
                    }
                }

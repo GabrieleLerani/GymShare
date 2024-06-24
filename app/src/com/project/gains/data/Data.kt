@@ -102,7 +102,7 @@ data class Option(val name: String, var isChecked: Boolean = false)
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Default.Home, "Home")
     data object Progress : BottomNavItem(Route.ProgressScreen.route, Icons.Default.Analytics, "Progress")
-    data object Plan : BottomNavItem(Route.PlansScreen.route, Icons.Default.Event, "Plans")
+    data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Default.Event, "Plan")
     data object Share : BottomNavItem(Route.ShareScreen.route, Icons.Default.Share, "Share")
     data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Search, "Explore")
 }

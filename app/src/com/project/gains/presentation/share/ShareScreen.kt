@@ -83,41 +83,19 @@ fun ShareScreen(
 
     GainsAppTheme {
         Scaffold(
+            topBar = { TopBar(navController = navController, message = "Share")},
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-
+                        .padding(20.dp),
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(5.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TopBar(navController = navController, message="Share")
-                    }
-                    // Horizontal separator around the post
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                            .background(Color.White) // Background color of the separator
-                    ) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 200.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
                             item {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -281,8 +259,6 @@ fun ShareScreen(
                 }
             }
         }
-    }
-}
 
 
 @Preview(showBackground = true)

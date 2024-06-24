@@ -93,7 +93,9 @@ fun PlanScreen(
                          ) {
                              WorkoutHeader()
                              Spacer(modifier = Modifier.height(16.dp))
-                             WorkoutDaysList()
+                             WorkoutDaysList{
+                                 navController.navigate(Route.ExerciseTypeScreen.route)
+                             }
                          }}
 // to every page
                         item {
@@ -130,7 +132,7 @@ fun PlanScreen(
             }
         // Page popups
 
-        workouts?.let { PlansPagePopup(showPopup, it) }
+        workouts?.let { PlansPagePopup(showPopup, it,{}) }
         }
     }
 

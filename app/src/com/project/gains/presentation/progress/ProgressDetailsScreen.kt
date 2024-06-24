@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -42,6 +43,7 @@ import com.project.gains.data.generateRandomTrainingData
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.MetricPopup
 import com.project.gains.presentation.components.PeriodPopup
+import com.project.gains.presentation.components.TopBar
 
 import com.project.gains.presentation.components.TrainingOverviewChart
 import com.project.gains.presentation.events.ShareContentEvent
@@ -63,6 +65,8 @@ fun ProgressDetailsScreen(
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
     val sessions by generalViewModel.currentSessions.observeAsState()
     var training_data: MutableList<TrainingData> = mutableListOf()
+    var trainingData: MutableList<TrainingData> = generateRandomTrainingData(10).toMutableList()
+
     val progressChartPreview by generalViewModel.selectedPlotPreview.observeAsState()
     sessions?.let { sessionList ->
         val kcalValuesInts = sessionList.map { it.kcal }
@@ -122,60 +126,53 @@ fun ProgressDetailsScreen(
 
     GainsAppTheme {
         Scaffold(
+            topBar = { TopBar(navController = navController, message = "Details")},
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
-            androidx.compose.material3.Surface(
-                color = MaterialTheme.colorScheme.background,
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize().padding(start=20.dp,end=20.dp),
+
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        Text(
-                            text = "Your Training Overview",
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.padding(16.dp),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
+                    item {
                         Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        ) {
-                            Text(selectedPeriod.name, style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurface)
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    ) {
+                        Text(selectedPeriod.name, style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface)
 
-                            IconButton(onClick = { popupVisible = true }) {
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Metric")
-                            }
-                            Spacer(modifier = Modifier.width(170.dp))
-                            Text(selectedMetric.name, style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurface)
-
-                            IconButton(onClick = { popupVisible = true }) {
-                                Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Metric")
-                            }
+                        IconButton(onClick = { popupVisible = true }) {
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Metric")
                         }
+                        Spacer(modifier = Modifier.width(170.dp))
+                        Text(selectedMetric.name, style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurface)
 
-                            MetricPopup(
-                                selectedMetricMap = selectedMetricMap,
-                                popupVisible = popupVisible,
-                                onDismiss = { popupVisible = false },
-                                onOptionSelected = { metric ->
-                                    selectedMetric = metric
-                                    popupVisible = false
-                                },
-                                selectedMetric = selectedMetric
-                            )
+                        IconButton(onClick = { popupVisible = true }) {
+                            Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Metric")
+                        }
+                    } }
 
-
+                    item {
+                        MetricPopup(
+                        selectedMetricMap = selectedMetricMap,
+                        popupVisible = popupVisible,
+                        onDismiss = { popupVisible = false },
+                        onOptionSelected = { metric ->
+                            selectedMetric = metric
+                            popupVisible = false
+                        },
+                        selectedMetric = selectedMetric
+                    )
+                    }
+                    item {
                         PeriodPopup(
                             selectedPeriodMap,
                             popupVisible = popupVisible,
@@ -186,20 +183,21 @@ fun ProgressDetailsScreen(
                             },
                             selectedMetric = selectedPeriod
                         )
+                    }
 
-                        TrainingOverviewChart(
-                            trainingData =training_data ,
-                            selectedMetric = selectedMetric,
-                            selectedPeriod = selectedPeriod,
-                            shareHandler = shareHandler,
-                            selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plo1)
-                        )
+                    item {    TrainingOverviewChart(
+                        trainingData =trainingData ,
+                        selectedMetric = selectedMetric,
+                        selectedPeriod = selectedPeriod,
+                        shareHandler = shareHandler,
+                        selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plo1)
+                    ) }
+
                     }
                 }
             }
         }
     }
-}
 
 
 

@@ -1,5 +1,6 @@
 package com.project.gains.presentation.navgraph
 
+import ExerciseTypeScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -112,6 +113,7 @@ fun NavGraph(
                     generalViewModel = generalViewModel
                 )
             }
+
             composable(
                 route = Route.NewPlanScreen.route
             ) {
@@ -136,6 +138,12 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 ExerciseDetailsScreen(navController = navController,generalViewModel)
+            }
+            composable(
+                route = Route.ExerciseTypeScreen.route
+            ) {
+                // set screen as the node state
+                ExerciseTypeScreen()
             }
             composable(
                 route = Route.ShareScreen.route

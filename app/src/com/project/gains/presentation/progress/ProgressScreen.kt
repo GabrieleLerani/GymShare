@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,9 +28,10 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
+import com.project.gains.data.generateRandomPlots
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.BottomNavigationBar
-import com.project.gains.presentation.components.ProgressChartList
+import com.project.gains.presentation.components.ProgressChartCard
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
@@ -40,49 +43,44 @@ fun ProgressScreen(
     generalViewModel: GeneralViewModel
 
 ) {
-    val plots by generalViewModel.plots.observeAsState()
+    val plots = generateRandomPlots()
 
     GainsAppTheme {
         Scaffold(
+            topBar = { TopBar(navController = navController, message = "Progress")},
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(20.dp),
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            TopBar(navController = navController, message="Progress")
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
+                    plots.forEach{plot ->
 
-                        ProgressChartList(plots?: mutableListOf(Plot(ProgressChartPreview("",R.drawable.plo1), data = listOf()))) { preview ->
-                            // Navigate to the details screen when the card is clicked
-                            selectHandler(
-                                SelectEvent.SelectPlotPreview(
-                                    preview
+                        item{
+                            ProgressChartCard(plot.preview) {
+                                navController.navigate(Route.ProgressDetailsScreen.route)
+                                selectHandler(
+                                    SelectEvent.SelectPlotPreview(
+                                        plot.preview
+                                    )
                                 )
-                            )
-                            navController.navigate(Route.ProgressDetailsScreen.route)
+                            }
+                            Spacer(modifier = Modifier.height(16.dp)) // Add spacing between cards
                         }
+                    }
+
                     }
 
                 }
             }
         }
     }
-}
 
 @Preview(showBackground = true)
 @Composable

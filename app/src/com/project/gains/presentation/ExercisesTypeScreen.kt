@@ -30,11 +30,11 @@ fun ExerciseTypeScreen() {
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
-        MuscleGroupItem(imageResId = R.drawable.exercise2, title = "Chest")
-        MuscleGroupItem(imageResId = R.drawable.exercise2, title = "Back")
-        MuscleGroupItem(imageResId = R.drawable.exercise2, title = "Legs")
-        MuscleGroupItem(imageResId = R.drawable.exercise2, title = "Gluteus")
-        MuscleGroupItem(imageResId = R.drawable.exercise2, title = "Deltoids")
+        MuscleGroupItem(imageResId = R.drawable.chest2, title = "Chest")
+        MuscleGroupItem(imageResId = R.drawable.back2, title = "Back")
+        MuscleGroupItem(imageResId = R.drawable.legs, title = "Legs")
+        MuscleGroupItem(imageResId = R.drawable.legs2, title = "Gluteus")
+        MuscleGroupItem(imageResId = R.drawable.legs3, title = "Deltoids")
     }
 }
 

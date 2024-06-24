@@ -1162,31 +1162,17 @@ fun MetricRow(icon: ImageVector, label: String, value: String) {
     }
 }
 
-@Composable
-fun ProgressChartList(
-    plots: List<Plot>,
-    onItemClick: (ProgressChartPreview) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(plots) { plot ->
-            ProgressChartCard(plot.preview, onItemClick)
-            Spacer(modifier = Modifier.height(16.dp)) // Add spacing between cards
-        }
-    }
-}
+
 @Composable
 fun TrainingOverviewChart(
     trainingData: List<TrainingData>, selectedMetric: TrainingMetricType, selectedPeriod: PeriodMetricType,
     shareHandler:(ShareContentEvent.SharePlot)->Unit, selectedPlotType: ProgressChartPreview) {
-    val filteredData = trainingData.filter { it.type == selectedMetric }
 
     val rowColors = listOf(Color.Red, Color.Blue, Color.Green) // Example colors, you can customize as needed
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        filteredData.forEachIndexed { index, data ->
+        trainingData.forEachIndexed { index, data ->
             val color = rowColors[index % rowColors.size] // Selecting color based on index
             Row(
                 modifier = Modifier
@@ -1209,14 +1195,6 @@ fun TrainingOverviewChart(
                                 shape = RoundedCornerShape(10.dp)
                             )
                     )
-
-                        var progress = 0.7f // Assuming progress is a value between 0 and 1
-                        LinearProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            progress = progress,
-                            color = Color.Blue,
-                        )
 
                 }
                 else if (selectedPlotType.imageResId == R.drawable.plot2) {
@@ -1289,13 +1267,16 @@ fun SocialMediaRow(
 //// CHECKED
 
 @Composable
-fun GeneralCard(imageResId: Int, title: String) {
+fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 8.dp)
             .height(150.dp)
             .background(Color.Gray, RoundedCornerShape(16.dp))
+            .clickable {
+                onItemClick()
+            }
     ) {
         Image(
             painter = painterResource(id = imageResId),
@@ -1507,7 +1488,7 @@ fun SharingPreferencesButton(navController: NavController) {
 
 
 @Composable
-fun PlansPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>) {
+fun PlansPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>,onItemClick: () -> Unit) {
     if (showPopup.value) {
     Box(
         modifier = Modifier
@@ -1574,7 +1555,7 @@ fun PlansPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Worko
 
                     workouts.forEach{workout ->
                         item {
-                            GeneralCard(imageResId = R.drawable.logo, title = "Workout1")
+                            GeneralCard(imageResId = R.drawable.logo, title = "Workout1", onItemClick = onItemClick)
                         }
 
                     }
@@ -1586,7 +1567,7 @@ fun PlansPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Worko
 
 
 @Composable
-fun NewPlanPagePopup(showPopup : MutableState<Boolean>,  workouts: MutableList<Workout>) {
+fun NewPlanPagePopup(showPopup : MutableState<Boolean>,  workouts: MutableList<Workout>,onItemClick: () -> Unit) {
     if (showPopup.value) {
         Box(
             modifier = Modifier
@@ -1653,7 +1634,7 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>,  workouts: MutableList<W
 
                 workouts.forEach{workout ->
                     item {
-                        GeneralCard(imageResId = R.drawable.logo, title = "Workout1")
+                        GeneralCard(imageResId = R.drawable.logo, title = "Workout1", onItemClick = onItemClick)
                     }
 
                 }
@@ -1950,7 +1931,7 @@ fun WorkoutHeader() {
 }
 
 @Composable
-fun WorkoutDaysList() {
+fun WorkoutDaysList(onItemClick:()->Unit) {
     val workoutDays = listOf(
         "chest",
         "back",
@@ -1972,7 +1953,8 @@ fun WorkoutDaysList() {
             androidx.compose.material.Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 8.dp)
+                    .clickable { onItemClick() },
                 elevation = 4.dp
             ) {
                 Row(

@@ -1,9 +1,12 @@
 package com.project.gains.presentation.plan
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -17,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 
@@ -47,6 +51,7 @@ import com.project.gains.presentation.components.BottomNavigationBar
 
 import com.project.gains.presentation.components.OptionCheckbox
 import com.project.gains.presentation.components.PeriodPopup
+import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.TrainingTypePopup
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.navgraph.Route
@@ -82,26 +87,21 @@ fun NewPlanScreen(
 
     GainsAppTheme {
         Scaffold(
+            topBar = { TopBar(navController = navController, message ="New Plane")},
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
-                modifier = Modifier.padding(paddingValues)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
-                ) {
-                    item {
-                        Text(
-                            text = "Select Options",
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier
-                                .padding(bottom = 16.dp),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
+                        .padding(start = 20.dp, end = 20.dp),
+
+                    ) {
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
                     item {
                         Text(
                             text = "Choose if you want to have music while training",
@@ -361,14 +361,9 @@ fun NewPlanScreen(
                                 onClick = {
                                     createHandler(CreateEvent.CreatePlan(options,selectedPeriod,selectedExerciseTypes,selectedMetrics,selectedTraining,selectedMusic.value,selectedBackup.value))
                                     navController.navigate(Route.PlanScreen.route) },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                ),
                                 modifier = Modifier.padding(bottom = 16.dp)
                             ) {
-                                Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                                Text("Generate")
+                                Icon(Icons.Default.Check, contentDescription = "Add Icon")
                             }
                         }
                     }
