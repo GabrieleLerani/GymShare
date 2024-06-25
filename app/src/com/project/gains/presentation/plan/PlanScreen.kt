@@ -66,11 +66,11 @@ fun PlanScreen(
     // Sample list of workouts
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
     val linkedApps by generalViewModel.linkedApps.observeAsState()
-    var showPopup1 = remember { mutableStateOf(false) }
+    var showPopup1 = remember { mutableStateOf(true) }
     var showPopup2 = remember { mutableStateOf(false) }
 
     var showPopup3 = remember { mutableStateOf(false) }
-    var showPopup4 = remember { mutableStateOf(true) }
+    var showPopup4 = remember { mutableStateOf(false) }
 
 
     val workouts by generalViewModel.workouts.observeAsState()

@@ -22,6 +22,12 @@ enum class TrainingType {
     CROSSFIT
 }
 
+enum class Level {
+    BEGINNER,
+    INTERMEDIATE,
+    EXPERT
+}
+
 enum class ExerciseType {
     CHEST,
     BACK,

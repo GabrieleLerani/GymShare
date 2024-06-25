@@ -241,6 +241,10 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
                 _selectedWorkout.value = event.workout
 
             }
+            is CreateEvent.SetPlanOptions -> {
+
+
+            }
             is CreateEvent.CreateExercise -> {
                 _exercises.value?.add(event.exercise)
                 _selectedExercise.value = event.exercise
