@@ -2,8 +2,6 @@ package com.project.gains.presentation.components
 
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,8 +38,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.DirectionsRun
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowForwardIos
@@ -58,15 +51,12 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PostAdd
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.Timelapse
-import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
@@ -75,10 +65,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -97,7 +89,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
@@ -117,11 +108,10 @@ import coil.transform.CircleCropTransformation
 import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
-import com.project.gains.data.MuscleGroup
+import com.project.gains.data.GymPost
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.Plan
-import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.Session
 import com.project.gains.data.TrainingData
@@ -131,14 +121,12 @@ import com.project.gains.data.Workout
 import com.project.gains.data.bottomNavItems
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.events.SaveSessionEvent
+import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
-import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
-// Buttons
-
+// MERGE
 @Composable
 fun ShareButton(
     onClick: () -> Unit,
@@ -159,368 +147,98 @@ fun ShareButton(
         )
     }
 }
-// popup
-
-@Composable
-fun FeedbackAlertDialog(
-    title: String,
-    message: String,
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit,
-    confirmButtonText: String,
-    dismissButtonText: String
-) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        },
-        text = {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        },
-        confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(
-                    text = confirmButtonText,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(
-                    text = dismissButtonText,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
-        },
-        shape = RoundedCornerShape(20.dp),
-    )
-}
-@Composable
-fun DialogOption(text: String, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(16.dp),
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-        )
-    }
-}
-
-@Composable
-fun SelectContentPopup(
-    onItemClickPlan: (Plan) -> Unit,
-    onItemClickWorkout: (Workout) -> Unit,
-    onItemClickExercise: (Exercise) -> Unit,
-    showDialog: MutableState<Boolean>
-) {
-    var selectedOption by remember { mutableStateOf<String?>(null) }
-    val exercises = listOf(
-        Exercise("Exercise 1", R.drawable.gi, "Description 1", ExerciseType.CARDIO, TrainingType.RUNNING, MuscleGroup.BACK),
-        Exercise("Exercise 2", R.drawable.gi, "Description 2", ExerciseType.BALANCE, TrainingType.STRENGTH, MuscleGroup.ARMS)
-    )
-
-    val workouts = listOf(
-        Workout(1, "Workout 1", exercises.toMutableList()),
-        Workout(2, "Workout 2", exercises.toMutableList())
-    )
-
-    val plans = listOf(
-        Plan(1, "Plan 1", PeriodMetricType.WEEK, workouts.toMutableList()),
-        Plan(2, "Plan 2", PeriodMetricType.MONTH, workouts.toMutableList())
-    )
-    AlertDialog(
-                onDismissRequest = { showDialog.value = false },
-                shape = RoundedCornerShape(20.dp),
-                confirmButton =
-                {
-                    Button(
-                        onClick = { showDialog.value = false },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        modifier = Modifier.padding(5.dp)
-                    ) {
-                        Text(
-                            text = "Confirm",
-                            style = MaterialTheme.typography.displaySmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    }
-                },
-                title= {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = "Choose an option",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.onBackground,
-                        )
-                        DialogOption(text = "Show Plans") {
-                            selectedOption = "Plan"
-
-                        }
-                        DialogOption(text = "Show Workouts") {
-                            selectedOption = "Workout"
-
-                        }
-                        DialogOption(text = "Show Exercises") {
-                            selectedOption = "Exercise"
-
-                        }
-                    }
-                },
-            )
-
-        selectedOption?.let { option ->
-            when (option) {
-                "Plan" -> PlanDialog(items = plans, onDismiss = { selectedOption = null }, onItemClickPlan)
-                "Workout" -> WorkoutDialog(items = workouts, onDismiss = { selectedOption = null }, onItemClickWorkout)
-                "Exercise" -> ExerciseDialog(items = exercises, onDismiss = { selectedOption = null }, onItemClickExercise)
-            }
-        }
-    }
-
-
-@Composable
-fun MetricPopup(
-    selectedMetricMap: MutableList<TrainingMetricType>?,
-    popupVisible: Boolean,
-    onDismiss: () -> Unit,
-    onOptionSelected: (TrainingMetricType) -> Unit,
-    selectedMetric: TrainingMetricType
-) {
-    if (popupVisible) {
-        Dialog(
-            onDismissRequest = { onDismiss() },
-            properties = DialogProperties(
-                dismissOnClickOutside = true,
-                dismissOnBackPress = false
-            )
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 10.dp
-                ),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    selectedMetricMap?.forEach { metric ->
-                        androidx.compose.material.Text(
-                            modifier = Modifier
-                                .clickable { onOptionSelected(metric) },
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            color = if (metric == selectedMetric) Color.Blue else Color.Black,
-                            text = metric.name
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-@Composable
-fun TrainingTypePopup(
-    popupVisible: Boolean,
-    onDismiss: () -> Unit,
-    onOptionSelected: (TrainingType) -> Unit,
-    selectedMetric: TrainingType
-) {
-    if (popupVisible) {
-        Dialog(
-            onDismissRequest = { onDismiss() },
-            properties = DialogProperties(
-                dismissOnClickOutside = true,
-                dismissOnBackPress = false
-            )
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 10.dp
-                ),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    TrainingType.entries.forEach { metric ->
-                        androidx.compose.material.Text(
-                            modifier = Modifier
-                                .clickable { onOptionSelected(metric) },
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            color = if (metric == selectedMetric) Color.Blue else Color.Black,
-                            text = metric.name
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-@Composable
-fun PeriodPopup(
-    selectedPeriodMap: MutableList<PeriodMetricType>?,
-    popupVisible: Boolean,
-    onDismiss: () -> Unit,
-    onOptionSelected: (PeriodMetricType) -> Unit,
-    selectedMetric: PeriodMetricType
-) {
-    if (popupVisible) {
-        Dialog(
-            onDismissRequest = { onDismiss() },
-            properties = DialogProperties(
-                dismissOnClickOutside = true,
-                dismissOnBackPress = false
-            )
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 10.dp
-                ),
-                shape = RoundedCornerShape(16.dp),
-            ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    selectedPeriodMap?.forEach { metric ->
-                        androidx.compose.material.Text(
-                            modifier = Modifier
-                                .clickable { onOptionSelected(metric) },
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            color = if (metric == selectedMetric) Color.Blue else Color.Black,
-                            text = metric.name
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 @Composable
 fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:String) {
     if (popup) {
         val play = remember {
             mutableStateOf(false)
         }
-            Card(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .widthIn(min = 300.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 10.dp
-                ),
-                shape = RoundedCornerShape(16.dp),
+        Card(
+            modifier = Modifier
+                .padding(16.dp)
+                .widthIn(min = 300.dp),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 10.dp
+            ),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.spotify_icon),
-                        contentDescription = "App Icon",
+                Image(
+                    painter = painterResource(id = R.drawable.spotify_icon),
+                    contentDescription = "App Icon",
+                    modifier = Modifier
+                        .size(64.dp)
+                        .padding(top = 16.dp)
+                )
+                Text(text = currentSong, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurface)
+
+                Row(modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    ElevatedButton(
                         modifier = Modifier
-                            .size(64.dp)
-                            .padding(top = 16.dp)
-                    )
-                    Text(text = currentSong, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurface)
+                            .align(Alignment.CenterVertically)
+                            .padding(bottom = 16.dp),
+                        onClick = {
+                            musicHandler(MusicEvent.Music)
+                            exitProcess(0)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FastRewind,
+                            contentDescription ="rewind",
+                            modifier = Modifier.size(20.dp), // Adjust the size of the icon
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
 
-                    Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically) {
-                        ElevatedButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(bottom = 16.dp),
-                            onClick = {
-                                musicHandler(MusicEvent.Music)
-                                exitProcess(0)
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FastRewind,
-                                contentDescription ="rewind",
-                                modifier = Modifier.size(20.dp), // Adjust the size of the icon
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
+                    ElevatedButton(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(bottom = 16.dp),
+                        onClick = {
+                            play.value = true
+                            musicHandler(MusicEvent.Music)
+                            exitProcess(0)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        Icon(
+                            imageVector = if(play.value) Icons.Default.Stop else Icons.Default.PlayArrow ,
+                            contentDescription ="play",
+                            modifier = Modifier.size(20.dp), // Adjust the size of the icon
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
 
-                        ElevatedButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(bottom = 16.dp),
-                            onClick = {
-                                play.value = true
-                                musicHandler(MusicEvent.Music)
-                                exitProcess(0)
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                        ) {
-                            Icon(
-                                imageVector = if(play.value) Icons.Default.Stop else Icons.Default.PlayArrow ,
-                                contentDescription ="play",
-                                modifier = Modifier.size(20.dp), // Adjust the size of the icon
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        ElevatedButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .padding(bottom = 16.dp),
-                            onClick = {
-                                musicHandler(MusicEvent.Music)
-                                exitProcess(0)
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FastForward,
-                                contentDescription ="forward",
-                                modifier = Modifier.size(20.dp), // Adjust the size of the icon
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
+                    ElevatedButton(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(bottom = 16.dp),
+                        onClick = {
+                            musicHandler(MusicEvent.Music)
+                            exitProcess(0)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FastForward,
+                            contentDescription ="forward",
+                            modifier = Modifier.size(20.dp), // Adjust the size of the icon
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     }
                 }
             }
         }
     }
+}
 @Composable
 fun SharePopup(popup: MutableState<Boolean>, icon: Int,shareHandler: (ShareContentEvent) -> Unit) {
     if (popup.value) {
@@ -667,7 +385,247 @@ fun BackupPopup(popup: MutableState<Boolean>,shareHandler: (ShareContentEvent) -
         }
     }
 }
-// dialogs
+
+
+// PROGRESS SCREEN
+@Composable
+fun MetricPopup(
+    selectedMetricMap: MutableList<TrainingMetricType>?,
+    popupVisible: Boolean,
+    onDismiss: () -> Unit,
+    onOptionSelected: (TrainingMetricType) -> Unit,
+    selectedMetric: TrainingMetricType
+) {
+    if (popupVisible) {
+        Dialog(
+            onDismissRequest = { onDismiss() },
+            properties = DialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = false
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 10.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    selectedMetricMap?.forEach { metric ->
+                        androidx.compose.material.Text(
+                            modifier = Modifier
+                                .clickable { onOptionSelected(metric) },
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            color = if (metric == selectedMetric) Color.Blue else Color.Black,
+                            text = metric.name
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+fun TrainingTypePopup(
+    popupVisible: Boolean,
+    onDismiss: () -> Unit,
+    onOptionSelected: (TrainingType) -> Unit,
+    selectedMetric: TrainingType
+) {
+    if (popupVisible) {
+        Dialog(
+            onDismissRequest = { onDismiss() },
+            properties = DialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = false
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 10.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    TrainingType.entries.forEach { metric ->
+                        androidx.compose.material.Text(
+                            modifier = Modifier
+                                .clickable { onOptionSelected(metric) },
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            color = if (metric == selectedMetric) Color.Blue else Color.Black,
+                            text = metric.name
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+@Composable
+fun PeriodPopup(
+    selectedPeriodMap: MutableList<PeriodMetricType>?,
+    popupVisible: Boolean,
+    onDismiss: () -> Unit,
+    onOptionSelected: (PeriodMetricType) -> Unit,
+    selectedMetric: PeriodMetricType
+) {
+    if (popupVisible) {
+        Dialog(
+            onDismissRequest = { onDismiss() },
+            properties = DialogProperties(
+                dismissOnClickOutside = true,
+                dismissOnBackPress = false
+            )
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 10.dp
+                ),
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    selectedPeriodMap?.forEach { metric ->
+                        androidx.compose.material.Text(
+                            modifier = Modifier
+                                .clickable { onOptionSelected(metric) },
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            color = if (metric == selectedMetric) Color.Blue else Color.Black,
+                            text = metric.name
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+// SHARE SCREEN
+
+@Composable
+fun DialogOption(text: String, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+        )
+    }
+}
+
+@Composable
+fun SelectContentPopup(
+    onItemClickPlan: (Plan) -> Unit,
+    onItemClickWorkout: (Workout) -> Unit,
+    onItemClickExercise: (Exercise) -> Unit,
+    showDialog: MutableState<Boolean>
+) {
+    var selectedOption by remember { mutableStateOf<String?>(null) }
+    val exercises = listOf(
+        Exercise(
+            "Exercise 1",
+            R.drawable.gi,
+            "Description 1",
+            ExerciseType.ARMS,
+            TrainingType.RUNNING
+        ),
+        Exercise(
+            "Exercise 2",
+            R.drawable.gi,
+            "Description 2",
+            ExerciseType.BACK,
+            TrainingType.STRENGTH
+        )
+    )
+
+    val workouts = listOf(
+        Workout(1, "Workout 1", exercises.toMutableList()),
+        Workout(2, "Workout 2", exercises.toMutableList())
+    )
+
+    val plans = listOf(
+        Plan(1, "Plan 1", PeriodMetricType.WEEK, workouts.toMutableList()),
+        Plan(2, "Plan 2", PeriodMetricType.MONTH, workouts.toMutableList())
+    )
+    AlertDialog(
+        onDismissRequest = { showDialog.value = false },
+        shape = RoundedCornerShape(20.dp),
+        confirmButton =
+        {
+            Button(
+                onClick = { showDialog.value = false },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                modifier = Modifier.padding(5.dp)
+            ) {
+                Text(
+                    text = "Confirm",
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        },
+        title= {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "Choose an option",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                DialogOption(text = "Show Plans") {
+                    selectedOption = "Plan"
+
+                }
+                DialogOption(text = "Show Workouts") {
+                    selectedOption = "Workout"
+
+                }
+                DialogOption(text = "Show Exercises") {
+                    selectedOption = "Exercise"
+
+                }
+            }
+        },
+    )
+
+    selectedOption?.let { option ->
+        when (option) {
+            "Plan" -> PlanDialog(items = plans, onDismiss = { selectedOption = null }, onItemClickPlan)
+            "Workout" -> WorkoutDialog(items = workouts, onDismiss = { selectedOption = null }, onItemClickWorkout)
+            "Exercise" -> ExerciseDialog(items = exercises, onDismiss = { selectedOption = null }, onItemClickExercise)
+        }
+    }
+}
+
+
 @Composable
 fun PlanDialog(items: List<Plan>, onDismiss: () -> Unit,onItemClick: (Plan) -> Unit) {
     AlertDialog(
@@ -801,74 +759,6 @@ fun ExerciseDialog(items: List<Exercise>, onDismiss: () -> Unit,onItemClick: (Ex
         shape = RoundedCornerShape(20.dp)
     )
 }
-// bars
-
-@Composable
-fun UserContentCard(title: String, icon: ImageVector, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        )    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(16.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                modifier = Modifier.size(48.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-        }
-    }
-}
-@Composable
-fun ProgressChartCard(
-    chartPreview: ProgressChartPreview,
-    onItemClick: (ProgressChartPreview) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onItemClick(chartPreview)
-            },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        ),
-        shape = RoundedCornerShape(8.dp) // Add rounded corners to the card
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = chartPreview.name,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Image(
-                painter = painterResource(id = chartPreview.imageResId),
-                contentDescription = null, // Provide a meaningful content description
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-// items
-
 @Composable
 fun ExerciseItem(exercise: Exercise, onDelete: (Exercise) -> Unit,onItemClick: (Exercise) -> Unit) {
     Card(
@@ -902,7 +792,6 @@ fun ExerciseItem(exercise: Exercise, onDelete: (Exercise) -> Unit,onItemClick: (
         }
     }
         }
-
 @Composable
 fun PlanItem(plan: Plan, onDelete: (Plan) -> Unit, onItemClick: (Plan) -> Unit) {
     Card(
@@ -965,39 +854,6 @@ fun WorkoutItem(workout: Workout, onItemClick: (Workout) -> Unit, onDelete: (Wor
                 modifier = Modifier.padding(start = 8.dp)
             ) {
                 androidx.compose.material.Icon(Icons.Default.Delete, contentDescription = "Delete Icon")
-            }
-        }
-    }
-}
-@Composable
-fun AddExerciseItem(exercise: Exercise, onAdd: (Exercise) -> Unit,isSelected: Boolean) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        onClick = { onAdd(exercise) },
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = if(isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        )
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            androidx.compose.material.Text(
-                text = exercise.name,
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.weight(1f)
-            )
-            androidx.compose.material.IconButton(
-                onClick = { onAdd(exercise) },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                androidx.compose.material.Icon(
-                    Icons.Default.Add,
-                    contentDescription = "Add Icon"
-                )
             }
         }
     }
@@ -1092,6 +948,44 @@ fun SelectPlanItem(plan: Plan,onCloseDialog: () -> Unit,onItemClick: (Plan) -> U
     }
     }
 
+
+//// CHECKED
+
+
+@Composable
+fun ProgressChartCard(
+    chartPreview: ProgressChartPreview,
+    onItemClick: (ProgressChartPreview) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onItemClick(chartPreview)
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
+            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
+        ),
+        shape = RoundedCornerShape(8.dp) // Add rounded corners to the card
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = chartPreview.name,
+                style = MaterialTheme.typography.labelMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Image(
+                painter = painterResource(id = chartPreview.imageResId),
+                contentDescription = null, // Provide a meaningful content description
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
 @Composable
 fun SocialMediaIcon(icon: Int, onClick: () -> Unit, isSelected: Boolean) {
     androidx.compose.material.IconButton(onClick = onClick) {
@@ -1142,26 +1036,6 @@ fun OptionCheckbox(
         )
     }
 }
-
-@Composable
-fun MetricRow(icon: ImageVector, label: String, value: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .padding(5.dp)
-            .fillMaxWidth()
-            .size(50.dp)
-    ) {
-        Icon(icon, contentDescription = label, modifier = Modifier.size(24.dp))
-        Text(
-            text = "$label: $value",
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
 
 @Composable
 fun TrainingOverviewChart(
@@ -1247,24 +1121,26 @@ fun SocialMediaRow(
                 modifier = Modifier.padding(20.dp)
             )
         } else if (!isLinked && !clickedApps.value.contains(icon)){
-            Button(
-                onClick = {
+            IconButton(
+                onClick =
+                {
                     clickedApps.value = clickedApps.value.toMutableList().apply { add(icon) }
                     linkHandler(LinkAppEvent.LinkApp(icon)) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                modifier = Modifier.padding(bottom = 16.dp)
+                modifier = Modifier.size(60.dp),
+                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
             ) {
-                androidx.compose.material.Icon(Icons.Default.Add, contentDescription = "Add Icon")
-                androidx.compose.material.Text("Link")
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Save Icon",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(10.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             }
         }
     }
 }
-
-//// CHECKED
 
 @Composable
 fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
@@ -1399,7 +1275,7 @@ fun TopBar(navController: NavController, message: String) {
             )
 
             LogoUser(
-                modifier = Modifier.size(60.dp)
+                modifier = Modifier.size(60.dp),R.drawable.pexels5
             ) { navController.navigate(Route.SettingsScreen.route) }
         }
     }
@@ -1447,124 +1323,6 @@ fun TopBar2(navController: NavController, message: String) {
         }
     }
 }
-
-@Composable
-fun LogoUser(modifier: Modifier, onClick: () -> Unit) {
-    Box(
-        modifier = modifier
-            .padding(8.dp)
-            .size(70.dp)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(R.drawable.pexels5),
-            contentDescription = "User Profile Image",
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(35.dp)),  // Half of the size to make it fully rounded
-            contentScale = ContentScale.Crop
-        )
-    }
-}
-
-@Composable
-fun SharingPreferencesButton(navController: NavController) {
-    IconButton(
-        onClick = { navController.navigate(Route.SettingScreen.route) },
-        modifier = Modifier.size(50.dp),
-        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.onSurface)
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Settings,
-            contentDescription = "Share Icon",
-            modifier = Modifier
-                .size(50.dp)
-                .padding(10.dp),
-            tint = MaterialTheme.colorScheme.surface
-        )
-    }
-}
-
-
-@Composable
-fun PlansPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>,onItemClick: () -> Unit) {
-    if (showPopup.value) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 40.dp)
-            .background(
-                MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(20.dp)
-            )
-    ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(40.dp)
-                ) {
-                    item {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 290.dp),
-                        horizontalArrangement = Arrangement.Center) {
-                        IconButton(onClick = { showPopup.value=false }) {
-                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
-                        }
-                    }  }
-
-                    item { Text(
-                        text = "Add Pre-Made Workout",
-                        style = MaterialTheme.typography.headlineMedium
-                    ) }
-                    item {
-                        Text(
-                        text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
-                        style = MaterialTheme.typography.bodySmall,
-                    ) }
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
-
-                    item {
-                        Button(
-                            onClick = { showPopup.value = false },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp),
-                   //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
-
-                        ) {
-                            Text(text = "USE WORKOUT BUILDER")
-                        }
-                    }
-
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
-
-
-                    item {
-                        Button(
-                            onClick = { showPopup.value=false },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp),
-                           // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
-                        ) {
-                            Text(text = "ADD PRE-MADE WORKOUT")
-                        }
-                    }
-
-                    workouts.forEach{workout ->
-                        item {
-                            GeneralCard(imageResId = R.drawable.logo, title = "Workout1", onItemClick = onItemClick)
-                        }
-
-                    }
-
-                }
-            }
-        }
-    }
-
 
 @Composable
 fun NewPlanPagePopup(showPopup : MutableState<Boolean>,  workouts: MutableList<Workout>,onItemClick: () -> Unit) {
@@ -1645,6 +1403,124 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>,  workouts: MutableList<W
 }
 
 @Composable
+fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .padding(8.dp)
+            .size(70.dp)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(res),
+            contentDescription = "User Profile Image",
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(35.dp)),  // Half of the size to make it fully rounded
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+fun SharingPreferencesButton(navController: NavController) {
+    IconButton(
+        onClick = { navController.navigate(Route.SettingScreen.route) },
+        modifier = Modifier.size(50.dp),
+        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.onSurface)
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Settings,
+            contentDescription = "Share Icon",
+            modifier = Modifier
+                .size(50.dp)
+                .padding(10.dp),
+            tint = MaterialTheme.colorScheme.surface
+        )
+    }
+}
+
+
+@Composable
+fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>, onItemClick: () -> Unit) {
+    if (showPopup.value) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 40.dp)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                RoundedCornerShape(20.dp)
+            )
+    ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(40.dp)
+                ) {
+                    item {
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 290.dp),
+                        horizontalArrangement = Arrangement.Center) {
+                        IconButton(onClick = { showPopup.value=false }) {
+                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
+                        }
+                    }  }
+
+                    item { Text(
+                        text = "Add Pre-Made Workout",
+                        style = MaterialTheme.typography.headlineMedium
+                    ) }
+                    item {
+                        Text(
+                        text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
+                        style = MaterialTheme.typography.bodySmall,
+                    ) }
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                    item {
+                        Button(
+                            onClick = { showPopup.value = false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp),
+                   //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+
+                        ) {
+                            Text(text = "USE WORKOUT BUILDER")
+                        }
+                    }
+
+                    item { Spacer(modifier = Modifier.height(10.dp)) }
+
+
+                    item {
+                        Button(
+                            onClick = { showPopup.value=false },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp),
+                           // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                        ) {
+                            Text(text = "ADD PRE-MADE WORKOUT")
+                        }
+                    }
+
+                    workouts.forEach{workout ->
+                        item {
+                            GeneralCard(imageResId = R.drawable.logo, title = "Workout1", onItemClick = onItemClick)
+                        }
+
+                    }
+
+                }
+            }
+        }
+    }
+
+
+@Composable
 fun ChoicePopup(){
     var showPopup = remember { mutableStateOf(true) }
     if (showPopup.value) {
@@ -1693,12 +1569,50 @@ fun ChoicePopup(){
 }
 
 @Composable
-fun MuscleGroupItem(imageResId: Int, title: String) {
+fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,isSelected: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .background(Color.DarkGray, RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
+            contentDescription = exercise.name,
+            modifier = Modifier.size(64.dp),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = exercise.name,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Row( modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        )  {
+            IconButton(onClick = {
+                onItemClick(exercise) }) {
+                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+
+            }
+        }
+    }
+}
+
+@Composable
+fun MuscleGroupItem(imageResId: Int, title: String,onItemClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -1717,12 +1631,13 @@ fun MuscleGroupItem(imageResId: Int, title: String) {
         )
         Row( modifier = Modifier
             .fillMaxWidth()
-            .background(Color.DarkGray, RoundedCornerShape(8.dp)),
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         )  {
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button")
+            IconButton(onClick = {
+                onItemClick() }) {
+                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
 
             }
         }
@@ -1768,7 +1683,7 @@ fun NotificationCard(
 }
 
 @Composable
-fun FeedPost() {
+fun FeedPost(gymPost: GymPost) {
     Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
 
     Column(
@@ -1784,27 +1699,37 @@ fun FeedPost() {
             horizontalArrangement = Arrangement.Start
         ) {
             // User Info Section
-            LogoUser(modifier = Modifier.size(60.dp)) {
+            LogoUser(modifier = Modifier.size(60.dp),gymPost.userResourceId) {
                 // Placeholder for user logo
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 androidx.compose.material.Text(
-                    text = "Chip Crayton",
+                    text = gymPost.username,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 androidx.compose.material.Text(
-                    text = "Today 13:13",
+                    text = gymPost.time,
                     fontSize = 14.sp,
                 )
             }
+            Spacer(modifier = Modifier.width(150.dp))
+            Image(
+                painter = painterResource(id = gymPost.randomSocialId),
+                contentDescription = "Social Icon",
+                modifier = Modifier
+                    .size(30.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
         }
         Spacer(modifier = Modifier.height(8.dp))
 
         // Image Section
         Image(
-            painter = painterResource(id = R.drawable.pexels3),
+            painter = painterResource(id = gymPost.imageResourceId),
             contentDescription = "Post Image",
             modifier = Modifier
                 .fillMaxWidth()
@@ -1816,9 +1741,7 @@ fun FeedPost() {
 
         // Text Content Section
         androidx.compose.material.Text(
-            text = "Good morning Fit-Family. Happy Sunday to you and your families. " +
-                    "I hope you have the best day and the most amazing week ahead. " +
-                    "I love you and stay blessed 🏋🏽‍♂️🤸🏽‍♀️🏋🏽‍♀️🤸🏽‍♂️, now let’s get MOVING 😁😁😃😄🙂😊😌🤗👍🏽👏🏽👊🏽✊🏽✌🏽🙏🏽",
+            text = gymPost.caption,
             fontSize = 16.sp,
             modifier = Modifier.padding(vertical = 8.dp)
         )
@@ -1841,7 +1764,7 @@ fun FeedPost() {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 androidx.compose.material.Text(
-                    text = "123 Likes",
+                    text = gymPost.likes,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -1857,7 +1780,7 @@ fun FeedPost() {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 androidx.compose.material.Text(
-                    text = "25 Comments",
+                    text = gymPost.comment,
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onBackground
                 )
@@ -2083,5 +2006,89 @@ fun ExerciseGif(exercise: Exercise,onClick: (Exercise) -> Unit) {
             .graphicsLayer {
                 // Add any additional transformations or animations if needed
             },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(
+    searchQuery: MutableState<String>,
+    allExercises: List<Exercise>?,
+    searchedExercises: MutableList<Exercise>?
+) {
+    TextField(
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = Color.DarkGray,
+            focusedTextColor = MaterialTheme.colorScheme.surface,
+            cursorColor = MaterialTheme.colorScheme.surface,
+            focusedIndicatorColor =  MaterialTheme.colorScheme.surface,
+            unfocusedIndicatorColor =  MaterialTheme.colorScheme.surface,
+            focusedLabelColor = MaterialTheme.colorScheme.surface, // Focused label color
+            unfocusedLabelColor = MaterialTheme.colorScheme.surface // Unfocused label color
+        ),
+        value = searchQuery.value,
+        onValueChange = { query ->
+            searchQuery.value = query
+            searchedExercises?.clear()
+            allExercises?.filter {
+                it.name.contains(query, ignoreCase = true)
+            }?.let { searchedExercises?.addAll(it) }
+        },
+        label = { Text("Search Exercise") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp, top = 16.dp)
+            .clip(RoundedCornerShape(20.dp)),
+        leadingIcon = {
+            Icon(Icons.Default.Search, contentDescription = "Search Icon", tint = MaterialTheme.colorScheme.surface)
+        }
+    )
+}
+
+
+@Composable
+fun FeedbackAlertDialog(
+    title: String,
+    message: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit,
+    confirmButtonText: String,
+    dismissButtonText: String
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        },
+        text = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        },
+        confirmButton = {
+            Button(onClick = onConfirm) {
+                Text(
+                    text = confirmButtonText,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(
+                    text = dismissButtonText,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        shape = RoundedCornerShape(20.dp),
     )
 }

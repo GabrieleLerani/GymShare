@@ -21,6 +21,7 @@ import com.project.gains.presentation.onboarding.OnBoardingViewModel
 import com.project.gains.presentation.settings.SettingsScreen
 import com.project.gains.presentation.settings.SettingsViewModel
 import com.project.gains.presentation.MainViewModel
+import com.project.gains.presentation.TypedExerciseScreen
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
@@ -28,7 +29,6 @@ import com.project.gains.presentation.progress.ProgressDetailsScreen
 import com.project.gains.presentation.progress.ProgressScreen
 import com.project.gains.presentation.settings.SettingScreen
 import com.project.gains.presentation.share.ShareScreen
-import com.project.gains.presentation.workout.AddExerciseScreen
 import com.project.gains.presentation.workout.SessionScreen
 import com.project.gains.presentation.workout.WorkoutScreen
 
@@ -80,18 +80,7 @@ fun NavGraph(
                 route = Route.SessionScreen.route
             ) {
                 // set screen as the node state
-                SessionScreen(
-                )
-            }
-            composable(
-                route = Route.AddExerciseScreenScreen.route
-            ) {
-                // set screen as the node state
-                AddExerciseScreen(
-                    navController = navController,
-                    createHandler = generalViewModel::onCreateEvent,
-                    deleteHandler = generalViewModel::onDeleteEvent,
-                    generalViewModel = generalViewModel
+                SessionScreen(navController
                 )
             }
             composable(
@@ -143,8 +132,14 @@ fun NavGraph(
                 route = Route.ExerciseTypeScreen.route
             ) {
                 // set screen as the node state
-                ExerciseTypeScreen()
+                ExerciseTypeScreen(navController,generalViewModel::onSelectEvent)
             }
+            composable(
+                route = Route.TypedExerciseScreen.route
+            ) {
+                // set screen as the node state
+                TypedExerciseScreen(navController = navController, selectHandler = generalViewModel::onSelectEvent, deleteHandler = generalViewModel::onDeleteEvent,
+                    createHandler = generalViewModel::onCreateEvent, generalViewModel = generalViewModel)            }
             composable(
                 route = Route.ShareScreen.route
             ) {

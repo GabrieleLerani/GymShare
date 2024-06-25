@@ -3,6 +3,7 @@ package com.project.gains.presentation.workout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
@@ -25,7 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
+import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 
 import com.project.gains.theme.GainsAppTheme
@@ -34,7 +39,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SessionScreen() {
+fun SessionScreen(navController:NavController) {
     // State for the timer
     var timerState by remember { mutableStateOf(0) }
     var isTimerRunning by remember { mutableStateOf(false) }
@@ -54,122 +59,157 @@ fun SessionScreen() {
     val seconds = timerState % 60
     val formattedTime = String.format("%02d:%02d", minutes, seconds)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .padding(16.dp)
-    ) {
-        // Top App Bar
-        TopAppBar(
-            title = { Text("1/12 Arms") },
-            navigationIcon = {
-                IconButton(onClick = { /* handle back */ }) {
-                    Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = "Back")
-                }
-            },
-            actions = {
-                Text(
-                    text = "12:21",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    modifier = Modifier.padding(end = 16.dp)
+    GainsAppTheme {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("1/12 Arms") },
+                    navigationIcon = {
+                        IconButton(onClick = {navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBackIosNew,
+                                contentDescription = "Back"
+                            )
+                        }
+                    },
+                    actions = {
+                        Text(
+                            text = "12:21",
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                    },
                 )
             },
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Exercise Image (Animated GIF)
-        Image(
-            painter = painterResource(id = R.drawable.exercise2), // Ensure this is a GIF resource
-            contentDescription = "Curl",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Exercise Title
-        Text(
-            text = "Curl",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        // Exercise Details
-        Text(
-            text = "Recommended time: 8 min, 110 - 140 bpm",
-            color = Color.White,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Counters Section
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Repetitions Counter
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("8", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text("Repeats required", color = Color.Gray, fontSize = 12.sp)
-            }
-
-            // Dynamic Counter for Minutes
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(formattedTime, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text("Minutes made", color = Color.Gray, fontSize = 12.sp)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Action Row (Start/Stop Button)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    isTimerRunning = !isTimerRunning
-                },
-                modifier = Modifier.padding(bottom = 16.dp)
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(MaterialTheme.colorScheme.onSurface)
             ) {
-                if (isTimerRunning){
-                    Icon(imageVector = Icons.Default.Stop, contentDescription = "Stop", modifier = Modifier.size(60.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.Center
 
-                }else{
-                    Icon(imageVector = Icons.Default.PlayArrow, contentDescription = "Start",modifier = Modifier.size(60.dp))
+                ) {
+                    item {
 
+                            // Exercise Image (Animated GIF)
+                            Image(
+                                painter = painterResource(id = R.drawable.legs), // Ensure this is a GIF resource
+                                contentDescription = "Curl",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .height(200.dp)
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(16.dp))
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Exercise Title
+                            Text(
+                                text = "Curl",
+                                color = Color.White,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            // Exercise Details
+                            Text(
+                                text = "Recommended time: 8 min, 110 - 140 bpm",
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Counters Section
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Repetitions Counter
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        "8",
+                                        color = Color.White,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text("Repeats required", color = Color.Gray, fontSize = 12.sp)
+                                }
+
+                                // Dynamic Counter for Minutes
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text(
+                                        formattedTime,
+                                        color = Color.White,
+                                        fontSize = 18.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text("Minutes made", color = Color.Gray, fontSize = 12.sp)
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Action Row (Start/Stop Button)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Button(
+                                    onClick = {
+                                        isTimerRunning = !isTimerRunning
+                                    },
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                ) {
+                                    if (isTimerRunning) {
+                                        Icon(
+                                            imageVector = Icons.Default.Stop,
+                                            contentDescription = "Stop",
+                                            modifier = Modifier.size(60.dp)
+                                        )
+
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.PlayArrow,
+                                            contentDescription = "Start",
+                                            modifier = Modifier.size(60.dp)
+                                        )
+
+                                    }
+                                }
+                            }
+
+                            // Spacer between button and error cards
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Error Warning Section
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                WarningCard(message = "Keep your back straight.")
+                                WarningCard(message = "Avoid locking your elbows.")
+                                WarningCard(message = "Maintain a consistent speed.")
+                            }
+                        }
+                    }
                 }
             }
         }
-
-        // Spacer between button and error cards
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Error Warning Section
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            WarningCard(message = "Keep your back straight.")
-            WarningCard(message = "Avoid locking your elbows.")
-            WarningCard(message = "Maintain a consistent speed.")
-        }
     }
-}
 
 
 
@@ -177,6 +217,6 @@ fun SessionScreen() {
 @Composable
 fun DefaultPreview() {
     GainsAppTheme {
-        SessionScreen()
+        SessionScreen(rememberNavController())
     }
 }

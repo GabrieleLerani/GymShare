@@ -13,11 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 
@@ -40,7 +39,8 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.BottomNavigationBar
-import com.project.gains.presentation.components.PlansPagePopup
+import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.PlanPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WorkoutDaysList
 import com.project.gains.presentation.components.WorkoutHeader
@@ -63,6 +63,10 @@ fun PlanScreen(
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
     var showPopup = remember { mutableStateOf(false) }
     val workouts by generalViewModel.workouts.observeAsState()
+    var showDialogShared = remember { mutableStateOf(false) }
+    var showDialog = remember { mutableStateOf(false) }
+
+
 
 
     GainsAppTheme {
@@ -94,10 +98,9 @@ fun PlanScreen(
                              WorkoutHeader()
                              Spacer(modifier = Modifier.height(16.dp))
                              WorkoutDaysList{
-                                 navController.navigate(Route.ExerciseTypeScreen.route)
+                                 navController.navigate(Route.WorkoutScreen.route)
                              }
                          }}
-// to every page
                         item {
                             Row(
                             modifier = Modifier
@@ -105,8 +108,23 @@ fun PlanScreen(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            BackButton {
-                                navController.popBackStack()
+                            IconButton(
+                                onClick = {
+                                    showDialog.value=true
+                                    showDialogShared.value = true
+
+                                },
+                                modifier = Modifier.size(60.dp),
+                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.Send,
+                                    contentDescription = "New Plan icon",
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .padding(10.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
                             }
                             Spacer(modifier = Modifier.width(20.dp))
                             IconButton(
@@ -118,7 +136,7 @@ fun PlanScreen(
                             ) {
                                 androidx.compose.material3.Icon(
                                     imageVector = Icons.Default.Add,
-                                    contentDescription = "Share Icon",
+                                    contentDescription = "New Plan icon",
                                     modifier = Modifier
                                         .size(60.dp)
                                         .padding(10.dp),
@@ -126,13 +144,37 @@ fun PlanScreen(
                                 )
                             }
                         } }
+                        item {  if (showDialog.value) {
+                            FeedbackAlertDialog(
+                                title = "Select a social",
+                                message = "",
+                                onDismissRequest = { showDialog.value = false },
+                                onConfirm = { showDialog.value = false
+                                    showDialogShared.value=true
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        } }
+                        item {  if (showDialogShared.value) {
+                            FeedbackAlertDialog(
+                                title = "",
+                                message = "You have successfully Shared your content!",
+                                onDismissRequest = { showDialogShared.value = false },
+                                onConfirm = { showDialogShared.value = false
+                                    navController.navigate(Route.HomeScreen.route)
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        } }
 
                     }
                 }
             }
         // Page popups
 
-        workouts?.let { PlansPagePopup(showPopup, it,{}) }
+        workouts?.let { PlanPagePopup(showPopup, it,{}) }
         }
     }
 

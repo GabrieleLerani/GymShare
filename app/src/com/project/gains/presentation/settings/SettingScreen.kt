@@ -2,6 +2,7 @@ package com.project.gains.presentation.settings
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -18,9 +21,14 @@ import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -53,6 +61,7 @@ import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
 
 import com.project.gains.presentation.components.SocialMediaRow
+import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import com.project.gains.presentation.navgraph.Route
@@ -86,87 +95,89 @@ fun SettingScreen(
 
     GainsAppTheme {
         Scaffold(
-            bottomBar = { BottomNavigationBar(navController = navController) }
+            topBar = {
+                TopBar(
+                    navController = navController,
+                    message = "Sharing Setting"
+                )
+            },
         ) { paddingValues ->
-            Surface(
-                color = MaterialTheme.colorScheme.background,
-                modifier = Modifier.padding(paddingValues)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp)
+                        .padding(bottom = 50.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BackButton(
-                            onClick = { navController.popBackStack() }
-                        )
-                        Spacer(modifier = Modifier.width(20.dp))
+                    item {
+                        icons.forEach { icon ->
+                            SocialMediaRow(
+                                icon = icon,
+                                isLinked = linkedApps?.contains(icon) == true,
+                                linkHandler = linkHandler,
+                                clickedApps = clickedApps
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
 
-                        Text(
-                            text = "Sharing Options",
-                            style = MaterialTheme.typography.displayLarge.copy( // Using a smaller typography style
-                                fontWeight = FontWeight.Bold,
-                                shadow = Shadow(
-                                    color = Color.Black,
-                                    offset = Offset(4f, 4f),
-                                    blurRadius = 8f
-                                )
-                            ),
-                            fontSize = 25.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(bottom = 0.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(50.dp))
+                        }
 
-                    icons.forEach { icon ->
-                        SocialMediaRow(
-                            icon = icon,
-                            isLinked = linkedApps?.contains(icon) == true,
-                            linkHandler = linkHandler,
-                            clickedApps=clickedApps
-                        )
-                    }
+                        Spacer(modifier = Modifier.height(30.dp))
 
-                    Spacer(modifier = Modifier.height(30.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Button(
-                            onClick = {
-                                showDialog.value=true
-                                saveLinkHandler(SaveSharingPreferencesEvent.SaveSharingPreferences(linkedApps ?: mutableListOf())) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                            ),
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(Icons.Default.Done, contentDescription = "Add Icon")
-                            Text("Save")
+                        if (showDialog.value) {
+                            FeedbackAlertDialog(
+                                title = "",
+                                message = "You have successfully updated your sharing preferences!",
+                                onDismissRequest = { showDialog.value = false },
+                                onConfirm = {
+                                    showDialog.value = false
+                                    navController.navigate(Route.HomeScreen.route)
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
                         }
                     }
-                    if (showDialog.value) {
-                        FeedbackAlertDialog(
-                            title = "",
-                            message = "You have successfully updated your sharing preferences!",
-                            onDismissRequest = { showDialog.value = false },
-                            onConfirm = { showDialog.value = false
-                                navController.navigate(Route.HomeScreen.route)
-                                        },
-                            confirmButtonText = "Ok",
-                            dismissButtonText = ""
-                        )
-                    }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            BackButton {
+                                navController.popBackStack()
+                            }
+                            Spacer(modifier = Modifier.width(20.dp))
+                            IconButton(
+                                onClick =
+                                    {
+                                        showDialog.value = true
+                                        saveLinkHandler(
+                                            SaveSharingPreferencesEvent.SaveSharingPreferences(
+                                                linkedApps ?: mutableListOf()
+                                            )
+                                        )
+                                    },
+                                modifier = Modifier.size(60.dp),
+                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Save Icon",
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .padding(10.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        } }
                 }
+
             }
         }
     }

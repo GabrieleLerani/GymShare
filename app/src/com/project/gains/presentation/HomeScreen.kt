@@ -51,13 +51,11 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
-import com.project.gains.data.MuscleGroup
 import com.project.gains.data.TrainingType
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.ExerciseGif
 import com.project.gains.presentation.components.GeneralCard
-import com.project.gains.presentation.components.UserContentCard
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.SelectEvent
 

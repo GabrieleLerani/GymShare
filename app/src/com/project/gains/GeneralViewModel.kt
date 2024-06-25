@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.Exercise
+import com.project.gains.data.ExerciseType
 import com.project.gains.data.GymPost
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.Plan
@@ -16,7 +17,6 @@ import com.project.gains.data.TrainingMetricType
 
 import com.project.gains.data.Workout
 import com.project.gains.data.generateRandomGymPost
-import com.project.gains.data.generateRandomPlan
 import com.project.gains.data.generateRandomPlots
 import com.project.gains.data.generateRandomSongTitle
 import com.project.gains.data.generateSampleExercises
@@ -66,6 +66,9 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _selectedExercise = MutableLiveData<Exercise>()
     val selectedExercise: MutableLiveData<Exercise> = _selectedExercise
 
+    private val _selectedExerciseType = MutableLiveData<ExerciseType>()
+    val selectedExerciseType: MutableLiveData<ExerciseType> = _selectedExerciseType
+
     private val _oldExercise = MutableLiveData<Exercise>()
     val oldExercise: MutableLiveData<Exercise> = _oldExercise
 
@@ -107,7 +110,7 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
         Log.d("LOAD","FETCHING DATA FROM DB")
         _plans.value = generateSamplePlans()
         _workouts.value = generateSampleWorkouts()
-        _exercises.value = generateSampleExercises()
+        _exercises.value = generateSampleExercises(ExerciseType.ARMS,R.drawable.arms)
         _plots.value = generateRandomPlots()
         _posts.value = generateRandomGymPost(10).toMutableList()
         _currentSessions.value = mutableListOf()
@@ -201,7 +204,9 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
                     PeriodMetricType.YEAR -> 192
                     PeriodMetricType.MONTH -> 16
                 }
-                val workouts = generateRandomPlan(event.selectedTrainingType,event.selectedExerciseType.toMutableList(),num,6)
+//                val workouts = generateRandomPlan(event.selectedTrainingType,event.selectedExerciseType.toMutableList(),num,6)
+                val workouts = generateSampleWorkouts()
+
                 val options_selected = event.selectedOptions
                 Log.d("PLAN","THESE ARE YOUR OPTIONS: $options_selected")
                 generateSamplePlans()
@@ -268,6 +273,9 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
                 _selectedPlotPreview.value = event.preview
             }
 
+            is SelectEvent.SelectExerciseType -> {
+                _selectedExerciseType.value = event.exerciseType
+            }
             is SelectEvent.SelectLinkedApp -> {
                 _selectedApp.value = event.app
             }

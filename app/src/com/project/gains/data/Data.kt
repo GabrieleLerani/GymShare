@@ -3,7 +3,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
@@ -25,13 +24,6 @@ enum class TrainingType {
 }
 
 enum class ExerciseType {
-    CARDIO,
-    STRENGTH,
-    FLEXIBILITY,
-    BALANCE
-}
-
-enum class MuscleGroup {
     CHEST,
     BACK,
     LEGS,
@@ -52,8 +44,7 @@ data class Exercise(
     val gifResId: Int?,  // Nullable Integer for resource ID
     val description: String,
     val type: ExerciseType,
-    val training: TrainingType,
-    val muscle: MuscleGroup
+    val training: TrainingType
 )
 data class Plan(
     val id: Int,
@@ -82,9 +73,14 @@ data class UserProfileBundle(
 
 data class GymPost(
     val id: String,
+    val userResourceId: Int,
     val imageResourceId: Int, // Resource ID of the image
     val username: String,
     val randomSocialId: Int,
+    val caption: String,
+    val time:String,
+    val likes : String,
+    val comment:String
     // Add other necessary properties
 )
 
@@ -110,61 +106,49 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
 
 // init data and functions
 
-fun generateSampleExercises(): MutableList<Exercise> {
+fun generateSampleExercises(exerciseType: ExerciseType,res:Int): MutableList<Exercise> {
     return mutableListOf(
-        Exercise("Exercise 1", description = "Exercise: Dumbbell Bicep Curl\n" +
-                "Execution:\n" +
-                "1. Stand upright with a dumbbell in each hand, arms fully extended by your sides, palms facing forward.\n" +
-                "2. Keep your elbows close to your torso and engage your core for stability.\n" +
-                "3. Begin the movement by flexing your elbows, curling the dumbbells towards your shoulders while keeping your upper arms stationary.\n" +
-                "4. Continue to curl until the dumbbells are at shoulder level, and your biceps are fully contracted.\n" +
-                "5. Hold the contracted position for a moment, then slowly lower the dumbbells back to the starting position with control.\n" +
-                "6. Repeat for the desired number of repetitions.\n" +
-                "\n" +
-                "Tips:\n" +
-                "- Use a controlled motion throughout the exercise, avoiding swinging or momentum.\n" +
-                "- Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists.\n" +
-                "- Focus on squeezing the biceps at the top of the movement to maximize muscle engagement.\n" +
-                "- Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing.\n" +
-                "- Choose an appropriate weight that allows you to perform the exercise with proper form and control.\n", gifResId = R.drawable.pexels5,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
+        Exercise(
+            "Exercise 1", gifResId = res, description = "Exercise: Dumbbell Bicep Curl\n" +
+                    "Execution:\n" +
+                    "1. Stand upright with a dumbbell in each hand, arms fully extended by your sides, palms facing forward.\n" +
+                    "2. Keep your elbows close to your torso and engage your core for stability.\n" +
+                    "3. Begin the movement by flexing your elbows, curling the dumbbells towards your shoulders while keeping your upper arms stationary.\n" +
+                    "4. Continue to curl until the dumbbells are at shoulder level, and your biceps are fully contracted.\n" +
+                    "5. Hold the contracted position for a moment, then slowly lower the dumbbells back to the starting position with control.\n" +
+                    "6. Repeat for the desired number of repetitions.\n" +
+                    "\n" +
+                    "Tips:\n" +
+                    "- Use a controlled motion throughout the exercise, avoiding swinging or momentum.\n" +
+                    "- Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists.\n" +
+                    "- Focus on squeezing the biceps at the top of the movement to maximize muscle engagement.\n" +
+                    "- Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing.\n" +
+                    "- Choose an appropriate weight that allows you to perform the exercise with proper form and control.\n",
+            type = exerciseType, training = TrainingType.STRENGTH
         ),
-        Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
+        Exercise(
+            "Exercise 2", gifResId = res, description = "Exercise 2",
+            type = exerciseType, training = TrainingType.STRENGTH
         ),
-        Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
+        Exercise(
+            "Exercise 3", gifResId = res, description = "Exercise 3",
+            type = exerciseType, training = TrainingType.STRENGTH
         ),
-        Exercise("Exercise 4", description = "Exercise 4", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
+        Exercise(
+            "Exercise 4", gifResId = res, description = "Exercise 4",
+            type = exerciseType, training = TrainingType.STRENGTH
         ),
-        Exercise("Exercise 5", description = "Exercise 5", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
+        Exercise(
+            "Exercise 5", gifResId = res, description = "Exercise 5",
+            type = exerciseType, training = TrainingType.STRENGTH
         ),
-        Exercise("Exercise 6", description = "Exercise 6", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
+        Exercise(
+            "Exercise 6", gifResId = res, description = "Exercise 6",
+            type = exerciseType, training = TrainingType.STRENGTH
         ),
-        Exercise("Exercise 7", description = "Exercise 7", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
-        ),
-        Exercise("Exercise 8", description = "Exercise 8", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
-        ),
-        Exercise("Exercise 9", description = "Exercise 9", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
-        ),
-        Exercise("Exercise 10", description = "Exercise 10", gifResId = null,
-            type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-            training = TrainingType.STRENGTH
+        Exercise(
+            "Exercise 7", gifResId = res, description = "Exercise 7",
+            type = exerciseType, training = TrainingType.STRENGTH
         ),
 
         )
@@ -176,17 +160,17 @@ fun generateSampleWorkouts(): MutableList<Workout> {
             id = 1,
             name = "Workout 1",
             exercises = mutableListOf(
-                Exercise("Exercise 1", description = "Exercise 1", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 1", gifResId = R.drawable.arms, description = "Exercise 1",
+                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 2", gifResId = R.drawable.arms2, description = "Exercise 2",
+                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 3", gifResId = R.drawable.arms3, description = "Exercise 3",
+                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH
                 ),
             )
         ),
@@ -194,34 +178,34 @@ fun generateSampleWorkouts(): MutableList<Workout> {
             id = 1,
             name = "Workout 2",
             exercises = mutableListOf(
-                Exercise("Exercise 1", description = "Exercise 1", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 1", gifResId = R.drawable.legs, description = "Exercise 1",
+                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 2", gifResId = R.drawable.legs2, description = "Exercise 2",
+                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 3", gifResId = R.drawable.legs3, description = "Exercise 3",
+                    type =ExerciseType.LEGS, training = TrainingType.STRENGTH
                 ),
             )
         ),  Workout(
             id = 1,
             name = "Workout 3",
             exercises = mutableListOf(
-                Exercise("Exercise 1", description = "Exercise 1", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 1", gifResId = R.drawable.chest, description = "Exercise 1",
+                    type = ExerciseType.CHEST, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 2", gifResId = R.drawable.chest2, description = "Exercise 2",
+                    type = ExerciseType.CHEST, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 3", gifResId = R.drawable.chest3, description = "Exercise 3",
+                    type = ExerciseType.CHEST, training = TrainingType.STRENGTH
                 ),
             )
         ),
@@ -229,17 +213,17 @@ fun generateSampleWorkouts(): MutableList<Workout> {
             id = 1,
             name = "Workout 4",
             exercises = mutableListOf(
-                Exercise("Exercise 1", description = "Exercise 1", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 1", gifResId = R.drawable.backk, description = "Exercise 1",
+                    type = ExerciseType.BACK, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 2", gifResId = R.drawable.back2, description = "Exercise 2",
+                    type = ExerciseType.BACK, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 3", gifResId = R.drawable.back4, description = "Exercise 3",
+                    type = ExerciseType.BACK, training = TrainingType.STRENGTH
                 ),
             )
         ),
@@ -247,53 +231,17 @@ fun generateSampleWorkouts(): MutableList<Workout> {
             id = 1,
             name = "Workout 5",
             exercises = mutableListOf(
-                Exercise("Exercise 1", description = "Exercise 1", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 1", gifResId = R.drawable.shoulders, description = "Exercise 1",
+                    type = ExerciseType.SHOULDERS, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 2", gifResId = R.drawable.shoulders2, description = "Exercise 1",
+                    type = ExerciseType.SHOULDERS, training = TrainingType.STRENGTH
                 ),
-                Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
-                ),
-            )
-        ),
-        Workout(
-            id = 1,
-            name = "Workout 6",
-            exercises = mutableListOf(
-                Exercise("Exercise 1", description = "Exercise 1", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
-                ),
-                Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
-                ),
-                Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
-                ),
-            )
-        ),
-        Workout(
-            id = 1,
-            name = "Workout 7",
-            exercises = mutableListOf(
-                Exercise("Exercise 1", description = "Exercise 1", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
-                ),
-                Exercise("Exercise 2", description = "Exercise 2", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
-                ),
-                Exercise("Exercise 3", description = "Exercise 3", gifResId = null,
-                    type = ExerciseType.STRENGTH, muscle = MuscleGroup.ARMS,
-                    training = TrainingType.STRENGTH
+                Exercise(
+                    "Exercise 3", gifResId = R.drawable.shoulders2, description = "Exercise 1",
+                    type = ExerciseType.SHOULDERS, training = TrainingType.STRENGTH
                 ),
             )
         ),
@@ -304,10 +252,11 @@ fun generateOptions(): List<Option> {
     return listOf(
         Option("MUSIC"),
         Option("BACKUP") ,
-        Option(ExerciseType.STRENGTH.toString()),
-        Option(ExerciseType.FLEXIBILITY.toString()),
-        Option(ExerciseType.CARDIO.toString()),
-        Option(ExerciseType.BALANCE.toString()),
+        Option(TrainingType.STRENGTH.toString()),
+        Option(TrainingType.PILATES.toString()),
+        Option(TrainingType.RUNNING.toString()),
+        Option(TrainingType.CROSSFIT.toString()),
+        Option(TrainingType.CALISTHENICS.toString()),
         Option(TrainingMetricType.BPM.toString()),
         Option(TrainingMetricType.KCAL.toString()),
         Option(TrainingMetricType.INTENSITY.toString()),
@@ -338,9 +287,11 @@ fun generateRandomGymPost(count: Int): List<GymPost> {
     val posts = mutableListOf<GymPost>()
     val usernames = listOf("user1", "user2", "user3", "user4", "user5")
     val imageResourceIds = listOf(
-        R.drawable.logo,
-        R.drawable.logo,
-        R.drawable.logo
+        R.drawable.pexels1,
+        R.drawable.pexels4,
+        R.drawable.pexels3,
+        R.drawable.pexels2
+
     )
     val socialResourceIconsIds = listOf(
         R.drawable.facebook_icon,
@@ -349,12 +300,24 @@ fun generateRandomGymPost(count: Int): List<GymPost> {
         R.drawable.x_logo_icon
     )
 
+    val userResourceIconsIds = listOf(
+        R.drawable.pexels1,
+        R.drawable.pexels2,
+        R.drawable.pexels3,
+        R.drawable.pexels4,
+        R.drawable.pexels5
+    )
+
+
     repeat(count) {
         val randomUsername = usernames.random()
+        val randomUserImageResourceId = userResourceIconsIds.random()
         val randomImageResourceId = imageResourceIds.random()
         val randomSocialId = socialResourceIconsIds.random()
         val postId = "post_$it"
-        val post = GymPost(postId, randomImageResourceId, randomUsername, randomSocialId)
+        val post = GymPost(postId, randomUserImageResourceId,randomImageResourceId, randomUsername, randomSocialId, "Good morning Fit-Family. Happy Sunday to you and your families. " +
+                "I hope you have the best day and the most amazing week ahead. " +
+                "I love you and stay blessed 🏋🏽‍♂️🤸🏽‍♀️🏋🏽‍♀️🤸🏽‍♂️, now let’s get MOVING 😁😁😃😄🙂😊😌🤗👍🏽👏🏽👊🏽✊🏽✌🏽🙏🏽","Today 13:13","125 Likes","25 Comments")
         posts.add(post)
     }
 
@@ -377,9 +340,43 @@ val bottomNavItems = listOf(
     BottomNavItem.Progress
 )
 
+fun generateRandomTrainingData(months: Int): List<TrainingData> {
+    val metrics = listOf(TrainingMetricType.DURATION, TrainingMetricType.INTENSITY, TrainingMetricType.DISTANCE)
+    return List(months) {
+        TrainingData(
+            type = metrics.random(),
+            value = (1..10).random()
+        )
+    }
+}
+
+// Function to generate a random Plot object
+fun generateRandomPlot(): Plot {
+    val names = mutableListOf(PeriodMetricType.WEEK.toString(),PeriodMetricType.MONTH.toString(),PeriodMetricType.YEAR.toString())
+    // List of drawable resource IDs
+    val drawableResources = listOf(
+        R.drawable.plo1,
+        R.drawable.plot2,
+        R.drawable.plot3,
+    )
+
+    val preview = ProgressChartPreview(
+        name = names.random(),
+        imageResId = drawableResources.random()  // Assuming drawable resources are in the range 1 to 100
+    )
+
+    val trainingData = generateRandomTrainingData(4)
+
+    return Plot(preview, trainingData)
+}
+
+// Function to generate a list of random Plot objects
+fun generateRandomPlots(): MutableList<Plot> {
+    return MutableList(2) { generateRandomPlot() }
+}
 
 
-fun generateRandomPlan(
+/*fun generateRandomPlan(
     trainingType: TrainingType,
     exerciseType: MutableList<ExerciseType>,
     numberOfWorkouts: Int,
@@ -398,10 +395,9 @@ fun generateRandomPlan(
             exercises.add(
                 Exercise(
                     name = exerciseName ?: "Unknown",
+                    gifResId = R.drawable.gi,
                     description = "$exerciseType exercise targeting $muscleGroup",
                     type = exerciseType.random(),
-                    gifResId = R.drawable.gi,
-                    muscle = muscleGroup,
                     training = trainingType
                 )
             )
@@ -441,8 +437,9 @@ val runningExercises = mapOf(
             MuscleGroup.SHOULDERS to listOf("Overhead Reach and Balance", "Yoga Tree Pose", "Pilates Side Leg Lift")
         )
     )
-)
+)*/
 
+/*
 val strengthExercises = mapOf(
     TrainingType.STRENGTH to mapOf(
         ExerciseType.CARDIO to listOf(
@@ -563,42 +560,7 @@ val trainingTypeExercises = mapOf(
     TrainingType.CALISTHENICS to calisthenicsExercises,
     TrainingType.CROSSFIT to crossfitExercises
 )
-
-fun generateRandomTrainingData(months: Int): List<TrainingData> {
-    val metrics = listOf(TrainingMetricType.DURATION, TrainingMetricType.INTENSITY, TrainingMetricType.DISTANCE)
-    return List(months) {
-        TrainingData(
-            type = metrics.random(),
-            value = (1..10).random()
-        )
-    }
-}
-
-// Function to generate a random Plot object
-fun generateRandomPlot(): Plot {
-    val names = mutableListOf(PeriodMetricType.WEEK.toString(),PeriodMetricType.MONTH.toString(),PeriodMetricType.YEAR.toString())
-    // List of drawable resource IDs
-    val drawableResources = listOf(
-        R.drawable.plo1,
-        R.drawable.plot2,
-        R.drawable.plot3,
-    )
-
-    val preview = ProgressChartPreview(
-        name = names.random(),
-        imageResId = drawableResources.random()  // Assuming drawable resources are in the range 1 to 100
-    )
-
-    val trainingData = generateRandomTrainingData(4)
-
-    return Plot(preview, trainingData)
-}
-
-// Function to generate a list of random Plot objects
-fun generateRandomPlots(): MutableList<Plot> {
-    return MutableList(2) { generateRandomPlot() }
-}
-
+*/
 
 
 

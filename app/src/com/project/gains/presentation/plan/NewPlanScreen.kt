@@ -14,15 +14,12 @@ import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -40,7 +37,6 @@ import androidx.compose.ui.unit.dp
 
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.data.ExerciseType
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingMetricType
@@ -71,7 +67,7 @@ fun NewPlanScreen(
     var popupVisible by remember { mutableStateOf(false) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
     var selectedTraining by remember { mutableStateOf(TrainingType.STRENGTH) }
-    val selectedExerciseTypes = remember { mutableStateListOf<ExerciseType>() } // List to store selected options
+    val selectedExerciseTypes = remember { mutableStateListOf<TrainingType>() } // List to store selected options
     val selectedMetrics = remember { mutableStateListOf<TrainingMetricType>() } // List to store selected options
     val selectedMusic = remember { mutableStateOf(false) } // List to store selected options
     val selectedBackup = remember { mutableStateOf(false) } // List to store selected options
@@ -154,7 +150,7 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[2],
                             onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(ExerciseType.STRENGTH)
+                                selectedExerciseTypes.add(TrainingType.STRENGTH)
                                 onOptionSelected(
                                     options[2],
                                     isChecked
@@ -166,7 +162,7 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[3],
                             onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(ExerciseType.FLEXIBILITY)
+                                selectedExerciseTypes.add(TrainingType.CALISTHENICS)
 
                                 onOptionSelected(
                                     options[3],
@@ -179,7 +175,7 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[4],
                             onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(ExerciseType.CARDIO)
+                                selectedExerciseTypes.add(TrainingType.RUNNING)
 
                                 onOptionSelected(
                                     options[4],
@@ -192,7 +188,7 @@ fun NewPlanScreen(
                         OptionCheckbox(
                             option = allOptions[5],
                             onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(ExerciseType.BALANCE)
+                                selectedExerciseTypes.add(TrainingType.CROSSFIT)
 
                                 onOptionSelected(
                                     options[5],

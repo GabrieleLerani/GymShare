@@ -1,48 +1,90 @@
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
+import com.project.gains.data.ExerciseType
+import com.project.gains.presentation.components.BackButton
+import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.MuscleGroupItem
+import com.project.gains.presentation.components.PlanPagePopup
+import com.project.gains.presentation.components.TopBar
+import com.project.gains.presentation.components.WorkoutDaysList
+import com.project.gains.presentation.components.WorkoutHeader
+import com.project.gains.presentation.events.SelectEvent
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
 
 
 @Composable
-fun ExerciseTypeScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Exercises",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        MuscleGroupItem(imageResId = R.drawable.chest2, title = "Chest")
-        MuscleGroupItem(imageResId = R.drawable.back2, title = "Back")
-        MuscleGroupItem(imageResId = R.drawable.legs, title = "Legs")
-        MuscleGroupItem(imageResId = R.drawable.legs2, title = "Gluteus")
-        MuscleGroupItem(imageResId = R.drawable.legs3, title = "Deltoids")
+fun ExerciseTypeScreen(navController:NavController,selectHandler: (SelectEvent)->Unit) {
+
+    GainsAppTheme {
+
+        Scaffold(
+            topBar = {
+                TopBar(navController = navController ,  message = "Exercises Type")
+            },
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.Center
+
+                ) {
+
+                    item {
+                            MuscleGroupItem(imageResId = R.drawable.chest2, title = "Chest"){
+                                selectHandler(SelectEvent.SelectExerciseType(ExerciseType.CHEST))
+                                navController.navigate(Route.TypedExerciseScreen.route)
+                            }
+                            MuscleGroupItem(imageResId = R.drawable.back2, title = "Back"){
+                                selectHandler(SelectEvent.SelectExerciseType(ExerciseType.BACK))
+                                navController.navigate(Route.TypedExerciseScreen.route)
+                            }
+                            MuscleGroupItem(imageResId = R.drawable.legs, title = "Legs"){
+                                selectHandler(SelectEvent.SelectExerciseType(ExerciseType.LEGS))
+                                navController.navigate(Route.TypedExerciseScreen.route)
+                            }
+                            MuscleGroupItem(imageResId = R.drawable.legs2, title = "Arms"){
+                                selectHandler(SelectEvent.SelectExerciseType(ExerciseType.ARMS))
+                                navController.navigate(Route.TypedExerciseScreen.route)
+                            }
+                            MuscleGroupItem(imageResId = R.drawable.legs3, title = "Shoulders"){
+                                selectHandler(SelectEvent.SelectExerciseType(ExerciseType.SHOULDERS))
+                                navController.navigate(Route.TypedExerciseScreen.route)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Page popups
     }
-}
 
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     GainsAppTheme {
-        ExerciseTypeScreen()
+        ExerciseTypeScreen(navController = rememberNavController(),{})
     }
 }

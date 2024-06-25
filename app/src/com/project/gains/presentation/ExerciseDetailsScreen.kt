@@ -38,7 +38,6 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
-import com.project.gains.data.MuscleGroup
 import com.project.gains.data.TrainingType
 import com.project.gains.presentation.components.BackButton
 
@@ -66,7 +65,6 @@ fun ExerciseDetailsScreen(
                     message = exercise?.name ?: "Exercise"
                 )
             },
-            bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
             Box(
                 modifier = Modifier
@@ -91,7 +89,7 @@ fun ExerciseDetailsScreen(
 
                     item{
                         Image(
-                            painter = painterResource(R.drawable.gi),
+                            painter = painterResource(R.drawable.legs),
                             contentDescription = "Exercise",
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -167,6 +165,7 @@ fun ExerciseDetailsScreen(
                             WarningCard(message = warning)
 
                         }
+                        item { Spacer(Modifier.height(5.dp)) }
                     }
 
 

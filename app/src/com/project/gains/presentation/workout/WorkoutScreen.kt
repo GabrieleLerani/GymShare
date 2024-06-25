@@ -24,6 +24,7 @@ import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -50,6 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.data.Workout
+import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.TopBar
@@ -86,76 +88,65 @@ fun WorkoutScreen(
             ) {
                 LazyColumn(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(10.dp),
                     verticalArrangement = Arrangement.Center
 
                 ) {
                     exercises?.forEach { exercise ->
                         item {
-                            Box(
-                                modifier = Modifier
-                                    .padding(4.dp)
-                                    .clip(RoundedCornerShape(16.dp)) // Rounded corners for the separator
-                                    .background(Color.White) // Background color of the separator
-                            ) {
-                                ExerciseItem(
-                                    exercise = exercise,
-                                    onDelete = { exerciseToDelete ->
-                                        deleteHandler(
-                                            DeleteEvent.DeleteExercise(
-                                                exerciseToDelete
-                                            )
-                                        )
-                                        // Update exercises list safely
-                                        exercises?.toMutableList()
-                                            ?.apply { remove(exerciseToDelete) }
-                                    },
-                                    onItemClick = { exerciseToSelect ->
-                                        selectHandler(
-                                            SelectEvent.SelectExercise(
-                                                exerciseToSelect
-                                            )
-                                        )
-                                        navController.navigate(Route.ExerciseDetailsScreen.route)
-                                    }
-                                )
-
-                            }
+                            AddExerciseItem(exercise = exercise, { exerciseToAdd ->
+                                selectHandler(SelectEvent.SelectExercise(exercise))
+                                navController.navigate(Route.ExerciseDetailsScreen.route)},
+                                isSelected = true
+                            )
                         }
                     }
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, start = 128.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                IconButton(
-                    onClick = {
-                        selectHandler(
-                            SelectEvent.SelectWorkout(
-                                workout ?: Workout(1, "", mutableListOf())
-                            )
-                        )
-                        navController.navigate(Route.SessionScreen.route)
-                    },
-                    modifier = Modifier.size(60.dp),
-                    colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Share Icon",
-                        modifier = Modifier
-                            .size(60.dp)
-                            .padding(10.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            BackButton {
+                                navController.popBackStack()
+                            }
+                            Spacer(modifier = Modifier.width(20.dp))
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Route.NewPlanScreen.route)
+                                },
+                                modifier = Modifier.size(60.dp),
+                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Share Icon",
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .padding(10.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(20.dp))
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Route.SessionScreen.route)
+                                },
+                                modifier = Modifier.size(60.dp),
+                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.PlayArrow,
+                                    contentDescription = "Start Icon",
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .padding(10.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        } }
                 }
             }
         }

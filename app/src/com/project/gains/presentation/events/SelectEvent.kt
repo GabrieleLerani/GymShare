@@ -1,6 +1,7 @@
 package com.project.gains.presentation.events
 
 import com.project.gains.data.Exercise
+import com.project.gains.data.ExerciseType
 import com.project.gains.data.Plan
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.TrainingData
@@ -12,5 +13,7 @@ sealed class SelectEvent {
     data class SelectPlan(val plan : Plan) : SelectEvent()
     data class SelectPlotPreview(val preview: ProgressChartPreview) : SelectEvent()
     data class SelectWorkout(val workout : Workout) : SelectEvent()
+    data class SelectExerciseType(val exerciseType: ExerciseType) : SelectEvent()
+
 
 }
