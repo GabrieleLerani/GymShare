@@ -721,7 +721,7 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,
                         com.project.gains.presentation.components.OptionCheckbox(
                             option = allOptions[4],
                             onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(com.project.gains.data.TrainingType.RUNNING)
+                                selectedExerciseTypes.add(com.project.gains.data.TrainingType.STRENGTH)
 
                                 onOptionSelected(
                                     options[4],
