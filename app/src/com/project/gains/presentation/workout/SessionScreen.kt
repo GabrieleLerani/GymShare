@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
@@ -30,8 +31,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.MusicPopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
+import com.project.gains.presentation.events.MusicEvent
 
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
@@ -39,11 +42,13 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SessionScreen(navController:NavController) {
+fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit) {
     // State for the timer
     var timerState by remember { mutableStateOf(0) }
     var isTimerRunning by remember { mutableStateOf(false) }
-
+    val show = remember {
+        mutableStateOf(true)
+    }
     // Function to start the timer
     if (isTimerRunning) {
         LaunchedEffect(Unit) {
@@ -62,24 +67,24 @@ fun SessionScreen(navController:NavController) {
     GainsAppTheme {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    title = { Text("1/12 Arms") },
-                    navigationIcon = {
-                        IconButton(onClick = {navController.popBackStack() }) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBackIosNew,
-                                contentDescription = "Back"
+                TopBar(
+                    navController = navController,
+                    message = "1/12 Arms" ,
+                    button= {
+                        androidx.compose.material.IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+                                // Handle history button click
+                                // TODO history popus page
+                                //navController.navigate(Route.HistoryScreen.route)
+                            }) {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = "History",
+                                tint = MaterialTheme.colorScheme.surface
                             )
                         }
-                    },
-                    actions = {
-                        Text(
-                            text = "12:21",
-                            color = MaterialTheme.colorScheme.onSurface,
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(end = 16.dp)
-                        )
-                    },
+                    }
                 )
             },
         ) { paddingValues ->
@@ -96,6 +101,9 @@ fun SessionScreen(navController:NavController) {
                     verticalArrangement = Arrangement.Center
 
                 ) {
+                    item {
+                        MusicPopup(popup = show.value, musicHandler = musicHandler, currentSong = "This is us")
+                    }
                     item {
 
                             // Exercise Image (Animated GIF)
@@ -189,7 +197,6 @@ fun SessionScreen(navController:NavController) {
                                     }
                                 }
                             }
-
                             // Spacer between button and error cards
                             Spacer(modifier = Modifier.height(16.dp))
 
@@ -217,6 +224,6 @@ fun SessionScreen(navController:NavController) {
 @Composable
 fun DefaultPreview() {
     GainsAppTheme {
-        SessionScreen(rememberNavController())
+        SessionScreen(rememberNavController(), musicHandler = {})
     }
 }

@@ -4,82 +4,79 @@ package com.project.gains.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material3.Button
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Support
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.project.gains.presentation.Dimension.ButtonCornerShape
-import com.project.gains.presentation.components.BackButton
-import com.project.gains.presentation.components.SharingPreferencesButton
+import androidx.navigation.compose.rememberNavController
+import com.project.gains.GeneralViewModel
+import com.project.gains.R
+import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.SettingItem
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.navgraph.Route
 
-import com.project.gains.presentation.settings.events.SignOutEvent
-import com.project.gains.presentation.settings.events.UpdateEvent
 import com.project.gains.theme.GainsAppTheme
-import com.project.gains.util.Constants.SIGN_OUT_SUCCESS
-import com.project.gains.util.Constants.UPDATE_SUCCESS
 
 
 @Composable
 fun SettingsScreen(
-    settingsHandler:(UpdateEvent.Update)-> Unit,
-    signOutHandler: (SignOutEvent.SignOut) -> Unit,
-    viewModel: SettingsViewModel,
-    navController:NavController
+    viewModel: GeneralViewModel,
+    navController: NavController
 ) {
-    // observable state
-    val userProfile by viewModel.userProfile.collectAsState()
-    val data by viewModel.data.observeAsState()
-    // field of interest
-    var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
-    var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Name") }
-    var newPassword by remember { mutableStateOf("New Password") }
-
     GainsAppTheme {
         Scaffold(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "Account Setting"
+                    message = "Account Setting" ,
+                    button= {
+                        IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+                                // Handle history button click
+                                // TODO history popus page
+                                //navController.navigate(Route.HistoryScreen.route)
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = "History",
+                                tint = MaterialTheme.colorScheme.surface
+                            )
+                        }
+                    }
                 )
             },
+            bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
             Box(
                 modifier = Modifier
@@ -90,157 +87,82 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-                        // Name field
-                        OutlinedTextField(
-                            value = newName,
-                            onValueChange = { newValue ->
-                                newName = newValue
-                            },
-                            label = {
-                                Text(
-                                    "New Name",
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                )
-                            },
-                            shape = RoundedCornerShape(size = 20.dp),
-                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
-
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
-                            )
+                        SettingItem(
+                            icon = Icons.Default.Person, // Replace with your desired icon
+                            title = "Account Preferences",
+                            onClick = {navController.navigate(Route.AccountScreen.route) }
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        // Email field
-                        OutlinedTextField(
-                            value = newEmail,
-                            onValueChange = { newValue ->
-                                newEmail = newValue
-                            },
-                            label = {
-                                Text(
-                                    "New Email",
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                )
-                            },
-                            shape = RoundedCornerShape(size = 20.dp),
-                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
+                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
-                            )
+                    }
+                    item {
+                        SettingItem(
+                            icon = Icons.Default.Send, // Replace with your desired icon
+                            title = "Sharing Preferences",
+                            onClick = { navController.navigate(Route.SettingScreen.route) }
                         )
+                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        Spacer(modifier = Modifier.height(12.dp))
-                        // Password field
-                        OutlinedTextField(
-                            value = newPassword,
-                            onValueChange = { newValue ->
-                                newPassword = newValue
-                            },
-                            visualTransformation = PasswordVisualTransformation(),
-                            shape = RoundedCornerShape(size = 20.dp),
-                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
-
-                            label = {
-                                Text(
-                                    "New Password",
-                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                )
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
-                            )
+                    }
+                    item {
+                        SettingItem(
+                            icon = Icons.Default.Group, // Replace with your desired icon
+                            title = "Tutorial",
+                            onClick = { /* Handle click */ }
                         )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            // logout button
-                            Button(
-                                onClick = {
-                                    signOutHandler(SignOutEvent.SignOut)
-                                },
-                                shape = RoundedCornerShape(size = ButtonCornerShape),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-                                ),
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .weight(1f)
-                            ) {
-                                Text(text = "Logout")
-                            }
-                            // Save button
-                            Button(
-                                onClick = {
-                                    settingsHandler(
-                                        UpdateEvent.Update(
-                                            newName,
-                                            newEmail,
-                                            newPassword
-                                        )
-                                    )
-                                },
-                                shape = RoundedCornerShape(size = ButtonCornerShape),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-                                ),
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .weight(1f)
-                            ) {
-                                Text(text = "Save")
-                            }
-                        }
-                        // Observe changes in data
-                        if (data?.isNotEmpty() == true) {
-                            // Display data
+                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                            if (data.equals(UPDATE_SUCCESS)) {
-                                Text(
-                                    text = data!!.toString(),
-                                    color = Color.Green
-                                )
-                            } else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS)) {
-                                Text(
-                                    text = data!!.toString(),
-                                    color = MaterialTheme.colorScheme.onError
-                                )
-                            }
+                    }
+                    item {
+                        SettingItem(
+                            icon = Icons.Default.Support, // Replace with your desired icon
+                            title = "Write to support",
+                            onClick = {  }
+                        )
+                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                    }
+                    item {
+                        SettingItem(
+                            icon = Icons.Default.Share, // Replace with your desired icon
+                            title = "Tell a friend",
+                            onClick = { /* Handle click */ }
+                        )
+                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                    }
+                    item {
+                        SettingItem(
+                            icon = Icons.Default.Star, // Replace with your desired icon
+                            title = "Rate the app",
+                            onClick = { /* Handle click */ }
+                        )
+                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                    }
+                }
+            }
+        }
+    }
+}
 
 
-                            // Change page if all ok
-                            if (viewModel.navigateToAnotherScreen.value == true) {
-                                val route: String = if (data.equals(SIGN_OUT_SUCCESS)) {
-                                    Route.SignInScreen.route
-                                } else {
-                                    Route.HomeScreen.route
-                                }
-                                // navigate
-                                navController.navigate(route)
-                                viewModel.onNavigationComplete()
-                            }
-
-                        }
-                    }}}}}}
-
-
-
-
+@Composable
+@Preview
+fun settingsPreview(){
+    val generalViewModel:GeneralViewModel= hiltViewModel()
+    GainsAppTheme {
+        SettingsScreen(viewModel = generalViewModel, navController = rememberNavController())
+    }
+}
 
 
 

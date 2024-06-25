@@ -9,6 +9,8 @@ sealed class Route(
     data object SignUpScreen : Route(route = "signUpScreen")
     data object SettingsScreen : Route(route = "settingsScreen")
     data object SettingScreen : Route(route = "settingScreen")
+    data object AccountScreen : Route(route = "accountScreen")
+
     data object WorkoutScreen : Route(route = "workoutScreen")
     data object SessionScreen : Route(route = "sessionScreen")
     data object ExerciseTypeScreen : Route(route = "exerciseTypeScreen")
@@ -20,7 +22,6 @@ sealed class Route(
     data object ProgressScreen : Route(route = "progressScreen")
     data object ProgressDetailsScreen : Route(route = "progressDetailsScreen")
     data object ExerciseDetailsScreen : Route(route = "exerciseDetailsScreen")
-    data object ShareScreen : Route(route = "shareScreen")
     data object AppStartNavigation : Route(route = "appStartNavigation")
 
 }

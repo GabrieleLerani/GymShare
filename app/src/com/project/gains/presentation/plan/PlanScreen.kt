@@ -36,14 +36,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
-import com.project.gains.presentation.components.BackButton
+import com.project.gains.R
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.NewPlanPagePopup
 import com.project.gains.presentation.components.PlanPagePopup
+import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WorkoutDaysList
 import com.project.gains.presentation.components.WorkoutHeader
+import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
@@ -61,7 +65,12 @@ fun PlanScreen(
 ) {
     // Sample list of workouts
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
-    var showPopup = remember { mutableStateOf(false) }
+    val linkedApps by generalViewModel.linkedApps.observeAsState()
+    var showPopup1 = remember { mutableStateOf(false) }
+    var showPopup2 = remember { mutableStateOf(false) }
+
+    var showPopup3 = remember { mutableStateOf(true) }
+
     val workouts by generalViewModel.workouts.observeAsState()
     var showDialogShared = remember { mutableStateOf(false) }
     var showDialog = remember { mutableStateOf(false) }
@@ -73,7 +82,15 @@ fun PlanScreen(
 
         Scaffold(
             topBar = {
-                TopBar(navController = navController ,  message = "Gains")
+                TopBar(
+                    navController = navController,
+                    message = "Account Setting" ,
+                    button= {
+                        LogoUser(
+                            modifier = Modifier.size(60.dp), R.drawable.pexels5
+                        ) { navController.navigate(Route.AccountScreen.route) }
+                    }
+                )
             },
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
@@ -174,7 +191,9 @@ fun PlanScreen(
             }
         // Page popups
 
-        workouts?.let { PlanPagePopup(showPopup, it,{}) }
+        workouts?.let { PlanPagePopup(showPopup1, it,{}) }
+        linkedApps?.let { ShareContentPagePopup(showPopup2,it,showDialog) {} }
+         NewPlanPagePopup(showPopup3,{},navController,{showDialogShared.value=true})
         }
     }
 

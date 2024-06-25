@@ -5,6 +5,7 @@ import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.project.gains.R
@@ -99,7 +100,7 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Default.Home, "Home")
     data object Progress : BottomNavItem(Route.ProgressScreen.route, Icons.Default.Analytics, "Progress")
     data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Default.Event, "Plan")
-    data object Share : BottomNavItem(Route.ShareScreen.route, Icons.Default.Share, "Share")
+    data object Settings : BottomNavItem(Route.SettingsScreen.route, Icons.Default.Settings, "Settings")
     data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Search, "Explore")
 }
 
@@ -333,11 +334,11 @@ fun generateRandomSongTitle(): String {
     return "$randomAdjective $randomNoun"
 }
 val bottomNavItems = listOf(
-    BottomNavItem.Share,
+    BottomNavItem.Progress,
     BottomNavItem.Explore,
     BottomNavItem.Home,
     BottomNavItem.Plan,
-    BottomNavItem.Progress
+    BottomNavItem.Settings,
 )
 
 fun generateRandomTrainingData(months: Int): List<TrainingData> {

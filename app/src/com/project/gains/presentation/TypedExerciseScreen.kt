@@ -2,6 +2,8 @@ package com.project.gains.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -9,11 +11,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -23,22 +23,15 @@ import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.TrainingType
-import com.project.gains.data.Workout
 import com.project.gains.data.generateSampleExercises
 import com.project.gains.presentation.components.AddExerciseItem
-import com.project.gains.presentation.components.BackButton
-import com.project.gains.presentation.components.BottomNavigationBar
-import com.project.gains.presentation.components.MuscleGroupItem
-import com.project.gains.presentation.components.PlanPagePopup
+import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.components.WorkoutDaysList
-import com.project.gains.presentation.components.WorkoutHeader
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +84,25 @@ fun TypedExerciseScreen(
 
         Scaffold(
             topBar = {
-                TopBar(navController = navController ,  message = "Exercises Type")
+                TopBar(
+                    navController = navController,
+                    message = "Exercises" ,
+                    button= {
+                        androidx.compose.material.IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+                                // Handle history button click
+                                // TODO history popus page
+                                //navController.navigate(Route.HistoryScreen.route)
+                            }) {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = "History",
+                                tint = MaterialTheme.colorScheme.surface
+                            )
+                        }
+                    }
+                )
             },
         ) { paddingValues ->
             Box(

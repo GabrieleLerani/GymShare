@@ -1,33 +1,28 @@
 package com.project.gains.presentation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,15 +31,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
-import com.project.gains.data.Exercise
-import com.project.gains.data.ExerciseType
-import com.project.gains.data.TrainingType
-import com.project.gains.presentation.components.BackButton
 
-import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.InstructionCard
+import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
 
@@ -62,7 +54,22 @@ fun ExerciseDetailsScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = exercise?.name ?: "Exercise"
+                    message = "Chest" ,
+                    button= {
+                        IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+                                // Handle history button click
+                                // TODO history popus page
+                                //navController.navigate(Route.HistoryScreen.route)
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.History,
+                                contentDescription = "History",
+                                tint = MaterialTheme.colorScheme.surface
+                            )
+                        }
+                    }
                 )
             },
         ) { paddingValues ->
@@ -77,15 +84,6 @@ fun ExerciseDetailsScreen(
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Chest",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(bottom = 16.dp)
-                        )
-                    }
 
                     item{
                         Image(
