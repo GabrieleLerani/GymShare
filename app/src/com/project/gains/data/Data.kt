@@ -17,9 +17,7 @@ import kotlin.random.Random
 
 
 enum class TrainingType {
-    RUNNING,
     STRENGTH,
-    PILATES,
     CALISTHENICS,
     CROSSFIT
 }
@@ -254,8 +252,6 @@ fun generateOptions(): List<Option> {
         Option("MUSIC"),
         Option("BACKUP") ,
         Option(TrainingType.STRENGTH.toString()),
-        Option(TrainingType.PILATES.toString()),
-        Option(TrainingType.RUNNING.toString()),
         Option(TrainingType.CROSSFIT.toString()),
         Option(TrainingType.CALISTHENICS.toString()),
         Option(TrainingMetricType.BPM.toString()),
@@ -377,194 +373,124 @@ fun generateRandomPlots(): MutableList<Plot> {
 }
 
 
-/*fun generateRandomPlan(
-    trainingType: TrainingType,
-    exerciseType: MutableList<ExerciseType>,
-    numberOfWorkouts: Int,
-    numberOfMuscleGroups: Int
-): List<Workout> {
-    return (1..numberOfWorkouts).map { workoutId ->
-        val exercises = mutableListOf<Exercise>()
-        var availableMuscleGroups = MuscleGroup.entries.toList()
-
-        repeat(numberOfMuscleGroups) { muscle ->
-            val muscleGroup = availableMuscleGroups[muscle]
-            val exerciseList = trainingTypeExercises[trainingType]?.get(trainingType)?.get(exerciseType.random())!![muscle]
-
-            val exerciseName = exerciseList.second.randomOrNull()
-
-            exercises.add(
-                Exercise(
-                    name = exerciseName ?: "Unknown",
-                    gifResId = R.drawable.gi,
-                    description = "$exerciseType exercise targeting $muscleGroup",
-                    type = exerciseType.random(),
-                    training = trainingType
-                )
-            )
-
-            // Remove the selected muscle group to avoid duplication
-            availableMuscleGroups = availableMuscleGroups.filterNot { it == muscleGroup }
-        }
-
-        Workout(id = workoutId, name = "Workout $workoutId", exercises = exercises)
-    }
-}
 
 
-val runningExercises = mapOf(
-    TrainingType.RUNNING to mapOf(
-        ExerciseType.CARDIO to listOf(
-            MuscleGroup.LEGS to listOf("Running", "Cycling", "Jump Rope"),
-            MuscleGroup.ARMS to listOf("Boxing", "Swimming", "Rowing"),
-            MuscleGroup.CORE to listOf("Mountain Climbers", "Burpees", "Jumping Jacks")
-        ),
-        ExerciseType.STRENGTH to listOf(
-            MuscleGroup.CHEST to listOf("Push Up", "Bench Press", "Dumbbell Fly"),
-            MuscleGroup.BACK to listOf("Pull Up", "Deadlift", "Bent Over Row"),
-            MuscleGroup.LEGS to listOf("Squat", "Lunges", "Leg Press"),
-            MuscleGroup.ARMS to listOf("Bicep Curl", "Tricep Dip", "Hammer Curl"),
-            MuscleGroup.SHOULDERS to listOf("Shoulder Press", "Lateral Raise", "Front Raise"),
-            MuscleGroup.CORE to listOf("Plank", "Russian Twist", "Crunches")
-        ),
-        ExerciseType.FLEXIBILITY to listOf(
-            MuscleGroup.CORE to listOf("Yoga", "Pilates", "Stretching"),
-            MuscleGroup.LEGS to listOf("Hamstring Stretch", "Quadriceps Stretch", "Calf Stretch"),
-            MuscleGroup.ARMS to listOf("Triceps Stretch", "Biceps Stretch", "Shoulder Stretch")
-        ),
-        ExerciseType.BALANCE to listOf(
-            MuscleGroup.LEGS to listOf("Single Leg Balance", "Bosu Ball Exercises", "Tai Chi"),
-            MuscleGroup.CORE to listOf("Balance Board Exercises", "Plank Variations", "Standing Yoga Poses"),
-            MuscleGroup.SHOULDERS to listOf("Overhead Reach and Balance", "Yoga Tree Pose", "Pilates Side Leg Lift")
-        )
-    )
-)*/
-
-/*
-val strengthExercises = mapOf(
-    TrainingType.STRENGTH to mapOf(
-        ExerciseType.CARDIO to listOf(
-            MuscleGroup.LEGS to listOf("Running", "Cycling", "Jump Rope"),
-            MuscleGroup.ARMS to listOf("Boxing", "Swimming", "Rowing"),
-            MuscleGroup.CORE to listOf("Mountain Climbers", "Burpees", "Jumping Jacks")
-        ),
-        ExerciseType.STRENGTH to listOf(
-            MuscleGroup.CHEST to listOf("Push Up", "Bench Press", "Dumbbell Fly"),
-            MuscleGroup.BACK to listOf("Pull Up", "Deadlift", "Bent Over Row"),
-            MuscleGroup.LEGS to listOf("Squat", "Lunges", "Leg Press"),
-            MuscleGroup.ARMS to listOf("Bicep Curl", "Tricep Dip", "Hammer Curl"),
-            MuscleGroup.SHOULDERS to listOf("Shoulder Press", "Lateral Raise", "Front Raise"),
-            MuscleGroup.CORE to listOf("Plank", "Russian Twist", "Crunches")
-        ),
-        ExerciseType.FLEXIBILITY to listOf(
-            MuscleGroup.CORE to listOf("Yoga", "Pilates", "Stretching"),
-            MuscleGroup.LEGS to listOf("Hamstring Stretch", "Quadriceps Stretch", "Calf Stretch"),
-            MuscleGroup.ARMS to listOf("Triceps Stretch", "Biceps Stretch", "Shoulder Stretch")
-        ),
-        ExerciseType.BALANCE to listOf(
-            MuscleGroup.LEGS to listOf("Single Leg Balance", "Bosu Ball Exercises", "Tai Chi"),
-            MuscleGroup.CORE to listOf("Balance Board Exercises", "Plank Variations", "Standing Yoga Poses"),
-            MuscleGroup.SHOULDERS to listOf("Overhead Reach and Balance", "Yoga Tree Pose", "Pilates Side Leg Lift")
-        )
-    )
-)
-
-val pilatesExercises = mapOf(
-    TrainingType.PILATES to mapOf(
-        ExerciseType.CARDIO to listOf(
-            MuscleGroup.LEGS to listOf("Running", "Cycling", "Jump Rope"),
-            MuscleGroup.ARMS to listOf("Boxing", "Swimming", "Rowing"),
-            MuscleGroup.CORE to listOf("Mountain Climbers", "Burpees", "Jumping Jacks")
-        ),
-        ExerciseType.STRENGTH to listOf(
-            MuscleGroup.CHEST to listOf("Push Up", "Bench Press", "Dumbbell Fly"),
-            MuscleGroup.BACK to listOf("Pull Up", "Deadlift", "Bent Over Row"),
-            MuscleGroup.LEGS to listOf("Squat", "Lunges", "Leg Press"),
-            MuscleGroup.ARMS to listOf("Bicep Curl", "Tricep Dip", "Hammer Curl"),
-            MuscleGroup.SHOULDERS to listOf("Shoulder Press", "Lateral Raise", "Front Raise"),
-            MuscleGroup.CORE to listOf("Plank", "Russian Twist", "Crunches")
-        ),
-        ExerciseType.FLEXIBILITY to listOf(
-            MuscleGroup.CORE to listOf("Yoga", "Pilates", "Stretching"),
-            MuscleGroup.LEGS to listOf("Hamstring Stretch", "Quadriceps Stretch", "Calf Stretch"),
-            MuscleGroup.ARMS to listOf("Triceps Stretch", "Biceps Stretch", "Shoulder Stretch")
-        ),
-        ExerciseType.BALANCE to listOf(
-            MuscleGroup.LEGS to listOf("Single Leg Balance", "Bosu Ball Exercises", "Tai Chi"),
-            MuscleGroup.CORE to listOf("Balance Board Exercises", "Plank Variations", "Standing Yoga Poses"),
-            MuscleGroup.SHOULDERS to listOf("Overhead Reach and Balance", "Yoga Tree Pose", "Pilates Side Leg Lift")
-        )
-    )
-)
-
+// Define exercise maps and types
 val calisthenicsExercises = mapOf(
-    TrainingType.CALISTHENICS to mapOf(
-        ExerciseType.CARDIO to listOf(
-            MuscleGroup.LEGS to listOf("Running", "Cycling", "Jump Rope"),
-            MuscleGroup.ARMS to listOf("Boxing", "Swimming", "Rowing"),
-            MuscleGroup.CORE to listOf("Mountain Climbers", "Burpees", "Jumping Jacks")
-        ),
-        ExerciseType.STRENGTH to listOf(
-            MuscleGroup.CHEST to listOf("Push Up", "Bench Press", "Dumbbell Fly"),
-            MuscleGroup.BACK to listOf("Pull Up", "Deadlift", "Bent Over Row"),
-            MuscleGroup.LEGS to listOf("Squat", "Lunges", "Leg Press"),
-            MuscleGroup.ARMS to listOf("Bicep Curl", "Tricep Dip", "Hammer Curl"),
-            MuscleGroup.SHOULDERS to listOf("Shoulder Press", "Lateral Raise", "Front Raise"),
-            MuscleGroup.CORE to listOf("Plank", "Russian Twist", "Crunches")
-        ),
-        ExerciseType.FLEXIBILITY to listOf(
-            MuscleGroup.CORE to listOf("Yoga", "Pilates", "Stretching"),
-            MuscleGroup.LEGS to listOf("Hamstring Stretch", "Quadriceps Stretch", "Calf Stretch"),
-            MuscleGroup.ARMS to listOf("Triceps Stretch", "Biceps Stretch", "Shoulder Stretch")
-        ),
-        ExerciseType.BALANCE to listOf(
-            MuscleGroup.LEGS to listOf("Single Leg Balance", "Bosu Ball Exercises", "Tai Chi"),
-            MuscleGroup.CORE to listOf("Balance Board Exercises", "Plank Variations", "Standing Yoga Poses"),
-            MuscleGroup.SHOULDERS to listOf("Overhead Reach and Balance", "Yoga Tree Pose", "Pilates Side Leg Lift")
-        )
+    ExerciseType.ARMS to listOf(
+        "Push-ups", "Dips", "Pull-ups", "Chin-ups"
+    ),
+    ExerciseType.LEGS to listOf(
+        "Squats", "Lunges", "Step-ups", "Calf Raises"
+    ),
+    ExerciseType.CHEST to listOf(
+        "Incline Push-ups", "Chest Dips", "Planche Push-ups"
+    ),
+    ExerciseType.CORE to listOf(
+        "Plank", "Leg Raises", "Mountain Climbers", "Russian Twists"
+    ),
+    ExerciseType.SHOULDERS to listOf(
+        "Pike Push-ups", "Handstand Push-ups", "Lateral Raises"
+    ),
+    ExerciseType.BACK to listOf(
+        "Pull-ups", "Inverted Rows", "Supermans", "Australian Pull-ups"
     )
 )
 
 val crossfitExercises = mapOf(
-    TrainingType.CROSSFIT to mapOf(
-        ExerciseType.CARDIO to listOf(
-            MuscleGroup.LEGS to listOf("Running", "Cycling", "Jump Rope"),
-            MuscleGroup.ARMS to listOf("Boxing", "Swimming", "Rowing"),
-            MuscleGroup.CORE to listOf("Mountain Climbers", "Burpees", "Jumping Jacks")
-        ),
-        ExerciseType.STRENGTH to listOf(
-            MuscleGroup.CHEST to listOf("Push Up", "Bench Press", "Dumbbell Fly"),
-            MuscleGroup.BACK to listOf("Pull Up", "Deadlift", "Bent Over Row"),
-            MuscleGroup.LEGS to listOf("Squat", "Lunges", "Leg Press"),
-            MuscleGroup.ARMS to listOf("Bicep Curl", "Tricep Dip", "Hammer Curl"),
-            MuscleGroup.SHOULDERS to listOf("Shoulder Press", "Lateral Raise", "Front Raise"),
-            MuscleGroup.CORE to listOf("Plank", "Russian Twist", "Crunches")
-        ),
-        ExerciseType.FLEXIBILITY to listOf(
-            MuscleGroup.CORE to listOf("Yoga", "Pilates", "Stretching"),
-            MuscleGroup.LEGS to listOf("Hamstring Stretch", "Quadriceps Stretch", "Calf Stretch"),
-            MuscleGroup.ARMS to listOf("Triceps Stretch", "Biceps Stretch", "Shoulder Stretch")
-        ),
-        ExerciseType.BALANCE to listOf(
-            MuscleGroup.LEGS to listOf("Single Leg Balance", "Bosu Ball Exercises", "Tai Chi"),
-            MuscleGroup.CORE to listOf("Balance Board Exercises", "Plank Variations", "Standing Yoga Poses"),
-            MuscleGroup.SHOULDERS to listOf("Overhead Reach and Balance", "Yoga Tree Pose", "Pilates Side Leg Lift")
-        )
+    ExerciseType.ARMS to listOf(
+        "Kettlebell Swings", "Dumbbell Snatches", "Rope Climbs"
+    ),
+    ExerciseType.LEGS to listOf(
+        "Box Jumps", "Wall Balls", "Deadlifts", "Overhead Squats"
+    ),
+    ExerciseType.CHEST to listOf(
+        "Burpees", "Chest-to-Bar Pull-ups", "Bench Press"
+    ),
+    ExerciseType.CORE to listOf(
+        "Toes-to-Bar", "Sit-ups", "GHD Sit-ups", "Hollow Rocks"
+    ),
+    ExerciseType.SHOULDERS to listOf(
+        "Handstand Walks", "Push Press", "Thrusters"
+    ),
+    ExerciseType.BACK to listOf(
+        "Deadlifts", "Barbell Rows", "Ring Rows", "Snatches"
     )
 )
 
+val strengthExercises = mapOf(
+    ExerciseType.ARMS to listOf(
+        "Bicep Curls", "Tricep Extensions", "Hammer Curls", "Skull Crushers"
+    ),
+    ExerciseType.LEGS to listOf(
+        "Squats", "Leg Press", "Deadlifts", "Hamstring Curls"
+    ),
+    ExerciseType.CHEST to listOf(
+        "Bench Press", "Incline Bench Press", "Chest Flyes"
+    ),
+    ExerciseType.CORE to listOf(
+        "Plank", "Hanging Leg Raises", "Cable Crunches", "Ab Rollouts"
+    ),
+    ExerciseType.SHOULDERS to listOf(
+        "Overhead Press", "Arnold Press", "Lateral Raises", "Front Raises"
+    ),
+    ExerciseType.BACK to listOf(
+        "Deadlifts", "Pull-ups", "Lat Pulldowns", "Seated Rows"
+    )
+)
 
 val trainingTypeExercises = mapOf(
-    TrainingType.RUNNING to runningExercises,
     TrainingType.STRENGTH to strengthExercises,
-    TrainingType.PILATES to pilatesExercises,
     TrainingType.CALISTHENICS to calisthenicsExercises,
     TrainingType.CROSSFIT to crossfitExercises
 )
-*/
 
+// Function to generate random workout plan with Exercise objects including GIFs and descriptions
+fun generateRandomPlan(
+    trainingType: TrainingType,
+    exerciseTypes: List<ExerciseType>,
+    numberOfWorkouts: Int
+): List<Workout> {
+    val exerciseMap = trainingTypeExercises[trainingType] ?: return emptyList()
+    val workouts = mutableListOf<Workout>()
 
+    repeat(numberOfWorkouts) { index ->
+        val workoutExercises = mutableListOf<Exercise>()
+        for (exerciseType in exerciseTypes) {
+            val exercises = exerciseMap[exerciseType] ?: continue
+            val randomExercise = exercises.random()
+            val exerciseName = randomExercise
+            val exerciseDescription = "Sample description for $exerciseName"
+            val exerciseGif = getExerciseGif(exerciseType) // Replace with your logic to get GIFs
 
+            workoutExercises.add(
+                Exercise(
+                    name = exerciseName,
+                    description = exerciseDescription,
+                    type = exerciseType,
+                    training = trainingType,
+                    gifResId = exerciseGif // Assuming you have a method to map ExerciseType to R.drawable
+                )
+            )
+        }
+        val workout = Workout(index, "Workout ${index + 1}", workoutExercises)
+        workouts.add(workout)
+    }
+
+    return workouts
+}
+
+// Dummy function to get exercise GIFs based on ExerciseType (replace with your logic)
+fun getExerciseGif(exerciseType: ExerciseType): Int {
+    return when (exerciseType) {
+        ExerciseType.ARMS -> R.drawable.arms2
+        ExerciseType.LEGS -> R.drawable.legs4
+        ExerciseType.CHEST -> R.drawable.chest
+        ExerciseType.CORE -> R.drawable.abs2
+        ExerciseType.SHOULDERS -> R.drawable.shoulders
+        ExerciseType.BACK -> R.drawable.back2
+    }
+}
 
 
 

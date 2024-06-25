@@ -43,11 +43,11 @@ import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.NewPlanPagePopup
 import com.project.gains.presentation.components.PlanPagePopup
+import com.project.gains.presentation.components.SetWorkoutPagePopup
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WorkoutDaysList
 import com.project.gains.presentation.components.WorkoutHeader
-import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
@@ -69,7 +69,9 @@ fun PlanScreen(
     var showPopup1 = remember { mutableStateOf(false) }
     var showPopup2 = remember { mutableStateOf(false) }
 
-    var showPopup3 = remember { mutableStateOf(true) }
+    var showPopup3 = remember { mutableStateOf(false) }
+    var showPopup4 = remember { mutableStateOf(true) }
+
 
     val workouts by generalViewModel.workouts.observeAsState()
     var showDialogShared = remember { mutableStateOf(false) }
@@ -84,8 +86,8 @@ fun PlanScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "Account Setting" ,
-                    button= {
+                    message = "Account Setting",
+                    button = {
                         LogoUser(
                             modifier = Modifier.size(60.dp), R.drawable.pexels5
                         ) { navController.navigate(Route.AccountScreen.route) }
@@ -99,27 +101,29 @@ fun PlanScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.Center
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center
 
-                    ) {
+                ) {
 
-                         item {  Column(
-                             modifier = Modifier
-                                 .fillMaxSize()
-                                 .padding(16.dp),
-                             horizontalAlignment = Alignment.CenterHorizontally
-                         ) {
-                             WorkoutHeader()
-                             Spacer(modifier = Modifier.height(16.dp))
-                             WorkoutDaysList{
-                                 navController.navigate(Route.WorkoutScreen.route)
-                             }
-                         }}
-                        item {
-                            Row(
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            WorkoutHeader()
+                            Spacer(modifier = Modifier.height(16.dp))
+                            WorkoutDaysList {
+                                navController.navigate(Route.WorkoutScreen.route)
+                            }
+                        }
+                    }
+                    item {
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.Center,
@@ -127,7 +131,7 @@ fun PlanScreen(
                         ) {
                             IconButton(
                                 onClick = {
-                                    showDialog.value=true
+                                    showDialog.value = true
                                     showDialogShared.value = true
 
                                 },
@@ -160,42 +164,51 @@ fun PlanScreen(
                                     tint = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             }
-                        } }
-                        item {  if (showDialog.value) {
+                        }
+                    }
+                    item {
+                        if (showDialog.value) {
                             FeedbackAlertDialog(
                                 title = "Select a social",
                                 message = "",
                                 onDismissRequest = { showDialog.value = false },
-                                onConfirm = { showDialog.value = false
-                                    showDialogShared.value=true
+                                onConfirm = {
+                                    showDialog.value = false
+                                    showDialogShared.value = true
                                 },
                                 confirmButtonText = "Ok",
                                 dismissButtonText = ""
                             )
-                        } }
-                        item {  if (showDialogShared.value) {
+                        }
+                    }
+                    item {
+                        if (showDialogShared.value) {
                             FeedbackAlertDialog(
                                 title = "",
                                 message = "You have successfully Shared your content!",
                                 onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = { showDialogShared.value = false
+                                onConfirm = {
+                                    showDialogShared.value = false
                                     navController.navigate(Route.HomeScreen.route)
                                 },
                                 confirmButtonText = "Ok",
                                 dismissButtonText = ""
                             )
-                        } }
-
+                        }
                     }
+
                 }
             }
+        }
         // Page popups
 
-        workouts?.let { PlanPagePopup(showPopup1, it,{}) }
-        linkedApps?.let { ShareContentPagePopup(showPopup2,it,showDialog) {} }
-         NewPlanPagePopup(showPopup3,{},navController,{showDialogShared.value=true})
-        }
+        workouts?.let { PlanPagePopup(showPopup1, it, {}) }
+        linkedApps?.let { ShareContentPagePopup(showPopup2, it, showDialog) {} }
+        NewPlanPagePopup(showPopup3, {}, navController, { showDialogShared.value = true })
+        SetWorkoutPagePopup(showPopup4, showDialog) {}
     }
+
+}
 
 
 

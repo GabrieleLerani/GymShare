@@ -18,11 +18,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.AlertDialog
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -38,27 +38,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.Backup
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Comment
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.WarningAmber
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -99,6 +94,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -112,7 +108,6 @@ import com.project.gains.data.GymPost
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.ProgressChartPreview
-import com.project.gains.data.Session
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
@@ -123,8 +118,6 @@ import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.events.ShareContentEvent
-import com.project.gains.presentation.navgraph.Route
-import kotlin.system.exitProcess
 
 @Composable
 fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:String) {
@@ -965,7 +958,7 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,
                                     )
                                 )
 
-                            showPopup.value = false
+                                  showPopup.value = false
                                   onItemClick()},
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1048,6 +1041,164 @@ fun ShareContentPagePopup(showPopup: MutableState<Boolean>, apps: MutableList<In
 
             }
         }
+    }
+}
+
+@Composable
+fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boolean>, onItemClick: (Int)->Unit ){
+    var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
+    var selectedExercises by remember { mutableStateOf(listOf<Exercise>()) }
+
+
+    if (showPopup.value) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 40.dp)
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                    RoundedCornerShape(20.dp)
+                )
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(40.dp)
+            ) {
+
+                item {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 290.dp),
+                        horizontalArrangement = Arrangement.Center) {
+                        IconButton(onClick = { showPopup.value=false }) {
+                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
+                        }
+                    }  }
+
+                item { Text(
+                    text = "Create Your Workout!",
+                    style = MaterialTheme.typography.headlineMedium
+                ) }
+                item {
+                    Text(
+                        text = "Manually add each exercise to your workout day, press the button + to search for an exercise and then click save button to submit",
+                        style = MaterialTheme.typography.bodySmall,
+                    ) }
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .background(
+                                color = Color.Gray.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(8.dp) // Inner padding to prevent text from touching the edges
+                    ) {
+                        BasicTextField(
+                            value = workoutTitle,
+                            onValueChange = { workoutTitle = it },
+                            decorationBox = { innerTextField ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                ) {
+                                    if (workoutTitle.text.isEmpty()) {
+                                        Text(
+                                            text = "Enter workout name...",
+                                            color = Color.Gray // Placeholder text color
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth() // Ensure the text field fills the width of the box
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    selectedExercises.forEach {exercise ->
+
+                        Row(horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically) {
+                            AddExerciseItem(exercise = exercise, onItemClick = {}, isSelected = true)
+                            Spacer(modifier = Modifier.width(20.dp))
+                            DeleteExerciseButton {
+
+                            }
+
+                        }
+                    }
+
+                    Row(horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically) {
+                        TextButton(onClick = { /* Add exercise action */ }) {
+                            Text(text = "Add new exercise", color = Color.Cyan)
+                        }
+                        Spacer(modifier = Modifier.width(80.dp))
+                        Spacer(modifier = Modifier.width(20.dp))
+                        AddExerciseButton {
+
+                        }
+                    }
+                }
+                item { Spacer(modifier = Modifier.height(10.dp)) }
+
+                item {
+                    Button(
+                        onClick = { showPopup.value = false
+                            show.value=true},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp),
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
+                    ) {
+                        Text(text = "SAVE PLAN", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
+@Composable
+fun AddExerciseButton(onClick: () -> Unit) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(50.dp)
+            .background(color = Color.Cyan, shape = CircleShape)
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = "+",
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun DeleteExerciseButton(onClick: () -> Unit) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(50.dp)
+            .background(color = Color.Red, shape = CircleShape)
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = "-",
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
