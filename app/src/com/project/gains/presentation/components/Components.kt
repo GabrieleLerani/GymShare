@@ -869,38 +869,6 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
         }
     }
 }
-@Composable
-fun HorizontalScale(value: Float) {
-    Row(
-        modifier = Modifier.padding(start=170.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        for (i in 0..value.toInt()) {
-            Text(
-                text = i.toString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-}
-
-@Composable
-fun VerticalScale(value: Float) {
-    Column(
-        modifier = Modifier.padding(start=100.dp),
-
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        for (i in 0..value.toInt()) {
-            Text(
-                text = i.toString(),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    }
-}
 
 
 @Composable
