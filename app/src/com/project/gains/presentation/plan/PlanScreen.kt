@@ -17,7 +17,6 @@ import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -39,15 +38,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
-import com.project.gains.R
-import com.project.gains.data.Exercise
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.LogoUser
-import com.project.gains.presentation.components.NewPlanPagePopup
 import com.project.gains.presentation.components.PlanPagePopup
-import com.project.gains.presentation.components.SetWorkoutPagePopup
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WorkoutDaysList
@@ -73,7 +67,7 @@ fun PlanScreen(
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
 
     val linkedApps by generalViewModel.linkedApps.observeAsState()
-    var showPopup1 = remember { mutableStateOf(false) }
+    val showPopup1 by generalViewModel.showPopup.observeAsState()
     var showPopup2 = remember { mutableStateOf(false) }
 
 
@@ -100,6 +94,7 @@ fun PlanScreen(
                             modifier = Modifier.size(45.dp),
                             onClick = {
 
+
                                 showPopup2.value=true
 
                             }) {
@@ -118,7 +113,12 @@ fun PlanScreen(
                         androidx.compose.material.IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                showPopup1.value=true
+                                selectHandler(SelectEvent.SelectPlanPopup(true))
+                                selectHandler(SelectEvent.SelectPreviewsPage("Home"))
+
+                                selectHandler(SelectEvent.SelectClicked(false))
+                                selectHandler(SelectEvent.SelectShowPopup3(false))
+                                selectHandler(SelectEvent.SelectShowPopup4(false))
                             }) {
                             Icon(
                                 imageVector = Icons.Default.Add,

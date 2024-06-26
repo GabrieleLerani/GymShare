@@ -40,7 +40,6 @@ import com.project.gains.R
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.components.LogoUser
-import com.project.gains.presentation.components.NewPlanPagePopup
 import com.project.gains.presentation.components.PlanPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
@@ -67,7 +66,7 @@ fun GainsHomeScreen(
     val plots by generalViewModel.plots.observeAsState()
     var showDialogWorkout = remember { mutableStateOf(false) }
     var showDialogPlan = remember { mutableStateOf(false) }
-    var showPopup1 = remember { mutableStateOf(false) }
+    val showPopup1 by generalViewModel.showPopup.observeAsState()
 
 
     CustomBackHandler(
@@ -95,7 +94,11 @@ fun GainsHomeScreen(
                        androidx.compose.material.IconButton(
                            modifier = Modifier.size(45.dp),
                            onClick = {
-                               showPopup1.value=true
+                               selectHandler(SelectEvent.SelectClicked(false))
+                               selectHandler(SelectEvent.SelectShowPopup3(false))
+                               selectHandler(SelectEvent.SelectShowPopup4(false))
+                               selectHandler(SelectEvent.SelectPreviewsPage("Home"))
+                               selectHandler(SelectEvent.SelectPlanPopup(true))
                            }) {
                            Icon(
                                imageVector = Icons.Default.Add,

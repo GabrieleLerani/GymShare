@@ -57,6 +57,8 @@ fun TypedExerciseScreen(
 ) {
     val isToAdd by generalViewModel.isToAdd.observeAsState()
     val allExercises by generalViewModel.exercises.observeAsState()
+    val previousPage by generalViewModel.previewsPage.observeAsState()
+
     val searchQuery = remember { mutableStateOf("") }
     val searchedExercises = remember { mutableStateOf(listOf<Exercise>()) }
     val isSearchQueryEmpty = remember { mutableStateOf(searchQuery.value.isBlank()) }
@@ -164,7 +166,17 @@ fun TypedExerciseScreen(
                             isSelected = allExercises?.contains(exercise) == true,
                             isToAdd = isToAdd ?: false,
                             onItemClick2 = {
-                                navController.navigate(Route.PlanScreen.route)
+                                selectHandler(SelectEvent.SelectExerciseToAdd(exercise))
+                                selectHandler(SelectEvent.SelectPlanPopup(false))
+                                selectHandler(SelectEvent.SelectClicked(true))
+                                selectHandler(SelectEvent.SelectShowPopup3(false))
+                                selectHandler(SelectEvent.SelectShowPopup4(true))
+                                if (previousPage=="Home"){
+                                    navController.navigate(Route.HomeScreen.route)
+                                } else{
+                                    navController.navigate(Route.PlanScreen.route)
+
+                                }
                             }
                         )
                     }
@@ -174,7 +186,9 @@ fun TypedExerciseScreen(
     }
 }
 
-
+/*AddExerciseItem(exercise = exercise, onItemClick = {onItemClick()}, onItemClick2 = {
+    selectedExercises.add(exercise)
+    onItemClick2()},isSelected = false,isToAdd = true)*/
 
 
 @Preview(showBackground = true)

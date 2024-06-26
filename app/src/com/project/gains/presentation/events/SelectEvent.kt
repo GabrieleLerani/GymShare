@@ -15,8 +15,20 @@ sealed class SelectEvent {
     data class SelectWorkout(val workout : Workout) : SelectEvent()
     data class SelectExerciseType(val exerciseType: ExerciseType) : SelectEvent()
     data class SelectExerciseToAdd(val exercise: Exercise) : SelectEvent()
-    object data class SelectIsToAdd() : SelectEvent()
+    data object SelectIsToAdd : SelectEvent()
 
+    data class SelectClicked(val clicked: Boolean) :
+        SelectEvent()
+    data class SelectShowPopup3(val showPopup3: Boolean) :
+        SelectEvent()
+    data class SelectShowPopup4(val showPopup4: Boolean) :
+        SelectEvent()
+
+    data class SelectPreviewsPage(val name: String) :
+        SelectEvent()
+
+    data class SelectPlanPopup(val showPopup:Boolean) :
+        SelectEvent()
 
 
 

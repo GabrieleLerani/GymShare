@@ -4,6 +4,7 @@ package com.project.gains.presentation.components
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import android.graphics.Paint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,7 +33,6 @@ import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries,
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
-import androidx.compose.material.LocalContentColor
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
@@ -54,8 +53,6 @@ import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
@@ -65,12 +62,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -98,9 +92,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.nativeCanvas
@@ -109,8 +100,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -140,7 +129,6 @@ import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.NewPlanScreen
-import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -191,7 +179,7 @@ fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemCl
             horizontalArrangement = Arrangement.End
         )  {
             IconButton(onClick = {
-                if (isToAdd==true){
+                if (isToAdd){
                     onItemClick2()
                 }else{
                     onItemClick(exercise)
@@ -362,14 +350,6 @@ fun PeriodPopup(
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
         )
-    }
-}
-
-@Preview
-@Composable
-fun p(){
-    GainsAppTheme {
-        MusicPopup(popup = true, musicHandler = {} , currentSong = Song("ciao","ciao","ciao"), totalTime = "12")
     }
 }
 // Utility function to format time
@@ -678,7 +658,9 @@ fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
     val barSpacing: Dp = 4.dp
     val density = LocalDensity.current
 
-    Canvas(modifier = Modifier.size(400.dp).padding(20.dp)) {
+    Canvas(modifier = Modifier
+        .size(400.dp)
+        .padding(20.dp)) {
         val totalBars = trainingData.size
         val totalSpacing = (totalBars - 1) * barSpacing.toPx()
         val barWidth = (size.width - totalSpacing) / totalBars
@@ -1052,8 +1034,10 @@ fun currentRoute(navController: NavController): String? {
     return navBackStackEntry?.destination?.route
 }
 @Composable
-fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,navController: NavController,
-                     createHandler: (CreateEvent) -> Unit) {
+fun NewPlanPagePopup(
+    selectHandler:(SelectEvent)->Unit,
+    showPopup: Boolean?, onItemClick: () -> Unit, navController: NavController,
+    createHandler: (CreateEvent) -> Unit) {
     val allOptions = remember { generateOptions() } // List to store selected options
     val options = remember { mutableStateListOf<Option>() } // List to store selected options
     var popupVisible = remember { mutableStateOf(false) }
@@ -1072,7 +1056,7 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,
             options.remove(option)
         }
     }
-    if (showPopup.value) {
+    if (showPopup == true) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -1092,7 +1076,7 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,
                         .fillMaxWidth()
                         .padding(end = 290.dp),
                         horizontalArrangement = Arrangement.Center) {
-                        IconButton(onClick = { showPopup.value=false }) {
+                        IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
                             Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
                         }
                     }  }
@@ -1448,7 +1432,7 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,
                                     )
                                 )
 
-                                  showPopup.value = false
+                                  selectHandler(SelectEvent.SelectPlanPopup(false))
                                   onItemClick()},
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1553,11 +1537,15 @@ fun ShareContentPagePopup(showPopup: MutableState<Boolean>, apps: MutableList<In
 }
 
 @Composable
-fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boolean>, onItemClick: ()->Unit,onItemClick2: ()->Unit ,selectedExercises:MutableList<Exercise>){
+fun SetWorkoutPagePopup(
+    selectHandler:(SelectEvent)-> Unit,
+    showPopup: Boolean?, show: MutableState<Boolean>, onItemClick: ()->Unit,
+    onItemClick2: ()->Unit,
+    selectedExercises:MutableList<Exercise>){
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
 
 
-    if (showPopup.value) {
+    if (showPopup==true) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -1578,7 +1566,7 @@ fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boo
                         .fillMaxWidth()
                         .padding(end = 290.dp),
                         horizontalArrangement = Arrangement.Center) {
-                        IconButton(onClick = { showPopup.value=false }) {
+                        IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false))}) {
                             Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
                         }
                     }  }
@@ -1631,9 +1619,9 @@ fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boo
 
                         Row(horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically) {
-                            AddExerciseItem(exercise = exercise, onItemClick = {onItemClick()}, onItemClick2 = {onItemClick2()},isSelected = false,isToAdd = true)
                             Spacer(modifier = Modifier.width(20.dp))
                             DeleteExerciseButton {
+                                selectedExercises.remove(exercise)
 
                             }
 
@@ -1657,7 +1645,9 @@ fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boo
 
                 item {
                     Button(
-                        onClick = { showPopup.value = false
+                        onClick = {
+
+                            selectHandler(SelectEvent.SelectPlanPopup(false))
                                   },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1732,18 +1722,25 @@ fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
 
 
 @Composable
-fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>,selectHandler: (SelectEvent) -> Unit,createHandler: (CreateEvent) -> Unit,navController: NavController,generalViewModel: GeneralViewModel,showCompleteWorkout:MutableState<Boolean>,showCompletePlan:MutableState<Boolean>,) {
+fun PlanPagePopup(
+    showPopup: Boolean?, workouts:MutableList<Workout>,
+    selectHandler: (SelectEvent) -> Unit,
+    createHandler: (CreateEvent) -> Unit,
+    navController: NavController,
+    generalViewModel: GeneralViewModel,
+    showCompleteWorkout:MutableState<Boolean>,
+    showCompletePlan:MutableState<Boolean>,) {
 
     val selectedExerciseToAdd by generalViewModel.addedExercises.observeAsState()
 
-    val clicked = remember {
-        mutableStateOf(false)
-    } // CREATE PLAN CLICKED
-    var showPopup3 = remember { mutableStateOf(false) } // LAST PLAN GENERATION SCREEN
-    var showPopup4 = remember { mutableStateOf(false) } // LAST  WORKOUT SET SCREEN
-    var showDialog = remember { mutableStateOf(false) } //
-    if (showPopup.value) { // PLAN PAGE POPUP OR WORKOUT SET
-                if (clicked.value == false && showPopup3.value == false && showPopup4.value == false) {
+    val clicked by generalViewModel.clicked.observeAsState()// CREATE PLAN CLICKED
+    val showPopup3 by generalViewModel.showPopup3.observeAsState()// LAST PLAN GENERATION SCREEN
+    val showPopup4 by generalViewModel.showPopup4.observeAsState() // LAST  WORKOUT SET SCREEN
+
+    Log.d("LOG","$showPopup,$showPopup3,$showPopup4,$clicked")
+
+    if (showPopup == true) { // PLAN PAGE POPUP OR WORKOUT SET
+                if (clicked == false && showPopup3 == false && showPopup4 == false) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -1765,7 +1762,7 @@ fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workou
                                         .padding(end = 290.dp),
                                     horizontalArrangement = Arrangement.Center
                                 ) {
-                                    IconButton(onClick = { clicked.value = true }) {
+                                    IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Close Icon"
@@ -1789,10 +1786,9 @@ fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workou
                             item {
                                 Button(
                                     onClick = {
-                                        clicked.value = true
-                                        showPopup4.value = false
-
-                                        showPopup3.value = true
+                                        selectHandler(SelectEvent.SelectClicked(true))
+                                        selectHandler(SelectEvent.SelectShowPopup4(false))
+                                        selectHandler(SelectEvent.SelectShowPopup3(false))
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -1807,9 +1803,9 @@ fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workou
                             item {
                                 Button(
                                     onClick = {
-                                        clicked.value = true
-                                        showPopup3.value = false
-                                        showPopup4.value = true
+                                        selectHandler(SelectEvent.SelectClicked(true))
+                                        selectHandler(SelectEvent.SelectShowPopup4(false))
+                                        selectHandler(SelectEvent.SelectShowPopup3(true))
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -1834,134 +1830,90 @@ fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workou
                             }
                         }
                     }
-                } else if (clicked.value == true && showPopup3.value == false && showPopup4.value == false) {
+                } else if (clicked == true && showPopup3 == false && showPopup4 == false) {
                  //INTERMEDIATE SCREEN
-                        NewPlanScreen(createHandler, navController, showPopup3)
+                        NewPlanScreen(createHandler, selectHandler,navController, showPopup3)
 
-                } else if (clicked.value == true && showPopup3.value == true && showPopup4.value == false) {
+                } else if (clicked == true && showPopup3 == true && showPopup4 == false) {
 
                         // LAST SCREEN
                         NewPlanPagePopup(
+                            selectHandler,
                             showPopup3,
                             {showCompletePlan.value=true},
-                            navController,
-                            { showPopup3.value = false })
+                            navController
+                        ) { selectHandler(SelectEvent.SelectShowPopup3(false)) }
 
-                } else if (clicked.value == true && showPopup3.value == false && showPopup4.value == true) {
+                } else if (clicked == true && showPopup3 == false && showPopup4 == true) {
 
                         SetWorkoutPagePopup(
+                            selectHandler,
                             showPopup4,
                             showCompleteWorkout,
                             {
+                                selectHandler(SelectEvent.SelectIsToAdd)
                                 navController.navigate(Route.TypedExerciseScreen.route)
                             },
                             selectedExercises = selectedExerciseToAdd ?: mutableListOf<Exercise>(),
                             onItemClick2 = {
-                                navController.navigate(Route.TypedExerciseScreen.route)
+                                selectHandler(SelectEvent.SelectClicked(true))
+                                selectHandler(SelectEvent.SelectShowPopup4(false))
+                                selectHandler(SelectEvent.SelectShowPopup3(true))
                             })
                     }
 
                 }
-            }
-
-    @Composable
-    fun ChoicePopup() {
-        var showPopup = remember { mutableStateOf(true) }
-        if (showPopup.value) {
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable {
-                        showPopup.value = false
-                    }
-                    .background(
-                        MaterialTheme.colorScheme.surface,
-                        RoundedCornerShape(20.dp)
-                    )
-            ) {
-                // Your main screen content here
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .background(Color.White, shape = RoundedCornerShape(10.dp),)
-                ) {
-                    Text(
-                        text = "Hammer Strength",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Text(
-                        text = "Are you sure you want to finish workout?",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Button(
-                            onClick = { showPopup.value = false },
-                        ) {
-                            Text(text = "No")
-                        }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Button(
-                            onClick = { /* on yes click */ },
-                        ) {
-                            Text(text = "Yes")
-                        }
-                    }
-                }
-            }
-        }
-    }
+}
 
 
-    @Composable
-    fun MuscleGroupItem(imageResId: Int, title: String, onItemClick: () -> Unit) {
+
+
+@Composable
+fun MuscleGroupItem(imageResId: Int, title: String, onItemClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = title,
+            modifier = Modifier.size(64.dp),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = title,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .background(
+                    MaterialTheme.colorScheme.onSurface,
+                    RoundedCornerShape(8.dp)
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
         ) {
-            Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = title,
-                modifier = Modifier.size(64.dp),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = title,
-                color = Color.White,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        MaterialTheme.colorScheme.onSurface,
-                        RoundedCornerShape(8.dp)
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(onClick = {
-                    onItemClick()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowForwardIos,
-                        contentDescription = "Exercise Button",
-                        tint = MaterialTheme.colorScheme.surface
-                    )
+            IconButton(onClick = {
+                onItemClick()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForwardIos,
+                    contentDescription = "Exercise Button",
+                    tint = MaterialTheme.colorScheme.surface
+                )
 
-                }
             }
         }
     }
+}
 
 
 @Composable

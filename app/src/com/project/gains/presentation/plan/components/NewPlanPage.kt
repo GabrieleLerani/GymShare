@@ -2,9 +2,7 @@ package com.project.gains.presentation.onboarding.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,10 +13,8 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -32,9 +28,8 @@ import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 
 import com.project.gains.presentation.components.GeneralCard
-import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
-import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.plan.PlanPages
 import com.project.gains.presentation.plan.pages
 import com.project.gains.theme.GainsAppTheme
@@ -49,8 +44,10 @@ fun NewPlanPage(
     pagerState: PagerState,
     page: PlanPages,
     createHandler:(CreateEvent)->Unit,
+    selectHandler:(SelectEvent)->Unit,
+
     navController: NavController,
-    clicked: MutableState<Boolean>
+    clicked: Boolean?
 
 ) {
 
@@ -71,7 +68,7 @@ fun NewPlanPage(
                                 .padding(end = 290.dp),
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            IconButton(onClick = { clicked.value = true }) {
+                            IconButton(onClick = {selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "Close Icon"
@@ -103,7 +100,8 @@ fun NewPlanPage(
                                             selectedLevel=selectedLevel.value,
                                             selectedPeriod=selectedLPeriod.value,
                                             selectedTrainingType=selectedTraining.value))
-                                        clicked.value=true
+                                        selectHandler(SelectEvent.SelectClicked(true))
+
                                     }
                                     else -> ""
                                 }
@@ -123,7 +121,7 @@ fun NewPlanPagePreview(){
         pages.size
     }
     GainsAppTheme {
-        NewPlanPage(pagerState, pages[0],{}, rememberNavController(), remember {
-            mutableStateOf(true)})
+        NewPlanPage(pagerState, pages[0],{}, {},rememberNavController(), remember {
+           true})
     }
 }

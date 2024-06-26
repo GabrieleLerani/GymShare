@@ -88,6 +88,18 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _isToAdd = MutableLiveData<Boolean>()
     val isToAdd: MutableLiveData<Boolean> = _isToAdd
 
+    private val _previewsPage = MutableLiveData<String>()
+    val previewsPage: MutableLiveData<String> = _previewsPage
+
+    private val _clicked = MutableLiveData<Boolean>()
+    val clicked: MutableLiveData<Boolean> = _clicked
+    private val _showPopup = MutableLiveData<Boolean>()
+    val showPopup: MutableLiveData<Boolean> = _showPopup
+    private val _showPopup3 = MutableLiveData<Boolean>()
+    val showPopup3: MutableLiveData<Boolean> = _showPopup3
+    private val _showPopup4 = MutableLiveData<Boolean>()
+    val showPopup4: MutableLiveData<Boolean> = _showPopup4
+
     private val _currentSong = MutableLiveData<Song>()
     val currentSong: MutableLiveData<Song> = _currentSong
 
@@ -310,7 +322,18 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
             }
 
             is SelectEvent.SelectIsToAdd -> {
-                _isToAdd.value = true
+                if (_isToAdd.value==true){
+                    _isToAdd.value = false
+
+                }else{
+                    _isToAdd.value = true
+
+                }
+            }
+
+            is SelectEvent.SelectPlanPopup -> {
+                    _showPopup.value = event.showPopup
+
             }
 
             is SelectEvent.SelectExerciseToAdd -> {
@@ -336,6 +359,21 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
                 _selectedExercise.value = event.exercise
             }
 
+            is SelectEvent.SelectClicked -> {
+
+                _clicked.value=event.clicked
+            }
+            is SelectEvent.SelectPreviewsPage -> {
+
+                _previewsPage.value=event.name
+            }
+            is SelectEvent.SelectShowPopup3 -> {
+
+                _showPopup3.value=event.showPopup3
+            }
+            is SelectEvent.SelectShowPopup4 -> {
+                _showPopup4.value=event.showPopup4
+            }
         }
     }
 }
