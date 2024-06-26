@@ -83,7 +83,6 @@ fun NewPlanPage(
                                             selectedLevel=selectedLevel.value,
                                             selectedPeriod=selectedLPeriod.value,
                                             selectedTrainingType=selectedTraining.value))
-                                        navController.navigate(Route.PlanScreen.route)
                                         clicked.value=true
                                     }
                                     else -> ""

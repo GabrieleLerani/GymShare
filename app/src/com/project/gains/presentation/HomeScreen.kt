@@ -65,6 +65,8 @@ fun GainsHomeScreen(
     val workouts by generalViewModel.workouts.observeAsState()
     val plans by generalViewModel.plans.observeAsState()
     val plots by generalViewModel.plots.observeAsState()
+    var showDialogWorkout = remember { mutableStateOf(false) }
+    var showDialogPlan = remember { mutableStateOf(false) }
     var showPopup1 = remember { mutableStateOf(false) }
 
 
@@ -157,7 +159,7 @@ fun GainsHomeScreen(
 
        }
        workouts?.let {
-           PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController)}
+           PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}
    }
 }
 

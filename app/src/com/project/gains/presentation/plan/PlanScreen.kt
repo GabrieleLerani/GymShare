@@ -71,18 +71,18 @@ fun PlanScreen(
 ) {
     // Sample list of workouts
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
-    val selectedExerciseToAdd by generalViewModel.addedExercises.observeAsState()
 
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     var showPopup1 = remember { mutableStateOf(false) }
     var showPopup2 = remember { mutableStateOf(false) }
 
-    var showPopup3 = remember { mutableStateOf(false) }
-    var showPopup4 = remember { mutableStateOf(false) }
 
 
     val workouts by generalViewModel.workouts.observeAsState()
     var showDialogShared = remember { mutableStateOf(false) }
+    var showDialogWorkout = remember { mutableStateOf(false) }
+    var showDialogPlan = remember { mutableStateOf(false) }
+
     var showDialog = remember { mutableStateOf(false) }
 
 
@@ -231,6 +231,36 @@ fun PlanScreen(
                             )
                         }
                     }
+                    item {
+                        if (showDialogWorkout.value) {
+                            FeedbackAlertDialog(
+                                title = "",
+                                message = "You have successfully created your workout!",
+                                onDismissRequest = { showDialogShared.value = false },
+                                onConfirm = {
+                                    showDialogShared.value = false
+                                    navController.navigate(Route.HomeScreen.route)
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
+                    item {
+                        if (showDialogPlan.value) {
+                            FeedbackAlertDialog(
+                                title = "",
+                                message = "You have successfully created your plan!",
+                                onDismissRequest = { showDialogShared.value = false },
+                                onConfirm = {
+                                    showDialogShared.value = false
+                                    navController.navigate(Route.HomeScreen.route)
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
 
                 }
             }
@@ -238,7 +268,7 @@ fun PlanScreen(
         // Page popups
 
         workouts?.let {
-            PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController)}
+            PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}
         linkedApps?.let {
             ShareContentPagePopup(
                 showPopup2,
@@ -247,11 +277,6 @@ fun PlanScreen(
                 { showDialogShared.value = true },
                 navController)
         } }
-        NewPlanPagePopup(showPopup3, {}, navController, {showPopup3.value=false} )
-        SetWorkoutPagePopup(showPopup4, showDialog,{
-            navController.navigate(Route.TypedExerciseScreen.route)
-        }, selectedExercises = selectedExerciseToAdd ?: mutableListOf<Exercise>(), onItemClick2 = {
-            navController.navigate(Route.TypedExerciseScreen.route)})
     }
 
 

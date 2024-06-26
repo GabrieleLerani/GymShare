@@ -88,6 +88,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -118,6 +119,7 @@ import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import coil.transform.CircleCropTransformation
+import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.GymPost
@@ -161,7 +163,6 @@ fun BackButton(onClick: () -> Unit) {
 
 @Composable
 fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
-   println("HERERERRER")
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -203,91 +204,6 @@ fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemCl
     }
 }
 
-@Composable
-fun AddWorkoutItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
-            contentDescription = exercise.name,
-            modifier = Modifier.size(64.dp),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = exercise.name,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-        Row( modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        )  {
-            IconButton(onClick = {
-                if (isToAdd==true){
-                    onItemClick2()
-                }else{
-                    onItemClick(exercise)
-                }
-            }) {
-                Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
-
-            }
-        }
-    }
-}
-
-@Composable
-fun AddPlanItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
-            contentDescription = exercise.name,
-            modifier = Modifier.size(64.dp),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = exercise.name,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-        Row( modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        )  {
-            IconButton(onClick = {
-                if (isToAdd==true){
-                    onItemClick2()
-                }else{
-                    onItemClick(exercise)
-                }
-            }) {
-                Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
-
-            }
-        }
-    }
-}
 
 @Composable
 fun TrainingTypePopup(
@@ -1774,7 +1690,7 @@ fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boo
                 item {
                     Button(
                         onClick = { showPopup.value = false
-                            show.value=true},
+                                  },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(55.dp),
@@ -1848,200 +1764,237 @@ fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
 
 
 @Composable
-fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>,selectHandler: (SelectEvent) -> Unit,createHandler: (CreateEvent) -> Unit,navController: NavController) {
+fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>,selectHandler: (SelectEvent) -> Unit,createHandler: (CreateEvent) -> Unit,navController: NavController,generalViewModel: GeneralViewModel,showCompleteWorkout:MutableState<Boolean>,showCompletePlan:MutableState<Boolean>,) {
+
+    val selectedExerciseToAdd by generalViewModel.addedExercises.observeAsState()
+
     val clicked = remember {
         mutableStateOf(false)
-    }
-    if (showPopup.value) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 40.dp)
-                .background(
-                    MaterialTheme.colorScheme.surface,
-                    RoundedCornerShape(20.dp)
-                )
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(40.dp)
-            ) {
-                if (clicked.value == false) {
-                    item {
-                        Row(
+    } // CREATE PLAN CLICKED
+    var showPopup3 = remember { mutableStateOf(false) } // LAST PLAN GENERATION SCREEN
+    var showPopup4 = remember { mutableStateOf(false) } // LAST  WORKOUT SET SCREEN
+    var showDialog = remember { mutableStateOf(false) } //
+    if (showPopup.value) { // PLAN PAGE POPUP OR WORKOUT SET
+                if (clicked.value == false && showPopup3.value == false && showPopup4.value == false) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 40.dp)
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                                RoundedCornerShape(20.dp)
+                            )
+                    ) {
+                        LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(end = 290.dp),
-                            horizontalArrangement = Arrangement.Center
+                                .padding(40.dp)
                         ) {
-                            IconButton(onClick = { showPopup.value = false }) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close Icon"
+                            item {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(end = 290.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    IconButton(onClick = { clicked.value = true }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Close,
+                                            contentDescription = "Close Icon"
+                                        )
+                                    }
+                                }
+                            }
+                            item {
+                                Text(
+                                    text = "Add Pre-Made Workout",
+                                    style = MaterialTheme.typography.headlineMedium
                                 )
+                            }
+                            item {
+                                Text(
+                                    text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                            item { Spacer(modifier = Modifier.height(10.dp)) }
+                            item {
+                                Button(
+                                    onClick = {
+                                        clicked.value = true
+                                        showPopup4.value = false
+
+                                        showPopup3.value = true
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(55.dp),
+                                    //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+
+                                ) {
+                                    Text(text = "USE PLAN BUILDER")
+                                }
+                            }
+                            item { Spacer(modifier = Modifier.height(10.dp)) }
+                            item {
+                                Button(
+                                    onClick = {
+                                        clicked.value = true
+                                        showPopup3.value = false
+                                        showPopup4.value = true
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(55.dp),
+                                    // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                                ) {
+                                    Text(text = "ADD MANUAL WORKOUT")
+                                }
+                            }
+                            workouts.forEach { workout ->
+                                item {
+                                    GeneralCard(
+                                        imageResId = R.drawable.logo,
+                                        title = workout.name,
+                                        onItemClick = {
+                                            selectHandler(SelectEvent.SelectWorkout(workout))
+                                            navController.navigate(Route.WorkoutScreen.route)
+                                        }
+                                    )
+                                }
+
                             }
                         }
                     }
-                    item {
-                        Text(
-                            text = "Add Pre-Made Workout",
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-                    }
-                    item {
-                        Text(
-                            text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
-                    item {
-                        Button(
-                            onClick = { showPopup.value = false },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp),
-                            //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+                } else if (clicked.value == true && showPopup3.value == false && showPopup4.value == false) {
+                 //INTERMEDIATE SCREEN
+                        NewPlanScreen(createHandler, navController, showPopup3)
 
-                        ) {
-                            Text(text = "USE WORKOUT BUILDER")
-                        }
-                    }
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
-                    item {
-                        Button(
-                            onClick = { showPopup.value = false },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp),
-                            // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
-                        ) {
-                            Text(text = "ADD PRE-MADE WORKOUT")
-                        }
-                    }
-                    workouts.forEach { workout ->
-                        item {
-                            GeneralCard(
-                                imageResId = R.drawable.logo,
-                                title = workout.name,
-                                onItemClick = {
-                                    selectHandler(SelectEvent.SelectWorkout(workout))
-                                    navController.navigate(Route.WorkoutScreen.route)
-                                }
-                            )
-                        }
+                } else if (clicked.value == true && showPopup3.value == true && showPopup4.value == false) {
 
+                        // LAST SCREEN
+                        NewPlanPagePopup(
+                            showPopup3,
+                            {showCompletePlan.value=true},
+                            navController,
+                            { showPopup3.value = false })
+
+                } else if (clicked.value == true && showPopup3.value == false && showPopup4.value == true) {
+
+                        SetWorkoutPagePopup(
+                            showPopup4,
+                            showCompleteWorkout,
+                            {
+                                navController.navigate(Route.TypedExerciseScreen.route)
+                            },
+                            selectedExercises = selectedExerciseToAdd ?: mutableListOf<Exercise>(),
+                            onItemClick2 = {
+                                navController.navigate(Route.TypedExerciseScreen.route)
+                            })
                     }
-                } else {
-                    item {
-                        NewPlanScreen(createHandler,navController,clicked)
-                    }
+
                 }
             }
-        }
-    }
-}
 
-
-@Composable
-fun ChoicePopup() {
-    var showPopup = remember { mutableStateOf(true) }
-    if (showPopup.value) {
-        Card(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable {
-                    showPopup.value = false
-                }
-                .background(
-                    MaterialTheme.colorScheme.surface,
-                    RoundedCornerShape(20.dp)
-                )
-        ) {
-            // Your main screen content here
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
+    @Composable
+    fun ChoicePopup() {
+        var showPopup = remember { mutableStateOf(true) }
+        if (showPopup.value) {
+            Card(
                 modifier = Modifier
-                    .padding(10.dp)
-                    .background(Color.White, shape = RoundedCornerShape(10.dp),)
-            ) {
-                Text(
-                    text = "Hammer Strength",
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Text(
-                    text = "Are you sure you want to finish workout?",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Button(
-                        onClick = { showPopup.value = false },
-                    ) {
-                        Text(text = "No")
+                    .fillMaxSize()
+                    .clickable {
+                        showPopup.value = false
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Button(
-                        onClick = { /* on yes click */ },
+                    .background(
+                        MaterialTheme.colorScheme.surface,
+                        RoundedCornerShape(20.dp)
+                    )
+            ) {
+                // Your main screen content here
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .background(Color.White, shape = RoundedCornerShape(10.dp),)
+                ) {
+                    Text(
+                        text = "Hammer Strength",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Text(
+                        text = "Are you sure you want to finish workout?",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Text(text = "Yes")
+                        Button(
+                            onClick = { showPopup.value = false },
+                        ) {
+                            Text(text = "No")
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Button(
+                            onClick = { /* on yes click */ },
+                        ) {
+                            Text(text = "Yes")
+                        }
                     }
                 }
             }
         }
     }
-}
 
 
-@Composable
-fun MuscleGroupItem(imageResId: Int, title: String, onItemClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = title,
-            modifier = Modifier.size(64.dp),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = title,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
+    @Composable
+    fun MuscleGroupItem(imageResId: Int, title: String, onItemClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    MaterialTheme.colorScheme.onSurface,
-                    RoundedCornerShape(8.dp)
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
+                .padding(vertical = 8.dp)
+                .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {
-                onItemClick()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowForwardIos,
-                    contentDescription = "Exercise Button",
-                    tint = MaterialTheme.colorScheme.surface
-                )
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = title,
+                modifier = Modifier.size(64.dp),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        MaterialTheme.colorScheme.onSurface,
+                        RoundedCornerShape(8.dp)
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = {
+                    onItemClick()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowForwardIos,
+                        contentDescription = "Exercise Button",
+                        tint = MaterialTheme.colorScheme.surface
+                    )
 
+                }
             }
         }
     }
-}
+
 
 @Composable
 fun NotificationCard(
