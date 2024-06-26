@@ -109,7 +109,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 PlanScreen(navController = navController, deleteHandler = generalViewModel::onDeleteEvent, selectHandler = generalViewModel::onSelectEvent,
-                    generalViewModel = generalViewModel
+                    generalViewModel = generalViewModel, createHandler = generalViewModel::onCreateEvent
                 )
             }
             composable(

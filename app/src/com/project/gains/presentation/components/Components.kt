@@ -118,7 +118,241 @@ import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.events.ShareContentEvent
+import com.project.gains.presentation.plan.NewPlanScreen
+@Composable
+fun BackButton(onClick: () -> Unit) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.size(45.dp),
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = "Share Icon",
+            modifier = Modifier
+                .size(60.dp)
+                .padding(10.dp),
+            tint = MaterialTheme.colorScheme.surface
+        )
+    }
+}
 
+@Composable
+fun ShareButton(
+    onClick: () -> Unit,
+    isEnabled: Boolean
+) {
+    IconButton(
+        onClick = { onClick() },
+        modifier = Modifier.size(50.dp),
+        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Send,
+            contentDescription = "Share Icon",
+            modifier = Modifier
+                .size(50.dp)
+                .padding(10.dp),
+            tint = if (isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+@Composable
+fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,isSelected: Boolean) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
+            contentDescription = exercise.name,
+            modifier = Modifier.size(64.dp),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = exercise.name,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Row( modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        )  {
+            IconButton(onClick = {
+                onItemClick(exercise) }) {
+                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+
+            }
+        }
+    }
+}
+
+@Composable
+fun TrainingTypePopup(
+    popupVisible: MutableState<Boolean>,
+    onDismiss: () -> Unit,
+    onOptionSelected: (TrainingType) -> Unit,
+    selectedMetric: TrainingType
+) {
+    if (popupVisible.value) {
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            title = {
+
+            },
+            text = {
+                Spacer(modifier = Modifier.height(10.dp))
+                Column(Modifier.padding(top=20.dp)) {
+                    TrainingType.entries.forEach { metric ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .background(
+                                    MaterialTheme.colorScheme.surface,
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .clickable { onOptionSelected(metric) }
+                        ) {
+                            Text(
+                                text = metric.name,
+                                color = if (metric == selectedMetric)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            },
+            buttons = {
+                Column {
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(5.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(
+                            onClick = { popupVisible.value = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Cancel",color = Color.Red)
+                        }
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(50.dp)
+                                .background(Color.Gray)
+                        )
+                        TextButton(
+                            onClick = { popupVisible.value = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
+                        }
+                    }
+                }
+            },
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
+        )
+    }
+}
+@Composable
+fun PeriodPopup(
+    selectedPeriodMap: MutableList<PeriodMetricType>?,
+    popupVisible: MutableState<Boolean>,
+    onDismiss: () -> Unit,
+    onOptionSelected: (PeriodMetricType) -> Unit,
+    selectedMetric: PeriodMetricType
+) {
+    if (popupVisible.value) {
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            title = {
+
+            },
+            text = {
+                Spacer(modifier = Modifier.height(10.dp))
+                Column(Modifier.padding(top=20.dp)) {
+                    selectedPeriodMap?.forEach { metric ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 10.dp)
+                                .border(
+                                    width = 1.dp,
+                                    color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .background(
+                                    MaterialTheme.colorScheme.surface,
+                                    RoundedCornerShape(8.dp)
+                                )
+                                .clickable { onOptionSelected(metric) }
+                        ) {
+                            Text(
+                                text = metric.name,
+                                color = if (metric == selectedMetric)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            },
+            buttons = {
+                Column {
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(5.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(
+                            onClick = { popupVisible.value = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Cancel",color = Color.Red)
+                        }
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(50.dp)
+                                .background(Color.Gray)
+                        )
+                        TextButton(
+                            onClick = { popupVisible.value = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
+                        }
+                    }
+                }
+            },
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
+        )
+    }
+}
 @Composable
 fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:String) {
     if (popup) {
@@ -560,6 +794,11 @@ fun TopBar(navController: NavController, message: String, button: @Composable ()
     }
 }
 @Composable
+fun currentRoute(navController: NavController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
+}
+@Composable
 fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,navController: NavController,
                      createHandler: (CreateEvent) -> Unit) {
     val allOptions = remember { generateOptions() } // List to store selected options
@@ -945,12 +1184,10 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,
                 item {
                     Button(
                         onClick = {
-
                                 createHandler(
-                                    com.project.gains.presentation.events.CreateEvent.CreatePlan(
+                                    CreateEvent.CreatePlan(
                                         options,
                                         selectedPeriod,
-                                        selectedExerciseTypes,
                                         selectedMetrics,
                                         selectedTraining,
                                         selectedMusic.value,
@@ -1224,86 +1461,101 @@ fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
 
 
 @Composable
-fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>, onItemClick: () -> Unit) {
+fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>, onItemClick: () -> Unit,createHandler: (CreateEvent) -> Unit,navController: NavController) {
+    val clicked = remember {
+        mutableStateOf(false)
+    }
     if (showPopup.value) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 40.dp)
-            .background(
-                MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(20.dp)
-            )
-    ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(40.dp)
-                ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 40.dp)
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                    RoundedCornerShape(20.dp)
+                )
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(40.dp)
+            ) {
+                if (clicked.value == false) {
                     item {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 290.dp),
-                        horizontalArrangement = Arrangement.Center) {
-                        IconButton(onClick = { showPopup.value=false }) {
-                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 290.dp),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            IconButton(onClick = { showPopup.value = false }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close Icon"
+                                )
+                            }
                         }
-                    }  }
-
-                    item { Text(
-                        text = "Add Pre-Made Workout",
-                        style = MaterialTheme.typography.headlineMedium
-                    ) }
+                    }
                     item {
                         Text(
-                        text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
-                        style = MaterialTheme.typography.bodySmall,
-                    ) }
+                            text = "Add Pre-Made Workout",
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    }
+                    item {
+                        Text(
+                            text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
                     item { Spacer(modifier = Modifier.height(10.dp)) }
-
                     item {
                         Button(
                             onClick = { showPopup.value = false },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(55.dp),
-                   //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+                            //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
 
                         ) {
                             Text(text = "USE WORKOUT BUILDER")
                         }
                     }
-
                     item { Spacer(modifier = Modifier.height(10.dp)) }
-
-
                     item {
                         Button(
-                            onClick = { showPopup.value=false },
+                            onClick = { showPopup.value = false },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(55.dp),
-                           // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                            // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
                         ) {
                             Text(text = "ADD PRE-MADE WORKOUT")
                         }
                     }
-
-                    workouts.forEach{workout ->
+                    workouts.forEach { workout ->
                         item {
-                            GeneralCard(imageResId = R.drawable.logo, title = "Workout1", onItemClick = onItemClick)
+                            GeneralCard(
+                                imageResId = R.drawable.logo,
+                                title = "Workout1",
+                                onItemClick = onItemClick
+                            )
                         }
 
                     }
-
+                } else {
+                    item {
+                        NewPlanScreen(createHandler,navController,clicked)
+                    }
                 }
             }
         }
     }
+}
 
 
 @Composable
-fun ChoicePopup(){
+fun ChoicePopup() {
     var showPopup = remember { mutableStateOf(true) }
     if (showPopup.value) {
         Card(
@@ -1324,7 +1576,10 @@ fun ChoicePopup(){
                     .padding(10.dp)
                     .background(Color.White, shape = RoundedCornerShape(10.dp),)
             ) {
-                Text(text = "Hammer Strength", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Hammer Strength",
+                    style = MaterialTheme.typography.headlineSmall
+                )
                 Text(
                     text = "Are you sure you want to finish workout?",
                     style = MaterialTheme.typography.bodySmall
@@ -1350,46 +1605,9 @@ fun ChoicePopup(){
     }
 }
 
-@Composable
-fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,isSelected: Boolean) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
-            contentDescription = exercise.name,
-            modifier = Modifier.size(64.dp),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = exercise.name,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-        Row( modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        )  {
-            IconButton(onClick = {
-                onItemClick(exercise) }) {
-                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
-
-            }
-        }
-    }
-}
 
 @Composable
-fun MuscleGroupItem(imageResId: Int, title: String,onItemClick: () -> Unit) {
+fun MuscleGroupItem(imageResId: Int, title: String, onItemClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -1411,15 +1629,24 @@ fun MuscleGroupItem(imageResId: Int, title: String,onItemClick: () -> Unit) {
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold
         )
-        Row( modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    MaterialTheme.colorScheme.onSurface,
+                    RoundedCornerShape(8.dp)
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
-        )  {
+        ) {
             IconButton(onClick = {
-                onItemClick() }) {
-                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+                onItemClick()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForwardIos,
+                    contentDescription = "Exercise Button",
+                    tint = MaterialTheme.colorScheme.surface
+                )
 
             }
         }
@@ -1464,6 +1691,7 @@ fun NotificationCard(
     }
 }
 
+
 @Composable
 fun FeedPost(gymPost: GymPost) {
     Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
@@ -1481,7 +1709,7 @@ fun FeedPost(gymPost: GymPost) {
             horizontalArrangement = Arrangement.Start
         ) {
             // User Info Section
-            LogoUser(modifier = Modifier.size(60.dp),gymPost.userResourceId) {
+            LogoUser(modifier = Modifier.size(60.dp), gymPost.userResourceId) {
                 // Placeholder for user logo
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -1575,28 +1803,6 @@ fun FeedPost(gymPost: GymPost) {
 
 }
 
-@Composable
-fun currentRoute(navController: NavController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
-}
-
-@Composable
-fun BackButton(onClick: () -> Unit) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.size(45.dp),
-    ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Share Icon",
-            modifier = Modifier
-                .size(60.dp)
-                .padding(10.dp),
-            tint = MaterialTheme.colorScheme.surface
-        )
-    }
-}
 
 @Composable
 fun WorkoutHeader() {
@@ -1607,7 +1813,7 @@ fun WorkoutHeader() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter= painterResource(id = R.drawable.pexels1),
+            painter = painterResource(id = R.drawable.pexels1),
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -1638,7 +1844,7 @@ fun WorkoutHeader() {
 }
 
 @Composable
-fun WorkoutDaysList(onItemClick:()->Unit) {
+fun WorkoutDaysList(onItemClick: () -> Unit) {
     val workoutDays = listOf(
         "chest",
         "back",
@@ -1706,11 +1912,13 @@ fun GifLoader(gif: Int) {
         }
         .build()
     val painter = // Adjust the size as needed
-        rememberAsyncImagePainter(ImageRequest // Optional: Apply transformations
-            .Builder(LocalContext.current).data(data = gif).apply(block = fun ImageRequest.Builder.() {
-                size(Size.ORIGINAL) // Adjust the size as needed
-                transformations(CircleCropTransformation()) // Optional: Apply transformations
-            }).build(), imageLoader = imageLoader
+        rememberAsyncImagePainter(
+            ImageRequest // Optional: Apply transformations
+                .Builder(LocalContext.current).data(data = gif)
+                .apply(block = fun ImageRequest.Builder.() {
+                    size(Size.ORIGINAL) // Adjust the size as needed
+                    transformations(CircleCropTransformation()) // Optional: Apply transformations
+                }).build(), imageLoader = imageLoader
         )
 
     Image(
@@ -1771,7 +1979,7 @@ fun WarningCard(message: String) {
 }
 
 @Composable
-fun ExerciseGif(exercise: Exercise,onClick: (Exercise) -> Unit) {
+fun ExerciseGif(exercise: Exercise, onClick: (Exercise) -> Unit) {
     val context = LocalContext.current
     val gifResourceId = R.drawable.gi
 
@@ -1779,9 +1987,11 @@ fun ExerciseGif(exercise: Exercise,onClick: (Exercise) -> Unit) {
         model = ImageRequest.Builder(context)
             .data(gifResourceId)
             .size(Size.ORIGINAL)
-            .parameters(coil.request.Parameters.Builder()
-                .set("coil-request-animated", true)
-                .build())
+            .parameters(
+                coil.request.Parameters.Builder()
+                    .set("coil-request-animated", true)
+                    .build()
+            )
             .build(),
         contentDescription = "Exercise GIF",
         modifier = Modifier
@@ -1805,8 +2015,8 @@ fun SearchBar(
             containerColor = Color.DarkGray,
             focusedTextColor = MaterialTheme.colorScheme.surface,
             cursorColor = MaterialTheme.colorScheme.surface,
-            focusedIndicatorColor =  MaterialTheme.colorScheme.surface,
-            unfocusedIndicatorColor =  MaterialTheme.colorScheme.surface,
+            focusedIndicatorColor = MaterialTheme.colorScheme.surface,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
             focusedLabelColor = MaterialTheme.colorScheme.surface, // Focused label color
             unfocusedLabelColor = MaterialTheme.colorScheme.surface // Unfocused label color
         ),
@@ -1824,7 +2034,11 @@ fun SearchBar(
             .padding(bottom = 16.dp, top = 16.dp)
             .clip(RoundedCornerShape(20.dp)),
         leadingIcon = {
-            Icon(Icons.Default.Search, contentDescription = "Search Icon", tint = MaterialTheme.colorScheme.surface)
+            Icon(
+                Icons.Default.Search,
+                contentDescription = "Search Icon",
+                tint = MaterialTheme.colorScheme.surface
+            )
         }
     )
 }
@@ -1909,26 +2123,7 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
     }
 }
 
-@Composable
-fun ShareButton(
-    onClick: () -> Unit,
-    isEnabled: Boolean
-) {
-    IconButton(
-        onClick = { onClick() },
-        modifier=Modifier.size(50.dp),
-        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Send,
-            contentDescription = "Share Icon",
-            modifier = Modifier
-                .size(50.dp)
-                .padding(10.dp),
-            tint = if (isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
+
 
 // PROGRESS SCREEN
 @Composable
@@ -1947,7 +2142,7 @@ fun MetricPopup(
             },
             text = {
                 Spacer(modifier = Modifier.height(10.dp))
-                Column(Modifier.padding(top=20.dp)) {
+                Column(Modifier.padding(top = 20.dp)) {
                     selectedMetricMap?.forEach { metric ->
                         Box(
                             modifier = Modifier
@@ -1966,7 +2161,7 @@ fun MetricPopup(
                         ) {
                             Text(
                                 text = metric.name,
-                                color = if (metric == selectedMetric)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
                                     .padding(16.dp)
@@ -1978,7 +2173,11 @@ fun MetricPopup(
             },
             buttons = {
                 Column {
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(5.dp))
+                    Divider(
+                        color = Color.Gray,
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(5.dp)
+                    )
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1989,7 +2188,7 @@ fun MetricPopup(
                             onClick = { popupVisible.value = false },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Cancel",color = Color.Red)
+                            Text("Cancel", color = Color.Red)
                         }
                         Box(
                             modifier = Modifier
@@ -2013,163 +2212,3 @@ fun MetricPopup(
 }
 
 
-
-@Composable
-fun TrainingTypePopup(
-    popupVisible: MutableState<Boolean>,
-    onDismiss: () -> Unit,
-    onOptionSelected: (TrainingType) -> Unit,
-    selectedMetric: TrainingType
-) {
-    if (popupVisible.value) {
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            title = {
-
-            },
-            text = {
-                Spacer(modifier = Modifier.height(10.dp))
-                Column(Modifier.padding(top=20.dp)) {
-                    TrainingType.entries.forEach { metric ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .clickable { onOptionSelected(metric) }
-                        ) {
-                            Text(
-                                text = metric.name,
-                                color = if (metric == selectedMetric)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-            },
-            buttons = {
-                Column {
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(5.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Cancel",color = Color.Red)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(50.dp)
-                                .background(Color.Gray)
-                        )
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
-        )
-    }
-}
-@Composable
-fun PeriodPopup(
-    selectedPeriodMap: MutableList<PeriodMetricType>?,
-    popupVisible: MutableState<Boolean>,
-    onDismiss: () -> Unit,
-    onOptionSelected: (PeriodMetricType) -> Unit,
-    selectedMetric: PeriodMetricType
-) {
-    if (popupVisible.value) {
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            title = {
-
-            },
-            text = {
-                Spacer(modifier = Modifier.height(10.dp))
-                Column(Modifier.padding(top=20.dp)) {
-                    selectedPeriodMap?.forEach { metric ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .clickable { onOptionSelected(metric) }
-                        ) {
-                            Text(
-                                text = metric.name,
-                                color = if (metric == selectedMetric)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-            },
-            buttons = {
-                Column {
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(5.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Cancel",color = Color.Red)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(50.dp)
-                                .background(Color.Gray)
-                        )
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
-        )
-    }
-}

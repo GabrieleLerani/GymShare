@@ -454,11 +454,11 @@ val trainingTypeExercises = mapOf(
 // Function to generate random workout plan with Exercise objects including GIFs and descriptions
 fun generateRandomPlan(
     trainingType: TrainingType,
-    exerciseTypes: List<ExerciseType>,
     numberOfWorkouts: Int
 ): List<Workout> {
     val exerciseMap = trainingTypeExercises[trainingType] ?: return emptyList()
     val workouts = mutableListOf<Workout>()
+    val exerciseTypes: List<ExerciseType> = listOf(ExerciseType.SHOULDERS,ExerciseType.CHEST,ExerciseType.BACK,ExerciseType.ARMS,ExerciseType.CORE,ExerciseType.LEGS)
 
     repeat(numberOfWorkouts) { index ->
         val workoutExercises = mutableListOf<Exercise>()

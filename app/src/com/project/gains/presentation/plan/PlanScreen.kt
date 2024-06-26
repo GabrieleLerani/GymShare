@@ -48,6 +48,7 @@ import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WorkoutDaysList
 import com.project.gains.presentation.components.WorkoutHeader
+import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
@@ -60,6 +61,7 @@ fun PlanScreen(
     navController: NavController,
     deleteHandler: (DeleteEvent) -> Unit,
     selectHandler: (SelectEvent)->Unit,
+    createHandler:(CreateEvent)->Unit,
     generalViewModel: GeneralViewModel
 
 ) {
@@ -202,7 +204,7 @@ fun PlanScreen(
         }
         // Page popups
 
-        workouts?.let { PlanPagePopup(showPopup1, it, {}) }
+        workouts?.let { PlanPagePopup(showPopup1, it, {},createHandler,navController)}
         linkedApps?.let { ShareContentPagePopup(showPopup2, it, showDialog) {} }
         NewPlanPagePopup(showPopup3, {}, navController, { showDialogShared.value = true })
         SetWorkoutPagePopup(showPopup4, showDialog) {}
@@ -221,7 +223,7 @@ fun PlanScreenPreview() {
         navController = navController,
         deleteHandler = {},
         selectHandler = {},
-        generalViewModel
-
+        createHandler = {},
+        generalViewModel=generalViewModel
     )
 }

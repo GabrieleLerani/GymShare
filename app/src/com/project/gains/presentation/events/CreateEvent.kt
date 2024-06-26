@@ -18,7 +18,6 @@ sealed class CreateEvent {
     data class CreatePlan(
         val selectedOptions: SnapshotStateList<Option>,
         val selectedPeriod: PeriodMetricType,
-        val selectedExerciseType: SnapshotStateList<TrainingType>,
         val selectedMetricType: MutableList<TrainingMetricType>,
         val selectedTrainingType: TrainingType,
         val selectedMusic: Boolean,

@@ -8,15 +8,18 @@ import androidx.lifecycle.ViewModel
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.GymPost
+import com.project.gains.data.Level
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.Plan
 import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.Session
 import com.project.gains.data.TrainingMetricType
+import com.project.gains.data.TrainingType
 
 import com.project.gains.data.Workout
 import com.project.gains.data.generateRandomGymPost
+import com.project.gains.data.generateRandomPlan
 import com.project.gains.data.generateRandomPlots
 import com.project.gains.data.generateRandomSongTitle
 import com.project.gains.data.generateSampleExercises
@@ -55,7 +58,6 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     val selectedPlan: MutableLiveData<Plan> = _selectedPlan
 
     private val _selectedApp = MutableLiveData<Int>()
-    val selectedApp: MutableLiveData<Int> = _selectedApp
 
     private val _selectedPlotPreview = MutableLiveData<ProgressChartPreview>()
     val selectedPlotPreview: MutableLiveData<ProgressChartPreview> = _selectedPlotPreview
@@ -69,8 +71,6 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _selectedExerciseType = MutableLiveData<ExerciseType>()
     val selectedExerciseType: MutableLiveData<ExerciseType> = _selectedExerciseType
 
-    private val _oldExercise = MutableLiveData<Exercise>()
-    val oldExercise: MutableLiveData<Exercise> = _oldExercise
 
     private val _linkedApps = MutableLiveData<MutableList<Int>>()
     val linkedApps: MutableLiveData<MutableList<Int>> = _linkedApps
@@ -87,16 +87,21 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _currentSessions = MutableLiveData<MutableList<Session>>()
     val currentSessions: MutableLiveData<MutableList<Session>> = _currentSessions
 
+
     // FOR EACH PLAN
 
-    val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
-    val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
-    val _selectedPeriodsMap = HashMap<Int,MutableList<PeriodMetricType>>()
+    private val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
+    private val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
+    private val _selectedPeriodsMap = HashMap<Int,MutableList<PeriodMetricType>>()
 
 
-    val _selectedMusicsMap = HashMap<Int,Boolean>()
+    private val _selectedMusicsMap = HashMap<Int,Boolean>()
 
-    val _selectedBackupsMap = HashMap<Int,Boolean>()
+    private val _selectedBackupsMap = HashMap<Int,Boolean>()
+
+    private val _selectedLvl = MutableLiveData<Level>()
+    private val _selectedPeriod = MutableLiveData<PeriodMetricType>()
+    private val _selectedTrainingType = MutableLiveData<TrainingType>()
 
 
     private var int = 0
@@ -123,13 +128,13 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
         when (event) {
             is SaveSessionEvent.SaveSession -> {
                 _currentSessions.value?.add(event.session)
-                if (_selectedSessionsPlan.get(event.plan) != null) {
-                    _selectedSessionsPlan.get(event.plan)?.get(event.workout)?.add(event.session)
+                if (_selectedSessionsPlan[event.plan] != null) {
+                    _selectedSessionsPlan[event.plan]?.get(event.workout)?.add(event.session)
                 }
                 else{
-                    val hashMap: HashMap<Int,MutableList<Session>> = HashMap<Int,MutableList<Session>>()
-                    hashMap.set(event.workout, mutableListOf())
-                    _selectedSessionsPlan.set(event.plan,hashMap)
+                    val hashMap: HashMap<Int,MutableList<Session>> = HashMap()
+                    hashMap[event.workout] = mutableListOf()
+                    _selectedSessionsPlan[event.plan] = hashMap
                 }
             }
 
@@ -204,16 +209,16 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
                     PeriodMetricType.YEAR -> 192
                     PeriodMetricType.MONTH -> 16
                 }
-//                val workouts = generateRandomPlan(event.selectedTrainingType,event.selectedExerciseType.toMutableList(),num,6)
-                val workouts = generateSampleWorkouts()
+                val workouts = generateRandomPlan(event.selectedTrainingType,num)
+                //val workouts = generateSampleWorkouts()
 
-                val options_selected = event.selectedOptions
-                Log.d("PLAN","THESE ARE YOUR OPTIONS: $options_selected")
-                generateSamplePlans()
-                int = int + 1
-                _selectedMetricsMap.set(int,event.selectedMetricType)
-                _selectedBackupsMap.set(int,event.selectedBackup)
-                _selectedMusicsMap.set(int,event.selectedMusic)
+                val optionsSelected = event.selectedOptions
+                Log.d("PLAN","THESE ARE YOUR OPTIONS: $optionsSelected")
+                //generateSamplePlans()
+                int += 1
+                _selectedMetricsMap[int] = event.selectedMetricType
+                _selectedBackupsMap[int] = event.selectedBackup
+                _selectedMusicsMap[int] = event.selectedMusic
                 val periods:MutableList<PeriodMetricType> = mutableListOf()
 
                 if (PeriodMetricType.WEEK == event.selectedPeriod){
@@ -230,8 +235,8 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
                     periods.add(PeriodMetricType.YEAR)
 
                 }
-                _selectedPeriodsMap.set(int,periods)
-                val plan : Plan = Plan(int,"plan+$int", workouts = workouts.toMutableList(), period = event.selectedPeriod)
+                _selectedPeriodsMap[int] = periods
+                val plan  = Plan(int,"plan+$int", workouts = workouts.toMutableList(), period = event.selectedPeriod)
                 _plans.value?.add(plan)
                 _selectedPlan.value = plan
 
@@ -242,8 +247,9 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
 
             }
             is CreateEvent.SetPlanOptions -> {
-
-
+                _selectedPeriod.value=event.selectedPeriod
+                _selectedLvl.value=event.selectedLevel
+                _selectedTrainingType.value=event.selectedTrainingType
             }
             is CreateEvent.CreateExercise -> {
                 _exercises.value?.add(event.exercise)
