@@ -14,6 +14,7 @@ import com.project.gains.data.Plan
 import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.Session
+import com.project.gains.data.Song
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
 
@@ -21,7 +22,7 @@ import com.project.gains.data.Workout
 import com.project.gains.data.generateRandomGymPost
 import com.project.gains.data.generateRandomPlan
 import com.project.gains.data.generateRandomPlots
-import com.project.gains.data.generateRandomSongTitle
+import com.project.gains.data.generateRandomSongs
 import com.project.gains.data.generateSampleExercises
 import com.project.gains.data.generateSamplePlans
 import com.project.gains.data.generateSampleWorkouts
@@ -54,6 +55,9 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _plots = MutableLiveData<MutableList<Plot>>()
     val plots: MutableLiveData<MutableList<Plot>> = _plots
 
+    private val _songs = MutableLiveData<MutableList<Song>>()
+    val songs: MutableLiveData<MutableList<Song>> = _songs
+
     private val _selectedPlan = MutableLiveData<Plan>()
     val selectedPlan: MutableLiveData<Plan> = _selectedPlan
 
@@ -81,18 +85,24 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _showMusic = MutableLiveData<Boolean>()
     val showMusic: MutableLiveData<Boolean> = _showMusic
 
-    private val _currentSong = MutableLiveData<String>()
-    val currentSong: MutableLiveData<String> = _currentSong
+    private val _isToAdd = MutableLiveData<Boolean>()
+    val isToAdd: MutableLiveData<Boolean> = _isToAdd
+
+    private val _currentSong = MutableLiveData<Song>()
+    val currentSong: MutableLiveData<Song> = _currentSong
 
     private val _currentSessions = MutableLiveData<MutableList<Session>>()
     val currentSessions: MutableLiveData<MutableList<Session>> = _currentSessions
 
 
+    private val _addedExercises = MutableLiveData<MutableList<Exercise>>()
+    val addedExercises: MutableLiveData<MutableList<Exercise>> = _addedExercises
+
     // FOR EACH PLAN
 
     private val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
-    private val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
-    private val _selectedPeriodsMap = HashMap<Int,MutableList<PeriodMetricType>>()
+    val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
+    val _selectedPeriodsMap = HashMap<Int,MutableList<PeriodMetricType>>()
 
 
     private val _selectedMusicsMap = HashMap<Int,Boolean>()
@@ -105,6 +115,8 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
 
 
     private var int = 0
+
+    private var songIndex = 0
 
 
 
@@ -120,6 +132,7 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
         _posts.value = generateRandomGymPost(10).toMutableList()
         _currentSessions.value = mutableListOf()
         _linkedApps.value = mutableListOf()
+        _currentSong.value=Song("","","")
 
     }
 
@@ -144,10 +157,23 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     fun onMusicEvent(event: MusicEvent) {
         when (event) {
             is MusicEvent.Music -> {
-                _currentSong.value = generateRandomSongTitle()
+                _songs.value = generateRandomSongs(10)
+                _currentSong.value= _songs.value?.get(songIndex)
             }
 
+            is MusicEvent.Forward -> {
+                songIndex+=1
+                _currentSong.value= _songs.value?.get(songIndex)
 
+            }
+            is MusicEvent.Rewind -> {
+                songIndex-=1
+
+                _currentSong.value= _songs.value?.get(songIndex)
+
+
+
+            }
         }
     }
 
@@ -281,6 +307,14 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
 
             is SelectEvent.SelectPlotPreview -> {
                 _selectedPlotPreview.value = event.preview
+            }
+
+            is SelectEvent.SelectIsToAdd -> {
+                _isToAdd.value = true
+            }
+
+            is SelectEvent.SelectExerciseToAdd -> {
+                _addedExercises.value?.add(event.exercise)
             }
 
             is SelectEvent.SelectExerciseType -> {

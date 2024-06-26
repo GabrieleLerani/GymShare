@@ -13,5 +13,7 @@ import com.project.gains.data.Workout
 
 sealed class MusicEvent {
     data object Music : MusicEvent()
+    data object  Rewind : MusicEvent()
 
+    data object  Forward: MusicEvent()
 }

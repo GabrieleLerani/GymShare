@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.MaterialTheme
 
 //noinspection UsingMaterialAndMaterial3Libraries
 
@@ -33,7 +37,10 @@ import com.project.gains.R
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.NewPlanPagePopup
+import com.project.gains.presentation.components.PlanPagePopup
 import com.project.gains.presentation.components.TopBar
+import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.SelectEvent
 
 import com.project.gains.presentation.navgraph.Route
@@ -47,11 +54,16 @@ fun GainsHomeScreen(
     viewModel: MainViewModel,
     generalViewModel: GeneralViewModel,
     selectHandler: (SelectEvent) -> Unit,
-) {
+    createHandler: (CreateEvent) -> Unit,
+
+
+    ) {
     val openPopup = remember { mutableStateOf(false) }
     val workouts by generalViewModel.workouts.observeAsState()
     val plans by generalViewModel.plans.observeAsState()
     val plots by generalViewModel.plots.observeAsState()
+    var showPopup1 = remember { mutableStateOf(false) }
+
 
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -68,11 +80,24 @@ fun GainsHomeScreen(
            topBar = {
                TopBar(
                    navController = navController,
-                   message = "Account Setting" ,
+                   message = "Gym Share!" ,
                    button= {
                        LogoUser(
                            modifier = Modifier.size(60.dp), R.drawable.pexels5
                        ) { navController.navigate(Route.AccountScreen.route) }
+                   },
+                   button1 = {
+                       androidx.compose.material.IconButton(
+                           modifier = Modifier.size(45.dp),
+                           onClick = {
+                               showPopup1.value=true
+                           }) {
+                           Icon(
+                               imageVector = Icons.Default.Add,
+                               contentDescription = "New",
+                               tint = MaterialTheme.colorScheme.surface
+                           )
+                       }
                    }
                )
            },
@@ -92,7 +117,7 @@ fun GainsHomeScreen(
                    workouts?.forEach{ workout ->
                        item {
                            GeneralCard(imageResId = R.drawable.pexels1, title = workout.name){
-                               navController.navigate(Route.ExerciseTypeScreen.route)
+                               navController.navigate(Route.WorkoutScreen.route)
                            }
                        }
                    }
@@ -116,6 +141,8 @@ fun GainsHomeScreen(
            }
 
        }
+       workouts?.let {
+           PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController)}
    }
 }
 

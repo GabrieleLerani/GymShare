@@ -42,12 +42,13 @@ fun FeedScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "Account Setting" ,
+                    message = " Explore Feed" ,
                     button= {
                         LogoUser(
                             modifier = Modifier.size(60.dp), R.drawable.pexels5
                         ) { navController.navigate(Route.AccountScreen.route) }
-                    }
+                    },
+                    button1 = {}
                 )
             },            bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->

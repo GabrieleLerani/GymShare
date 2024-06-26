@@ -3,6 +3,8 @@ package com.project.gains.presentation.components
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 
+import android.graphics.Paint
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +33,7 @@ import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries,
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
+import androidx.compose.material.LocalContentColor
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
@@ -83,6 +87,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -90,11 +95,22 @@ import androidx.compose.runtime.setValue
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -108,6 +124,7 @@ import com.project.gains.data.GymPost
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.ProgressChartPreview
+import com.project.gains.data.Song
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
@@ -117,8 +134,14 @@ import com.project.gains.data.generateOptions
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
+import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.NewPlanScreen
+import com.project.gains.theme.GainsAppTheme
+import kotlinx.coroutines.delay
+import kotlin.random.Random
+
 @Composable
 fun BackButton(onClick: () -> Unit) {
     IconButton(
@@ -137,27 +160,7 @@ fun BackButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun ShareButton(
-    onClick: () -> Unit,
-    isEnabled: Boolean
-) {
-    IconButton(
-        onClick = { onClick() },
-        modifier = Modifier.size(50.dp),
-        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Send,
-            contentDescription = "Share Icon",
-            modifier = Modifier
-                .size(50.dp)
-                .padding(10.dp),
-            tint = if (isEnabled) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-@Composable
-fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,isSelected: Boolean) {
+fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,8 +189,99 @@ fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,isSelect
             horizontalArrangement = Arrangement.End
         )  {
             IconButton(onClick = {
-                onItemClick(exercise) }) {
-                Icon(imageVector = Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+                if (isToAdd==true){
+                    onItemClick2()
+                }else{
+                    onItemClick(exercise)
+                }
+            }) {
+                Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+
+            }
+        }
+    }
+}
+
+@Composable
+fun AddWorkoutItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
+            contentDescription = exercise.name,
+            modifier = Modifier.size(64.dp),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = exercise.name,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Row( modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        )  {
+            IconButton(onClick = {
+                if (isToAdd==true){
+                    onItemClick2()
+                }else{
+                    onItemClick(exercise)
+                }
+            }) {
+                Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+
+            }
+        }
+    }
+}
+
+@Composable
+fun AddPlanItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
+            contentDescription = exercise.name,
+            modifier = Modifier.size(64.dp),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = exercise.name,
+            color = Color.White,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+        Row( modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        )  {
+            IconButton(onClick = {
+                if (isToAdd==true){
+                    onItemClick2()
+                }else{
+                    onItemClick(exercise)
+                }
+            }) {
+                Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
 
             }
         }
@@ -353,17 +447,51 @@ fun PeriodPopup(
         )
     }
 }
+
+@Preview
 @Composable
-fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:String) {
+fun p(){
+    GainsAppTheme {
+        MusicPopup(popup = true, musicHandler = {} , currentSong = Song("ciao","ciao","ciao"), totalTime = "12")
+    }
+}
+// Utility function to format time
+fun formatTime(seconds: Float): String {
+    val minutes = (seconds / 60).toInt()
+    val remainingSeconds = (seconds % 60).toInt()
+    return String.format("%d:%02d", minutes, remainingSeconds)
+}
+@Composable
+fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: Song, totalTime: String) {
     if (popup) {
-        val play = remember {
-            mutableStateOf(false)
+        val play = remember { mutableStateOf(false) }
+        var currentTime by remember { mutableStateOf(0f) }
+        var songTotalTime:Float = 165f
+
+        // Simulate a timer to update the current playback position
+        LaunchedEffect(play.value) {
+            if (play.value) {
+                while (currentTime < songTotalTime && play.value) {
+                    delay(100L) // Shorter delay for finer granularity
+                    currentTime += 0.1f // Increment by 0.1 second
+
+                    // Adjust the timer to handle seconds incrementing correctly
+                    if (currentTime % 1.0f >= 0.9f) {
+                        currentTime = (currentTime - (currentTime % 1.0f)) + 1f
+                    }
+
+                    if (currentTime >= songTotalTime) {
+                        play.value = false
+                        musicHandler(MusicEvent.Forward)
+                    }
+                }
+            }
         }
         Card(
             modifier = Modifier
                 .padding(16.dp)
                 .width(500.dp)
-                .height(150.dp)
+                .height(250.dp)
                 .background(Color.Green, RoundedCornerShape(16.dp)),
             elevation = CardDefaults.cardElevation(
                 defaultElevation = 10.dp
@@ -374,6 +502,7 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:St
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(16.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.spotify_icon),
@@ -382,61 +511,86 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:St
                         .size(64.dp)
                         .padding(16.dp)
                 )
-                Text(text = currentSong, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurface)
+                Text(
+                    text = currentSong.title,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(  horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(4.dp)) {
+                    Text(
+                        text = "Artist : ${currentSong.singer}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                Row(modifier = Modifier.fillMaxWidth(),
+                    Text(
+                        text = "Album : ${currentSong.album}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Time: ${formatTime(currentTime)}/${formatTime(songTotalTime)}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically) {
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     ElevatedButton(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(bottom = 16.dp),
+                        modifier = Modifier.align(Alignment.CenterVertically),
                         onClick = {
-                            musicHandler(MusicEvent.Music)
+                            musicHandler(MusicEvent.Rewind)
+                            currentTime=0f
+                            songTotalTime=Random.nextFloat() * (300 - 120) + 120
+
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                     ) {
                         Icon(
                             imageVector = Icons.Default.FastRewind,
-                            contentDescription ="rewind",
-                            modifier = Modifier.size(20.dp), // Adjust the size of the icon
+                            contentDescription = "rewind",
+                            modifier = Modifier.size(24.dp),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
-
+                    Spacer(modifier = Modifier.width(20.dp))
                     ElevatedButton(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(bottom = 16.dp),
+                        modifier = Modifier.align(Alignment.CenterVertically),
                         onClick = {
-                            play.value = true
+                            play.value = !play.value
                             musicHandler(MusicEvent.Music)
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                     ) {
                         Icon(
-                            imageVector = if(play.value) Icons.Default.Stop else Icons.Default.PlayArrow ,
-                            contentDescription ="play",
-                            modifier = Modifier.size(20.dp), // Adjust the size of the icon
+                            imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
+                            contentDescription = "play",
+                            modifier = Modifier.size(24.dp),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
-                    Spacer(modifier = Modifier.width(10.dp))
-
+                    Spacer(modifier = Modifier.width(20.dp))
                     ElevatedButton(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(bottom = 16.dp),
+                        modifier = Modifier.align(Alignment.CenterVertically),
                         onClick = {
-                            musicHandler(MusicEvent.Music)
-                        },
+                            musicHandler(MusicEvent.Forward)
+                            currentTime=0f
+                            songTotalTime=Random.nextFloat() * (300 - 120) + 120 },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                     ) {
                         Icon(
                             imageVector = Icons.Default.FastForward,
-                            contentDescription ="forward",
-                            modifier = Modifier.size(20.dp), // Adjust the size of the icon
+                            contentDescription = "forward",
+                            modifier = Modifier.size(24.dp),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
@@ -445,12 +599,12 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit,currentSong:St
         }
     }
 }
-
 @Composable
 fun ProgressChartCard(
     chartPreview: ProgressChartPreview,
     onItemClick: (ProgressChartPreview) -> Unit
 ) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -553,68 +707,284 @@ fun OptionCheckbox(
 
 @Composable
 fun TrainingOverviewChart(
-    trainingData: List<TrainingData>, selectedMetric: TrainingMetricType, selectedPeriod: PeriodMetricType,
-    shareHandler:(ShareContentEvent.SharePlot)->Unit, selectedPlotType: ProgressChartPreview) {
-
-    val rowColors = listOf(Color.Red, Color.Blue, Color.Green) // Example colors, you can customize as needed
+    trainingData: List<TrainingData>,
+    selectedMetric: TrainingMetricType,
+    selectedPeriod: PeriodMetricType,
+    shareHandler: (ShareContentEvent.SharePlot) -> Unit,
+    selectedPlotType: ProgressChartPreview
+) {
+    val values= remember {
+        mutableListOf<Float>()
+    }
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
         trainingData.forEachIndexed { index, data ->
-            val color = rowColors[index % rowColors.size] // Selecting color based on index
-            Row(
+            values.add(data.value.toFloat())
+           /* Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                androidx.compose.material.Text(
-                    text = "$selectedPeriod ${index + 1}", style = MaterialTheme.typography.labelSmall,
+                // Y-axis label (period)
+                androidx.compose.material3.Text(
+                    text = "${selectedPeriod.name} ${index + 1}",
+                    style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                if (selectedPlotType.imageResId == R.drawable.plo1) {
-                    Box(
-                        modifier = Modifier
-                            .height(20.dp)
-                            .width((data.value * 20).dp)
-                            .background(
-                                color = color,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                    )
 
+                // Spacer to separate Y-axis label from plot
+                Spacer(modifier = Modifier.width(16.dp))
+            }*/
+        }
+            when (selectedPlotType.imageResId) {
+                R.drawable.plot2 -> {
+                    // Bar plot (Vertical bar plot)
+                    BarPlot(trainingData,"Months","Bpm")
                 }
-                else if (selectedPlotType.imageResId == R.drawable.plot2) {
-                    Box(
-                        modifier = Modifier
-                            .height((data.value * 20).dp)
-                            .width(20.dp)
-                            .background(
-                                color = color,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                    )
+                R.drawable.plot3 -> {
+                    // Pie plot (Circular pie chart)
+                    PiePlot(trainingData,"Months","Bpm")
                 }
-                else{
-                    Box(
-                        modifier = Modifier
-                            .size((data.value * 20).dp)
-                            .background(color = color, shape = CircleShape)
+            }
+    }
+}
+
+
+
+
+@Composable
+fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: String) {
+    val maxValue = trainingData.maxOf { it.value }
+    val barSpacing: Dp = 4.dp
+    val density = LocalDensity.current
+
+    Canvas(modifier = Modifier.size(400.dp).padding(20.dp)) {
+        val totalBars = trainingData.size
+        val totalSpacing = (totalBars - 1) * barSpacing.toPx()
+        val barWidth = (size.width - totalSpacing) / totalBars
+        val graphHeight = size.height
+
+        // Draw X-axis label (Metric Type)
+        drawIntoCanvas {
+            val label = valueType
+            val textWidth = with(density) { size.width.toDp() }
+            val textHeight = with(density) { 16.dp.toPx() }
+
+            it.nativeCanvas.drawText(
+                label,
+                (size.width - textWidth.toPx()) / 2,
+                graphHeight + textHeight + 24.dp.toPx(),
+                Paint().apply {
+                    color = Color.Black.toArgb()
+                    textSize = density.run { 16f.sp.toPx() }
+                    isAntiAlias = true
+                }
+            )
+        }
+
+        // Draw X-axis
+        drawRoundRect(
+            color = Color.Gray,
+            topLeft = Offset(0f, graphHeight),
+            size = androidx.compose.ui.geometry.Size(size.width, 4.dp.toPx()),
+            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+        )
+
+        // Draw Y-axis label
+        drawIntoCanvas {
+            val maxLabel = maxValue.toString()
+            val textWidth = with(density) { 16.dp.toPx() }
+            val textHeight = with(density) { 12.dp.toPx() }
+
+            it.nativeCanvas.drawText(
+                metricType,
+                -textWidth -50 ,
+                textHeight + 900,
+                Paint().apply {
+                    color = Color.Black.toArgb()
+                    textSize = density.run { 14f.sp.toPx() }
+                    isAntiAlias = true
+                }
+            )
+
+            it.nativeCanvas.drawText(
+                maxLabel,
+                -textWidth -50 ,
+                 textHeight,
+                Paint().apply {
+                    color = Color.Black.toArgb()
+                    textSize = density.run { 14f.sp.toPx() }
+                    isAntiAlias = true
+                }
+            )
+        }
+
+        // Draw Y-axis
+        drawRoundRect(
+            color = Color.Gray,
+            topLeft = Offset(0f, 0f),
+            size = androidx.compose.ui.geometry.Size(4.dp.toPx(), graphHeight),
+            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
+        )
+
+        // Draw X-axis labels (Bar indices)
+        trainingData.forEachIndexed { index, data ->
+            val startX = index * (barWidth + barSpacing.toPx())
+            val label = "${index + 1}"
+
+            drawIntoCanvas {
+                val textWidth = with(density) { (barWidth - 8.dp.toPx()).toDp() }
+                val textHeight = with(density) { 16.dp.toPx() }
+
+                it.nativeCanvas.drawText(
+                    label,
+                    startX + (barWidth - textWidth.toPx()) / 2,
+                    graphHeight + textHeight + 4.dp.toPx(),
+                    Paint().apply {
+                        color = Color.Black.toArgb()
+                        textSize = density.run { 14f.sp.toPx() }
+                        isAntiAlias = true
+                    }
+                )
+            }
+        }
+
+        // Draw bars
+        trainingData.forEachIndexed { index, data ->
+            val barHeight = data.value / maxValue.toFloat()
+            val startX = index * (barWidth + barSpacing.toPx())
+            val startY = graphHeight * (1 - barHeight)
+
+            // Random color generation for the bars
+            val color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
+
+            // Draw background bar
+            drawRoundRect(
+                color = Color.LightGray,
+                topLeft = Offset(startX, startY),
+                size = androidx.compose.ui.geometry.Size(barWidth, graphHeight * barHeight),
+                cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+            )
+
+            // Draw actual bar
+            drawRoundRect(
+                color = color,
+                topLeft = Offset(startX, startY),
+                size = androidx.compose.ui.geometry.Size(barWidth, graphHeight * barHeight),
+                cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
+            )
+        }
+    }
+}
+@Composable
+fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: String) {
+    val totalValue = trainingData.sumOf { it.value }
+    val colorMap = HashMap<Int,Color>()
+
+    Row(modifier = Modifier.padding(20.dp)) {
+        // Canvas for pie plot
+        Canvas(modifier = Modifier.size(240.dp)) {
+            val canvasWidth = size.width
+            val canvasHeight = size.height
+            val radius = size.minDimension / 2
+
+            var startAngle = 0f
+            val centerX = canvasWidth / 2
+            val centerY = canvasHeight / 2
+
+            trainingData.forEachIndexed { index, data ->
+                val sweepAngle = (data.value / totalValue.toFloat()) * 360
+
+                // Calculate slice color
+                val color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
+
+                colorMap.set(index,color)
+
+                // Draw pie segment
+                drawArc(
+                    color = color,
+                    startAngle = startAngle,
+                    sweepAngle = sweepAngle,
+                    useCenter = true,
+                    topLeft = Offset(centerX - radius, centerY - radius),
+                    size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
+                )
+
+                startAngle += sweepAngle
+            }
+        }
+
+        // Canvas for legend
+        Canvas(modifier = Modifier.weight(1.5f)) {
+            val legendOffsetY = 20.dp.toPx()
+            val legendBoxSize = 20.dp.toPx()
+            val legendTextSize = 30f
+
+            trainingData.forEachIndexed { index, data ->
+                val legendX = 20.dp.toPx()
+                val legendY = legendOffsetY + index * (legendBoxSize + 8.dp.toPx())
+
+                // Legend box
+                drawRoundRect(
+                    color = colorMap.get(index) ?: Color.White,
+                    topLeft = Offset(legendX, legendY),
+                    size = androidx.compose.ui.geometry.Size(legendBoxSize, legendBoxSize),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx(), 4.dp.toPx())
+                )
+
+                // Legend text
+                drawIntoCanvas {
+                    it.nativeCanvas.drawText(
+                        "Month ${index +1}",
+                        legendX + legendBoxSize + 8.dp.toPx(),
+                        legendY + legendBoxSize * 0.75f,
+                        Paint().apply {
+                            color = Color.Black.toArgb()
+                            textSize = legendTextSize
+                            isAntiAlias = true
+                        }
                     )
                 }
             }
         }
-        Row ( modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center){
-            ShareButton(onClick = { shareHandler(ShareContentEvent.SharePlot(trainingData,selectedMetric,selectedPeriod))}, isEnabled = true)
-
+    }
+}
+@Composable
+fun HorizontalScale(value: Float) {
+    Row(
+        modifier = Modifier.padding(start=170.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        for (i in 0..value.toInt()) {
+            Text(
+                text = i.toString(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }
+
+@Composable
+fun VerticalScale(value: Float) {
+    Column(
+        modifier = Modifier.padding(start=100.dp),
+
+        verticalArrangement = Arrangement.spacedBy(3.dp)
+    ) {
+        for (i in 0..value.toInt()) {
+            Text(
+                text = i.toString(),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+}
+
 
 @Composable
 fun SocialMediaRow(
@@ -752,7 +1122,7 @@ fun BottomNavigationBar(navController: NavController) {
 }
 
 @Composable
-fun TopBar(navController: NavController, message: String, button: @Composable () -> Unit) {
+fun TopBar(navController: NavController, message: String, button: @Composable () -> Unit,button1: @Composable () -> Unit) {
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -768,9 +1138,7 @@ fun TopBar(navController: NavController, message: String, button: @Composable ()
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            BackButton {
-                navController.popBackStack()
-            }
+            button1()
 
             Text(
                 text = message,
@@ -1212,7 +1580,7 @@ fun NewPlanPagePopup(showPopup : MutableState<Boolean>, onItemClick: () -> Unit,
 }
 
 @Composable
-fun ShareContentPagePopup(showPopup: MutableState<Boolean>, apps: MutableList<Int>,  show: MutableState<Boolean>,onItemClick: (Int)->Unit ){
+fun ShareContentPagePopup(showPopup: MutableState<Boolean>, apps: MutableList<Int>,  show: MutableState<Boolean>,onItemClick: (Int)->Unit,navController: NavController ){
     var clickedApp by remember { mutableIntStateOf(1) }
 
 
@@ -1265,14 +1633,32 @@ fun ShareContentPagePopup(showPopup: MutableState<Boolean>, apps: MutableList<In
 
 
                 item {
-                    Button(
-                        onClick = { showPopup.value = false
-                                  show.value=true},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(55.dp),
-                    ) {
-                        Text(text = "SHARE CONTENT")
+                    if (apps.isEmpty()){
+                        Text(
+                            text = "You have no linked apps to link an app go to settings -> sharing preferences or click the link apps button below",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Button(
+                            onClick = { showPopup.value = false
+                                navController.navigate(Route.SettingScreen.route)},
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp),
+                        ) {
+                            Text(text = "LINK APPS")
+                        }
+
+                    }else{
+                        Button(
+                            onClick = { showPopup.value = false
+                                show.value=true},
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp),
+                        ) {
+                            Text(text = "SHARE CONTENT")
+                        }
                     }
                 }
 
@@ -1282,9 +1668,8 @@ fun ShareContentPagePopup(showPopup: MutableState<Boolean>, apps: MutableList<In
 }
 
 @Composable
-fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boolean>, onItemClick: (Int)->Unit ){
+fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boolean>, onItemClick: ()->Unit,onItemClick2: ()->Unit ,selectedExercises:MutableList<Exercise>){
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
-    var selectedExercises by remember { mutableStateOf(listOf<Exercise>()) }
 
 
     if (showPopup.value) {
@@ -1361,7 +1746,7 @@ fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boo
 
                         Row(horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically) {
-                            AddExerciseItem(exercise = exercise, onItemClick = {}, isSelected = true)
+                            AddExerciseItem(exercise = exercise, onItemClick = {onItemClick()}, onItemClick2 = {onItemClick2()},isSelected = false,isToAdd = true)
                             Spacer(modifier = Modifier.width(20.dp))
                             DeleteExerciseButton {
 
@@ -1378,6 +1763,7 @@ fun SetWorkoutPagePopup(showPopup: MutableState<Boolean>, show: MutableState<Boo
                         Spacer(modifier = Modifier.width(80.dp))
                         Spacer(modifier = Modifier.width(20.dp))
                         AddExerciseButton {
+                            onItemClick()
 
                         }
                     }
@@ -1461,7 +1847,7 @@ fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
 
 
 @Composable
-fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>, onItemClick: () -> Unit,createHandler: (CreateEvent) -> Unit,navController: NavController) {
+fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workout>,selectHandler: (SelectEvent) -> Unit,createHandler: (CreateEvent) -> Unit,navController: NavController) {
     val clicked = remember {
         mutableStateOf(false)
     }
@@ -1537,8 +1923,11 @@ fun PlanPagePopup(showPopup : MutableState<Boolean>, workouts:MutableList<Workou
                         item {
                             GeneralCard(
                                 imageResId = R.drawable.logo,
-                                title = "Workout1",
-                                onItemClick = onItemClick
+                                title = workout.name,
+                                onItemClick = {
+                                    selectHandler(SelectEvent.SelectWorkout(workout))
+                                    navController.navigate(Route.WorkoutScreen.route)
+                                }
                             )
                         }
 

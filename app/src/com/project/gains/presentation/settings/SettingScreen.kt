@@ -85,20 +85,15 @@ fun SettingScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "Account Setting" ,
+                    message = "Sharing Preferences" ,
                     button= {
-                        androidx.compose.material.IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
-                                // Handle history button click
-                                // TODO history popus page
-                                //navController.navigate(Route.HistoryScreen.route)
-                            }) {
-                            Icon(
-                                imageVector = Icons.Default.History,
-                                contentDescription = "History",
-                                tint = MaterialTheme.colorScheme.surface
-                            )
+                        LogoUser(
+                            modifier = Modifier.size(60.dp), R.drawable.pexels5
+                        ) { navController.navigate(Route.AccountScreen.route) }
+                    },
+                    button1 = {
+                        BackButton {
+                            navController.popBackStack()
                         }
                     }
                 )

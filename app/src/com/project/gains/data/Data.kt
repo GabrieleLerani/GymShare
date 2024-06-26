@@ -58,6 +58,12 @@ data class Plan(
     val workouts: MutableList<Workout>
 )
 
+data class Song(
+    val singer: String,
+    val album: String,
+    val title: String,
+)
+
 data class Workout(
     val id:Int,val name:String,val exercises:MutableList<Exercise>
 )
@@ -94,7 +100,7 @@ data class Plot(val preview: ProgressChartPreview, val data: List<TrainingData>)
 data class ProgressChartPreview(val name: String, @DrawableRes val imageResId: Int)
 
 // Data class to hold chart data
-data class TrainingData(val type: TrainingMetricType, val value: Int)
+data class TrainingData(val type: TrainingMetricType, var value: Int)
 
 
 data class Option(val name: String, var isChecked: Boolean = false)
@@ -196,59 +202,6 @@ fun generateSampleWorkouts(): MutableList<Workout> {
                     type =ExerciseType.LEGS, training = TrainingType.STRENGTH
                 ),
             )
-        ),  Workout(
-            id = 1,
-            name = "Workout 3",
-            exercises = mutableListOf(
-                Exercise(
-                    "Exercise 1", gifResId = R.drawable.chest, description = "Exercise 1",
-                    type = ExerciseType.CHEST, training = TrainingType.STRENGTH
-                ),
-                Exercise(
-                    "Exercise 2", gifResId = R.drawable.chest2, description = "Exercise 2",
-                    type = ExerciseType.CHEST, training = TrainingType.STRENGTH
-                ),
-                Exercise(
-                    "Exercise 3", gifResId = R.drawable.chest3, description = "Exercise 3",
-                    type = ExerciseType.CHEST, training = TrainingType.STRENGTH
-                ),
-            )
-        ),
-        Workout(
-            id = 1,
-            name = "Workout 4",
-            exercises = mutableListOf(
-                Exercise(
-                    "Exercise 1", gifResId = R.drawable.backk, description = "Exercise 1",
-                    type = ExerciseType.BACK, training = TrainingType.STRENGTH
-                ),
-                Exercise(
-                    "Exercise 2", gifResId = R.drawable.back2, description = "Exercise 2",
-                    type = ExerciseType.BACK, training = TrainingType.STRENGTH
-                ),
-                Exercise(
-                    "Exercise 3", gifResId = R.drawable.back4, description = "Exercise 3",
-                    type = ExerciseType.BACK, training = TrainingType.STRENGTH
-                ),
-            )
-        ),
-        Workout(
-            id = 1,
-            name = "Workout 5",
-            exercises = mutableListOf(
-                Exercise(
-                    "Exercise 1", gifResId = R.drawable.shoulders, description = "Exercise 1",
-                    type = ExerciseType.SHOULDERS, training = TrainingType.STRENGTH
-                ),
-                Exercise(
-                    "Exercise 2", gifResId = R.drawable.shoulders2, description = "Exercise 1",
-                    type = ExerciseType.SHOULDERS, training = TrainingType.STRENGTH
-                ),
-                Exercise(
-                    "Exercise 3", gifResId = R.drawable.shoulders2, description = "Exercise 1",
-                    type = ExerciseType.SHOULDERS, training = TrainingType.STRENGTH
-                ),
-            )
         ),
         // Define more workouts as needed
     )
@@ -326,15 +279,7 @@ fun generateRandomGymPost(count: Int): List<GymPost> {
 
     return posts
 }
-fun generateRandomSongTitle(): String {
-    val adjectives = listOf("Happy", "Sad", "Lonely", "Joyful", "Mysterious", "Crazy", "Calm", "Exciting", "Melodic", "Harmonic")
-    val nouns = listOf("Love", "Dream", "Night", "Day", "Star", "Heart", "Journey", "Memory", "World", "Light")
 
-    val randomAdjective = adjectives[Random.nextInt(adjectives.size)]
-    val randomNoun = nouns[Random.nextInt(nouns.size)]
-
-    return "$randomAdjective $randomNoun"
-}
 val bottomNavItems = listOf(
     BottomNavItem.Progress,
     BottomNavItem.Explore,
@@ -342,6 +287,23 @@ val bottomNavItems = listOf(
     BottomNavItem.Plan,
     BottomNavItem.Settings,
 )
+
+fun generateRandomSongs(count: Int): MutableList<Song> {
+    val singers = listOf("Singer A", "Singer B", "Singer C", "Singer D")
+    val albums = listOf("Album X", "Album Y", "Album Z", "Album W")
+    val titles = listOf("Title 1", "Title 2", "Title 3", "Title 4")
+
+    val songs = mutableListOf<Song>()
+
+    repeat(count) {
+        val randomSinger = singers.random()
+        val randomAlbum = albums.random()
+        val randomTitle = titles.random()
+        songs.add(Song(randomSinger, randomAlbum, randomTitle))
+    }
+
+    return songs
+}
 
 fun generateRandomTrainingData(months: Int): List<TrainingData> {
     val metrics = listOf(TrainingMetricType.DURATION, TrainingMetricType.INTENSITY, TrainingMetricType.DISTANCE)
@@ -358,7 +320,6 @@ fun generateRandomPlot(): Plot {
     val names = mutableListOf(PeriodMetricType.WEEK.toString(),PeriodMetricType.MONTH.toString(),PeriodMetricType.YEAR.toString())
     // List of drawable resource IDs
     val drawableResources = listOf(
-        R.drawable.plo1,
         R.drawable.plot2,
         R.drawable.plot3,
     )

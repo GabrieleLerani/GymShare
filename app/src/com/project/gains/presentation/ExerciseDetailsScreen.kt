@@ -13,13 +13,17 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,9 +35,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
+import com.project.gains.presentation.components.BackButton
+import com.project.gains.presentation.components.FeedbackAlertDialog
 
 import com.project.gains.presentation.components.InstructionCard
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.navgraph.Route
@@ -47,6 +54,10 @@ fun ExerciseDetailsScreen(
 
 ) {
     // Sample list of workouts
+    val linkedApps by generalViewModel.linkedApps.observeAsState()
+    var showPopup2 = remember { mutableStateOf(false) }
+    var showDialogShared = remember { mutableStateOf(false) }
+    var showDialog = remember { mutableStateOf(false) }
     val exercise by generalViewModel.selectedExercise.observeAsState()
 
     GainsAppTheme {
@@ -54,20 +65,28 @@ fun ExerciseDetailsScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "Chest" ,
-                    button= {
-                        IconButton(
+                    message = "Chest",
+                    button = {
+                        androidx.compose.material.IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                // Handle history button click
-                                // TODO history popus page
-                                //navController.navigate(Route.HistoryScreen.route)
+
+                                showPopup2.value = true
+
                             }) {
-                            Icon(
-                                imageVector = Icons.Default.History,
-                                contentDescription = "History",
-                                tint = MaterialTheme.colorScheme.surface
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "Share",
+                                tint = MaterialTheme.colorScheme.surface,
+                                modifier = Modifier.graphicsLayer {
+                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
+                                }
                             )
+                        }
+                    },
+                    button1 = {
+                        BackButton {
+                            navController.popBackStack()
                         }
                     }
                 )
@@ -85,7 +104,7 @@ fun ExerciseDetailsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    item{
+                    item {
                         Image(
                             painter = painterResource(R.drawable.legs),
                             contentDescription = "Exercise",
@@ -166,13 +185,52 @@ fun ExerciseDetailsScreen(
                         item { Spacer(Modifier.height(5.dp)) }
                     }
 
+                    item {
+                        if (showDialog.value) {
+                            FeedbackAlertDialog(
+                                title = "Select a social",
+                                message = "",
+                                onDismissRequest = { showDialog.value = false },
+                                onConfirm = {
+                                    showDialog.value = false
+                                    showDialogShared.value = true
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
+                    item {
+                        if (showDialogShared.value) {
+                            FeedbackAlertDialog(
+                                title = "",
+                                message = "You have successfully Shared your content!",
+                                onDismissRequest = { showDialogShared.value = false },
+                                onConfirm = {
+                                    showDialogShared.value = false
+                                    navController.navigate(Route.HomeScreen.route)
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
+
 
                 }
             }
         }
+        linkedApps?.let {
+            ShareContentPagePopup(
+                showPopup2,
+                it,
+                showDialog,
+                { showDialogShared.value = true },
+                navController)
+        }
+
     }
 }
-
 
 
 

@@ -1,5 +1,6 @@
 package com.project.gains.presentation.workout
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,10 +25,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,7 +44,9 @@ import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 
@@ -56,6 +61,10 @@ fun WorkoutScreen(
     generalViewModel: GeneralViewModel
 
 ) {
+    val linkedApps by generalViewModel.linkedApps.observeAsState()
+    var showPopup2 = remember { mutableStateOf(false) }
+    var showDialogShared = remember { mutableStateOf(false) }
+    var showDialog = remember { mutableStateOf(false) }
     // Sample list of exercises
     val exercises by generalViewModel.exercises.observeAsState()
     val workout by generalViewModel.selectedWorkout.observeAsState()
@@ -69,19 +78,57 @@ fun WorkoutScreen(
                         androidx.compose.material.IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                // Handle history button click
-                                // TODO history popus page
-                                //navController.navigate(Route.HistoryScreen.route)
+
+                                showPopup2.value=true
+
                             }) {
-                            Icon(
-                                imageVector = Icons.Default.History,
-                                contentDescription = "History",
-                                tint = MaterialTheme.colorScheme.surface
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "Share",
+                                tint = MaterialTheme.colorScheme.surface,
+                                modifier = Modifier.graphicsLayer {
+                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
+                                }
                             )
+                        }
+                    },
+
+                    button1 = {
+                        BackButton {
+                            navController.popBackStack()
                         }
                     }
                 )
             },
+            bottomBar = {
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .size(64.dp)
+                            .background(MaterialTheme.colorScheme.onSurface),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(Route.SessionScreen.route)
+                            },
+                            modifier = Modifier.size(50.dp),
+                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            androidx.compose.material3.Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "Start Icon",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(10.dp),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    } 
+                
+            }
         ) { paddingValues ->
             Box(
                 modifier = Modifier
@@ -100,55 +147,54 @@ fun WorkoutScreen(
                             AddExerciseItem(exercise = exercise, { exerciseToAdd ->
                                 selectHandler(SelectEvent.SelectExercise(exercise))
                                 navController.navigate(Route.ExerciseDetailsScreen.route)},
-                                isSelected = true
+                                isSelected = true,
+                                isToAdd = false,
+                                onItemClick2 = {}
                             )
                         }
                     }
                     item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    navController.navigate(Route.PlanScreen.route)
+                        if (showDialog.value) {
+                            FeedbackAlertDialog(
+                                title = "Select a social",
+                                message = "",
+                                onDismissRequest = { showDialog.value = false },
+                                onConfirm = {
+                                    showDialog.value = false
+                                    showDialogShared.value = true
                                 },
-                                modifier = Modifier.size(60.dp),
-                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                androidx.compose.material3.Icon(
-                                    imageVector = Icons.Default.Send,
-                                    contentDescription = "Share Icon",
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .padding(10.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(20.dp))
-                            IconButton(
-                                onClick = {
-                                    navController.navigate(Route.SessionScreen.route)
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
+                    item {
+                        if (showDialogShared.value) {
+                            FeedbackAlertDialog(
+                                title = "",
+                                message = "You have successfully Shared your content!",
+                                onDismissRequest = { showDialogShared.value = false },
+                                onConfirm = {
+                                    showDialogShared.value = false
+                                    navController.navigate(Route.HomeScreen.route)
                                 },
-                                modifier = Modifier.size(60.dp),
-                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                androidx.compose.material3.Icon(
-                                    imageVector = Icons.Default.PlayArrow,
-                                    contentDescription = "Start Icon",
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .padding(10.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                        } }
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
+        linkedApps?.let {
+            ShareContentPagePopup(
+                showPopup2,
+                it,
+                showDialog,
+                { showDialogShared.value = true },
+                navController)
+        }}
+
 }
 
 

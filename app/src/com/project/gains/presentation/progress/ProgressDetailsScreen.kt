@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -41,12 +43,16 @@ import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
+import com.project.gains.presentation.components.BackButton
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MetricPopup
 import com.project.gains.presentation.components.PeriodPopup
+import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 
 import com.project.gains.presentation.components.TrainingOverviewChart
 import com.project.gains.presentation.events.ShareContentEvent
+import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
 
@@ -57,11 +63,16 @@ fun ProgressDetailsScreen(
     generalViewModel: GeneralViewModel
 ) {
     var popupVisible1 = remember { mutableStateOf(false) }
-    var popupVisible2 = remember { mutableStateOf(true) }
+    var popupVisible2 = remember { mutableStateOf(false) }
+    var isTimerRunning by remember { mutableStateOf(false) }
+    val linkedApps by generalViewModel.linkedApps.observeAsState()
+    var showPopup2 = remember { mutableStateOf(false) }
+    var showDialogShared = remember { mutableStateOf(false) }
+    var showDialog = remember { mutableStateOf(false) }
 
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
-    var selectedMetricMap = generalViewModel._selectedMetricsMap.get(selectedPlan?.id)
-    var selectedPeriodMap = generalViewModel._selectedPeriodsMap.get(selectedPlan?.id)
+    //var selectedMetric = generalViewModel._selectedMetricsMap.get(selectedPlan?.id)?.get(0)
+    //var selectedPeriod = generalViewModel._selectedPeriodsMap.get(selectedPlan?.id)?.get(0)
 
     var selectedMetric by remember { mutableStateOf(TrainingMetricType.BPM) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
@@ -118,6 +129,8 @@ fun ProgressDetailsScreen(
                 }
 
             }
+
+            null -> TODO()
         }
 
     }
@@ -135,18 +148,26 @@ fun ProgressDetailsScreen(
                     navController = navController,
                     message = "Progress Details" ,
                     button= {
-                        IconButton(
+                        androidx.compose.material.IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                // Handle history button click
-                                // TODO history popus page
-                                //navController.navigate(Route.HistoryScreen.route)
+
+                                showPopup2.value=true
+
                             }) {
                             androidx.compose.material.Icon(
-                                imageVector = Icons.Default.History,
-                                contentDescription = "History",
-                                tint = MaterialTheme.colorScheme.surface
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "Share",
+                                tint = MaterialTheme.colorScheme.surface,
+                                modifier = Modifier.graphicsLayer {
+                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
+                                }
                             )
+                        }
+                    },
+                    button1 = {
+                        BackButton {
+                            navController.popBackStack()
                         }
                     }
                 )
@@ -214,14 +235,52 @@ fun ProgressDetailsScreen(
                         selectedMetric = selectedMetric,
                         selectedPeriod = selectedPeriod,
                         shareHandler = shareHandler,
-                        selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plo1)
+                        selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plot3)
                     ) }
+                    item {
+                        if (showDialog.value) {
+                            FeedbackAlertDialog(
+                                title = "Select a social",
+                                message = "",
+                                onDismissRequest = { showDialog.value = false },
+                                onConfirm = {
+                                    showDialog.value = false
+                                    showDialogShared.value = true
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
+                    item {
+                        if (showDialogShared.value) {
+                            FeedbackAlertDialog(
+                                title = "",
+                                message = "You have successfully Shared your content!",
+                                onDismissRequest = { showDialogShared.value = false },
+                                onConfirm = {
+                                    showDialogShared.value = false
+                                    navController.navigate(Route.HomeScreen.route)
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = ""
+                            )
+                        }
+                    }
 
                     }
                 }
             }
-        }
-    }
+        linkedApps?.let {
+            ShareContentPagePopup(
+                showPopup2,
+                it,
+                showDialog,
+                { showDialogShared.value = true },
+                navController)
+        } }
+
+}
 
 
 

@@ -14,6 +14,10 @@ sealed class SelectEvent {
     data class SelectPlotPreview(val preview: ProgressChartPreview) : SelectEvent()
     data class SelectWorkout(val workout : Workout) : SelectEvent()
     data class SelectExerciseType(val exerciseType: ExerciseType) : SelectEvent()
+    data class SelectExerciseToAdd(val exercise: Exercise) : SelectEvent()
+    object data class SelectIsToAdd() : SelectEvent()
+
+
 
 
 }

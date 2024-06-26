@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -29,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,6 +40,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
+import com.project.gains.data.Exercise
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
@@ -67,8 +71,10 @@ fun PlanScreen(
 ) {
     // Sample list of workouts
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
+    val selectedExerciseToAdd by generalViewModel.addedExercises.observeAsState()
+
     val linkedApps by generalViewModel.linkedApps.observeAsState()
-    var showPopup1 = remember { mutableStateOf(true) }
+    var showPopup1 = remember { mutableStateOf(false) }
     var showPopup2 = remember { mutableStateOf(false) }
 
     var showPopup3 = remember { mutableStateOf(false) }
@@ -88,11 +94,38 @@ fun PlanScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "Account Setting",
-                    button = {
-                        LogoUser(
-                            modifier = Modifier.size(60.dp), R.drawable.pexels5
-                        ) { navController.navigate(Route.AccountScreen.route) }
+                    message = selectedPlan?.name ?: "Plan",
+                    button= {
+                        androidx.compose.material.IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+
+                                showPopup2.value=true
+
+                            }) {
+                            androidx.compose.material.Icon(
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "Share",
+                                tint = MaterialTheme.colorScheme.surface,
+                                modifier = Modifier.graphicsLayer {
+                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
+                                }
+                            )
+                        }
+                    },
+
+                    button1 = {
+                        androidx.compose.material.IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+                                showPopup1.value=true
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "New",
+                                tint = MaterialTheme.colorScheme.surface
+                            )
+                        }
                     }
                 )
             },
@@ -204,13 +237,23 @@ fun PlanScreen(
         }
         // Page popups
 
-        workouts?.let { PlanPagePopup(showPopup1, it, {},createHandler,navController)}
-        linkedApps?.let { ShareContentPagePopup(showPopup2, it, showDialog) {} }
-        NewPlanPagePopup(showPopup3, {}, navController, { showDialogShared.value = true })
-        SetWorkoutPagePopup(showPopup4, showDialog) {}
+        workouts?.let {
+            PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController)}
+        linkedApps?.let {
+            ShareContentPagePopup(
+                showPopup2,
+                it,
+                showDialog,
+                { showDialogShared.value = true },
+                navController)
+        } }
+        NewPlanPagePopup(showPopup3, {}, navController, {showPopup3.value=false} )
+        SetWorkoutPagePopup(showPopup4, showDialog,{
+            navController.navigate(Route.TypedExerciseScreen.route)
+        }, selectedExercises = selectedExerciseToAdd ?: mutableListOf<Exercise>(), onItemClick2 = {
+            navController.navigate(Route.TypedExerciseScreen.route)})
     }
 
-}
 
 
 

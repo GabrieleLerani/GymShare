@@ -53,6 +53,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.presentation.Dimension.ButtonCornerShape
+import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
@@ -97,6 +98,11 @@ fun AccountScreen(
                                 contentDescription = "Logout",
                                 tint = MaterialTheme.colorScheme.surface
                             )
+                        }
+                    },
+                    button1 = {
+                        BackButton {
+                            navController.popBackStack()
                         }
                     }
                 )

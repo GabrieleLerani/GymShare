@@ -25,6 +25,7 @@ import com.project.gains.data.ExerciseType
 import com.project.gains.data.TrainingType
 import com.project.gains.data.generateSampleExercises
 import com.project.gains.presentation.components.AddExerciseItem
+import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
@@ -41,6 +42,7 @@ fun TypedExerciseScreen(
     deleteHandler: (DeleteEvent) -> Unit,
     navController:NavController, selectHandler: (SelectEvent)->Unit, generalViewModel: GeneralViewModel) {
     // Sample list of exercises
+    val isToAdd by generalViewModel.isToAdd.observeAsState()
     val searchQuery = remember { mutableStateOf("") }
     val show = remember {
         mutableStateOf(false)
@@ -64,7 +66,7 @@ fun TypedExerciseScreen(
 
     }
     else if (selectExerciseType == ExerciseType.BACK){
-        res= R.drawable.back
+        res= R.drawable.backk
 
     }
     else if (selectExerciseType == ExerciseType.LEGS){
@@ -88,18 +90,10 @@ fun TypedExerciseScreen(
                     navController = navController,
                     message = "Exercises" ,
                     button= {
-                        androidx.compose.material.IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
-                                // Handle history button click
-                                // TODO history popus page
-                                //navController.navigate(Route.HistoryScreen.route)
-                            }) {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.Default.History,
-                                contentDescription = "History",
-                                tint = MaterialTheme.colorScheme.surface
-                            )
+                    },
+                    button1 = {
+                        BackButton {
+                            navController.popBackStack()
                         }
                     }
                 )
@@ -133,7 +127,11 @@ fun TypedExerciseScreen(
                                 selectedExercises.add(exerciseToAdd)
                                 selectHandler(SelectEvent.SelectExercise(exercise))
                                 navController.navigate(Route.ExerciseDetailsScreen.route)},
-                                isSelected = exercise in selectedExercises
+                                isSelected = exercise in selectedExercises,
+                                isToAdd = isToAdd ?: false,
+                                onItemClick2 = {
+                                    navController.navigate(Route.PlanScreen.route)
+                                }
                             )                        }
                     }
                 }
