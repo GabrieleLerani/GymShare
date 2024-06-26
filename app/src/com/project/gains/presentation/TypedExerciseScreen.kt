@@ -2,16 +2,27 @@ package com.project.gains.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,71 +44,38 @@ import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
-
+import dev.romainguy.kotlin.math.all
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TypedExerciseScreen(
     createHandler: (CreateEvent) -> Unit,
     deleteHandler: (DeleteEvent) -> Unit,
-    navController:NavController, selectHandler: (SelectEvent)->Unit, generalViewModel: GeneralViewModel) {
-    // Sample list of exercises
+    navController: NavController,
+    selectHandler: (SelectEvent) -> Unit,
+    generalViewModel: GeneralViewModel
+) {
     val isToAdd by generalViewModel.isToAdd.observeAsState()
-    val searchQuery = remember { mutableStateOf("") }
-    val show = remember {
-        mutableStateOf(false)
-    }
     val allExercises by generalViewModel.exercises.observeAsState()
-    val searchedExercises = remember { allExercises }
-    val selectedExercises = remember {
-        mutableStateListOf(Exercise("", R.drawable.legs, "", ExerciseType.ARMS, TrainingType.STRENGTH))
-    }
-    val selectExerciseType by generalViewModel.selectedExerciseType.observeAsState()
-    var res:Int
-    if (selectExerciseType == ExerciseType.ARMS){
-        res= R.drawable.arms
-    }
-    else if (selectExerciseType == ExerciseType.SHOULDERS){
-        res= R.drawable.shoulders
-
-    }
-    else if (selectExerciseType == ExerciseType.CHEST){
-        res= R.drawable.chest2
-
-    }
-    else if (selectExerciseType == ExerciseType.BACK){
-        res= R.drawable.backk
-
-    }
-    else if (selectExerciseType == ExerciseType.LEGS){
-        res= R.drawable.legs
-
-    }
-    else{
-        res= R.drawable.arms2
-
-    }
-    val exercises = remember {
-        mutableListOf(generateSampleExercises(selectExerciseType ?: ExerciseType.ARMS,res))
-    }
-
+    val searchQuery = remember { mutableStateOf("") }
+    val searchedExercises = remember { mutableStateOf(listOf<Exercise>()) }
+    val isSearchQueryEmpty = remember { mutableStateOf(searchQuery.value.isBlank()) }
+    val localKeyboardController = LocalSoftwareKeyboardController.current
 
     GainsAppTheme {
-
         Scaffold(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "Exercises" ,
-                    button= {
-                    },
+                    message = "Exercises",
+                    button = {},
                     button1 = {
                         BackButton {
                             navController.popBackStack()
                         }
                     }
                 )
-            },
+            }
         ) { paddingValues ->
             Box(
                 modifier = Modifier
@@ -109,37 +87,95 @@ fun TypedExerciseScreen(
                         .fillMaxSize()
                         .padding(10.dp),
                     verticalArrangement = Arrangement.Top
-
                 ) {
-
                     item {
-                        com.project.gains.presentation.components.SearchBar(
-                            searchQuery = searchQuery,
-                            allExercises = allExercises,
-                            searchedExercises = searchedExercises
-                        )
-
-                    }
-                    allExercises?.forEach{exercise ->
-                        item {
-                            AddExerciseItem(exercise = exercise, { exerciseToAdd ->
-                                show.value=true
-                                selectedExercises.add(exerciseToAdd)
-                                selectHandler(SelectEvent.SelectExercise(exercise))
-                                navController.navigate(Route.ExerciseDetailsScreen.route)},
-                                isSelected = exercise in selectedExercises,
-                                isToAdd = isToAdd ?: false,
-                                onItemClick2 = {
-                                    navController.navigate(Route.PlanScreen.route)
+                        // Remember if the search query is empty
+                        TextField(
+                            colors = TextFieldDefaults.textFieldColors(
+                                containerColor = Color.DarkGray,
+                                cursorColor = MaterialTheme.colorScheme.surface,
+                                focusedIndicatorColor = MaterialTheme.colorScheme.surface,
+                                unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
+                                focusedLabelColor = MaterialTheme.colorScheme.surface,
+                                unfocusedLabelColor = MaterialTheme.colorScheme.surface
+                            ),
+                            value = searchQuery.value,
+                            onValueChange = { query ->
+                                searchQuery.value = query
+                                isSearchQueryEmpty.value = query.isBlank()
+                                searchedExercises.value = if (query.isNotBlank()) {
+                                    allExercises?.filter {
+                                        it.name.contains(query, ignoreCase = true)
+                                    } ?: listOf()
+                                } else {
+                                    listOf()
                                 }
-                            )                        }
+                            },
+                            label = {
+                                if (isSearchQueryEmpty.value) {
+                                    Text("Search Exercise", color = MaterialTheme.colorScheme.surface)
+                                }
+                            },
+                            leadingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        searchedExercises.value = allExercises?.filter {
+                                            it.name.contains(searchQuery.value, ignoreCase = true)
+                                        } ?: listOf()
+                                        localKeyboardController?.hide()
+                                    },
+                                    content = {
+                                        Icon(
+                                            imageVector = Icons.Default.Search,
+                                            contentDescription = "Search Icon",
+                                            tint = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                )
+                            },
+                            keyboardActions = KeyboardActions(
+                                onSearch = {
+                                    searchedExercises.value = allExercises?.filter {
+                                        it.name.contains(searchQuery.value, ignoreCase = true)
+                                    } ?: listOf()
+                                    localKeyboardController?.hide()
+                                }
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.Search
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                        )
+                    }
+
+                    items(searchedExercises.value) { exercise ->
+                        AddExerciseItem(
+                            exercise = exercise,
+                            onItemClick = { exerciseToAdd ->
+                                searchedExercises.value = searchedExercises.value.toMutableList().apply {
+                                    add(exerciseToAdd)
+                                }
+                                selectHandler(SelectEvent.SelectExercise(exercise))
+                                navController.navigate(Route.ExerciseDetailsScreen.route)
+                            },
+                            isSelected = allExercises?.contains(exercise) == true,
+                            isToAdd = isToAdd ?: false,
+                            onItemClick2 = {
+                                navController.navigate(Route.PlanScreen.route)
+                            }
+                        )
                     }
                 }
             }
         }
     }
-    // Page popups
 }
+
+
+
 
 @Preview(showBackground = true)
 @Composable

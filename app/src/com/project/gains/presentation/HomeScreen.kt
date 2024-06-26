@@ -5,14 +5,17 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.MaterialTheme
 
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -95,6 +98,18 @@ fun GainsHomeScreen(
                            Icon(
                                imageVector = Icons.Default.Add,
                                contentDescription = "New",
+                               tint = MaterialTheme.colorScheme.surface
+                           )
+                       }
+                       Spacer(modifier = Modifier.width(4.dp))
+                       androidx.compose.material.IconButton(
+                           modifier = Modifier.size(45.dp),
+                           onClick = {
+                               navController.navigate(Route.TypedExerciseScreen.route)
+                           }) {
+                           Icon(
+                               imageVector = Icons.Default.FitnessCenter,
+                               contentDescription = "Workout",
                                tint = MaterialTheme.colorScheme.surface
                            )
                        }

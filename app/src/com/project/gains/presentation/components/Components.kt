@@ -161,6 +161,7 @@ fun BackButton(onClick: () -> Unit) {
 
 @Composable
 fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
+   println("HERERERRER")
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -2392,45 +2393,7 @@ fun ExerciseGif(exercise: Exercise, onClick: (Exercise) -> Unit) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchBar(
-    searchQuery: MutableState<String>,
-    allExercises: List<Exercise>?,
-    searchedExercises: MutableList<Exercise>?
-) {
-    TextField(
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.DarkGray,
-            focusedTextColor = MaterialTheme.colorScheme.surface,
-            cursorColor = MaterialTheme.colorScheme.surface,
-            focusedIndicatorColor = MaterialTheme.colorScheme.surface,
-            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-            focusedLabelColor = MaterialTheme.colorScheme.surface, // Focused label color
-            unfocusedLabelColor = MaterialTheme.colorScheme.surface // Unfocused label color
-        ),
-        value = searchQuery.value,
-        onValueChange = { query ->
-            searchQuery.value = query
-            searchedExercises?.clear()
-            allExercises?.filter {
-                it.name.contains(query, ignoreCase = true)
-            }?.let { searchedExercises?.addAll(it) }
-        },
-        label = { Text("Search Exercise") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 16.dp, top = 16.dp)
-            .clip(RoundedCornerShape(20.dp)),
-        leadingIcon = {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "Search Icon",
-                tint = MaterialTheme.colorScheme.surface
-            )
-        }
-    )
-}
+
 
 
 @Composable
