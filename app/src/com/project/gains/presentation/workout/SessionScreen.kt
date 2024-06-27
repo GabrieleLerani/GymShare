@@ -6,13 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,14 +35,12 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Song
 import com.project.gains.presentation.components.BackButton
-import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MusicPopup
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
@@ -244,32 +238,17 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
                         }
                     }
                     item {
-                        if (showDialog.value) {
-                            FeedbackAlertDialog(
-                                title = "Select a social",
-                                message = "",
-                                onDismissRequest = { showDialog.value = false },
-                                onConfirm = {
-                                    showDialog.value = false
-                                    showDialogShared.value = true
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = ""
-                            )
-                        }
-                    }
-                    item {
                         if (showDialogShared.value) {
                             FeedbackAlertDialog(
-                                title = "",
-                                message = "You have successfully Shared your content!",
+                                title = "You have successfully Shared your content!",
+                                message = "",
                                 onDismissRequest = { showDialogShared.value = false },
                                 onConfirm = {
                                     showDialogShared.value = false
-                                    navController.navigate(Route.HomeScreen.route)
                                 },
                                 confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                dismissButtonText = "",
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }

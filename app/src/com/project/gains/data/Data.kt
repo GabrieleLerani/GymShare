@@ -210,14 +210,10 @@ fun generateOptions(): List<Option> {
     return listOf(
         Option("MUSIC"),
         Option("BACKUP") ,
-        Option(TrainingType.STRENGTH.toString()),
-        Option(TrainingType.CROSSFIT.toString()),
-        Option(TrainingType.CALISTHENICS.toString()),
         Option(TrainingMetricType.BPM.toString()),
         Option(TrainingMetricType.KCAL.toString()),
         Option(TrainingMetricType.INTENSITY.toString()),
         Option(TrainingMetricType.DURATION.toString()),
-        Option(TrainingMetricType.DISTANCE.toString())
         )
 }
 

@@ -7,15 +7,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -30,21 +26,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
-import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.data.ExerciseType
-import com.project.gains.data.TrainingType
-import com.project.gains.data.generateSampleExercises
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
-import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
-import dev.romainguy.kotlin.math.all
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -163,11 +153,9 @@ fun TypedExerciseScreen(
                                 selectHandler(SelectEvent.SelectExercise(exercise))
                                 navController.navigate(Route.ExerciseDetailsScreen.route)
                             },
-                            isSelected = allExercises?.contains(exercise) == true,
-                            isToAdd = isToAdd ?: false,
                             onItemClick2 = {
                                 selectHandler(SelectEvent.SelectExerciseToAdd(exercise))
-                                selectHandler(SelectEvent.SelectPlanPopup(false))
+                                selectHandler(SelectEvent.SelectPlanPopup(true))
                                 selectHandler(SelectEvent.SelectClicked(true))
                                 selectHandler(SelectEvent.SelectShowPopup3(false))
                                 selectHandler(SelectEvent.SelectShowPopup4(true))
@@ -177,7 +165,10 @@ fun TypedExerciseScreen(
                                     navController.navigate(Route.PlanScreen.route)
 
                                 }
-                            }
+                            },
+                            isSelected = true,
+                            isToAdd = isToAdd ?: false,
+                            modifier = Modifier
                         )
                     }
                 }

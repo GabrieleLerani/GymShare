@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -41,22 +40,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.R
-import com.project.gains.presentation.Dimension.ButtonCornerShape
 import com.project.gains.presentation.components.BackButton
-import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.presentation.settings.events.SignOutEvent
@@ -80,6 +74,7 @@ fun AccountScreen(
     var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
     var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Name") }
     var newPassword by remember { mutableStateOf("New Password") }
+    var showDialog = remember { mutableStateOf(false) }
 
     GainsAppTheme {
         Scaffold(
@@ -195,15 +190,10 @@ fun AccountScreen(
                             // Display data
 
                             if (data.equals(UPDATE_SUCCESS)) {
-                                Text(
-                                    text = data!!.toString(),
-                                    color = Color.Green
-                                )
+                                showDialog.value=true
                             } else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS)) {
-                                Text(
-                                    text = data!!.toString(),
-                                    color = MaterialTheme.colorScheme.onError
-                                )
+                                showDialog.value=true
+
                             }
 
 
@@ -241,6 +231,21 @@ fun AccountScreen(
                             ) {
                                 Icon(Icons.Default.Check, contentDescription = "Check Icon", tint = MaterialTheme.colorScheme.onSurface)
                             }
+                        }
+                    }
+                    item {
+                        if (showDialog.value) {
+                            FeedbackAlertDialog(
+                                title = if (data.equals(UPDATE_SUCCESS)) "You have successfully updated your profile!" else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS)) data!!.toString() else "",
+                                message = "",
+                                onDismissRequest = { showDialog.value = false },
+                                onConfirm = {
+                                    showDialog.value = false
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = "",
+                                color=  if (data.equals(UPDATE_SUCCESS))  MaterialTheme.colorScheme.onSurface else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS))  MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onSurface,
+                            )
                         }
                     }
                 }

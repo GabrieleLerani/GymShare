@@ -4,18 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.IconButton
@@ -37,15 +32,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
-import com.project.gains.R
-import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
@@ -144,42 +135,29 @@ fun WorkoutScreen(
                 ) {
                     exercises?.forEach { exercise ->
                         item {
-                            AddExerciseItem(exercise = exercise, { exerciseToAdd ->
-                                selectHandler(SelectEvent.SelectExercise(exercise))
-                                navController.navigate(Route.ExerciseDetailsScreen.route)},
+                            AddExerciseItem(
+                                exercise = exercise, { exerciseToAdd ->
+                                    selectHandler(SelectEvent.SelectExercise(exercise))
+                                    navController.navigate(Route.ExerciseDetailsScreen.route)},
+                                onItemClick2 = {},
                                 isSelected = true,
                                 isToAdd = false,
-                                onItemClick2 = {}
-                            )
-                        }
-                    }
-                    item {
-                        if (showDialog.value) {
-                            FeedbackAlertDialog(
-                                title = "Select a social",
-                                message = "",
-                                onDismissRequest = { showDialog.value = false },
-                                onConfirm = {
-                                    showDialog.value = false
-                                    showDialogShared.value = true
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                modifier = Modifier
                             )
                         }
                     }
                     item {
                         if (showDialogShared.value) {
                             FeedbackAlertDialog(
-                                title = "",
-                                message = "You have successfully Shared your content!",
+                                title = "You have successfully Shared your content!",
+                                message = "",
                                 onDismissRequest = { showDialogShared.value = false },
                                 onConfirm = {
                                     showDialogShared.value = false
-                                    navController.navigate(Route.HomeScreen.route)
                                 },
                                 confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                dismissButtonText = "",
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }

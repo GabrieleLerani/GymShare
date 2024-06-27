@@ -4,7 +4,6 @@ package com.project.gains.presentation.components
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import android.graphics.Paint
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,7 +24,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.AlertDialog
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -33,15 +31,16 @@ import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries,
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
+import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Check
@@ -99,7 +98,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
@@ -129,6 +130,7 @@ import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.NewPlanScreen
+import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
@@ -150,9 +152,16 @@ fun BackButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemClick2: () -> Unit,isSelected: Boolean,isToAdd: Boolean) {
+fun AddExerciseItem(
+    exercise: Exercise,
+    onItemClick: (Exercise) -> Unit,
+    onItemClick2: () -> Unit,
+    isSelected: Boolean,
+    isToAdd: Boolean,
+    modifier: Modifier
+) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
@@ -178,6 +187,7 @@ fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemCl
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         )  {
+            if (isSelected){
             IconButton(onClick = {
                 if (isToAdd){
                     onItemClick2()
@@ -187,91 +197,11 @@ fun AddExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit,onItemCl
             }) {
                 Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
 
-            }
+            }}
         }
     }
 }
 
-
-@Composable
-fun TrainingTypePopup(
-    popupVisible: MutableState<Boolean>,
-    onDismiss: () -> Unit,
-    onOptionSelected: (TrainingType) -> Unit,
-    selectedMetric: TrainingType
-) {
-    if (popupVisible.value) {
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            title = {
-
-            },
-            text = {
-                Spacer(modifier = Modifier.height(10.dp))
-                Column(Modifier.padding(top=20.dp)) {
-                    TrainingType.entries.forEach { metric ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .clickable { onOptionSelected(metric) }
-                        ) {
-                            Text(
-                                text = metric.name,
-                                color = if (metric == selectedMetric)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-            },
-            buttons = {
-                Column {
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(5.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Cancel",color = Color.Red)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(50.dp)
-                                .background(Color.Gray)
-                        )
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
-        )
-    }
-}
 @Composable
 fun PeriodPopup(
     selectedPeriodMap: MutableList<PeriodMetricType>?,
@@ -618,23 +548,6 @@ fun TrainingOverviewChart(
     ) {
         trainingData.forEachIndexed { index, data ->
             values.add(data.value.toFloat())
-           /* Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Y-axis label (period)
-                androidx.compose.material3.Text(
-                    text = "${selectedPeriod.name} ${index + 1}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-
-                // Spacer to separate Y-axis label from plot
-                Spacer(modifier = Modifier.width(16.dp))
-            }*/
         }
             when (selectedPlotType.imageResId) {
                 R.drawable.plot2 -> {
@@ -1043,8 +956,10 @@ fun NewPlanPagePopup(
     var popupVisible = remember { mutableStateOf(false) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
     var selectedTraining by remember { mutableStateOf(TrainingType.STRENGTH) }
-    val selectedExerciseTypes = remember { mutableStateListOf<TrainingType>() } // List to store selected options
-    val selectedMetrics = remember { mutableStateListOf<TrainingMetricType>() } // List to store selected options
+    val selectedExerciseTypes =
+        remember { mutableStateListOf<TrainingType>() } // List to store selected options
+    val selectedMetrics =
+        remember { mutableStateListOf<TrainingMetricType>() } // List to store selected options
     val selectedMusic = remember { mutableStateOf(false) } // List to store selected options
     val selectedBackup = remember { mutableStateOf(false) } // List to store selected options
 
@@ -1072,347 +987,161 @@ fun NewPlanPagePopup(
                     .padding(40.dp)
             ) {
                 item {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 290.dp),
-                        horizontalArrangement = Arrangement.Center) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 290.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
                         IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
-                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close Icon"
+                            )
                         }
-                    }  }
+                    }
+                }
 
-                item { Text(
-                    text = "Create New Plan",
-                    style = MaterialTheme.typography.headlineMedium
-                ) }
+                item {
+                    Text(
+                        text = "Create New Plan",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
                 item {
                     Text(
                         text = "Set the following options and press the generate plan button to create a personalized workout plan based on your needs.",
                         style = MaterialTheme.typography.bodySmall,
-                    ) }
+                    )
+                }
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
-                    item {
-                        androidx.compose.foundation.layout.Spacer(
-                            modifier = androidx.compose.ui.Modifier.height(
-                                10.dp
+                item {
+                    androidx.compose.foundation.layout.Spacer(
+                        modifier = androidx.compose.ui.Modifier.height(
+                            10.dp
+                        )
+                    )
+                }
+                item {
+                    Text(
+                        text = "Choose if you want to have music while training",
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                        color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp) // Add padding for better spacing
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                RoundedCornerShape(16.dp)
+                            ) // Optional background for emphasis
+                            .padding(16.dp) // Inner padding for the text itself
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[0],
+                        onOptionSelected = { isChecked ->
+                            selectedMusic.value = true
+                            onOptionSelected(
+                                allOptions[0],
+                                isChecked
                             )
-                        )
-                    }
-                    item {
-                        Text(
-                            text = "Choose if you want to have music while training",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                ) // Optional background for emphasis
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[0],
-                            onOptionSelected = { isChecked ->
-                                selectedMusic.value = true
-                                onOptionSelected(
-                                    options[0],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Choose if you want to have backup on your workout",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[1],
-                            onOptionSelected = { isChecked ->
-                                selectedBackup.value = true
-                                onOptionSelected(
-                                    options[1],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Choose type of exercises to include",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[2],
-                            onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(com.project.gains.data.TrainingType.STRENGTH)
-                                onOptionSelected(
-                                    options[2],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[3],
-                            onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(com.project.gains.data.TrainingType.CALISTHENICS)
-
-                                onOptionSelected(
-                                    options[3],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[4],
-                            onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(com.project.gains.data.TrainingType.STRENGTH)
-
-                                onOptionSelected(
-                                    options[4],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[5],
-                            onOptionSelected = { isChecked ->
-                                selectedExerciseTypes.add(com.project.gains.data.TrainingType.CROSSFIT)
-
-                                onOptionSelected(
-                                    options[5],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Choose the training type",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    }
-                    item {
-                        androidx.compose.foundation.layout.Row(
-                            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                            modifier = androidx.compose.ui.Modifier.padding(vertical = 8.dp)
-                        ) {
-                            androidx.compose.material.Text(
-                                selectedTraining.name,
-                                style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                            )
-
-                            androidx.compose.material.IconButton(onClick = {
-                                popupVisible.value = true
-                            }) {
-                                androidx.compose.material3.Icon(
-                                    androidx.compose.material.icons.Icons.Default.ArrowDropDown,
-                                    contentDescription = "Change Metric"
-                                )
-                            }
                         }
-                    }
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Choose the plan period",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    }
-                    item {
-                        androidx.compose.foundation.layout.Row(
-                            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
-                            verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                            modifier = androidx.compose.ui.Modifier.padding(vertical = 8.dp)
-                        ) {
-                            androidx.compose.material.Text(
-                                selectedPeriod.name,
-                                style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
-                                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                item {
+                    androidx.compose.material.Text(
+                        text = "Choose if you want to have backup on your workout",
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                        color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp) // Add padding for better spacing
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                RoundedCornerShape(16.dp)
                             )
-
-                            androidx.compose.material.IconButton(onClick = {
-                                popupVisible.value = true
-                            }) {
-                                androidx.compose.material3.Icon(
-                                    androidx.compose.material.icons.Icons.Default.ArrowDropDown,
-                                    contentDescription = "Change Metric"
-                                )
-                            }
+                            .padding(16.dp) // Inner padding for the text itself
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[1],
+                        onOptionSelected = { isChecked ->
+                            selectedBackup.value = true
+                            onOptionSelected(
+                                allOptions[1],
+                                isChecked
+                            )
                         }
-                    }
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Choose the metrics to track",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[6],
-                            onOptionSelected = { isChecked ->
-                                selectedMetrics.add(com.project.gains.data.TrainingMetricType.BPM)
+                    )
+                }
+                item {
+                    androidx.compose.material.Text(
+                        text = "Choose the metrics to track in your progress",
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                        color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp) // Add padding for better spacing
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                RoundedCornerShape(16.dp)
+                            )
+                            .padding(16.dp) // Inner padding for the text itself
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[2],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.STRENGTH)
+                            onOptionSelected(
+                                allOptions[2],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[3],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.CALISTHENICS)
 
-                                onOptionSelected(
-                                    options[6],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[7],
-                            onOptionSelected = { isChecked ->
-                                selectedMetrics.add(com.project.gains.data.TrainingMetricType.KCAL)
+                            onOptionSelected(
+                                allOptions[3],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[4],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.STRENGTH)
 
-                                onOptionSelected(
-                                    options[7],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[8],
-                            onOptionSelected = { isChecked ->
-                                selectedMetrics.add(com.project.gains.data.TrainingMetricType.INTENSITY)
+                            onOptionSelected(
+                                allOptions[4],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[5],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.CROSSFIT)
 
-                                onOptionSelected(
-                                    options[8],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[9],
-                            onOptionSelected = { isChecked ->
-                                selectedMetrics.add(com.project.gains.data.TrainingMetricType.DURATION)
-
-                                onOptionSelected(
-                                    options[9],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.OptionCheckbox(
-                            option = allOptions[10],
-                            onOptionSelected = { isChecked ->
-                                selectedMetrics.add(com.project.gains.data.TrainingMetricType.DISTANCE)
-
-                                onOptionSelected(
-                                    options[10],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.PeriodPopup(
-                            selectedPeriodMap = com.project.gains.data.PeriodMetricType.entries.toMutableList(),
-                            popupVisible = popupVisible,
-                            onDismiss = { popupVisible.value = false },
-                            onOptionSelected = { period ->
-                                selectedPeriod = period
-                                popupVisible.value = false
-                            },
-                            selectedMetric = selectedPeriod
-                        )
-                    }
-                    item {
-                        com.project.gains.presentation.components.TrainingTypePopup(
-                            popupVisible = popupVisible,
-                            onDismiss = { popupVisible.value = false },
-                            onOptionSelected = { training ->
-                                selectedTraining = training
-                                popupVisible.value = false
-                            },
-                            selectedMetric = selectedTraining
-                        )
-                    }
-
-
-
-                options.forEach{option ->
-                    item {
-                        OptionCheckbox(
-                            option = allOptions[1],
-                            onOptionSelected = { isChecked ->
-                                selectedBackup.value = true
-                                onOptionSelected(
-                                    options[1],
-                                    isChecked
-                                )
-                            }
-                        )
-                    }
-
+                            onOptionSelected(
+                                allOptions[5],
+                                isChecked
+                            )
+                        }
+                    )
                 }
 
                 item { Spacer(modifier = Modifier.height(10.dp)) }
@@ -1421,25 +1150,29 @@ fun NewPlanPagePopup(
                 item {
                     Button(
                         onClick = {
-                                createHandler(
-                                    CreateEvent.CreatePlan(
-                                        options,
-                                        selectedPeriod,
-                                        selectedMetrics,
-                                        selectedTraining,
-                                        selectedMusic.value,
-                                        selectedBackup.value
-                                    )
+                            createHandler(
+                                CreateEvent.CreatePlan(
+                                    options,
+                                    selectedPeriod,
+                                    selectedMetrics,
+                                    selectedTraining,
+                                    selectedMusic.value,
+                                    selectedBackup.value
                                 )
+                            )
 
-                                  selectHandler(SelectEvent.SelectPlanPopup(false))
-                                  onItemClick()},
+                            selectHandler(SelectEvent.SelectPlanPopup(false))
+                            onItemClick()
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(55.dp),
                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
                     ) {
-                        Text(text = "GENERATE PLAN", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(
+                            text = "GENERATE PLAN",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
                     }
                 }
 
@@ -1447,6 +1180,7 @@ fun NewPlanPagePopup(
         }
     }
 }
+
 
 @Composable
 fun ShareContentPagePopup(showPopup: MutableState<Boolean>, apps: MutableList<Int>,  show: MutableState<Boolean>,onItemClick: (Int)->Unit,navController: NavController ){
@@ -1541,8 +1275,14 @@ fun SetWorkoutPagePopup(
     selectHandler:(SelectEvent)-> Unit,
     showPopup: Boolean?, show: MutableState<Boolean>, onItemClick: ()->Unit,
     onItemClick2: ()->Unit,
-    selectedExercises:MutableList<Exercise>){
+    generalViewModel:GeneralViewModel){
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
+    val workoutTitleStored by generalViewModel.workoutTitle.observeAsState()
+    val selectedExercises by generalViewModel.addedExercises.observeAsState()
+
+     val removedExercises = remember {
+         mutableStateOf(listOf<Exercise>())
+     }
 
 
     if (showPopup==true) {
@@ -1583,63 +1323,76 @@ fun SetWorkoutPagePopup(
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
                 item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .background(
-                                color = Color.Gray.copy(alpha = 0.1f),
-                                shape = RoundedCornerShape(8.dp)
+
+                        (if(workoutTitle.text=="") workoutTitleStored else workoutTitle)?.let {
+                            OutlinedTextField(
+                                value = it,
+                                onValueChange = { newValue ->
+                                    workoutTitle = newValue
+                                    selectHandler(SelectEvent.SelectWorkoutStored(newValue))
+                                },
+                                label = {
+                                    Text(
+                                        "Enter workout name...",
+                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                },
+                                shape = RoundedCornerShape(size = 20.dp),
+                                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
+
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                                )
                             )
-                            .padding(8.dp) // Inner padding to prevent text from touching the edges
-                    ) {
-                        BasicTextField(
-                            value = workoutTitle,
-                            onValueChange = { workoutTitle = it },
-                            decorationBox = { innerTextField ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                ) {
-                                    if (workoutTitle.text.isEmpty()) {
-                                        Text(
-                                            text = "Enter workout name...",
-                                            color = Color.Gray // Placeholder text color
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth() // Ensure the text field fills the width of the box
-                        )
-                    }
+                        }
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    selectedExercises.forEach {exercise ->
 
-                        Row(horizontalArrangement = Arrangement.Start,
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Spacer(modifier = Modifier.width(20.dp))
-                            DeleteExerciseButton {
-                                selectedExercises.remove(exercise)
+                   Column(modifier = Modifier.fillMaxWidth(),
+                       verticalArrangement = Arrangement.Center,
+                       horizontalAlignment = Alignment.CenterHorizontally) {
+                       selectedExercises?.forEach {exercise ->
+                           println(removedExercises)
+                           if (!removedExercises.value.contains(exercise)) {
+                               Row(
+                                   horizontalArrangement = Arrangement.Start,
+                                   verticalAlignment = Alignment.CenterVertically
+                               ) {
+                                   AddExerciseItem(
+                                       modifier = Modifier.weight(1f),
+                                       exercise = exercise,
+                                       onItemClick = {},
+                                       onItemClick2 = {},
+                                       isSelected = true,
+                                       isToAdd = false
+                                   )
+                                   Spacer(modifier = Modifier.width(5.dp))
 
-                            }
+                                   DeleteExerciseButton {
+                                       removedExercises.value= listOf( exercise)
+                                       selectHandler(SelectEvent.RemoveExerciseToAdd(exercise))
+                                   }
 
-                        }
-                    }
+                               }
+                           }
+                       }
 
-                    Row(horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically) {
-                        TextButton(onClick = { /* Add exercise action */ }) {
-                            Text(text = "Add new exercise", color = Color.Cyan)
-                        }
-                        Spacer(modifier = Modifier.width(80.dp))
-                        Spacer(modifier = Modifier.width(20.dp))
-                        AddExerciseButton {
-                            onItemClick()
+                       Row(horizontalArrangement = Arrangement.Center,
+                           verticalAlignment = Alignment.CenterVertically) {
+                           TextButton(onClick = { /* Add exercise action */ }) {
+                               Text(text = "Add new exercise", color = Color.Cyan)
+                           }
+                           Spacer(modifier = Modifier.width(80.dp))
+                           Spacer(modifier = Modifier.width(20.dp))
+                           AddExerciseButton {
+                               onItemClick()
 
-                        }
-                    }
+                           }
+                       }
+                   }
                 }
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
@@ -1654,7 +1407,7 @@ fun SetWorkoutPagePopup(
                             .height(55.dp),
                         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
                     ) {
-                        Text(text = "SAVE PLAN", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(text = "SAVE WORKOUT", color = MaterialTheme.colorScheme.onPrimaryContainer)
                     }
                 }
 
@@ -1662,64 +1415,6 @@ fun SetWorkoutPagePopup(
         }
     }
 }
-
-
-@Composable
-fun AddExerciseButton(onClick: () -> Unit) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(50.dp)
-            .background(color = Color.Cyan, shape = CircleShape)
-            .clickable(onClick = onClick)
-    ) {
-        Text(
-            text = "+",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-fun DeleteExerciseButton(onClick: () -> Unit) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(50.dp)
-            .background(color = Color.Red, shape = CircleShape)
-            .clickable(onClick = onClick)
-    ) {
-        Text(
-            text = "-",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
-    Box(
-        modifier = modifier
-            .padding(8.dp)
-            .size(70.dp)
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(res),
-            contentDescription = "User Profile Image",
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(35.dp)),  // Half of the size to make it fully rounded
-            contentScale = ContentScale.Crop
-        )
-    }
-}
-
 
 @Composable
 fun PlanPagePopup(
@@ -1731,13 +1426,11 @@ fun PlanPagePopup(
     showCompleteWorkout:MutableState<Boolean>,
     showCompletePlan:MutableState<Boolean>,) {
 
-    val selectedExerciseToAdd by generalViewModel.addedExercises.observeAsState()
 
     val clicked by generalViewModel.clicked.observeAsState()// CREATE PLAN CLICKED
     val showPopup3 by generalViewModel.showPopup3.observeAsState()// LAST PLAN GENERATION SCREEN
     val showPopup4 by generalViewModel.showPopup4.observeAsState() // LAST  WORKOUT SET SCREEN
 
-    Log.d("LOG","$showPopup,$showPopup3,$showPopup4,$clicked")
 
     if (showPopup == true) { // PLAN PAGE POPUP OR WORKOUT SET
                 if (clicked == false && showPopup3 == false && showPopup4 == false) {
@@ -1804,8 +1497,8 @@ fun PlanPagePopup(
                                 Button(
                                     onClick = {
                                         selectHandler(SelectEvent.SelectClicked(true))
-                                        selectHandler(SelectEvent.SelectShowPopup4(false))
-                                        selectHandler(SelectEvent.SelectShowPopup3(true))
+                                        selectHandler(SelectEvent.SelectShowPopup4(true))
+                                        selectHandler(SelectEvent.SelectShowPopup3(false))
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -1851,10 +1544,10 @@ fun PlanPagePopup(
                             showPopup4,
                             showCompleteWorkout,
                             {
-                                selectHandler(SelectEvent.SelectIsToAdd)
+                                selectHandler(SelectEvent.SelectIsToAdd(true))
                                 navController.navigate(Route.TypedExerciseScreen.route)
                             },
-                            selectedExercises = selectedExerciseToAdd ?: mutableListOf<Exercise>(),
+                            generalViewModel = generalViewModel,
                             onItemClick2 = {
                                 selectHandler(SelectEvent.SelectClicked(true))
                                 selectHandler(SelectEvent.SelectShowPopup4(false))
@@ -1865,55 +1558,62 @@ fun PlanPagePopup(
                 }
 }
 
-
-
-
 @Composable
-fun MuscleGroupItem(imageResId: Int, title: String, onItemClick: () -> Unit) {
-    Row(
+fun AddExerciseButton(onClick: () -> Unit) {
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .size(50.dp)
+            .background(color = Color.Cyan, shape = CircleShape)
+            .clickable(onClick = onClick)
     ) {
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = title,
-            modifier = Modifier.size(64.dp),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = title,
+            text = "+",
             color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
         )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    MaterialTheme.colorScheme.onSurface,
-                    RoundedCornerShape(8.dp)
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
-            IconButton(onClick = {
-                onItemClick()
-            }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowForwardIos,
-                    contentDescription = "Exercise Button",
-                    tint = MaterialTheme.colorScheme.surface
-                )
-
-            }
-        }
     }
 }
+
+@Composable
+fun DeleteExerciseButton(onClick: () -> Unit) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(50.dp)
+            .background(color = Color.Red, shape = CircleShape)
+            .clickable(onClick = onClick)
+    ) {
+        Text(
+            text = "-",
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
+    Box(
+        modifier = modifier
+            .padding(8.dp)
+            .size(70.dp)
+            .clickable { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(res),
+            contentDescription = "User Profile Image",
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(35.dp)),  // Half of the size to make it fully rounded
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
 
 
 @Composable
@@ -2267,7 +1967,21 @@ fun ExerciseGif(exercise: Exercise, onClick: (Exercise) -> Unit) {
 }
 
 
-
+@Preview
+@Composable
+fun prev(){
+    GainsAppTheme {
+        FeedbackAlertDialog(
+            title = "You have created your plan!",
+            message = "",
+            onDismissRequest = { /*TODO*/ },
+            onConfirm = { /*TODO*/ },
+            confirmButtonText = "Ok",
+            dismissButtonText = "{}",
+            color = MaterialTheme.colorScheme.onError
+        )
+    }
+}
 
 @Composable
 fun FeedbackAlertDialog(
@@ -2276,46 +1990,43 @@ fun FeedbackAlertDialog(
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
     confirmButtonText: String,
-    dismissButtonText: String
+    dismissButtonText: String,
+    color: Color
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
         },
         text = {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground
-            )
         },
         confirmButton = {
-            Button(onClick = onConfirm) {
-                Text(
-                    text = confirmButtonText,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
+            Row (modifier=Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+                IconButton(
+                    onClick = { onConfirm() },
+                    modifier = Modifier.padding(30.dp).size(60.dp),
+                    colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.onPrimary)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "Confirm Icon",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .padding(10.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(
-                    text = dismissButtonText,
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.onPrimary
-                )
-            }
         },
         shape = RoundedCornerShape(20.dp),
     )
 }
-
 @Composable
 fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
     Row(

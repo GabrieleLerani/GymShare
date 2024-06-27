@@ -202,21 +202,6 @@ fun PlanScreen(
                         }
                     }
                     item {
-                        if (showDialog.value) {
-                            FeedbackAlertDialog(
-                                title = "Select a social",
-                                message = "",
-                                onDismissRequest = { showDialog.value = false },
-                                onConfirm = {
-                                    showDialog.value = false
-                                    showDialogShared.value = true
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = ""
-                            )
-                        }
-                    }
-                    item {
                         if (showDialogShared.value) {
                             FeedbackAlertDialog(
                                 title = "",
@@ -227,37 +212,38 @@ fun PlanScreen(
                                     navController.navigate(Route.HomeScreen.route)
                                 },
                                 confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                dismissButtonText = "",
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }
                     item {
                         if (showDialogWorkout.value) {
                             FeedbackAlertDialog(
-                                title = "",
-                                message = "You have successfully created your workout!",
+                                title = "You have successfully created your workout!",
+                                message = "",
                                 onDismissRequest = { showDialogShared.value = false },
                                 onConfirm = {
                                     showDialogShared.value = false
-                                    navController.navigate(Route.HomeScreen.route)
                                 },
                                 confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                dismissButtonText = "",
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }
                     item {
                         if (showDialogPlan.value) {
                             FeedbackAlertDialog(
-                                title = "",
-                                message = "You have successfully created your plan!",
+                                title = "You have successfully created your plan!",
+                                message = "",
                                 onDismissRequest = { showDialogShared.value = false },
                                 onConfirm = {
                                     showDialogShared.value = false
-                                    navController.navigate(Route.HomeScreen.route)
                                 },
                                 confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                dismissButtonText = "",
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }

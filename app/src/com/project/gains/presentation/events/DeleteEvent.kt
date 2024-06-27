@@ -11,4 +11,5 @@ sealed class DeleteEvent {
     data class DeleteExercise(val exercise: Exercise) : DeleteEvent()
 
     data class DeletePlan(val plan: Plan) : DeleteEvent()
+
 }

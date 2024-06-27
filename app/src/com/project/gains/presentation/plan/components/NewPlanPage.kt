@@ -84,6 +84,7 @@ fun NewPlanPage(
 
                         item {
                             val scope = rememberCoroutineScope()
+                            
 
                             GeneralCard(imageResId = content.image, title = content.title){
                                 scope.launch {
@@ -101,6 +102,8 @@ fun NewPlanPage(
                                             selectedPeriod=selectedLPeriod.value,
                                             selectedTrainingType=selectedTraining.value))
                                         selectHandler(SelectEvent.SelectClicked(true))
+                                        selectHandler(SelectEvent.SelectShowPopup4(false))
+                                        selectHandler(SelectEvent.SelectShowPopup3(true))
 
                                     }
                                     else -> ""

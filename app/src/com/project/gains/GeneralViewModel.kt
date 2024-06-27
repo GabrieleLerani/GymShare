@@ -3,6 +3,7 @@ package com.project.gains
 
 
 import android.util.Log
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.Exercise
@@ -85,6 +86,9 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _showMusic = MutableLiveData<Boolean>()
     val showMusic: MutableLiveData<Boolean> = _showMusic
 
+    private val _workoutTitle = MutableLiveData<TextFieldValue>()
+    val workoutTitle: MutableLiveData<TextFieldValue> = _workoutTitle
+
     private val _isToAdd = MutableLiveData<Boolean>()
     val isToAdd: MutableLiveData<Boolean> = _isToAdd
 
@@ -145,6 +149,8 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
         _currentSessions.value = mutableListOf()
         _linkedApps.value = mutableListOf()
         _currentSong.value=Song("","","")
+        _addedExercises.value= mutableListOf()
+        _workoutTitle.value=TextFieldValue()
 
     }
 
@@ -322,13 +328,10 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
             }
 
             is SelectEvent.SelectIsToAdd -> {
-                if (_isToAdd.value==true){
-                    _isToAdd.value = false
 
-                }else{
-                    _isToAdd.value = true
+                    _isToAdd.value = event.value
 
-                }
+
             }
 
             is SelectEvent.SelectPlanPopup -> {
@@ -373,6 +376,15 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
             }
             is SelectEvent.SelectShowPopup4 -> {
                 _showPopup4.value=event.showPopup4
+            }
+
+            is SelectEvent.RemoveExerciseToAdd -> {
+
+                _addedExercises.value?.remove(event.exercise)
+            }
+
+            is SelectEvent.SelectWorkoutStored -> {
+                _workoutTitle.value=event.name
             }
         }
     }

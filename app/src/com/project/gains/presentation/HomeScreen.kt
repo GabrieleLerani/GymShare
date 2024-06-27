@@ -38,6 +38,7 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.R
 
 import com.project.gains.presentation.components.BottomNavigationBar
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.PlanPagePopup
@@ -67,6 +68,9 @@ fun GainsHomeScreen(
     var showDialogWorkout = remember { mutableStateOf(false) }
     var showDialogPlan = remember { mutableStateOf(false) }
     val showPopup1 by generalViewModel.showPopup.observeAsState()
+    var showDialogShared = remember { mutableStateOf(false) }
+
+    var showDialog = remember { mutableStateOf(false) }
 
 
     CustomBackHandler(
@@ -155,6 +159,36 @@ fun GainsHomeScreen(
                                selectHandler(SelectEvent.SelectPlotPreview(plot.preview))
                                navController.navigate(Route.ProgressDetailsScreen.route)
                            }
+                       }
+                   }
+                   item {
+                       if (showDialogWorkout.value) {
+                           FeedbackAlertDialog(
+                               title = "You have successfully created your workout!",
+                               message = "",
+                               onDismissRequest = { showDialogShared.value = false },
+                               onConfirm = {
+                                   showDialogShared.value = false
+                               },
+                               confirmButtonText = "Ok",
+                               dismissButtonText = "",
+                               color = MaterialTheme.colorScheme.onError
+                           )
+                       }
+                   }
+                   item {
+                       if (showDialogPlan.value) {
+                           FeedbackAlertDialog(
+                               title = "You have successfully created your plan!",
+                               message = "",
+                               onDismissRequest = { showDialogShared.value = false },
+                               onConfirm = {
+                                   showDialogShared.value = false
+                               },
+                               confirmButtonText = "Ok",
+                               dismissButtonText = "",
+                               color = MaterialTheme.colorScheme.onError
+                           )
                        }
                    }
                }

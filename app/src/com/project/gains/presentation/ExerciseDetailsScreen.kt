@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -39,7 +36,6 @@ import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 
 import com.project.gains.presentation.components.InstructionCard
-import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
@@ -196,22 +192,24 @@ fun ExerciseDetailsScreen(
                                     showDialogShared.value = true
                                 },
                                 confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                dismissButtonText = "",
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }
                     item {
                         if (showDialogShared.value) {
                             FeedbackAlertDialog(
-                                title = "",
-                                message = "You have successfully Shared your content!",
+                                title = "You have successfully Shared your content!",
+                                message = "",
                                 onDismissRequest = { showDialogShared.value = false },
                                 onConfirm = {
                                     showDialogShared.value = false
                                     navController.navigate(Route.HomeScreen.route)
                                 },
                                 confirmButtonText = "Ok",
-                                dismissButtonText = ""
+                                dismissButtonText = "",
+                                color = MaterialTheme.colorScheme.onError
                             )
                         }
                     }

@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 
@@ -55,7 +52,7 @@ import com.project.gains.presentation.navgraph.Route
 
 
 import com.project.gains.theme.GainsAppTheme
-
+import com.project.gains.util.Constants
 
 
 @SuppressLint("MutableCollectionMutableState")
@@ -124,20 +121,6 @@ fun SettingScreen(
                         }
 
                         Spacer(modifier = Modifier.height(30.dp))
-
-                        if (showDialog.value) {
-                            FeedbackAlertDialog(
-                                title = "",
-                                message = "You have successfully updated your sharing preferences!",
-                                onDismissRequest = { showDialog.value = false },
-                                onConfirm = {
-                                    showDialog.value = false
-                                    navController.navigate(Route.HomeScreen.route)
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = ""
-                            )
-                        }
                     }
                     item {
                         Row(
@@ -169,6 +152,21 @@ fun SettingScreen(
                                 )
                             }
                         } }
+                    item {
+                        if (showDialog.value) {
+                            FeedbackAlertDialog(
+                                title =  "You have successfully updated your preferences!" ,
+                                message = "",
+                                onDismissRequest = { showDialog.value = false },
+                                onConfirm = {
+                                    showDialog.value = false
+                                },
+                                confirmButtonText = "Ok",
+                                dismissButtonText = "",
+                                color=   MaterialTheme.colorScheme.onSurface ,
+                            )
+                        }
+                    }
                 }
 
             }

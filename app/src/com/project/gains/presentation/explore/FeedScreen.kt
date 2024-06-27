@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +25,7 @@ import com.project.gains.R
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedPost
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
@@ -34,6 +38,7 @@ fun FeedScreen(
     generalViewModel: GeneralViewModel
 ) {
     val gymPosts by generalViewModel.posts.observeAsState()
+
 
     // Assuming you have a function to fetch gym posts from an API or elsewhere
     // You'll need to implement this function accordingly
@@ -65,6 +70,7 @@ fun FeedScreen(
                     gymPosts?.forEach{gymPost ->
                         item { FeedPost(gymPost) }
                     }
+
                 }
             }
         }

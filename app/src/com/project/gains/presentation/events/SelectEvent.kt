@@ -1,5 +1,6 @@
 package com.project.gains.presentation.events
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.Plan
@@ -15,7 +16,7 @@ sealed class SelectEvent {
     data class SelectWorkout(val workout : Workout) : SelectEvent()
     data class SelectExerciseType(val exerciseType: ExerciseType) : SelectEvent()
     data class SelectExerciseToAdd(val exercise: Exercise) : SelectEvent()
-    data object SelectIsToAdd : SelectEvent()
+    data class SelectIsToAdd(val value: Boolean) : SelectEvent()
 
     data class SelectClicked(val clicked: Boolean) :
         SelectEvent()
@@ -29,6 +30,11 @@ sealed class SelectEvent {
 
     data class SelectPlanPopup(val showPopup:Boolean) :
         SelectEvent()
+
+    data class SelectWorkoutStored(val name:TextFieldValue) :
+        SelectEvent()
+
+    data class RemoveExerciseToAdd(val exercise: Exercise) : SelectEvent()
 
 
 
