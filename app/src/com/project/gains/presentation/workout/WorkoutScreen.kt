@@ -54,8 +54,11 @@ fun WorkoutScreen(
 ) {
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     var showPopup2 = remember { mutableStateOf(false) }
-    var showDialogShared = remember { mutableStateOf(false) }
-    var showDialog = remember { mutableStateOf(false) }
+    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
+
+    val stableKey = remember { mutableStateOf(0) } // Stable key to force recomposition
+
+
     // Sample list of exercises
     val exercises by generalViewModel.exercises.observeAsState()
     val workout by generalViewModel.selectedWorkout.observeAsState()
@@ -64,13 +67,13 @@ fun WorkoutScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = workout?.name ?: "Workout" ,
-                    button= {
+                    message = workout?.name ?: "Workout",
+                    button = {
                         androidx.compose.material.IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
 
-                                showPopup2.value=true
+                                showPopup2.value = true
 
                             }) {
                             androidx.compose.material.Icon(
@@ -93,32 +96,32 @@ fun WorkoutScreen(
             },
             bottomBar = {
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .size(64.dp)
-                            .background(MaterialTheme.colorScheme.onSurface),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(64.dp)
+                        .background(MaterialTheme.colorScheme.onSurface),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Route.SessionScreen.route)
+                        },
+                        modifier = Modifier.size(50.dp),
+                        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
                     ) {
-                        IconButton(
-                            onClick = {
-                                navController.navigate(Route.SessionScreen.route)
-                            },
-                            modifier = Modifier.size(50.dp),
-                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                        ) {
-                            androidx.compose.material3.Icon(
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Start Icon",
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(10.dp),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-                    } 
-                
+                        androidx.compose.material3.Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Start Icon",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .padding(10.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+
             }
         ) { paddingValues ->
             Box(
@@ -138,7 +141,8 @@ fun WorkoutScreen(
                             AddExerciseItem(
                                 exercise = exercise, { exerciseToAdd ->
                                     selectHandler(SelectEvent.SelectExercise(exercise))
-                                    navController.navigate(Route.ExerciseDetailsScreen.route)},
+                                    navController.navigate(Route.ExerciseDetailsScreen.route)
+                                },
                                 onItemClick2 = {},
                                 isSelected = true,
                                 isToAdd = false,
@@ -146,53 +150,57 @@ fun WorkoutScreen(
                             )
                         }
                     }
-                    item {
-                        if (showDialogShared.value) {
-                            FeedbackAlertDialog(
-                                title = "You have successfully Shared your content!",
-                                message = "",
-                                onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = {
-                                    showDialogShared.value = false
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError
-                            )
-                        }
+
                     }
+
+                if (showDialogShared==true) {
+
+                    FeedbackAlertDialog(
+                        title = "You have successfully Shared your content!",
+                        message = "",
+                        onDismissRequest = {
+                        },
+                        onConfirm = {
+                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                        },
+                        confirmButtonText = "Ok",
+                        dismissButtonText = "",
+                        color = MaterialTheme.colorScheme.onError,
+                        show = showPopup2
+                    )
+                }
                 }
             }
+            linkedApps?.let {
+                ShareContentPagePopup(
+                    showPopup2,
+                    it,
+                    showDialogShared,
+                    { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
+                    navController
+                )
+            }
         }
-        linkedApps?.let {
-            ShareContentPagePopup(
-                showPopup2,
-                it,
-                showDialog,
-                { showDialogShared.value = true },
-                navController)
-        }}
 
-}
+    }
 
 
 
 
 
+    @Preview(showBackground = true)
+    @Composable
+    fun WorkoutScreenPreview() {
+        val navController = rememberNavController()
+        val generalViewModel: GeneralViewModel = hiltViewModel()
+        WorkoutScreen(
+            navController = navController,
+            deleteHandler = { },
+            selectHandler = {},
+            generalViewModel = generalViewModel
 
+        )
+    }
 
-@Preview(showBackground = true)
-@Composable
-fun WorkoutScreenPreview() {
-    val navController = rememberNavController()
-    val generalViewModel: GeneralViewModel = hiltViewModel()
-    WorkoutScreen(
-        navController = navController,
-        deleteHandler = {  },
-        selectHandler = {},
-        generalViewModel = generalViewModel
-
-    )
-}
 
 

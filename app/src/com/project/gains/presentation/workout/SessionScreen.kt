@@ -41,6 +41,7 @@ import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.events.MusicEvent
+import com.project.gains.presentation.events.SelectEvent
 
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
@@ -48,7 +49,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,generalViewModel:GeneralViewModel) {
+fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,generalViewModel:GeneralViewModel,selectHandler:(SelectEvent)->Unit) {
     // State for the timer
     val currentSong by generalViewModel.currentSong.observeAsState()
 
@@ -56,7 +57,7 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
     var isTimerRunning by remember { mutableStateOf(false) }
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     var showPopup2 = remember { mutableStateOf(false) }
-    var showDialogShared = remember { mutableStateOf(false) }
+    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
     var showDialog = remember { mutableStateOf(false) }
     val show = remember {
         mutableStateOf(true)
@@ -237,21 +238,22 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
                             WarningCard(message = "Maintain a consistent speed.")
                         }
                     }
-                    item {
-                        if (showDialogShared.value) {
-                            FeedbackAlertDialog(
-                                title = "You have successfully Shared your content!",
-                                message = "",
-                                onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = {
-                                    showDialogShared.value = false
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError
-                            )
-                        }
-                    }
+                }
+                if (showDialogShared==true) {
+
+                    FeedbackAlertDialog(
+                        title = "You have successfully Shared your content!",
+                        message = "",
+                        onDismissRequest = {
+                        },
+                        onConfirm = {
+                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                        },
+                        confirmButtonText = "Ok",
+                        dismissButtonText = "",
+                        color = MaterialTheme.colorScheme.onError,
+                        show = showPopup2
+                    )
                 }
             }
         }
@@ -259,8 +261,8 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
             ShareContentPagePopup(
                 showPopup2,
                 it,
-                showDialog,
-                { showDialogShared.value = true },
+                showDialogShared,
+                {  selectHandler(SelectEvent.SelectShowDialogShared(true))},
                 navController
             )
         }
@@ -274,6 +276,6 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
 fun DefaultPreview() {
     val generalViewModel:GeneralViewModel= hiltViewModel()
     GainsAppTheme {
-        SessionScreen(rememberNavController(), musicHandler = {},generalViewModel)
+        SessionScreen(rememberNavController(), musicHandler = {},generalViewModel, selectHandler = {})
     }
 }

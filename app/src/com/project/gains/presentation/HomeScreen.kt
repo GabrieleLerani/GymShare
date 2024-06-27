@@ -65,10 +65,9 @@ fun GainsHomeScreen(
     val workouts by generalViewModel.workouts.observeAsState()
     val plans by generalViewModel.plans.observeAsState()
     val plots by generalViewModel.plots.observeAsState()
-    var showDialogWorkout = remember { mutableStateOf(false) }
-    var showDialogPlan = remember { mutableStateOf(false) }
     val showPopup1 by generalViewModel.showPopup.observeAsState()
-    var showDialogShared = remember { mutableStateOf(false) }
+    val showDialogWorkout by generalViewModel.showDialogWorkout.observeAsState()
+    val showDialogPlan by generalViewModel.showDialogPlan.observeAsState()
 
     var showDialog = remember { mutableStateOf(false) }
 
@@ -147,7 +146,7 @@ fun GainsHomeScreen(
                    }
                    plans?.forEach{ plan ->
                        item {
-                           GeneralCard(imageResId = R.drawable.pexels1, title = plan.name){
+                           GeneralCard(imageResId = R.drawable.pexels2, title = plan.name){
                                selectHandler(SelectEvent.SelectPlan(plan))
                                navController.navigate(Route.PlanScreen.route)
                            }
@@ -155,42 +154,41 @@ fun GainsHomeScreen(
                    }
                    plots?.forEach{ plot ->
                        item {
-                           GeneralCard(imageResId = R.drawable.pexels1, title = "plot"){
+                           GeneralCard(imageResId = R.drawable.plot3, title = "plot"){
                                selectHandler(SelectEvent.SelectPlotPreview(plot.preview))
                                navController.navigate(Route.ProgressDetailsScreen.route)
                            }
                        }
                    }
-                   item {
-                       if (showDialogWorkout.value) {
-                           FeedbackAlertDialog(
-                               title = "You have successfully created your workout!",
-                               message = "",
-                               onDismissRequest = { showDialogShared.value = false },
-                               onConfirm = {
-                                   showDialogShared.value = false
-                               },
-                               confirmButtonText = "Ok",
-                               dismissButtonText = "",
-                               color = MaterialTheme.colorScheme.onError
-                           )
-                       }
-                   }
-                   item {
-                       if (showDialogPlan.value) {
-                           FeedbackAlertDialog(
-                               title = "You have successfully created your plan!",
-                               message = "",
-                               onDismissRequest = { showDialogShared.value = false },
-                               onConfirm = {
-                                   showDialogShared.value = false
-                               },
-                               confirmButtonText = "Ok",
-                               dismissButtonText = "",
-                               color = MaterialTheme.colorScheme.onError
-                           )
-                       }
-                   }
+
+               }
+               if (showDialogWorkout == true) {
+                   FeedbackAlertDialog(
+                       title = "You have successfully created your workout!",
+                       message = "",
+                       onDismissRequest = { selectHandler(SelectEvent.SelectShowDialogWorkout(false)) },
+                       onConfirm = {
+                           selectHandler(SelectEvent.SelectShowDialogWorkout(false))
+                       },
+                       confirmButtonText = "Ok",
+                       dismissButtonText = "",
+                       color = MaterialTheme.colorScheme.onError,
+                       showDialog
+                   )
+               }
+               if (showDialogPlan == true) {
+                   FeedbackAlertDialog(
+                       title = "You have successfully created your plan!",
+                       message = "",
+                       onDismissRequest = {  selectHandler(SelectEvent.SelectShowDialogPlan(false)) },
+                       onConfirm = {
+                           selectHandler(SelectEvent.SelectShowDialogPlan(false))
+                       },
+                       confirmButtonText = "Ok",
+                       dismissButtonText = "",
+                       color = MaterialTheme.colorScheme.onError,
+                       showDialog
+                   )
                }
            }
 

@@ -36,6 +36,16 @@ sealed class SelectEvent {
 
     data class RemoveExerciseToAdd(val exercise: Exercise) : SelectEvent()
 
+    data class SelectShowDialogShared(val value:Boolean) :
+        SelectEvent()
+
+    data class SelectShowDialogPlan(val value:Boolean) :
+        SelectEvent()
+
+    data class SelectShowDialogWorkout(val value:Boolean) :
+        SelectEvent()
+
+
 
 
 }

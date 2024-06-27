@@ -164,6 +164,8 @@ fun SettingScreen(
                                 confirmButtonText = "Ok",
                                 dismissButtonText = "",
                                 color=   MaterialTheme.colorScheme.onSurface ,
+                                show = showDialog
+
                             )
                         }
                     }

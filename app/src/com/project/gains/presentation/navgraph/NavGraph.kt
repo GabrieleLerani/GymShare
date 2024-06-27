@@ -89,7 +89,7 @@ fun NavGraph(
                 route = Route.SessionScreen.route
             ) {
                 // set screen as the node state
-                SessionScreen(navController,generalViewModel::onMusicEvent,generalViewModel
+                SessionScreen(navController,generalViewModel::onMusicEvent,generalViewModel, selectHandler = generalViewModel::onSelectEvent
                 )
             }
             composable(
@@ -122,13 +122,13 @@ fun NavGraph(
                 route = Route.ProgressDetailsScreen.route
             ) {
                 // set screen as the node state
-                ProgressDetailsScreen(navController = navController, shareHandler = generalViewModel::onShareContentEvent, generalViewModel)
+                ProgressDetailsScreen(navController = navController, shareHandler = generalViewModel::onShareContentEvent, generalViewModel,generalViewModel::onSelectEvent)
             }
             composable(
                 route = Route.ExerciseDetailsScreen.route
             ) {
                 // set screen as the node state
-                ExerciseDetailsScreen(navController = navController,generalViewModel)
+                ExerciseDetailsScreen(navController = navController,generalViewModel, selectHandler = generalViewModel::onSelectEvent)
             }
             composable(
                 route = Route.TypedExerciseScreen.route

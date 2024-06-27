@@ -70,6 +70,9 @@ fun AccountScreen(
     // observable state
     val userProfile by viewModel.userProfile.collectAsState()
     val data by viewModel.data.observeAsState()
+    var flag = remember {
+        mutableStateOf(false)
+    }
     // field of interest
     var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
     var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Name") }
@@ -97,6 +100,7 @@ fun AccountScreen(
                     },
                     button1 = {
                         BackButton {
+                            showDialog.value=false
                             navController.popBackStack()
                         }
                     }
@@ -189,24 +193,15 @@ fun AccountScreen(
                         if (data?.isNotEmpty() == true) {
                             // Display data
 
-                            if (data.equals(UPDATE_SUCCESS)) {
+                            if (data.equals(UPDATE_SUCCESS) && flag.value==false) {
                                 showDialog.value=true
-                            } else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS)) {
+                                println(UPDATE_SUCCESS)
+                                flag.value=true
+                            } else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS) && flag.value==false ) {
                                 showDialog.value=true
+                                println("OTHER")
+                                flag.value=true
 
-                            }
-
-
-                            // Change page if all ok
-                            if (viewModel.navigateToAnotherScreen.value == true) {
-                                val route: String = if (data.equals(SIGN_OUT_SUCCESS)) {
-                                    Route.SignInScreen.route
-                                } else {
-                                    Route.HomeScreen.route
-                                }
-                                // navigate
-                                navController.navigate(route)
-                                viewModel.onNavigationComplete()
                             }
 
                         }
@@ -238,13 +233,16 @@ fun AccountScreen(
                             FeedbackAlertDialog(
                                 title = if (data.equals(UPDATE_SUCCESS)) "You have successfully updated your profile!" else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS)) data!!.toString() else "",
                                 message = "",
-                                onDismissRequest = { showDialog.value = false },
+                                onDismissRequest = { },
                                 onConfirm = {
                                     showDialog.value = false
+
                                 },
                                 confirmButtonText = "Ok",
                                 dismissButtonText = "",
                                 color=  if (data.equals(UPDATE_SUCCESS))  MaterialTheme.colorScheme.onSurface else if (!data.equals(SIGN_OUT_SUCCESS) && !data.equals(UPDATE_SUCCESS))  MaterialTheme.colorScheme.onError else MaterialTheme.colorScheme.onSurface,
+                                show = showDialog
+
                             )
                         }
                     }

@@ -39,6 +39,7 @@ import com.project.gains.presentation.components.InstructionCard
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
+import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
@@ -46,13 +47,14 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun ExerciseDetailsScreen(
     navController: NavController,
-    generalViewModel: GeneralViewModel
+    generalViewModel: GeneralViewModel,
+    selectHandler:(SelectEvent)->Unit
 
 ) {
     // Sample list of workouts
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     var showPopup2 = remember { mutableStateOf(false) }
-    var showDialogShared = remember { mutableStateOf(false) }
+    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
     var showDialog = remember { mutableStateOf(false) }
     val exercise by generalViewModel.selectedExercise.observeAsState()
 
@@ -189,32 +191,33 @@ fun ExerciseDetailsScreen(
                                 onDismissRequest = { showDialog.value = false },
                                 onConfirm = {
                                     showDialog.value = false
-                                    showDialogShared.value = true
+                                    selectHandler(SelectEvent.SelectShowDialogShared(true))
                                 },
                                 confirmButtonText = "Ok",
                                 dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError
-                            )
-                        }
-                    }
-                    item {
-                        if (showDialogShared.value) {
-                            FeedbackAlertDialog(
-                                title = "You have successfully Shared your content!",
-                                message = "",
-                                onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = {
-                                    showDialogShared.value = false
-                                    navController.navigate(Route.HomeScreen.route)
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError
+                                color = MaterialTheme.colorScheme.onError,
+                                showDialog
                             )
                         }
                     }
 
 
+                }
+                if (showDialogShared==true) {
+
+                    FeedbackAlertDialog(
+                        title = "You have successfully Shared your content!",
+                        message = "",
+                        onDismissRequest = {
+                        },
+                        onConfirm = {
+                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                        },
+                        confirmButtonText = "Ok",
+                        dismissButtonText = "",
+                        color = MaterialTheme.colorScheme.onError,
+                        show = showPopup2
+                    )
                 }
             }
         }
@@ -222,8 +225,8 @@ fun ExerciseDetailsScreen(
             ShareContentPagePopup(
                 showPopup2,
                 it,
-                showDialog,
-                { showDialogShared.value = true },
+                showDialogShared,
+                { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
                 navController)
         }
 
@@ -240,7 +243,8 @@ fun ExerciseDetailsScreenPreview() {
     val generalViewModel:GeneralViewModel = hiltViewModel()
     ExerciseDetailsScreen(
         navController = navController,
-        generalViewModel =generalViewModel
+        generalViewModel =generalViewModel,
+        selectHandler= {  }
 
     )
 }

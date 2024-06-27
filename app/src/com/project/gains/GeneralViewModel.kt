@@ -76,7 +76,6 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _selectedExerciseType = MutableLiveData<ExerciseType>()
     val selectedExerciseType: MutableLiveData<ExerciseType> = _selectedExerciseType
 
-
     private val _linkedApps = MutableLiveData<MutableList<Int>>()
     val linkedApps: MutableLiveData<MutableList<Int>> = _linkedApps
 
@@ -86,15 +85,19 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _showMusic = MutableLiveData<Boolean>()
     val showMusic: MutableLiveData<Boolean> = _showMusic
 
+// PAGE POPUP HANDLING
+private val _showDialogWorkout = MutableLiveData<Boolean>()
+    val showDialogWorkout: MutableLiveData<Boolean> = _showDialogWorkout
+    private val _showDialogPlan = MutableLiveData<Boolean>()
+    val showDialogPlan: MutableLiveData<Boolean> = _showDialogPlan
+    private val _showDialogShared = MutableLiveData<Boolean>()
+    val showDialogShared: MutableLiveData<Boolean> = _showDialogShared
     private val _workoutTitle = MutableLiveData<TextFieldValue>()
     val workoutTitle: MutableLiveData<TextFieldValue> = _workoutTitle
-
     private val _isToAdd = MutableLiveData<Boolean>()
     val isToAdd: MutableLiveData<Boolean> = _isToAdd
-
     private val _previewsPage = MutableLiveData<String>()
     val previewsPage: MutableLiveData<String> = _previewsPage
-
     private val _clicked = MutableLiveData<Boolean>()
     val clicked: MutableLiveData<Boolean> = _clicked
     private val _showPopup = MutableLiveData<Boolean>()
@@ -103,6 +106,9 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     val showPopup3: MutableLiveData<Boolean> = _showPopup3
     private val _showPopup4 = MutableLiveData<Boolean>()
     val showPopup4: MutableLiveData<Boolean> = _showPopup4
+    private val _addedExercises = MutableLiveData<MutableList<Exercise>>()
+    val addedExercises: MutableLiveData<MutableList<Exercise>> = _addedExercises
+//
 
     private val _currentSong = MutableLiveData<Song>()
     val currentSong: MutableLiveData<Song> = _currentSong
@@ -111,10 +117,7 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     val currentSessions: MutableLiveData<MutableList<Session>> = _currentSessions
 
 
-    private val _addedExercises = MutableLiveData<MutableList<Exercise>>()
-    val addedExercises: MutableLiveData<MutableList<Exercise>> = _addedExercises
-
-    // FOR EACH PLAN
+// FOR EACH PLAN
 
     private val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
     val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
@@ -125,16 +128,21 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
 
     private val _selectedBackupsMap = HashMap<Int,Boolean>()
 
+
     private val _selectedLvl = MutableLiveData<Level>()
+    val selectedLvl : MutableLiveData<Level> = _selectedLvl
     private val _selectedPeriod = MutableLiveData<PeriodMetricType>()
+    val selectedPeriod : MutableLiveData<PeriodMetricType> = _selectedPeriod
     private val _selectedTrainingType = MutableLiveData<TrainingType>()
+    val selectedTrainingType : MutableLiveData<TrainingType> = _selectedTrainingType
+
 
 
     private var int = 0
 
     private var songIndex = 0
 
-
+//
 
 
 
@@ -151,6 +159,10 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
         _currentSong.value=Song("","","")
         _addedExercises.value= mutableListOf()
         _workoutTitle.value=TextFieldValue()
+        _songs.value= generateRandomSongs(5)
+        _selectedLvl.value = Level.BEGINNER
+        _selectedPeriod.value=PeriodMetricType.WEEK
+        _selectedTrainingType.value=TrainingType.STRENGTH
 
     }
 
@@ -385,6 +397,20 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
 
             is SelectEvent.SelectWorkoutStored -> {
                 _workoutTitle.value=event.name
+            }
+
+            is SelectEvent.SelectShowDialogShared -> {
+                _showDialogShared.value=event.value
+
+
+            }
+
+            is SelectEvent.SelectShowDialogPlan -> {
+                _showDialogPlan.value=event.value
+            }
+            is SelectEvent.SelectShowDialogWorkout -> {
+                _showDialogWorkout.value=event.value
+
             }
         }
     }

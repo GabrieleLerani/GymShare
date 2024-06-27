@@ -50,6 +50,7 @@ import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 
 import com.project.gains.presentation.components.TrainingOverviewChart
+import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
 
@@ -59,14 +60,15 @@ import com.project.gains.theme.GainsAppTheme
 fun ProgressDetailsScreen(
     navController: NavController,
     shareHandler: (ShareContentEvent.SharePlot) -> Unit,
-    generalViewModel: GeneralViewModel
+    generalViewModel: GeneralViewModel,
+    selectHandler:(SelectEvent)->Unit
 ) {
     var popupVisible1 = remember { mutableStateOf(false) }
     var popupVisible2 = remember { mutableStateOf(false) }
     var isTimerRunning by remember { mutableStateOf(false) }
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     var showPopup2 = remember { mutableStateOf(false) }
-    var showDialogShared = remember { mutableStateOf(false) }
+    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
     var showDialog = remember { mutableStateOf(false) }
 
     val selectedPlan by generalViewModel.selectedPlan.observeAsState()
@@ -192,14 +194,14 @@ fun ProgressDetailsScreen(
                         Text(selectedPeriod.name, style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurface)
 
-                        IconButton(onClick = { popupVisible1.value = true }) {
+                        IconButton(onClick = { popupVisible2.value = true }) {
                             Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Metric")
                         }
                         Spacer(modifier = Modifier.width(170.dp))
                         Text(selectedMetric.name, style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurface)
 
-                        IconButton(onClick = { popupVisible2.value = true }) {
+                        IconButton(onClick = { popupVisible1.value = true }) {
                             Icon(Icons.Default.ArrowDropDown, contentDescription = "Change Metric")
                         }
                     } }
@@ -213,7 +215,7 @@ fun ProgressDetailsScreen(
                             selectedMetric = metric
                             popupVisible1.value = false
                         },
-                        selectedMetric = metrics[0]
+                        selectedMetric = selectedMetric
                     )
                     }
                     item {
@@ -225,7 +227,7 @@ fun ProgressDetailsScreen(
                                 selectedPeriod = period
                                 popupVisible2.value = false
                             },
-                            selectedMetric = periods[0]
+                            selectedMetric = selectedPeriod
                         )
                     }
 
@@ -236,32 +238,32 @@ fun ProgressDetailsScreen(
                         shareHandler = shareHandler,
                         selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plot3)
                     ) }
-                    item {
-                        if (showDialogShared.value) {
-                            FeedbackAlertDialog(
-                                title = "You have successfully Shared your content!",
-                                message = "",
-                                onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = {
-                                    showDialogShared.value = false
-                                    navController.navigate(Route.HomeScreen.route)
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
 
                     }
+                if (showDialogShared==true) {
+
+                    FeedbackAlertDialog(
+                        title = "You have successfully Shared your content!",
+                        message = "",
+                        onDismissRequest = {
+                        },
+                        onConfirm = {
+                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                        },
+                        confirmButtonText = "Ok",
+                        dismissButtonText = "",
+                        color = MaterialTheme.colorScheme.onError,
+                        show = showPopup2
+                    )
+                }
                 }
             }
         linkedApps?.let {
             ShareContentPagePopup(
                 showPopup2,
                 it,
-                showDialog,
-                { showDialogShared.value = true },
+                showDialogShared,
+                { selectHandler(SelectEvent.SelectShowDialogShared(true))},
                 navController)
         } }
 
@@ -281,7 +283,8 @@ fun ProgressDetailsScreenPreview() {
     ProgressDetailsScreen(
         navController = navController,
         shareHandler = {  },
-        generalViewModel
+        generalViewModel,
+        selectHandler = {}
 
     )
 }

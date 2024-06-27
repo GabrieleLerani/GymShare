@@ -73,9 +73,9 @@ fun PlanScreen(
 
 
     val workouts by generalViewModel.workouts.observeAsState()
-    var showDialogShared = remember { mutableStateOf(false) }
-    var showDialogWorkout = remember { mutableStateOf(false) }
-    var showDialogPlan = remember { mutableStateOf(false) }
+    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
+    val showDialogWorkout by generalViewModel.showDialogWorkout.observeAsState()
+    val showDialogPlan by generalViewModel.showDialogPlan.observeAsState()
 
     var showDialog = remember { mutableStateOf(false) }
 
@@ -150,7 +150,7 @@ fun PlanScreen(
                                 .padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            WorkoutHeader()
+                            WorkoutHeader(generalViewModel)
                             Spacer(modifier = Modifier.height(16.dp))
                             WorkoutDaysList {
                                 navController.navigate(Route.WorkoutScreen.route)
@@ -167,8 +167,6 @@ fun PlanScreen(
                             IconButton(
                                 onClick = {
                                     showDialog.value = true
-                                    showDialogShared.value = true
-
                                 },
                                 modifier = Modifier.size(60.dp),
                                 colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
@@ -201,53 +199,53 @@ fun PlanScreen(
                             }
                         }
                     }
-                    item {
-                        if (showDialogShared.value) {
-                            FeedbackAlertDialog(
-                                title = "",
-                                message = "You have successfully Shared your content!",
-                                onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = {
-                                    showDialogShared.value = false
-                                    navController.navigate(Route.HomeScreen.route)
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError
-                            )
-                        }
-                    }
-                    item {
-                        if (showDialogWorkout.value) {
-                            FeedbackAlertDialog(
-                                title = "You have successfully created your workout!",
-                                message = "",
-                                onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = {
-                                    showDialogShared.value = false
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError
-                            )
-                        }
-                    }
-                    item {
-                        if (showDialogPlan.value) {
-                            FeedbackAlertDialog(
-                                title = "You have successfully created your plan!",
-                                message = "",
-                                onDismissRequest = { showDialogShared.value = false },
-                                onConfirm = {
-                                    showDialogShared.value = false
-                                },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError
-                            )
-                        }
-                    }
 
+                }
+                if (showDialogWorkout == true) {
+                    FeedbackAlertDialog(
+                        title = "You have successfully created your workout!",
+                        message = "",
+                        onDismissRequest = { selectHandler(SelectEvent.SelectShowDialogWorkout(false)) },
+                        onConfirm = {
+                            selectHandler(SelectEvent.SelectShowDialogWorkout(false))
+                        },
+                        confirmButtonText = "Ok",
+                        dismissButtonText = "",
+                        color = MaterialTheme.colorScheme.onError,
+                        show = showDialog
+
+                    )
+                }
+                if (showDialogPlan == true) {
+                    FeedbackAlertDialog(
+                        title = "You have successfully created your plan!",
+                        message = "",
+                        onDismissRequest = { selectHandler(SelectEvent.SelectShowDialogPlan(false)) },
+                        onConfirm = {
+                            selectHandler(SelectEvent.SelectShowDialogPlan(false))
+                        },
+                        confirmButtonText = "Ok",
+                        dismissButtonText = "",
+                        color = MaterialTheme.colorScheme.onError,
+                        show = showDialog
+
+                    )
+                }
+                if (showDialogShared==true) {
+
+                    FeedbackAlertDialog(
+                        title = "You have successfully Shared your content!",
+                        message = "",
+                        onDismissRequest = {
+                        },
+                        onConfirm = {
+                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                        },
+                        confirmButtonText = "Ok",
+                        dismissButtonText = "",
+                        color = MaterialTheme.colorScheme.onError,
+                        show = showPopup2
+                    )
                 }
             }
         }
@@ -259,8 +257,8 @@ fun PlanScreen(
             ShareContentPagePopup(
                 showPopup2,
                 it,
-                showDialog,
-                { showDialogShared.value = true },
+                showDialogShared,
+                { selectHandler(SelectEvent.SelectShowDialogShared(true))},
                 navController)
         } }
     }
