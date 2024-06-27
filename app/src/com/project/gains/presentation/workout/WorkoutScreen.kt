@@ -37,6 +37,7 @@ import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
@@ -56,8 +57,9 @@ fun WorkoutScreen(
     var showPopup2 = remember { mutableStateOf(false) }
     val showDialogShared by generalViewModel.showDialogShared.observeAsState()
 
-    val stableKey = remember { mutableStateOf(0) } // Stable key to force recomposition
-
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
     // Sample list of exercises
     val exercises by generalViewModel.exercises.observeAsState()
@@ -93,6 +95,9 @@ fun WorkoutScreen(
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },
             bottomBar = {
 

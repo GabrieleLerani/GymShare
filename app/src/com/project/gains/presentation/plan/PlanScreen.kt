@@ -41,6 +41,7 @@ import com.project.gains.GeneralViewModel
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.PlanPagePopup
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
@@ -69,7 +70,9 @@ fun PlanScreen(
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     val showPopup1 by generalViewModel.showPopup.observeAsState()
     var showPopup2 = remember { mutableStateOf(false) }
-
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
 
     val workouts by generalViewModel.workouts.observeAsState()
@@ -128,6 +131,9 @@ fun PlanScreen(
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
@@ -154,48 +160,6 @@ fun PlanScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             WorkoutDaysList {
                                 navController.navigate(Route.WorkoutScreen.route)
-                            }
-                        }
-                    }
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    showDialog.value = true
-                                },
-                                modifier = Modifier.size(60.dp),
-                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                androidx.compose.material3.Icon(
-                                    imageVector = Icons.Default.Send,
-                                    contentDescription = "New Plan icon",
-                                    modifier = Modifier
-                                        .size(50.dp)
-                                        .padding(10.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(20.dp))
-                            IconButton(
-                                onClick = {
-                                    navController.navigate(Route.NewPlanScreen.route)
-                                },
-                                modifier = Modifier.size(60.dp),
-                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                androidx.compose.material3.Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "New Plan icon",
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .padding(10.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
                             }
                         }
                     }

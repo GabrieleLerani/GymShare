@@ -554,11 +554,11 @@ fun TrainingOverviewChart(
             when (selectedPlotType.imageResId) {
                 R.drawable.plot2 -> {
                     // Bar plot (Vertical bar plot)
-                    BarPlot(trainingData,"Months","Bpm")
+                    BarPlot(trainingData,selectedPeriod.toString(),selectedMetric.toString())
                 }
                 R.drawable.plot3 -> {
                     // Pie plot (Circular pie chart)
-                    PiePlot(trainingData,"Months","Bpm")
+                    PiePlot(trainingData,selectedPeriod.toString(),selectedMetric.toString())
                 }
             }
     }
@@ -754,7 +754,7 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
                 // Legend text
                 drawIntoCanvas {
                     it.nativeCanvas.drawText(
-                        "Month ${index +1}",
+                        "$valueType ${index +1}",
                         legendX + legendBoxSize + 8.dp.toPx(),
                         legendY + legendBoxSize * 0.75f,
                         Paint().apply {
@@ -1646,6 +1646,7 @@ fun NotificationCard(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             androidx.compose.material.Text(

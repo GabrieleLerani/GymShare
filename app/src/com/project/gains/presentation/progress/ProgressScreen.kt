@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,6 +23,7 @@ import com.project.gains.data.generateRandomPlots
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ProgressChartCard
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
@@ -34,6 +37,9 @@ fun ProgressScreen(
 
 ) {
     val plots = generateRandomPlots()
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
     GainsAppTheme {
         Scaffold(
@@ -48,6 +54,9 @@ fun ProgressScreen(
                     },
                     button1 = {}
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },            bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
             Box(

@@ -36,6 +36,7 @@ import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 
 import com.project.gains.presentation.components.InstructionCard
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
@@ -57,6 +58,9 @@ fun ExerciseDetailsScreen(
     val showDialogShared by generalViewModel.showDialogShared.observeAsState()
     var showDialog = remember { mutableStateOf(false) }
     val exercise by generalViewModel.selectedExercise.observeAsState()
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
     GainsAppTheme {
         Scaffold(
@@ -88,6 +92,9 @@ fun ExerciseDetailsScreen(
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },
         ) { paddingValues ->
             Box(

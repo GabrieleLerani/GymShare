@@ -43,6 +43,7 @@ import com.project.gains.presentation.components.BackButton
 
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.NotificationCard
 
 import com.project.gains.presentation.components.SocialMediaRow
 import com.project.gains.presentation.components.TopBar
@@ -65,6 +66,9 @@ fun SettingScreen(
 ) {
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
     val showDialog = remember { mutableStateOf(false) }
     val icons = listOf(
@@ -94,6 +98,9 @@ fun SettingScreen(
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },
         ) { paddingValues ->
             Box(

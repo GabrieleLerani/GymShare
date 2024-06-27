@@ -41,6 +41,7 @@ import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.PlanPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
@@ -70,6 +71,9 @@ fun GainsHomeScreen(
     val showDialogPlan by generalViewModel.showDialogPlan.observeAsState()
 
     var showDialog = remember { mutableStateOf(false) }
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
 
     CustomBackHandler(
@@ -123,6 +127,9 @@ fun GainsHomeScreen(
                        }
                    }
                )
+               if (notification.value){
+                   NotificationCard(message ="CIAO", onClose = {notification.value=false})
+               }
            },
            bottomBar = { BottomNavigationBar(navController = navController) }
        ) { paddingValues ->

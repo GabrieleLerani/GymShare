@@ -27,6 +27,7 @@ import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedPost
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
@@ -38,7 +39,9 @@ fun FeedScreen(
     generalViewModel: GeneralViewModel
 ) {
     val gymPosts by generalViewModel.posts.observeAsState()
-
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
     // Assuming you have a function to fetch gym posts from an API or elsewhere
     // You'll need to implement this function accordingly
@@ -55,6 +58,9 @@ fun FeedScreen(
                     },
                     button1 = {}
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },            bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->
             Box(

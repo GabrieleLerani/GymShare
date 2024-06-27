@@ -29,6 +29,7 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
@@ -53,6 +54,9 @@ fun TypedExerciseScreen(
     val searchedExercises = remember { mutableStateOf(listOf<Exercise>()) }
     val isSearchQueryEmpty = remember { mutableStateOf(searchQuery.value.isBlank()) }
     val localKeyboardController = LocalSoftwareKeyboardController.current
+    var notification = remember {
+        mutableStateOf(false)
+    }
 
     GainsAppTheme {
         Scaffold(
@@ -67,6 +71,9 @@ fun TypedExerciseScreen(
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             }
         ) { paddingValues ->
             Box(

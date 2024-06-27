@@ -37,6 +37,7 @@ import com.project.gains.data.Song
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MusicPopup
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
@@ -61,6 +62,9 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
     var showDialog = remember { mutableStateOf(false) }
     val show = remember {
         mutableStateOf(true)
+    }
+    var notification = remember {
+        mutableStateOf(false)
     }
     // Function to start the timer
     if (isTimerRunning) {
@@ -107,6 +111,9 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },
         ) { paddingValues ->
             Box(

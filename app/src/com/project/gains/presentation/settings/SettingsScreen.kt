@@ -30,6 +30,8 @@ import androidx.compose.material.icons.filled.Support
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,6 +43,7 @@ import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.SettingItem
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.navgraph.Route
@@ -53,6 +56,9 @@ fun SettingsScreen(
     viewModel: GeneralViewModel,
     navController: NavController
 ) {
+    var notification = remember {
+        mutableStateOf(false)
+    }
     GainsAppTheme {
         Scaffold(
             topBar = {
@@ -68,6 +74,9 @@ fun SettingsScreen(
 
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },
             bottomBar = { BottomNavigationBar(navController = navController) }
         ) { paddingValues ->

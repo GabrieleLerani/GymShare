@@ -45,6 +45,7 @@ import com.project.gains.data.generateRandomTrainingData
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MetricPopup
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.PeriodPopup
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
@@ -77,71 +78,18 @@ fun ProgressDetailsScreen(
 
     var selectedMetric by remember { mutableStateOf(TrainingMetricType.BPM) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
-    val sessions by generalViewModel.currentSessions.observeAsState()
-    var training_data: MutableList<TrainingData> = mutableListOf()
     var trainingData: MutableList<TrainingData> = generateRandomTrainingData(10).toMutableList()
 
     val progressChartPreview by generalViewModel.selectedPlotPreview.observeAsState()
-    sessions?.let { sessionList ->
-        val kcalValuesInts = sessionList.map { it.kcal }
-        val bpmsInts = sessionList.map { it.bpm }
-        val restTimesInts = sessionList.map { it.restTime }
-        val durationsInts = sessionList.map { it.duration }
-        val intensitiesInts = sessionList.map { it.intensity }
-        val distancesInts = sessionList.map { it.distance }
-        when (selectedMetric) {
-            TrainingMetricType.INTENSITY -> {
-                training_data = mutableListOf()
-                intensitiesInts.forEach {
-                    training_data.add(TrainingData(TrainingMetricType.INTENSITY,it))
-                }
-            }
-            TrainingMetricType.DURATION -> {
-                training_data = mutableListOf()
-                durationsInts.forEach {
-                    training_data.add(TrainingData(TrainingMetricType.DURATION,it))
-                }
-
-            }
-            TrainingMetricType.DISTANCE -> {
-                training_data = mutableListOf()
-                distancesInts.forEach {
-                    training_data.add(TrainingData(TrainingMetricType.DISTANCE,it))
-                }
-            }
-            TrainingMetricType.KCAL -> {
-                training_data = mutableListOf()
-                kcalValuesInts.forEach {
-                    training_data.add(TrainingData(TrainingMetricType.KCAL,it))
-                }
-
-            }
-            TrainingMetricType.BPM -> {
-                training_data = mutableListOf()
-                bpmsInts.forEach {
-                    training_data.add(TrainingData(TrainingMetricType.BPM,it))
-                }
-
-            }
-            TrainingMetricType.REST -> {
-                training_data = mutableListOf()
-                restTimesInts.forEach {
-                    training_data.add(TrainingData(TrainingMetricType.REST,it))
-                }
-
-            }
-
-            null -> TODO()
-        }
-
-    }
     val metrics = remember {
         mutableListOf(TrainingMetricType.BPM,TrainingMetricType.DISTANCE,TrainingMetricType.DURATION)
     }
     val periods = remember {
         mutableListOf(PeriodMetricType.YEAR,PeriodMetricType.MONTH,PeriodMetricType.WEEK)
     }
-
+    var notification = remember {
+        mutableStateOf(false)
+    }
     GainsAppTheme {
         Scaffold(
             topBar = {
@@ -172,6 +120,9 @@ fun ProgressDetailsScreen(
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             }
         ) { paddingValues ->
             Box(

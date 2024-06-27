@@ -50,6 +50,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.navgraph.Route
 
@@ -71,6 +72,9 @@ fun AccountScreen(
     val userProfile by viewModel.userProfile.collectAsState()
     val data by viewModel.data.observeAsState()
     var flag = remember {
+        mutableStateOf(false)
+    }
+    var notification = remember {
         mutableStateOf(false)
     }
     // field of interest
@@ -105,6 +109,9 @@ fun AccountScreen(
                         }
                     }
                 )
+                if (notification.value){
+                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                }
             },
         ) { paddingValues ->
             Box(
