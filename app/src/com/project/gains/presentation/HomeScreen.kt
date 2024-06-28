@@ -16,6 +16,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.MaterialTheme
 
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -120,8 +121,8 @@ fun GainsHomeScreen(
                                navController.navigate(Route.TypedExerciseScreen.route)
                            }) {
                            Icon(
-                               imageVector = Icons.Default.FitnessCenter,
-                               contentDescription = "Workout",
+                               imageVector = Icons.Default.Search,
+                               contentDescription = "Exercises",
                                tint = MaterialTheme.colorScheme.surface
                            )
                        }

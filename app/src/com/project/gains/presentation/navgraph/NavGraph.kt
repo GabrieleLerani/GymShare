@@ -21,6 +21,7 @@ import com.project.gains.presentation.settings.SettingsScreen
 import com.project.gains.presentation.settings.SettingsViewModel
 import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.TypedExerciseScreen
+import com.project.gains.presentation.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.plan.PlanScreen
 import com.project.gains.presentation.progress.ProgressDetailsScreen
@@ -129,6 +130,13 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 ExerciseDetailsScreen(navController = navController,generalViewModel, selectHandler = generalViewModel::onSelectEvent)
+            }
+            composable(
+                route = Route.WorkoutModeScreen.route
+            ) {
+                // set screen as the node state
+                WorkoutModeScreen(navController,generalViewModel::onMusicEvent,generalViewModel, selectHandler = generalViewModel::onSelectEvent
+                )
             }
             composable(
                 route = Route.TypedExerciseScreen.route

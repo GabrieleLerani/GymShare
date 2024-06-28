@@ -31,6 +31,7 @@ import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries,
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
@@ -284,18 +285,12 @@ fun PeriodPopup(
         )
     }
 }
-// Utility function to format time
-fun formatTime(seconds: Float): String {
-    val minutes = (seconds / 60).toInt()
-    val remainingSeconds = (seconds % 60).toInt()
-    return String.format("%d:%02d", minutes, remainingSeconds)
-}
 @Composable
 fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: Song, totalTime: String) {
     if (popup) {
         val play = remember { mutableStateOf(false) }
         var currentTime by remember { mutableStateOf(0f) }
-        var songTotalTime:Float = 165f
+        val songTotalTime = 165f
 
         // Simulate a timer to update the current playback position
         LaunchedEffect(play.value) {
@@ -316,111 +311,126 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
                 }
             }
         }
+
         Card(
             modifier = Modifier
-                .padding(16.dp)
-                .width(500.dp)
-                .height(250.dp)
-                .background(Color.Green, RoundedCornerShape(16.dp)),
+                .fillMaxWidth()
+                .size(240.dp),
             elevation = CardDefaults.cardElevation(
-                defaultElevation = 10.dp
+                defaultElevation = 8.dp
             ),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(Color.Green)
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(Color.Black)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(8.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.spotify_icon),
+                    painter = painterResource(id = R.drawable.spotify2),
                     contentDescription = "App Icon",
                     modifier = Modifier
-                        .size(64.dp)
-                        .padding(16.dp)
+                        .size(40.dp)
+                        .padding(2.dp)
                 )
-                Text(
-                    text = currentSong.title,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(  horizontalArrangement = Arrangement.Center,
+                Row(
+                    horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(4.dp)) {
+                    modifier = Modifier.padding(16.dp)
+                ) {
                     Text(
-                        text = "Artist : ${currentSong.singer}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface
+                        text = "Song: ${currentSong.title}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.surface
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "Artist: ${currentSong.singer}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.surface
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
 
                     Text(
-                        text = "Album : ${currentSong.album}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface
+                        text = "Album: ${currentSong.album}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.surface
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+
+                LinearProgressIndicator(
+                    progress = currentTime / songTotalTime,
+                    color = MaterialTheme.colorScheme.surface,
+                    backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(16.dp)
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = formatTime(currentTime),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.surface
+                    )
+                    Text(
+                        text = formatTime(songTotalTime),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.surface
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Time: ${formatTime(currentTime)}/${formatTime(songTotalTime)}",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(16.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    ElevatedButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
+                    IconButton(
                         onClick = {
                             musicHandler(MusicEvent.Rewind)
-                            currentTime=0f
-                            songTotalTime=Random.nextFloat() * (300 - 120) + 120
-
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                            currentTime = 0f
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.FastRewind,
-                            contentDescription = "rewind",
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            contentDescription = "Rewind",
+                            tint = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(40.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.width(20.dp))
-                    ElevatedButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
+                    IconButton(
                         onClick = {
                             play.value = !play.value
                             musicHandler(MusicEvent.Music)
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                        }
                     ) {
                         Icon(
                             imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
-                            contentDescription = "play",
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            contentDescription = if (play.value) "Stop" else "Play",
+                            tint = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(40.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.width(20.dp))
-                    ElevatedButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
+                    IconButton(
                         onClick = {
                             musicHandler(MusicEvent.Forward)
-                            currentTime=0f
-                            songTotalTime=Random.nextFloat() * (300 - 120) + 120 },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+                            currentTime = 0f
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.FastForward,
-                            contentDescription = "forward",
-                            modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            contentDescription = "Forward",
+                            tint = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(40.dp)
                         )
                     }
                 }
@@ -428,6 +438,15 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
         }
     }
 }
+
+fun formatTime(time: Float): String {
+    val totalSeconds = time.toInt()
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format("%02d:%02d", minutes, seconds)
+}
+
+
 @Composable
 fun ProgressChartCard(
     chartPreview: ProgressChartPreview,

@@ -163,6 +163,9 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
         _selectedLvl.value = Level.BEGINNER
         _selectedPeriod.value=PeriodMetricType.WEEK
         _selectedTrainingType.value=TrainingType.STRENGTH
+        _selectedExercise.value= generateSampleExercises(ExerciseType.ARMS,R.drawable.arms2).get(0)
+        _selectedWorkout.value= generateSampleWorkouts().get(0)
+        _selectedPlan.value= generateSamplePlans().get(0)
 
     }
 

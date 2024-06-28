@@ -17,6 +17,8 @@ import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -126,6 +128,18 @@ fun PlanScreen(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "New",
+                                tint = MaterialTheme.colorScheme.surface
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        androidx.compose.material.IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+                                navController.navigate(Route.WorkoutModeScreen.route)
+                            }) {
+                            Icon(
+                                imageVector = Icons.Default.FitnessCenter,
+                                contentDescription = "Workout",
                                 tint = MaterialTheme.colorScheme.surface
                             )
                         }
