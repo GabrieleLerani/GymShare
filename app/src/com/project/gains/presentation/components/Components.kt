@@ -1842,13 +1842,16 @@ fun WorkoutHeader(generalViewModel: GeneralViewModel) {
 }
 
 @Composable
-fun WorkoutDaysList(onItemClick: () -> Unit) {
-    val workoutDays = listOf(
-        "chest",
-        "back",
-        "legs",
-        "arms+shoulders"
-    )
+fun WorkoutDaysList(workouts: MutableList<Workout>, onItemClick: () -> Unit) {
+
+    val workoutsDays = mutableListOf<String>()
+
+    val workoutsIds = mutableListOf<Int>()
+
+    workouts.forEach { workout ->
+        workoutsDays.add(workout.name)
+        workoutsIds.add(workout.id)
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -1860,7 +1863,7 @@ fun WorkoutDaysList(onItemClick: () -> Unit) {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        workoutDays.forEachIndexed { index, day ->
+        workoutsDays.forEachIndexed { index, day ->
             androidx.compose.material.Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -1883,7 +1886,7 @@ fun WorkoutDaysList(onItemClick: () -> Unit) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         androidx.compose.material.Text(
-                            text = "${index + 1} workout day",
+                            text = "workout day ${workoutsIds[index]}",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )

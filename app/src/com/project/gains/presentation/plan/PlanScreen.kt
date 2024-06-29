@@ -172,7 +172,7 @@ fun PlanScreen(
                         ) {
                             WorkoutHeader(generalViewModel)
                             Spacer(modifier = Modifier.height(16.dp))
-                            WorkoutDaysList {
+                            WorkoutDaysList(workouts ?: mutableListOf()) {
                                 navController.navigate(Route.WorkoutScreen.route)
                             }
                         }

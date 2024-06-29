@@ -163,9 +163,9 @@ fun AccountScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 32.dp),
-                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
                         ) {
-                            Text(text = "Edit Profile", color = MaterialTheme.colorScheme.onSurface)
+                            Text(text = "Edit Profile", color = MaterialTheme.colorScheme.surface)
                         }
 
                         Spacer(modifier = Modifier.height(20.dp))

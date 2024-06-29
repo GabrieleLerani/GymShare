@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -24,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,13 +35,8 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Song
-import com.project.gains.presentation.components.BackButton
-import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MusicPopup
-import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.events.SelectEvent
 
@@ -59,17 +52,19 @@ fun WorkoutModeScreen(
     selectHandler: (SelectEvent) -> Unit
 ) {
     val currentSong by generalViewModel.currentSong.observeAsState()
+    val workout by generalViewModel.selectedWorkout.observeAsState()
+    val show = remember { mutableStateOf(true) }
+
+    var currentExerciseIndex by remember { mutableStateOf(0) }
     var timerState by remember { mutableStateOf(0) }
     var isTimerRunning by remember { mutableStateOf(false) }
     var setsDone by remember { mutableStateOf(0) }
     var restCountdown by remember { mutableStateOf(60) }
-    val show = remember { mutableStateOf(true) }
     val rest = remember { mutableStateOf(false) }
 
-    // Dummy state for current exercise index
-    val workout by generalViewModel.selectedWorkout.observeAsState()
-
-    var currentExerciseIndex by remember { mutableStateOf(0) }
+    // Get the current exercise total time (dummy value 90 seconds for this example)
+    val currentExerciseTime = workout?.exercises?.get(currentExerciseIndex)?.totalTime ?: 90
+    val totalSets = workout?.exercises?.get(currentExerciseIndex)?.sets ?: 4
 
     // Function to start the timer
     LaunchedEffect(isTimerRunning) {
@@ -81,10 +76,24 @@ fun WorkoutModeScreen(
                         restCountdown--
                     } else {
                         rest.value = false
-                        timerState = 0
+                        setsDone++
+                        if (setsDone >= totalSets) {
+                            if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
+                                currentExerciseIndex++
+                            } else {
+                                currentExerciseIndex = 0
+                            }
+                            setsDone = 0
+                        }
+                        timerState = currentExerciseTime
                     }
                 } else {
-                    timerState++
+                    if (timerState > 0) {
+                        timerState--
+                    } else {
+                        rest.value = true
+                        restCountdown = 60
+                    }
                 }
             }
         }
@@ -177,7 +186,7 @@ fun WorkoutModeScreen(
                             // Sets Done Counter
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    setsDone.toString(),
+                                    "${setsDone + 1}/$totalSets",
                                     color = Color.White,
                                     fontSize = 40.sp,
                                     fontWeight = FontWeight.Bold
@@ -214,12 +223,14 @@ fun WorkoutModeScreen(
                                 onClick = {
                                     if (currentExerciseIndex > 0) {
                                         currentExerciseIndex--
-                                        // Reset the timer and other states if necessary
-                                        isTimerRunning = false
-                                        timerState = 0
-                                        restCountdown = 60
-                                        rest.value = false
+                                    } else {
+                                        currentExerciseIndex = workout?.exercises?.size!! - 1
                                     }
+                                    isTimerRunning = false
+                                    timerState = currentExerciseTime
+                                    setsDone = 0
+                                    restCountdown = 60
+                                    rest.value = false
                                 },
                                 modifier = Modifier.padding(bottom = 16.dp)
                             ) {
@@ -255,10 +266,14 @@ fun WorkoutModeScreen(
                             // Next Exercise Button
                             Button(
                                 onClick = {
-                                    currentExerciseIndex++
-                                    // Reset the timer and other states if necessary
+                                    if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
+                                        currentExerciseIndex++
+                                    } else {
+                                        currentExerciseIndex = 0
+                                    }
                                     isTimerRunning = false
-                                    timerState = 0
+                                    timerState = currentExerciseTime
+                                    setsDone = 0
                                     restCountdown = 60
                                     rest.value = false
                                 },
@@ -277,6 +292,7 @@ fun WorkoutModeScreen(
         }
     }
 }
+
 
 
 

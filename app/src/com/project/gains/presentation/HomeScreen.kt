@@ -154,7 +154,7 @@ fun GainsHomeScreen(
                    }
                    plans?.forEach{ plan ->
                        item {
-                           GeneralCard(imageResId = R.drawable.pexels2, title = plan.name){
+                           GeneralCard(imageResId = R.drawable.pexels3, title = plan.name){
                                selectHandler(SelectEvent.SelectPlan(plan))
                                navController.navigate(Route.PlanScreen.route)
                            }
@@ -162,7 +162,7 @@ fun GainsHomeScreen(
                    }
                    plots?.forEach{ plot ->
                        item {
-                           GeneralCard(imageResId = R.drawable.plot3, title = "plot"){
+                           GeneralCard(imageResId = plot.preview.imageResId, title = "plot"){
                                selectHandler(SelectEvent.SelectPlotPreview(plot.preview))
                                navController.navigate(Route.ProgressDetailsScreen.route)
                            }

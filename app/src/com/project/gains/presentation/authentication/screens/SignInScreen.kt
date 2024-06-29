@@ -225,7 +225,7 @@ fun DefaultSignInContent(
             modifier = Modifier
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
+                containerColor = MaterialTheme.colorScheme.secondary, // Green
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
             )
         ) {

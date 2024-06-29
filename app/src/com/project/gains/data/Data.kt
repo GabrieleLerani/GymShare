@@ -5,13 +5,10 @@ import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.project.gains.R
 import com.project.gains.presentation.navgraph.Route
-import kotlin.random.Random
 
 
 // structures
@@ -50,8 +47,12 @@ data class Exercise(
     val gifResId: Int?,  // Nullable Integer for resource ID
     val description: String,
     val type: ExerciseType,
-    val training: TrainingType
-)
+    val training: TrainingType,
+    val sets: Int,
+    val totalTime: Int
+) {
+}
+
 data class Plan(
     val id: Int,
     val name: String,
@@ -136,31 +137,31 @@ fun generateSampleExercises(exerciseType: ExerciseType,res:Int): MutableList<Exe
                     "- Focus on squeezing the biceps at the top of the movement to maximize muscle engagement.\n" +
                     "- Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing.\n" +
                     "- Choose an appropriate weight that allows you to perform the exercise with proper form and control.\n",
-            type = exerciseType, training = TrainingType.STRENGTH
+            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
         ),
         Exercise(
             "Exercise 2", gifResId = res, description = "Exercise 2",
-            type = exerciseType, training = TrainingType.STRENGTH
+            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
         ),
         Exercise(
             "Exercise 3", gifResId = res, description = "Exercise 3",
-            type = exerciseType, training = TrainingType.STRENGTH
+            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
         ),
         Exercise(
             "Exercise 4", gifResId = res, description = "Exercise 4",
-            type = exerciseType, training = TrainingType.STRENGTH
+            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
         ),
         Exercise(
             "Exercise 5", gifResId = res, description = "Exercise 5",
-            type = exerciseType, training = TrainingType.STRENGTH
+            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
         ),
         Exercise(
             "Exercise 6", gifResId = res, description = "Exercise 6",
-            type = exerciseType, training = TrainingType.STRENGTH
+            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
         ),
         Exercise(
             "Exercise 7", gifResId = res, description = "Exercise 7",
-            type = exerciseType, training = TrainingType.STRENGTH
+            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
         ),
 
         )
@@ -174,15 +175,15 @@ fun generateSampleWorkouts(): MutableList<Workout> {
             exercises = mutableListOf(
                 Exercise(
                     "Exercise 1", gifResId = R.drawable.arms, description = "Exercise 1",
-                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH
+                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH, 4, 90
                 ),
                 Exercise(
                     "Exercise 2", gifResId = R.drawable.arms2, description = "Exercise 2",
-                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH
+                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH, 4, 90
                 ),
                 Exercise(
                     "Exercise 3", gifResId = R.drawable.arms3, description = "Exercise 3",
-                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH
+                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH, 4, 90
                 ),
             )
         ),
@@ -192,15 +193,15 @@ fun generateSampleWorkouts(): MutableList<Workout> {
             exercises = mutableListOf(
                 Exercise(
                     "Exercise 1", gifResId = R.drawable.legs, description = "Exercise 1",
-                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH
+                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH, 4, 90
                 ),
                 Exercise(
                     "Exercise 2", gifResId = R.drawable.legs2, description = "Exercise 2",
-                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH
+                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH, 4, 90
                 ),
                 Exercise(
                     "Exercise 3", gifResId = R.drawable.legs3, description = "Exercise 3",
-                    type =ExerciseType.LEGS, training = TrainingType.STRENGTH
+                    type =ExerciseType.LEGS, training = TrainingType.STRENGTH, 4, 90
                 ),
             )
         ),
@@ -430,10 +431,12 @@ fun generateRandomPlan(
             workoutExercises.add(
                 Exercise(
                     name = exerciseName,
+                    gifResId = exerciseGif,
                     description = exerciseDescription,
                     type = exerciseType,
                     training = trainingType,
-                    gifResId = exerciseGif // Assuming you have a method to map ExerciseType to R.drawable
+                    sets = 4,
+                    totalTime = 90 // Assuming you have a method to map ExerciseType to R.drawable
                 )
             )
         }

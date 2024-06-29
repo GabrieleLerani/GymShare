@@ -6,6 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Stop
@@ -48,30 +51,66 @@ import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,generalViewModel:GeneralViewModel,selectHandler:(SelectEvent)->Unit) {
     // State for the timer
-    val currentSong by generalViewModel.currentSong.observeAsState()
 
-    var timerState by remember { mutableStateOf(0) }
-    var isTimerRunning by remember { mutableStateOf(false) }
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     var showPopup2 = remember { mutableStateOf(false) }
     val showDialogShared by generalViewModel.showDialogShared.observeAsState()
     var showDialog = remember { mutableStateOf(false) }
-    val show = remember {
-        mutableStateOf(true)
-    }
+
     var notification = remember {
         mutableStateOf(false)
     }
+
+
+    val currentSong by generalViewModel.currentSong.observeAsState()
+    val workout by generalViewModel.selectedWorkout.observeAsState()
+    val show = remember { mutableStateOf(true) }
+
+    var currentExerciseIndex by remember { mutableStateOf(0) }
+    var timerState by remember { mutableStateOf(0) }
+    var isTimerRunning by remember { mutableStateOf(false) }
+    var setsDone by remember { mutableStateOf(0) }
+    var restCountdown by remember { mutableStateOf(60) }
+    val rest = remember { mutableStateOf(false) }
+
+    // Get the current exercise total time (dummy value 90 seconds for this example)
+    val currentExerciseTime = workout?.exercises?.get(currentExerciseIndex)?.totalTime ?: 90
+    val totalSets = workout?.exercises?.get(currentExerciseIndex)?.sets ?: 4
+
+
+
     // Function to start the timer
-    if (isTimerRunning) {
-        LaunchedEffect(Unit) {
+    LaunchedEffect(isTimerRunning) {
+        if (isTimerRunning) {
             while (isTimerRunning) {
-                delay(1000) // Update timer every second
-                timerState++
+                delay(1000L) // Update timer every second
+                if (rest.value) {
+                    if (restCountdown > 0) {
+                        restCountdown--
+                    } else {
+                        rest.value = false
+                        setsDone++
+                        if (setsDone >= totalSets) {
+                            if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
+                                currentExerciseIndex++
+                            } else {
+                                currentExerciseIndex = 0
+                            }
+                            setsDone = 0
+                        }
+                        timerState = currentExerciseTime
+                    }
+                } else {
+                    if (timerState > 0) {
+                        timerState--
+                    } else {
+                        rest.value = true
+                        restCountdown = 60
+                    }
+                }
             }
         }
     }
@@ -80,13 +119,14 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
     val minutes = timerState / 60
     val seconds = timerState % 60
     val formattedTime = String.format("%02d:%02d", minutes, seconds)
+    val restTime = String.format("%02d", restCountdown)
 
     GainsAppTheme {
         Scaffold(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = "1/12 Arms",
+                    message = "${setsDone + 1}/$totalSets  ${workout?.exercises?.get(currentExerciseIndex)?.name}",
                     button = {
                         androidx.compose.material.IconButton(
                             modifier = Modifier.size(45.dp),
@@ -142,7 +182,7 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
                         // Exercise Image (Animated GIF)
                         Image(
                             painter = painterResource(id = R.drawable.legs), // Ensure this is a GIF resource
-                            contentDescription = "Curl",
+                            contentDescription = workout?.exercises?.get(currentExerciseIndex)?.name,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .height(200.dp)
@@ -154,7 +194,7 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
 
                         // Exercise Title
                         Text(
-                            text = "Curl",
+                            text = "${workout?.exercises?.get(currentExerciseIndex)?.name}",
                             color = Color.White,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold
@@ -162,7 +202,7 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
 
                         // Exercise Details
                         Text(
-                            text = "Recommended time: 8 min, 110 - 140 bpm",
+                            text = "Recommended time: ${workout?.exercises?.get(currentExerciseIndex)?.totalTime} sec",
                             color = Color.White,
                             fontSize = 16.sp,
                             modifier = Modifier.padding(vertical = 8.dp)
@@ -179,32 +219,32 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
                             // Repetitions Counter
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    "8",
+                                    "${setsDone + 1}/$totalSets",
                                     color = Color.White,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold
                                 )
-                                Text("Repeats required", color = Color.Gray, fontSize = 12.sp)
+                                Text("Sets Done", color = Color.Gray, fontSize = 12.sp)
                             }
 
                             // Dynamic Counter for Minutes
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    formattedTime,
+                                    if (!rest.value) formattedTime else restTime,
                                     color = Color.White,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold
                                 )
-                                Text("Minutes made", color = Color.Gray, fontSize = 12.sp)
+                                Text(if (!rest.value) "Time Left" else "Rest Left", color = Color.Gray, fontSize = 12.sp)
                             }
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Action Row (Start/Stop Button)
+                        // Start/Stop Button
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
+                            horizontalArrangement = Arrangement.SpaceAround,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Button(
@@ -219,14 +259,12 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
                                         contentDescription = "Stop",
                                         modifier = Modifier.size(60.dp)
                                     )
-
                                 } else {
                                     Icon(
                                         imageVector = Icons.Default.PlayArrow,
                                         contentDescription = "Start",
                                         modifier = Modifier.size(60.dp)
                                     )
-
                                 }
                             }
                         }
@@ -275,6 +313,10 @@ fun SessionScreen(navController:NavController,musicHandler:(MusicEvent)->Unit,ge
         }
     }
 }
+
+
+
+
 
 
 
