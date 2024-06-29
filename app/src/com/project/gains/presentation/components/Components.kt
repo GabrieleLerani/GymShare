@@ -2002,7 +2002,24 @@ fun ExerciseGif(exercise: Exercise, onClick: (Exercise) -> Unit) {
 }
 
 
-
+@Preview
+@Composable
+fun previwe(){
+    GainsAppTheme {
+        FeedbackAlertDialog(
+            title = "Content Shared",
+            message = "",
+            onDismissRequest = { /*TODO*/ },
+            onConfirm = { /*TODO*/ },
+            confirmButtonText ="" ,
+            dismissButtonText = "",
+            color = Color.Black,
+            show = remember {
+                mutableStateOf(true)
+            }
+        )
+    }
+}
 
 @Composable
 fun FeedbackAlertDialog(
@@ -2015,15 +2032,19 @@ fun FeedbackAlertDialog(
     color: Color,
     show:MutableState<Boolean>
 ) {
-
         AlertDialog(
             onDismissRequest = onDismissRequest,
             title = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                )  {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
             },
             text = {
             },
@@ -2037,9 +2058,9 @@ fun FeedbackAlertDialog(
                             onConfirm()
                                   },
                         modifier = Modifier
-                            .padding(30.dp)
+                            .padding(bottom = 10.dp)
                             .size(60.dp),
-                        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.onPrimary)
+                        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.secondary)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Check,

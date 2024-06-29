@@ -21,12 +21,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,12 +51,14 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignUpEvent
 import com.project.gains.presentation.navgraph.Route
@@ -87,6 +94,8 @@ fun DefaultSignUpContent(
     // observed state
     val data by viewModel.data.observeAsState()
     val focusManager = LocalFocusManager.current
+    var passwordVisible by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -162,7 +171,7 @@ fun DefaultSignUpContent(
             onValueChange = { password = it },
             label = {
                 Text(
-                    "Password",
+                    text = "Password",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
@@ -170,21 +179,32 @@ fun DefaultSignUpContent(
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
-
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
                 }
             ),
-            visualTransformation = PasswordVisualTransformation(),
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image = if (passwordVisible)
+                    Icons.Default.VisibilityOff
+                else
+                    Icons.Default.Visibility
+
+                val description = if (passwordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, contentDescription = description)
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp),
+            shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
             )
         )
         OutlinedTextField(
@@ -241,7 +261,7 @@ fun DefaultSignUpContent(
             )
             withStyle(
                 style = SpanStyle(
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.colorScheme.tertiary,
                     textDecoration = TextDecoration.Underline
                 )
             ) {

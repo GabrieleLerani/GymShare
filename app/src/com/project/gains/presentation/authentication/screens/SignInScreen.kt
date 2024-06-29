@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
 
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material3.Button
@@ -36,7 +37,11 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,12 +62,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImagePainter.State.Empty.painter
+import com.project.gains.R
 import com.project.gains.presentation.CustomBackHandler
 import com.project.gains.presentation.Dimension.ButtonCornerShape
 
@@ -115,6 +123,8 @@ fun DefaultSignInContent(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
+    var passwordVisible by remember { mutableStateOf(false) }
+
     // observed state
     val data by viewModel.data.observeAsState()
     var authenticationResult by remember { mutableStateOf("") }
@@ -183,16 +193,27 @@ fun DefaultSignInContent(
                     focusManager.clearFocus()
                 }
             ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                val image = if (passwordVisible)
+                    Icons.Default.VisibilityOff
+                else
+                    Icons.Default.Visibility
 
-            visualTransformation = PasswordVisualTransformation(),
+                val description = if (passwordVisible) "Hide password" else "Show password"
+
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(imageVector = image, contentDescription = description)
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
             )
         )
         Button(
@@ -222,7 +243,7 @@ fun DefaultSignInContent(
             )
             withStyle(
                 style = SpanStyle(
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.colorScheme.tertiary,
                     textDecoration = TextDecoration.Underline
                 )
             ) {
