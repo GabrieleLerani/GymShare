@@ -721,7 +721,6 @@ fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
 fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: String) {
     val totalValue = trainingData.sumOf { it.value }
     val colorMap = HashMap<Int, Color>()
-
     Row(modifier = Modifier.padding(30.dp)) {
         // Canvas for pie plot
         Canvas(modifier = Modifier.size(200.dp)) {
@@ -732,7 +731,7 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
 
             var startAngle = 0f
             val centerX = canvasWidth / 2
-            val centerY = canvasHeight / 2
+            val centerY = canvasHeight - radius / 2
 
             trainingData.forEachIndexed { index, data ->
                 val sweepAngle = (data.value / totalValue.toFloat()) * 360
