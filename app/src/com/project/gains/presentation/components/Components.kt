@@ -135,6 +135,9 @@ import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 @Composable
@@ -717,14 +720,15 @@ fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
 @Composable
 fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: String) {
     val totalValue = trainingData.sumOf { it.value }
-    val colorMap = HashMap<Int,Color>()
+    val colorMap = HashMap<Int, Color>()
 
-    Row(modifier = Modifier.padding(20.dp)) {
+    Row(modifier = Modifier.padding(30.dp)) {
         // Canvas for pie plot
-        Canvas(modifier = Modifier.size(240.dp)) {
+        Canvas(modifier = Modifier.size(200.dp)) {
             val canvasWidth = size.width
             val canvasHeight = size.height
             val radius = size.minDimension / 2
+            val innerRadius = radius * 0.4f // Adjust inner radius to create the donut effect
 
             var startAngle = 0f
             val centerX = canvasWidth / 2
@@ -734,26 +738,51 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
                 val sweepAngle = (data.value / totalValue.toFloat()) * 360
 
                 // Calculate slice color
-                val color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
+                val sliceColor =Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
 
-                colorMap.set(index,color)
+                colorMap[index] = sliceColor
 
                 // Draw pie segment
                 drawArc(
-                    color = color,
+                    color = sliceColor,
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
-                    useCenter = true,
+                    useCenter = false,
                     topLeft = Offset(centerX - radius, centerY - radius),
                     size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = radius - innerRadius)
                 )
+
+                // Calculate the middle angle for label position
+                val middleAngle = startAngle + sweepAngle / 2
+                val middleAngleRad = middleAngle * (PI / 180) // Convert to radians
+                val labelRadius = (radius + innerRadius) / 1.3f
+
+                val labelX = centerX + labelRadius * cos(middleAngleRad).toFloat()
+                val labelY = centerY + labelRadius * sin(middleAngleRad).toFloat()
+
+                // Draw percentage label
+                drawIntoCanvas {
+                    it.nativeCanvas.drawText(
+                        "${(data.value / totalValue.toFloat() * 100).toInt()}%",
+                        labelX,
+                        labelY,
+                        android.graphics.Paint().apply {
+                            color = if (sliceColor != Color.Yellow) android.graphics.Color.WHITE else android.graphics.Color.BLACK
+                            textSize = 30f
+                            textAlign = android.graphics.Paint.Align.CENTER
+                            isAntiAlias = true
+                        }
+                    )
+                }
 
                 startAngle += sweepAngle
             }
         }
 
+        Spacer(modifier = Modifier.width(30.dp))
         // Canvas for legend
-        Canvas(modifier = Modifier.weight(1.5f)) {
+        Canvas(modifier = Modifier.size(100.dp)) {
             val legendOffsetY = 20.dp.toPx()
             val legendBoxSize = 20.dp.toPx()
             val legendTextSize = 30f
@@ -764,7 +793,7 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
 
                 // Legend box
                 drawRoundRect(
-                    color = colorMap.get(index) ?: Color.White,
+                    color = colorMap[index] ?: Color.White,
                     topLeft = Offset(legendX, legendY),
                     size = androidx.compose.ui.geometry.Size(legendBoxSize, legendBoxSize),
                     cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx(), 4.dp.toPx())
@@ -773,11 +802,11 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
                 // Legend text
                 drawIntoCanvas {
                     it.nativeCanvas.drawText(
-                        "$valueType ${index +1}",
+                        "$valueType ${index + 1}",
                         legendX + legendBoxSize + 8.dp.toPx(),
                         legendY + legendBoxSize * 0.75f,
-                        Paint().apply {
-                            color = Color.Black.toArgb()
+                        android.graphics.Paint().apply {
+                            color = android.graphics.Color.BLACK
                             textSize = legendTextSize
                             isAntiAlias = true
                         }
@@ -787,8 +816,6 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
         }
     }
 }
-
-
 @Composable
 fun SocialMediaRow(
     icon: Int,
