@@ -115,6 +115,7 @@ import coil.transform.CircleCropTransformation
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Exercise
+import com.project.gains.data.ExerciseType
 import com.project.gains.data.GymPost
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
@@ -1002,11 +1003,8 @@ fun NewPlanPagePopup(
     createHandler: (CreateEvent) -> Unit) {
     val allOptions = remember { generateOptions() } // List to store selected options
     val options = remember { mutableStateListOf<Option>() } // List to store selected options
-    var popupVisible = remember { mutableStateOf(false) }
-    var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
-    var selectedTraining by remember { mutableStateOf(TrainingType.STRENGTH) }
     val selectedExerciseTypes =
-        remember { mutableStateListOf<TrainingType>() } // List to store selected options
+        remember { mutableStateListOf<ExerciseType>() } // List to store selected options
     val selectedMetrics =
         remember { mutableStateListOf<TrainingMetricType>() } // List to store selected options
     val selectedMusic = remember { mutableStateOf(false) } // List to store selected options
@@ -1145,7 +1143,7 @@ fun NewPlanPagePopup(
                     com.project.gains.presentation.components.OptionCheckbox(
                         option = allOptions[2],
                         onOptionSelected = { isChecked ->
-                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.STRENGTH)
+                            selectedMetrics.add(TrainingMetricType.BPM)
                             onOptionSelected(
                                 allOptions[2],
                                 isChecked
@@ -1157,7 +1155,7 @@ fun NewPlanPagePopup(
                     com.project.gains.presentation.components.OptionCheckbox(
                         option = allOptions[3],
                         onOptionSelected = { isChecked ->
-                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.CALISTHENICS)
+                            selectedMetrics.add(TrainingMetricType.KCAL)
 
                             onOptionSelected(
                                 allOptions[3],
@@ -1170,7 +1168,7 @@ fun NewPlanPagePopup(
                     com.project.gains.presentation.components.OptionCheckbox(
                         option = allOptions[4],
                         onOptionSelected = { isChecked ->
-                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.STRENGTH)
+                            selectedMetrics.add(TrainingMetricType.DURATION)
 
                             onOptionSelected(
                                 allOptions[4],
@@ -1180,11 +1178,25 @@ fun NewPlanPagePopup(
                     )
                 }
                 item {
+                    androidx.compose.material.Text(
+                        text = "Choose the muscle groups to include in your plan",
+                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                        color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp) // Add padding for better spacing
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                RoundedCornerShape(16.dp)
+                            )
+                            .padding(16.dp) // Inner padding for the text itself
+                    )
+                }
+                item {
                     com.project.gains.presentation.components.OptionCheckbox(
                         option = allOptions[5],
                         onOptionSelected = { isChecked ->
-                            selectedExerciseTypes.add(com.project.gains.data.TrainingType.CROSSFIT)
-
+                            selectedExerciseTypes.add(ExerciseType.CHEST)
                             onOptionSelected(
                                 allOptions[5],
                                 isChecked
@@ -1192,6 +1204,70 @@ fun NewPlanPagePopup(
                         }
                     )
                 }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[6],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(ExerciseType.BACK)
+
+                            onOptionSelected(
+                                allOptions[6],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[7],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(ExerciseType.SHOULDERS)
+
+                            onOptionSelected(
+                                allOptions[7],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[8],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(ExerciseType.ARMS)
+
+                            onOptionSelected(
+                                allOptions[8],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[9],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(ExerciseType.LEGS)
+                            onOptionSelected(
+                                allOptions[9],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+                item {
+                    com.project.gains.presentation.components.OptionCheckbox(
+                        option = allOptions[10],
+                        onOptionSelected = { isChecked ->
+                            selectedExerciseTypes.add(ExerciseType.CORE)
+                            onOptionSelected(
+                                allOptions[10],
+                                isChecked
+                            )
+                        }
+                    )
+                }
+
 
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
@@ -1201,10 +1277,8 @@ fun NewPlanPagePopup(
                         onClick = {
                             createHandler(
                                 CreateEvent.CreatePlan(
-                                    options,
-                                    selectedPeriod,
                                     selectedMetrics,
-                                    selectedTraining,
+                                    selectedExerciseTypes,
                                     selectedMusic.value,
                                     selectedBackup.value
                                 )

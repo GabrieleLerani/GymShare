@@ -6,6 +6,7 @@ import com.project.gains.data.ExerciseType
 import com.project.gains.data.Plan
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.TrainingData
+import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.Workout
 
 sealed class SelectEvent {

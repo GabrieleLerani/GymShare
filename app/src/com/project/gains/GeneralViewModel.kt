@@ -122,6 +122,7 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
     private val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
     val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
     val _selectedPeriodsMap = HashMap<Int,MutableList<PeriodMetricType>>()
+    val _selectedLevelMap = HashMap<Int,Level>()
 
 
     private val _selectedMusicsMap = HashMap<Int,Boolean>()
@@ -263,39 +264,38 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
     fun onCreateEvent(event: CreateEvent) {
         when (event) {
             is CreateEvent.CreatePlan -> {
-                val num = when(event.selectedPeriod) {
+                val num = when(_selectedPeriod.value) {
                     PeriodMetricType.WEEK -> 4
                     PeriodMetricType.YEAR -> 192
                     PeriodMetricType.MONTH -> 16
+                    null -> TODO()
                 }
-                val workouts = generateRandomPlan(event.selectedTrainingType,num)
-                //val workouts = generateSampleWorkouts()
+                val workouts = generateRandomPlan(_selectedTrainingType.value ?: TrainingType.STRENGTH,event.selectedExerciseType,_selectedLvl.value?: Level.BEGINNER,num)
 
-                val optionsSelected = event.selectedOptions
-                Log.d("PLAN","THESE ARE YOUR OPTIONS: $optionsSelected")
-                //generateSamplePlans()
                 int += 1
+
+                _selectedLevelMap[int] = _selectedLvl.value ?: Level.BEGINNER
                 _selectedMetricsMap[int] = event.selectedMetricType
                 _selectedBackupsMap[int] = event.selectedBackup
                 _selectedMusicsMap[int] = event.selectedMusic
                 val periods:MutableList<PeriodMetricType> = mutableListOf()
 
-                if (PeriodMetricType.WEEK == event.selectedPeriod){
+                if (PeriodMetricType.WEEK == _selectedPeriod.value){
                     periods.add(PeriodMetricType.WEEK)
                 }
-                if (PeriodMetricType.MONTH == event.selectedPeriod){
+                if (PeriodMetricType.MONTH == _selectedPeriod.value){
                     periods.add(PeriodMetricType.WEEK)
                     periods.add(PeriodMetricType.MONTH)
 
                 }
-                if (PeriodMetricType.YEAR == event.selectedPeriod){
+                if (PeriodMetricType.YEAR == _selectedPeriod.value){
                     periods.add(PeriodMetricType.WEEK)
                     periods.add(PeriodMetricType.MONTH)
                     periods.add(PeriodMetricType.YEAR)
 
                 }
                 _selectedPeriodsMap[int] = periods
-                val plan  = Plan(int,"plan+$int", workouts = workouts.toMutableList(), period = event.selectedPeriod)
+                val plan  = Plan(int,"plan+$int", workouts = workouts.toMutableList(), period = _selectedPeriod.value ?: PeriodMetricType.WEEK)
                 _plans.value?.add(plan)
                 _selectedPlan.value = plan
 

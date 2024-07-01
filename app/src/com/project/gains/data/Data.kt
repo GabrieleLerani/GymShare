@@ -36,7 +36,7 @@ enum class ExerciseType {
 }
 
 enum class TrainingMetricType {
-    DURATION, BPM, KCAL, INTENSITY, DISTANCE, REST
+    DURATION, BPM, KCAL, INTENSITY, DISTANCE,
 }
 enum class PeriodMetricType {
     WEEK,MONTH, YEAR
@@ -211,11 +211,17 @@ fun generateSampleWorkouts(): MutableList<Workout> {
 fun generateOptions(): List<Option> {
     return listOf(
         Option("MUSIC"),
-        Option("BACKUP") ,
+        Option("BACKUP"),
         Option(TrainingMetricType.BPM.toString()),
         Option(TrainingMetricType.KCAL.toString()),
-        Option(TrainingMetricType.INTENSITY.toString()),
         Option(TrainingMetricType.DURATION.toString()),
+        Option(ExerciseType.CHEST.toString()),
+        Option(ExerciseType.BACK.toString()),
+        Option(ExerciseType.SHOULDERS.toString()),
+        Option(ExerciseType.ARMS.toString()),
+        Option(ExerciseType.LEGS.toString()),
+        Option(ExerciseType.CORE.toString()),
+
         )
 }
 
@@ -413,11 +419,14 @@ val trainingTypeExercises = mapOf(
 // Function to generate random workout plan with Exercise objects including GIFs and descriptions
 fun generateRandomPlan(
     trainingType: TrainingType,
+    muscleGroups: MutableList<ExerciseType>,
+    level: Level,
     numberOfWorkouts: Int
 ): List<Workout> {
     val exerciseMap = trainingTypeExercises[trainingType] ?: return emptyList()
     val workouts = mutableListOf<Workout>()
-    val exerciseTypes: List<ExerciseType> = listOf(ExerciseType.SHOULDERS,ExerciseType.CHEST,ExerciseType.BACK,ExerciseType.ARMS,ExerciseType.CORE,ExerciseType.LEGS)
+    val exerciseTypes: List<ExerciseType> = muscleGroups
+    val hardness = level
 
     repeat(numberOfWorkouts) { index ->
         val workoutExercises = mutableListOf<Exercise>()
