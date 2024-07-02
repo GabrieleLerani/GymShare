@@ -61,6 +61,8 @@ import androidx.navigation.NavController
 import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignUpEvent
+import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.FeedbackAlertDialogOptions
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
@@ -90,11 +92,13 @@ fun DefaultSignUpContent(
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirmPass by remember { mutableStateOf("") }
     // observed state
     val data by viewModel.data.observeAsState()
     val focusManager = LocalFocusManager.current
     var passwordVisible by remember { mutableStateOf(false) }
+    val openPopup = remember { mutableStateOf(false) }
+    val openErrorPopup = remember { mutableStateOf(false) }
+
 
 
     Column(
@@ -207,40 +211,10 @@ fun DefaultSignUpContent(
                 unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
             )
         )
-        OutlinedTextField(
-            value = confirmPass,
-            onValueChange = { confirmPass = it },
-            label = {
-                Text(
-                    "Confirm Password",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next
-            ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
-
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            ),
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
-            )
-        )
         Button(
             onClick = {
                 focusManager.clearFocus()
-
-                signInHandler(SignUpEvent.SignUp(name, email, password, confirmPass))
-
+                openPopup.value=true
 
             },
             shape = RoundedCornerShape(size = 20.dp),
@@ -306,13 +280,29 @@ fun DefaultSignUpContent(
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
                 if (isError == true) {
-                    Text(
-                        text = "Check your internet connection and retry later",
-                        color = MaterialTheme.colorScheme.onError,
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    openErrorPopup.value=true
                 }
             }
+        }
+        if (openPopup.value == true) {
+            FeedbackAlertDialogOptions(
+                message = "Are you sure your credentials are correct?",
+                popupVisible = openPopup
+            ) { signInHandler(SignUpEvent.SignUp(name, email, password, password)) }
+        }
+        if (openErrorPopup.value == true) {
+            FeedbackAlertDialog(
+                title = "",
+                message = "Something went wrong check your input and retry",
+                onDismissRequest = {  },
+                onConfirm = {
+
+                },
+                confirmButtonText = "Ok",
+                dismissButtonText = "",
+                color = MaterialTheme.colorScheme.onError,
+                openErrorPopup
+            )
         }
         // Observe changes in data
         if (data?.isNotEmpty() == true) {

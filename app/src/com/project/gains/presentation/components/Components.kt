@@ -61,7 +61,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -92,7 +91,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
@@ -123,7 +121,6 @@ import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.Song
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
-import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 import com.project.gains.data.bottomNavItems
 import com.project.gains.data.generateOptions
@@ -2109,17 +2106,72 @@ fun ExerciseGif(exercise: Exercise, onClick: (Exercise) -> Unit) {
 @Composable
 fun previwe(){
     GainsAppTheme {
-        FeedbackAlertDialog(
-            title = "Content Shared",
-            message = "",
-            onDismissRequest = { /*TODO*/ },
-            onConfirm = { /*TODO*/ },
-            confirmButtonText ="" ,
-            dismissButtonText = "",
-            color = Color.Black,
-            show = remember {
+        FeedbackAlertDialogOptions(
+            message = "Are you sure your credentials are correct?",
+            popupVisible = remember {
                 mutableStateOf(true)
             }
+        ) {
+        }
+    }
+}
+
+@Composable
+fun FeedbackAlertDialogOptions(
+    message: String,
+    popupVisible: MutableState<Boolean>,
+    onClick: () -> Unit,
+) {
+    if (popupVisible.value) {
+        AlertDialog(
+            onDismissRequest = { popupVisible.value=false },
+            title = {
+            },
+            text = {
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            },
+            buttons = {
+                Column {
+                    Divider(
+                        color = Color.Gray,
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(
+                            onClick = { popupVisible.value = false },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Cancel", color = Color.Red)
+                        }
+                        Box(
+                            modifier = Modifier
+                                .width(1.dp)
+                                .height(50.dp)
+                                .background(Color.Gray)
+                        )
+                        TextButton(
+                            onClick = { popupVisible.value = false
+                                onClick()
+                                      },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Confirm", color = MaterialTheme.colorScheme.secondary)
+                        }
+                    }
+                }
+            },
+            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
         )
     }
 }

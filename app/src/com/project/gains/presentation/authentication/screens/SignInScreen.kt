@@ -76,6 +76,7 @@ import com.project.gains.presentation.Dimension.ButtonCornerShape
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignInEvent
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.Constants.BIO_AUTH_FAILED
@@ -128,6 +129,8 @@ fun DefaultSignInContent(
     // observed state
     val data by viewModel.data.observeAsState()
     var authenticationResult by remember { mutableStateOf("") }
+    val openErrorPopup = remember { mutableStateOf(false) }
+
     // focus
     val focusManager = LocalFocusManager.current
 
@@ -272,18 +275,10 @@ fun DefaultSignInContent(
 
                 when (data){
                     LOGIN_FAILED -> {
-                        Text(
-                            text =  LOGIN_FAILED,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.displayMedium
-                        )
+                       openErrorPopup.value=true
                     }
                     BIO_AUTH_FAILED -> {
-                        Text(
-                            text =  BIO_AUTH_FAILED,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.displayMedium
-                        )
+                        openErrorPopup.value=true
                     }
                 }
 
@@ -329,6 +324,20 @@ fun DefaultSignInContent(
                     }
                 }
             }
+        if (openErrorPopup.value == true) {
+            FeedbackAlertDialog(
+                title = "",
+                message = "Something went wrong check your input and retry",
+                onDismissRequest = {  },
+                onConfirm = {
+
+                },
+                confirmButtonText = "Ok",
+                dismissButtonText = "",
+                color = MaterialTheme.colorScheme.onError,
+                openErrorPopup
+            )
+        }
 
         }
     }
