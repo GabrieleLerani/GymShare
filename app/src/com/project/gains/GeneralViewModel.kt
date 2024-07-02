@@ -2,7 +2,12 @@ package com.project.gains
 
 
 
+import android.graphics.drawable.Icon
 import android.util.Log
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Message
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -108,6 +113,8 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
     val showPopup4: MutableLiveData<Boolean> = _showPopup4
     private val _addedExercises = MutableLiveData<MutableList<Exercise>>()
     val addedExercises: MutableLiveData<MutableList<Exercise>> = _addedExercises
+    private val _linkedSharingMedia = MutableLiveData<MutableList<ImageVector>>()
+    val linkedSharingMedia: MutableLiveData<MutableList<ImageVector>> = _linkedSharingMedia
 //
 
     private val _currentSong = MutableLiveData<Song>()
@@ -167,6 +174,8 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
         _selectedExercise.value= generateSampleExercises(ExerciseType.ARMS,R.drawable.arms2).get(0)
         _selectedWorkout.value= generateSampleWorkouts().get(0)
         _selectedPlan.value= generateSamplePlans().get(0)
+        _linkedSharingMedia.value?.add(Icons.Default.Email)
+        _linkedSharingMedia.value?.add(Icons.Default.Message)
 
     }
 

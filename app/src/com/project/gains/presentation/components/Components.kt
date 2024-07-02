@@ -51,6 +51,7 @@ import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -105,6 +106,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
@@ -499,6 +501,30 @@ fun SocialMediaIcon(icon: Int, onClick: () -> Unit, isSelected: Boolean) {
         ) {
             androidx.compose.material.Icon(
                 painter = painterResource(id = icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(38.dp) // Adjust the size of the icon to fit within the padding
+            )
+        }
+    }
+}
+
+@Composable
+fun SharingMediaIcon(icon: ImageVector, onClick: () -> Unit, isSelected: Boolean) {
+    androidx.compose.material.IconButton(onClick = onClick) {
+        Box(
+            modifier = Modifier
+                .size(50.dp)
+                .background(
+                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent,
+                    shape = CircleShape
+                )
+                .clip(CircleShape)
+                .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                .padding(6.dp) // Add padding between the border and the image icon
+        ) {
+            androidx.compose.material.Icon(
+                imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier
                     .size(38.dp) // Adjust the size of the icon to fit within the padding
@@ -1306,9 +1332,12 @@ fun NewPlanPagePopup(
 fun ShareContentPagePopup(
     showPopup: MutableState<Boolean>, apps: MutableList<Int>, show: Boolean?,
     onItemClick: ()->Unit,
-    navController: NavController ){
+    navController: NavController,
+    generalViewModel: GeneralViewModel){
     var clickedApp by remember { mutableIntStateOf(1) }
+    var clickedMedia by remember { mutableStateOf<ImageVector>(Icons.Default.Home) }
 
+    val sharingMedia by generalViewModel.linkedSharingMedia.observeAsState()
 
     if (showPopup.value) {
         Box(
@@ -1352,6 +1381,13 @@ fun ShareContentPagePopup(
                                 clickedApp = app
                             }, clickedApp == app)
                         Spacer(modifier = Modifier.width(2.dp))
+                    }
+                    sharingMedia?.forEach {media ->
+                        SharingMediaIcon(icon = media, onClick = {
+                            clickedMedia = media
+                        }, clickedMedia == media)
+                        Spacer(modifier = Modifier.width(2.dp))
+
                     }
                 } }
 

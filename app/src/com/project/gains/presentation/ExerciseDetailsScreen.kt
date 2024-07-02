@@ -234,7 +234,7 @@ fun ExerciseDetailsScreen(
                 it,
                 showDialogShared,
                 { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
-                navController)
+                navController,generalViewModel)
         }
 
     }

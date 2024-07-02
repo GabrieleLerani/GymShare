@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
@@ -64,8 +65,9 @@ fun OnBoardingScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 PagerIndicator(
-                    pageSize = pages.size,
-                    selectedPage = pagerState.currentPage
+                    pageSize = com.project.gains.presentation.plan.pages.size,
+                    selectedPage = pagerState.currentPage,
+                    selectedColor = MaterialTheme.colorScheme.onPrimary,
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
