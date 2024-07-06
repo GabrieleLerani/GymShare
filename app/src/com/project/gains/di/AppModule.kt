@@ -40,6 +40,9 @@ import com.mygdx.game.domain.usecase.settings.Update
 import com.project.gains.data.manager.AuthManagerImpl
 import com.project.gains.domain.manager.AuthManager
 import com.project.gains.domain.usecase.appEntry.AppEntryUseCases
+import com.project.gains.domain.usecase.linkedSocial.FetchLinkedSocial
+import com.project.gains.domain.usecase.linkedSocial.LinkedSocialUseCases
+import com.project.gains.domain.usecase.linkedSocial.StoreLinkedSocial
 
 import javax.inject.Singleton
 
@@ -129,16 +132,23 @@ object AppModule {
     fun provideSettingsUseCases(
         settingsManager: SettingsManager,
         authManager: AuthManager,
-        localUserManager: LocalUserManager,
-
         ) = SettingsUseCases(
         update= Update(settingsManager),
         fetch= FetchUserProfile(settingsManager),
         signOut = SignOut(settingsManager),
-        subscribe = Subscribe(settingsManager, authManager)
+        subscribe = Subscribe(settingsManager, authManager),
+
     )
 
 
+    @Provides
+    @Singleton
+    fun provideLinkedSocialUseCases(
+        localUserManager: LocalUserManager,
+        ) = LinkedSocialUseCases(
+        storeLinkedSocial = StoreLinkedSocial(localUserManager),
+        fetchLinkedSocial = FetchLinkedSocial(localUserManager)
+    )
 
 
 

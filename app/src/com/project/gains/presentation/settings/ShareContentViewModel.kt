@@ -6,13 +6,20 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mygdx.game.domain.usecase.settings.SettingsUseCases
+import com.project.gains.data.manager.UpdateListener
+import com.project.gains.domain.usecase.linkedSocial.LinkedSocialUseCases
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ShareContentViewModel @Inject constructor() : ViewModel(){
+class ShareContentViewModel @Inject constructor(
+    private val linkedSocialUseCases: LinkedSocialUseCases
+) : ViewModel(){
 
     // TODO check if used
     private val _linkedSharingMedia = MutableLiveData<MutableList<ImageVector>>()
@@ -35,12 +42,14 @@ class ShareContentViewModel @Inject constructor() : ViewModel(){
 
         when (event) {
             is SaveSharingPreferencesEvent.SaveSharingPreferences -> {
-                _linkedApps.value = (_linkedApps.value?.plus(event.apps))?.toSet()?.toMutableList()
+
+                viewModelScope.launch {
+                    linkedSocialUseCases.storeLinkedSocial.invoke(event.apps)
+                }
             }
 
         }
     }
-
 
 
     fun onLinkAppEvent(event: LinkAppEvent) {

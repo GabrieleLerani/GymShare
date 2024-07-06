@@ -98,6 +98,8 @@ class SettingsManagerImpl @Inject constructor(
     override suspend fun fetch(): UserProfileBundle {
         return localUserManager.getUserProfile()
     }
+
+
     override suspend fun signOut() {
         try {
             // clear firebase

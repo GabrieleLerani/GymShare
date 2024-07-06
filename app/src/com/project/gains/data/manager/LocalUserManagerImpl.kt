@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.gson.Gson
 
 
 import com.project.gains.data.UserProfileBundle
@@ -26,17 +27,19 @@ class LocalUserManagerImpl(
 
     private var updateListener: UpdateListener? = null
 
+    private val dataStore: DataStore<Preferences> = context.dataStore
 
+    private val gson = Gson()
 
     override suspend fun saveAppEntry() {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[PreferencesKeys.APP_ENTRY] = true
         }
     }
 
     override fun readAppEntry(): List<Boolean> {
         val result = mutableListOf<Boolean>()
-        val data = context.dataStore.data
+        val data = dataStore.data
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
         result.add(preferences[PreferencesKeys.APP_ENTRY] ?: false)
 
@@ -44,22 +47,20 @@ class LocalUserManagerImpl(
     }
 
     override suspend fun clearAppEntry() {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[PreferencesKeys.APP_ENTRY] = false
         }
     }
 
 
-
-
     override suspend fun saveFirestoreDocumentId(name: String) {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[PreferencesKeys.FIRESTORE_ID] = name
         }
     }
 
     override fun readFirestoreDocumentId(): String {
-        val data = context.dataStore.data
+        val data = dataStore.data
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
         return preferences[PreferencesKeys.FIRESTORE_ID] ?: ""
     }
@@ -68,7 +69,7 @@ class LocalUserManagerImpl(
 
 
     override fun getUserProfile(): UserProfileBundle {
-        val data = context.dataStore.data
+        val data = dataStore.data
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
         val displayName = preferences[PreferencesKeys.DISPLAY_NAME] ?: ""
         val email = preferences[PreferencesKeys.EMAIL] ?: ""
@@ -76,11 +77,28 @@ class LocalUserManagerImpl(
     }
 
     override suspend fun saveUserProfile(userProfile: UserProfileBundle) {
-        context.dataStore.edit { settings ->
+        dataStore.edit { settings ->
             settings[PreferencesKeys.DISPLAY_NAME] = userProfile.displayName
             settings[PreferencesKeys.EMAIL] = userProfile.email
         }
 
+    }
+
+    // TODO test
+    override suspend fun saveLinkedSocial(apps: List<Int>) {
+        val appStrings = gson.toJson(apps)
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LINKED_APPS] = appStrings
+        }
+    }
+
+    // TODO test
+    override suspend fun getLinkedSocial(): List<Int> {
+        val preferences = runBlocking {
+            dataStore.data.first()
+        }
+        val linkedApps = preferences[PreferencesKeys.LINKED_APPS] ?: "[]"
+        return gson.fromJson(linkedApps, Array<Int>::class.java).toList()
     }
 
     override fun setUpdateListener(ref: UpdateListener) {
@@ -97,6 +115,8 @@ private object PreferencesKeys{
     val APP_ENTRY = booleanPreferencesKey(name = Constants.APP_ENTRY)
 
     val FIRESTORE_ID = stringPreferencesKey(name = Constants.FIRESTORE_ID)
+
+    val LINKED_APPS = stringPreferencesKey(name = Constants.LINKED_APPS)
 
     // auth user
     val DISPLAY_NAME = stringPreferencesKey("display_name")

@@ -10,5 +10,7 @@ interface SettingsManager {
 
     suspend fun signOut()
     suspend fun fetch(): UserProfileBundle?
+
     fun setUpdateListener(ref: UpdateListener)
+
 }

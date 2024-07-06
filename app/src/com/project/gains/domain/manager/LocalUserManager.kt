@@ -13,6 +13,8 @@ interface LocalUserManager {
     fun getUserProfile(): UserProfileBundle
     suspend fun saveUserProfile(userProfile: UserProfileBundle)
 
+    suspend fun saveLinkedSocial(apps: List<Int>)
+    suspend fun getLinkedSocial(): List<Int>
 
     fun setUpdateListener(ref: UpdateListener)
 

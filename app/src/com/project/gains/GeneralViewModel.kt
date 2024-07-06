@@ -172,8 +172,6 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
             is LinkAppEvent.LinkApp -> {
                 _linkedApps.value?.add(event.app)
             }
-
-
         }
     }
 
