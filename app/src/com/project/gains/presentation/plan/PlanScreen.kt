@@ -62,6 +62,7 @@ import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
+import com.project.gains.presentation.events.ManageDataStoreEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
@@ -100,7 +101,6 @@ fun PlanScreen(
                             modifier = Modifier.size(45.dp),
                             onClick = {
                                 showPopup.value = true
-                                // TODO popup the share view
                             }
                         ) {
                             Icon(
@@ -129,10 +129,19 @@ fun PlanScreen(
                     }
                 )
                 if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
+                    NotificationCard(
+                        message ="Notification",
+                        onClose = {
+                            notification.value = false
+                        }
+                    )
                 }
             },
-            bottomBar = { BottomNavigationBar(navController = navController) }
+            bottomBar = {
+                BottomNavigationBar(
+                    navController = navController
+                )
+            }
         ) { paddingValues ->
             Box(
                 modifier = Modifier
@@ -163,20 +172,13 @@ fun PlanScreen(
                 }
             }
         }
-        // TODO no more PlanPagePopup nor linkedApps
-        /*
-        workouts?.let {
-            PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}
-        linkedApps?.let {
-            ShareContentPagePopup(
-                showPopup2,
-                it,
-                showDialogShared,
-                { selectHandler(SelectEvent.SelectShowDialogShared(true))},
-                navController,generalViewModel)
-        }
 
-         */
+        ShareContentPagePopup(
+            showPopup = showPopup,
+            onItemClick = {},
+            navController = navController,
+            shareContentViewModel = shareContentViewModel
+        )
     }
 }
 

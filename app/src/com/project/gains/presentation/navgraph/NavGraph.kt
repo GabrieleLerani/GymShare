@@ -24,6 +24,8 @@ import com.project.gains.presentation.TypedExerciseScreen
 import com.project.gains.presentation.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
+import com.project.gains.presentation.plan.AddGeneratedPlan
+import com.project.gains.presentation.plan.AddManualWorkout
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
 import com.project.gains.presentation.plan.PlanViewModel
@@ -93,7 +95,7 @@ fun NavGraph(
                 // set screen as the node state
                 WorkoutScreen(navController = navController, deleteHandler = workoutViewModel::onDeleteEvent, selectHandler = workoutViewModel::onSelectEvent,
                     workoutViewModel = workoutViewModel,
-                    shareContentViewModel = ShareContentViewModel()
+                    shareContentViewModel = shareContentViewModel
                 )
             }
 
@@ -122,8 +124,19 @@ fun NavGraph(
                 route = Route.NewPlanScreen.route
             ) {
                 // set screen as the node state
-                NewPlanScreen(navController = ,
-                    clicked = )
+                NewPlanScreen(navController = navController)
+            }
+            composable(
+                route = Route.AddGeneratedPlan.route
+            ) {
+                // set screen as the node state
+                AddGeneratedPlan(navController = navController)
+            }
+            composable(
+                route = Route.AddManualWorkout.route
+            ) {
+                // set screen as the node state
+                AddManualWorkout(navController = navController)
             }
 
             composable(

@@ -31,15 +31,13 @@ import com.project.gains.data.Level
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.presentation.events.SelectEvent
+import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
 
-/*
-* Composable to combine all the OnBoarding components*/
 @Composable
 fun NewPlanScreen(
     navController: NavController,
-    clicked: Boolean?
 ) {
     Box(
         modifier = Modifier
@@ -62,7 +60,10 @@ fun NewPlanScreen(
                         .padding(end = 290.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
+                    IconButton(onClick = {
+                        // TODO test it
+                        navController.popBackStack()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Close Icon"
@@ -86,15 +87,11 @@ fun NewPlanScreen(
             item {
                 Button(
                     onClick = {
-                        selectHandler(SelectEvent.SelectClicked(true))
-                        selectHandler(SelectEvent.SelectShowPopup4(false))
-                        selectHandler(SelectEvent.SelectShowPopup3(false))
+                        navController.navigate(Route.AddGeneratedPlan.route)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp),
-                    //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
-
                 ) {
                     Text(text = "USE PLAN BUILDER")
                 }
@@ -103,67 +100,26 @@ fun NewPlanScreen(
             item {
                 Button(
                     onClick = {
-                        selectHandler(SelectEvent.SelectClicked(true))
-                        selectHandler(SelectEvent.SelectShowPopup4(true))
-                        selectHandler(SelectEvent.SelectShowPopup3(false))
+                        navController.navigate(Route.AddManualWorkout.route)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp),
-                    // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
                 ) {
                     Text(text = "ADD MANUAL WORKOUT")
                 }
             }
         }
     }
-
 }
-
-data class PlanPages(
-    val title: String,
-    val pages:MutableList<PlanPage>
-)
-
-data class PlanPage(
-    val title: String,
-    @DrawableRes val image: Int
-)
-
-
-val pages = listOf(
-    PlanPages(
-        "Select what you think is your level",
-        mutableListOf<PlanPage>(
-            PlanPage( title = Level.BEGINNER.toString(),
-            image = R.drawable.pexels3),
-            PlanPage( title = Level.INTERMEDIATE.toString(),
-                image = R.drawable.pexels1),
-            PlanPage( title = Level.EXPERT.toString(), image = R.drawable.pexels2))),
-        PlanPages(
-            "Select the training type",
-            mutableListOf<PlanPage>(
-                PlanPage( title = TrainingType.STRENGTH.toString(),
-                    image = R.drawable.pexels4),
-                PlanPage( title = TrainingType.CALISTHENICS.toString(),
-                    image = R.drawable.pexels3),
-                PlanPage( title =TrainingType.CROSSFIT.toString(), image = R.drawable.pexels2))),
-        PlanPages(
-            "Select the training plan period",
-            mutableListOf<PlanPage>(
-                    PlanPage( title = PeriodMetricType.WEEK.toString(),
-                        image = R.drawable.pexels1),
-                    PlanPage( title =PeriodMetricType.MONTH.toString(),
-                        image = R.drawable.pexels2),
-                    PlanPage( title = PeriodMetricType.YEAR.toString(), image = R.drawable.pexels3)))
-    )
 
 @Preview(showBackground = true)
 @Composable
-fun NewPlanPagePreview(){
+fun NewPlanPagePreview() {
+    val navController = rememberNavController()
     GainsAppTheme {
-        NewPlanScreen({}, {},rememberNavController(), remember {
-           false
-        })
+        NewPlanScreen(
+            navController = navController
+        )
     }
 }

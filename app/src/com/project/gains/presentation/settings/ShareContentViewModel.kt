@@ -7,11 +7,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mygdx.game.domain.usecase.settings.SettingsUseCases
-import com.project.gains.data.manager.UpdateListener
 import com.project.gains.domain.usecase.linkedSocial.LinkedSocialUseCases
 import com.project.gains.presentation.events.LinkAppEvent
-import com.project.gains.presentation.events.SaveSharingPreferencesEvent
+import com.project.gains.presentation.events.ManageDataStoreEvent
 import com.project.gains.presentation.settings.events.ManageDialogEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -34,21 +32,25 @@ class ShareContentViewModel @Inject constructor(
     val showDialogShared: MutableLiveData<Boolean> = _showDialogShared
 
     init {
-
         _linkedApps.value = mutableListOf()
 
         _linkedSharingMedia.value?.add(Icons.Default.Email)
         _linkedSharingMedia.value?.add(Icons.AutoMirrored.Filled.Message)
     }
 
-    fun onSaveSharingPreferencesEvent(event: SaveSharingPreferencesEvent) {
-        // TODO implement storage on data store
+    fun onSaveSharingPreferencesEvent(event: ManageDataStoreEvent) {
 
         when (event) {
-            is SaveSharingPreferencesEvent.SaveSharingPreferences -> {
-
+            is ManageDataStoreEvent.Save -> {
                 viewModelScope.launch {
-                    linkedSocialUseCases.storeLinkedSocial.invoke(event.apps)
+                    linkedSocialUseCases.storeLinkedSocial(event.apps)
+                    _linkedApps.value = event.apps
+                }
+            }
+
+            ManageDataStoreEvent.Retrieve -> {
+                viewModelScope.launch {
+                    _linkedApps.value = linkedSocialUseCases.fetchLinkedSocial().toMutableList()
                 }
             }
         }
@@ -67,7 +69,7 @@ class ShareContentViewModel @Inject constructor(
     fun onManageDialogEvent(event: ManageDialogEvent) {
         when (event) {
             is ManageDialogEvent.SelectShowDialogShared -> {
-                _showDialogShared.value=event.value
+                _showDialogShared.value = event.value
             }
         }
     }

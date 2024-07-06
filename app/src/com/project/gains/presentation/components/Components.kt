@@ -112,6 +112,7 @@ import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.bottomNavItems
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.events.LinkAppEvent
+import com.project.gains.presentation.events.ManageDataStoreEvent
 import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
@@ -912,18 +913,18 @@ fun currentRoute(navController: NavController): String? {
     return navBackStackEntry?.destination?.route
 }
 
-
 @Composable
 fun ShareContentPagePopup(
-    showPopup: MutableState<Boolean>, apps: MutableList<Int>, show: Boolean?,
-    onItemClick: ()->Unit,
+    showPopup: MutableState<Boolean>,
+    onItemClick: () -> Unit,
     navController: NavController,
     shareContentViewModel: ShareContentViewModel
-){
+) {
     var clickedApp by remember { mutableIntStateOf(1) }
     var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
 
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
+    val apps by shareContentViewModel.linkedApps.observeAsState()
 
     if (showPopup.value) {
         Box(
@@ -945,51 +946,71 @@ fun ShareContentPagePopup(
                         .fillMaxWidth()
                         .padding(end = 290.dp),
                         horizontalArrangement = Arrangement.Center) {
-                        IconButton(onClick = { showPopup.value=false }) {
+                        IconButton(
+                            onClick = {
+                                showPopup.value = false
+                            }
+                        ) {
                             Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
                         }
-                    }  }
+                    }
+                }
 
-                item { Text(
-                    text = "Share Your Content!",
-                    style = MaterialTheme.typography.headlineMedium
-                ) }
+                item {
+                    Text(
+                        text = "Share Your Content!",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                }
+
                 item {
                     Text(
                         text = "Share Your Content with your friends showing your progress, your workouts and your plans",
                         style = MaterialTheme.typography.bodySmall,
-                    ) }
+                    )
+                }
+
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
-                item { Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
-                    apps.forEach{app ->
-                            SocialMediaIcon(icon = app, onClick = {
-                                clickedApp = app
-                            }, clickedApp == app)
-                        Spacer(modifier = Modifier.width(2.dp))
+                item {
+                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
+                        apps?.forEach{ app ->
+                            SocialMediaIcon(
+                                icon = app,
+                                onClick = {
+                                    clickedApp = app
+                                },
+                                isSelected = clickedApp == app
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                        }
+                        sharingMedia?.forEach { media ->
+                            SharingMediaIcon(
+                                icon = media,
+                                onClick = {
+                                    clickedMedia = media
+                                          },
+                                isSelected = clickedMedia == media
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                        }
                     }
-                    sharingMedia?.forEach {media ->
-                        SharingMediaIcon(icon = media, onClick = {
-                            clickedMedia = media
-                        }, clickedMedia == media)
-                        Spacer(modifier = Modifier.width(2.dp))
-
-                    }
-                } }
+                }
 
                 item { Spacer(modifier = Modifier.height(20.dp)) }
 
-
                 item {
-                    if (apps.isEmpty()){
+                    if (apps?.isEmpty() == true) {
                         Text(
                             text = "You have no linked apps to link an app go to settings -> sharing preferences or click the link apps button below",
                             style = MaterialTheme.typography.bodySmall,
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Button(
-                            onClick = { showPopup.value = false
-                                navController.navigate(Route.SettingScreen.route)},
+                            onClick = {
+                                showPopup.value = false
+                                navController.navigate(Route.SettingsScreen.route)
+                                      },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(55.dp),
@@ -997,20 +1018,36 @@ fun ShareContentPagePopup(
                             Text(text = "LINK APPS")
                         }
 
-                    }else{
+                    } else if (apps?.isEmpty() == false) {
                         Button(
                             onClick = {
                                 onItemClick()
-                                showPopup.value = false},
+                                showPopup.value = false
+                                      },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(55.dp),
                         ) {
                             Text(text = "SHARE CONTENT")
                         }
+                    } else {
+                        Text(
+                            text = "An error has occurred",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        Button(
+                            onClick = {
+                                onItemClick()
+                                showPopup.value = false
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(55.dp),
+                        ) {
+                            Text(text = "Go back")
+                        }
                     }
                 }
-
             }
         }
     }
