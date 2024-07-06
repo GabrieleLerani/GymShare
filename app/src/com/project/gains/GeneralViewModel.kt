@@ -13,6 +13,7 @@ import com.project.gains.data.ExerciseType
 import com.project.gains.data.GymPost
 import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
+import com.project.gains.data.Session
 import com.project.gains.data.Song
 
 import com.project.gains.data.Workout
@@ -25,6 +26,7 @@ import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
+import com.project.gains.presentation.events.SaveSessionEvent
 
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import com.project.gains.presentation.events.SelectEvent
@@ -35,7 +37,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class GeneralViewModel @Inject constructor() : ViewModel(){
+class GeneralViewModel @Inject constructor() : ViewModel() {
 
     private val _exercises = MutableLiveData<MutableList<Exercise>>()
     val exercises: MutableLiveData<MutableList<Exercise>> = _exercises
@@ -51,9 +53,6 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _selectedPlotPreview = MutableLiveData<ProgressChartPreview>()
     val selectedPlotPreview: MutableLiveData<ProgressChartPreview> = _selectedPlotPreview
 
-    private val _selectedWorkout = MutableLiveData<Workout>()
-    val selectedWorkout: MutableLiveData<Workout> = _selectedWorkout
-
     private val _selectedExercise = MutableLiveData<Exercise>()
     val selectedExercise: MutableLiveData<Exercise> = _selectedExercise
 
@@ -63,17 +62,12 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
     private val _linkedApps = MutableLiveData<MutableList<Int>>()
     val linkedApps: MutableLiveData<MutableList<Int>> = _linkedApps
 
-    private val _posts = MutableLiveData<MutableList<GymPost>>()
-    val posts: MutableLiveData<MutableList<GymPost>> = _posts
-
     private val _showMusic = MutableLiveData<Boolean>()
     val showMusic: MutableLiveData<Boolean> = _showMusic
 
 // PAGE POPUP HANDLING
 private val _showDialogWorkout = MutableLiveData<Boolean>()
     val showDialogWorkout: MutableLiveData<Boolean> = _showDialogWorkout
-    private val _showDialogPlan = MutableLiveData<Boolean>()
-    val showDialogPlan: MutableLiveData<Boolean> = _showDialogPlan
     private val _showDialogShared = MutableLiveData<Boolean>()
     val showDialogShared: MutableLiveData<Boolean> = _showDialogShared
     private val _workoutTitle = MutableLiveData<TextFieldValue>()
@@ -95,6 +89,11 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
     private val _linkedSharingMedia = MutableLiveData<MutableList<ImageVector>>()
     val linkedSharingMedia: MutableLiveData<MutableList<ImageVector>> = _linkedSharingMedia
 
+    private val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
+
+    private val _currentSessions = MutableLiveData<MutableList<Session>>()
+    val currentSessions: MutableLiveData<MutableList<Session>> = _currentSessions
+
     private val _currentSong = MutableLiveData<Song>()
     val currentSong: MutableLiveData<Song> = _currentSong
 
@@ -104,17 +103,34 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
         Log.d("LOAD","FETCHING DATA FROM DB")
         _exercises.value = generateSampleExercises(ExerciseType.ARMS,R.drawable.arms)
         _plots.value = generateRandomPlots()
-        _posts.value = generateRandomGymPost(10).toMutableList()
         _linkedApps.value = mutableListOf()
         _currentSong.value=Song("","","")
+        _currentSessions.value = mutableListOf()
         _addedExercises.value= mutableListOf()
         _workoutTitle.value=TextFieldValue()
         _songs.value= generateRandomSongs(5)
         _selectedExercise.value= generateSampleExercises(ExerciseType.ARMS,R.drawable.arms2).get(0)
-        _selectedWorkout.value= generateSampleWorkouts().get(0)
         _linkedSharingMedia.value?.add(Icons.Default.Email)
         _linkedSharingMedia.value?.add(Icons.Default.Message)
 
+    }
+
+    fun onSaveSessionEvent(event: SaveSessionEvent) {
+        when (event) {
+
+            is SaveSessionEvent.SaveSession -> {
+                _currentSessions.value?.add(event.session)
+                if (_selectedSessionsPlan[event.plan] != null) {
+                    _selectedSessionsPlan[event.plan]?.get(event.workout)?.add(event.session)
+                }
+                else{
+                    val hashMap: HashMap<Int,MutableList<Session>> = HashMap()
+                    hashMap[event.workout] = mutableListOf()
+                    _selectedSessionsPlan[event.plan] = hashMap
+                }
+            }
+
+        }
     }
 
     fun onMusicEvent(event: MusicEvent) {
@@ -344,10 +360,11 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
                 _showDialogShared.value=event.value
 
             }
-
+/*
             is SelectEvent.SelectShowDialogPlan -> {
                 _showDialogPlan.value=event.value
             }
+ */
             is SelectEvent.SelectShowDialogWorkout -> {
                 _showDialogWorkout.value=event.value
 

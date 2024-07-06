@@ -11,10 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,8 +36,10 @@ import com.project.gains.data.Level
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.presentation.Dimension
+import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.SelectEvent
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.onboarding.components.NewPlanPage
 import com.project.gains.presentation.onboarding.components.PagerIndicator
 
@@ -39,17 +48,10 @@ import com.project.gains.theme.GainsAppTheme
 /*
 * Composable to combine all the OnBoarding components*/
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 fun NewPlanScreen(
-    createHandler: (CreateEvent) -> Unit,
-    selectHandler: (SelectEvent) -> Unit,
-
     navController: NavController,
     clicked: Boolean?
 ) {
-    val pagerState = rememberPagerState(initialPage = 0) {
-        pages.size
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -59,32 +61,71 @@ fun NewPlanScreen(
                 RoundedCornerShape(20.dp)
             )
     ) {
-
-        HorizontalPager(state = pagerState) { index ->
-            NewPlanPage(
-                selectHandler = selectHandler,
-                page = pages[index],
-                pagerState = pagerState,
-                createHandler = createHandler,
-                navController = navController, clicked = clicked
-            )
-        }
-        // PagerIndicator Row
-        Row(
+        LazyColumn(
             modifier = Modifier
-                .align(Alignment.BottomCenter) // Align the Row to the bottom center of the Box
                 .fillMaxWidth()
-                .padding(bottom=40.dp)
-                .padding(horizontal = Dimension.MediumPadding2)
-                .navigationBarsPadding(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
+                .padding(40.dp)
         ) {
-            PagerIndicator(
-                pageSize = pages.size,
-                selectedPage = pagerState.currentPage,
-                selectedColor = MaterialTheme.colorScheme.onPrimary,
-            )
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 290.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Close Icon"
+                        )
+                    }
+                }
+            }
+            item {
+                Text(
+                    text = "Add Pre-Made Workout",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+            item {
+                Text(
+                    text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            item { Spacer(modifier = Modifier.height(10.dp)) }
+            item {
+                Button(
+                    onClick = {
+                        selectHandler(SelectEvent.SelectClicked(true))
+                        selectHandler(SelectEvent.SelectShowPopup4(false))
+                        selectHandler(SelectEvent.SelectShowPopup3(false))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    //         colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondary)
+
+                ) {
+                    Text(text = "USE PLAN BUILDER")
+                }
+            }
+            item { Spacer(modifier = Modifier.height(10.dp)) }
+            item {
+                Button(
+                    onClick = {
+                        selectHandler(SelectEvent.SelectClicked(true))
+                        selectHandler(SelectEvent.SelectShowPopup4(true))
+                        selectHandler(SelectEvent.SelectShowPopup3(false))
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp),
+                    // colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                ) {
+                    Text(text = "ADD MANUAL WORKOUT")
+                }
+            }
         }
     }
 

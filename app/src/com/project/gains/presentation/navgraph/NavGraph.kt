@@ -24,7 +24,10 @@ import com.project.gains.presentation.ShareContentViewModel
 import com.project.gains.presentation.TypedExerciseScreen
 import com.project.gains.presentation.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
+import com.project.gains.presentation.explore.FeedViewModel
+import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
+import com.project.gains.presentation.plan.PlanViewModel
 import com.project.gains.presentation.progress.ProgressDetailsScreen
 import com.project.gains.presentation.progress.ProgressScreen
 import com.project.gains.presentation.settings.AccountScreen
@@ -42,6 +45,7 @@ fun NavGraph(
     val generalViewModel : GeneralViewModel = hiltViewModel()
     val workoutViewModel : WorkoutViewModel = hiltViewModel()
     val shareContentViewModel : ShareContentViewModel = hiltViewModel()
+    val planViewModel : PlanViewModel = hiltViewModel()
 
     NavHost(navController = navController, startDestination = startDestination){
         // construct a nested nav graph
@@ -94,22 +98,31 @@ fun NavGraph(
             composable(
                 route = Route.FeedScreen.route
             ) {
+                val feedViewModel : FeedViewModel = hiltViewModel()
                 // set screen as the node state
                 FeedScreen(
                     navController = navController,
-                    shareHandler = generalViewModel::onShareContentEvent,
-                    generalViewModel = generalViewModel
-
+                    feedViewModel =feedViewModel
                 )
             }
             composable(
                 route = Route.PlanScreen.route
             ) {
                 // set screen as the node state
-                PlanScreen(navController = navController, deleteHandler = generalViewModel::onDeleteEvent, selectHandler = generalViewModel::onSelectEvent,
-                    generalViewModel = generalViewModel, createHandler = generalViewModel::onCreateEvent
+                PlanScreen(navController = navController,
+                    planViewModel = planViewModel,
+                    selectDialogPlanHandler = planViewModel::onCreatePlanEvent
                 )
             }
+
+            composable(
+                route = Route.NewPlanScreen.route
+            ) {
+                // set screen as the node state
+                NewPlanScreen(navController = ,
+                    clicked = )
+            }
+
             composable(
                 route = Route.ProgressScreen.route
             ) {
