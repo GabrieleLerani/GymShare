@@ -6,10 +6,8 @@ package com.project.gains.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,8 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material3.Button
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -31,9 +27,6 @@ import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -62,7 +55,6 @@ import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.presentation.settings.events.SignOutEvent
@@ -93,17 +85,15 @@ fun AccountScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
                     message = "Account Settings",
                     button = {
-                    },
-                    button1 = {
-                        BackButton {
-                            showDialog.value = false
-                            navController.popBackStack()
-                        }
                     }
-                )
+                ) {
+                    BackButton {
+                        showDialog.value = false
+                        navController.popBackStack()
+                    }
+                }
                 if (notification.value) {
                     NotificationCard(message = "Notification", onClose = { notification.value = false })
                 }
@@ -223,15 +213,11 @@ fun AccountScreen(
 
                     FeedbackAlertDialog(
                         title = "You have successfully Updated your profile!",
-                        message = "",
                         onDismissRequest = {
                         },
                         onConfirm = {
                             showDialogComplete.value=false
                         },
-                        confirmButtonText = "Ok",
-                        dismissButtonText = "",
-                        color = MaterialTheme.colorScheme.onError,
                         show = showDialogComplete
                     )
                 }

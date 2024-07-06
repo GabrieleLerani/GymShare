@@ -1,4 +1,4 @@
-package com.project.gains.presentation
+package com.project.gains.presentation.workout
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -32,13 +33,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Song
 import com.project.gains.presentation.components.MusicPopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.events.SelectEvent
 
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
@@ -48,18 +47,17 @@ import kotlinx.coroutines.delay
 fun WorkoutModeScreen(
     navController: NavController,
     musicHandler: (MusicEvent) -> Unit,
-    generalViewModel: GeneralViewModel,
-    selectHandler: (SelectEvent) -> Unit
+    workoutViewModel: WorkoutViewModel
 ) {
-    val currentSong by generalViewModel.currentSong.observeAsState()
-    val workout by generalViewModel.selectedWorkout.observeAsState()
+    val currentSong by workoutViewModel.currentSong.observeAsState()
+    val workout by workoutViewModel.selectedWorkout.observeAsState()
     val show = remember { mutableStateOf(true) }
 
-    var currentExerciseIndex by remember { mutableStateOf(0) }
-    var timerState by remember { mutableStateOf(0) }
+    var currentExerciseIndex by remember { mutableIntStateOf(0) }
+    var timerState by remember { mutableIntStateOf(0) }
     var isTimerRunning by remember { mutableStateOf(false) }
-    var setsDone by remember { mutableStateOf(0) }
-    var restCountdown by remember { mutableStateOf(60) }
+    var setsDone by remember { mutableIntStateOf(0) }
+    var restCountdown by remember { mutableIntStateOf(60) }
     val rest = remember { mutableStateOf(false) }
 
     // Get the current exercise total time (dummy value 90 seconds for this example)
@@ -109,20 +107,18 @@ fun WorkoutModeScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
                     message = "Workout Mode",
-                    button = { },
-                    button1 = {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Close Icon",
-                                tint = MaterialTheme.colorScheme.surface,
-                                modifier = Modifier.size(50.dp)
-                            )
-                        }
+                    button = { }
+                ) {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "Close Icon",
+                            tint = MaterialTheme.colorScheme.surface,
+                            modifier = Modifier.size(50.dp)
+                        )
                     }
-                )
+                }
             },
         ) { paddingValues ->
             Box(
@@ -141,8 +137,7 @@ fun WorkoutModeScreen(
                         MusicPopup(
                             popup = show.value,
                             musicHandler = musicHandler,
-                            currentSong = currentSong ?: Song("", "", ""),
-                            totalTime = "3.0"
+                            currentSong = currentSong ?: Song("", "", "")
                         )
                     }
                     item {
@@ -235,7 +230,7 @@ fun WorkoutModeScreen(
                                 modifier = Modifier.padding(bottom = 16.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.ArrowBack,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                     contentDescription = "Previous",
                                     modifier = Modifier.size(60.dp)
                                 )
@@ -280,7 +275,7 @@ fun WorkoutModeScreen(
                                 modifier = Modifier.padding(bottom = 16.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.ArrowForward,
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                     contentDescription = "Next",
                                     modifier = Modifier.size(60.dp)
                                 )
@@ -301,8 +296,8 @@ fun WorkoutModeScreen(
 @Preview(showBackground = true)
 @Composable
 fun WorkoutModePreview() {
-    val generalViewModel:GeneralViewModel= hiltViewModel()
+    val workoutViewModel: WorkoutViewModel = hiltViewModel()
     GainsAppTheme {
-        WorkoutModeScreen(rememberNavController(), musicHandler = {},generalViewModel, selectHandler = {})
+        WorkoutModeScreen(rememberNavController(), musicHandler = {}, workoutViewModel)
     }
 }

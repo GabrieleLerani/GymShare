@@ -16,9 +16,7 @@ import com.project.gains.data.generateSampleExercises
 import com.project.gains.data.generateSampleWorkouts
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
-import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,11 +31,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private val _selectedWorkout = MutableLiveData<Workout>()
     val selectedWorkout: MutableLiveData<Workout> = _selectedWorkout
 
-    private val _linkedApps = MutableLiveData<MutableList<Int>>()
-    val linkedApps: MutableLiveData<MutableList<Int>> = _linkedApps
-
-    private val _showDialogShared = MutableLiveData<Boolean>()
-    val showDialogShared: MutableLiveData<Boolean> = _showDialogShared
 
     private val _currentSong = MutableLiveData<Song>()
     val currentSong: MutableLiveData<Song> = _currentSong
@@ -51,7 +44,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
 
 
     init {
-        _linkedApps.value = mutableListOf()
+
         _workouts.value = generateSampleWorkouts()
         _exercises.value = generateSampleExercises(ExerciseType.ARMS,R.drawable.arms)
         _currentSong.value=Song("","","") // Dummy init
@@ -59,23 +52,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
         _selectedWorkout.value= generateSampleWorkouts()[0]
     }
 
-    fun onSaveSharingPreferencesEvent(event: SaveSharingPreferencesEvent) {
-        when (event) {
-            is SaveSharingPreferencesEvent.SaveSharingPreferences -> {
-                _linkedApps.value = (_linkedApps.value?.plus(event.apps))?.toSet()?.toMutableList()
-            }
-        }
-    }
 
-    fun onLinkAppEvent(event: LinkAppEvent) {
-        when (event) {
-            is LinkAppEvent.LinkApp -> {
-                _linkedApps.value?.add(event.app)
-            }
-
-
-        }
-    }
 
     fun onMusicEvent(event: MusicEvent) {
         when (event) {
@@ -93,7 +70,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                 songIndex-=1
 
                 _currentSong.value= _songs.value?.get(songIndex)
-
 
 
             }
@@ -122,11 +98,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     fun onSelectEvent(event: SelectEvent) {// delete exercise plan workout
         when (event) {
 
-            is SelectEvent.SelectShowDialogShared -> {
-                _showDialogShared.value=event.value
-
-            }
-
+            is SelectEvent.SelectShowDialogShared -> TODO()
             is SelectEvent.RemoveExerciseToAdd -> TODO()
             is SelectEvent.SelectClicked -> TODO()
             is SelectEvent.SelectExercise -> TODO()

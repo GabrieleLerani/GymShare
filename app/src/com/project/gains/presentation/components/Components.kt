@@ -30,18 +30,21 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.BottomNavigation
 //noinspection UsingMaterialAndMaterial3Libraries,
 import androidx.compose.material.BottomNavigationItem
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Divider
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.LinearProgressIndicator
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FastForward
@@ -53,8 +56,6 @@ import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -76,6 +77,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -83,7 +85,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.graphicsLayer
@@ -103,7 +104,6 @@ import coil.size.Size
 import coil.transform.CircleCropTransformation
 import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.Song
@@ -114,7 +114,6 @@ import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.ManageDataStoreEvent
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
@@ -184,7 +183,7 @@ fun AddExerciseItem(
                     onItemClick(exercise)
                 }
             }) {
-                Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.Default.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+                Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
 
             }}
         }
@@ -272,10 +271,10 @@ fun PeriodPopup(
     }
 }
 @Composable
-fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: Song, totalTime: String) {
+fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: Song) {
     if (popup) {
         val play = remember { mutableStateOf(false) }
-        var currentTime by remember { mutableStateOf(0f) }
+        var currentTime by remember { mutableFloatStateOf(0f) }
         val songTotalTime = 165f
 
         // Simulate a timer to update the current playback position
@@ -521,7 +520,6 @@ fun TrainingOverviewChart(
     trainingData: List<TrainingData>,
     selectedMetric: TrainingMetricType,
     selectedPeriod: PeriodMetricType,
-    shareHandler: (ShareContentEvent.SharePlot) -> Unit,
     selectedPlotType: ProgressChartPreview
 ) {
     val values= remember {
@@ -530,7 +528,7 @@ fun TrainingOverviewChart(
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        trainingData.forEachIndexed { index, data ->
+        trainingData.forEachIndexed { _, data ->
             values.add(data.value.toFloat())
         }
             when (selectedPlotType.imageResId) {
@@ -540,7 +538,7 @@ fun TrainingOverviewChart(
                 }
                 R.drawable.plot3 -> {
                     // Pie plot (Circular pie chart)
-                    PiePlot(trainingData,selectedPeriod.toString(),selectedMetric.toString())
+                    PiePlot(trainingData, selectedPeriod.toString())
                 }
             }
     }
@@ -565,12 +563,11 @@ fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
 
         // Draw X-axis label (Metric Type)
         drawIntoCanvas {
-            val label = valueType
             val textWidth = with(density) { size.width.toDp() }
             val textHeight = with(density) { 16.dp.toPx() }
 
             it.nativeCanvas.drawText(
-                label,
+                valueType,
                 (size.width - textWidth.toPx()) / 2,
                 graphHeight + textHeight + 24.dp.toPx(),
                 Paint().apply {
@@ -629,7 +626,7 @@ fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
         )
 
         // Draw X-axis labels (Bar indices)
-        trainingData.forEachIndexed { index, data ->
+        trainingData.forEachIndexed { index, _ ->
             val startX = index * (barWidth + barSpacing.toPx())
             val label = "${index + 1}"
 
@@ -678,7 +675,7 @@ fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
     }
 }
 @Composable
-fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: String) {
+fun PiePlot(trainingData: List<TrainingData>, valueType: String) {
     val totalValue = trainingData.sumOf { it.value }
     val colorMap = HashMap<Int, Color>()
     Row(modifier = Modifier.padding(30.dp)) {
@@ -726,7 +723,7 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
                         "${(data.value / totalValue.toFloat() * 100).toInt()}%",
                         labelX,
                         labelY,
-                        android.graphics.Paint().apply {
+                        Paint().apply {
                             color = if (sliceColor != Color.Yellow) android.graphics.Color.WHITE else android.graphics.Color.BLACK
                             textSize = 30f
                             textAlign = android.graphics.Paint.Align.CENTER
@@ -746,7 +743,7 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
             val legendBoxSize = 20.dp.toPx()
             val legendTextSize = 30f
 
-            trainingData.forEachIndexed { index, data ->
+            trainingData.forEachIndexed { index, _ ->
                 val legendX = 20.dp.toPx()
                 val legendY = legendOffsetY + index * (legendBoxSize + 8.dp.toPx())
 
@@ -755,7 +752,7 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
                     color = colorMap[index] ?: Color.White,
                     topLeft = Offset(legendX, legendY),
                     size = androidx.compose.ui.geometry.Size(legendBoxSize, legendBoxSize),
-                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(4.dp.toPx(), 4.dp.toPx())
+                    cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
                 )
 
                 // Legend text
@@ -764,7 +761,7 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
                         "$valueType ${index + 1}",
                         legendX + legendBoxSize + 8.dp.toPx(),
                         legendY + legendBoxSize * 0.75f,
-                        android.graphics.Paint().apply {
+                        Paint().apply {
                             color = android.graphics.Color.BLACK
                             textSize = legendTextSize
                             isAntiAlias = true
@@ -793,7 +790,7 @@ fun SocialMediaRow(
                 contentDescription = "Linked Icon",
                 modifier = Modifier.padding(20.dp)
             )
-        } else if (!isLinked && !clickedApps.value.contains(icon)){
+        } else if (!clickedApps.value.contains(icon)){
             IconButton(
                 onClick =
                 {
@@ -802,7 +799,7 @@ fun SocialMediaRow(
                 modifier = Modifier.size(60.dp),
                 colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
             ) {
-                androidx.compose.material3.Icon(
+                Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Save Icon",
                     modifier = Modifier
@@ -868,7 +865,7 @@ fun BottomNavigationBar(navController: NavController) {
 }
 
 @Composable
-fun TopBar(navController: NavController, message: String, button: @Composable () -> Unit,button1: @Composable () -> Unit) {
+fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -1218,7 +1215,7 @@ fun ExerciseGif(exercise: Exercise, onClick: (Exercise) -> Unit) {
 
 @Preview
 @Composable
-fun previwe(){
+fun Preview(){
     GainsAppTheme {
         FeedbackAlertDialogOptions(
             message = "Are you sure your credentials are correct?",
@@ -1293,13 +1290,9 @@ fun FeedbackAlertDialogOptions(
 @Composable
 fun FeedbackAlertDialog(
     title: String,
-    message: String,
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
-    confirmButtonText: String,
-    dismissButtonText: String,
-    color: Color,
-    show:MutableState<Boolean>
+    show: MutableState<Boolean>
 ) {
         AlertDialog(
             onDismissRequest = onDismissRequest,
@@ -1372,7 +1365,7 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             )
         }
         androidx.compose.material.Icon(
-            imageVector = Icons.Default.ArrowForward,
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface
         )

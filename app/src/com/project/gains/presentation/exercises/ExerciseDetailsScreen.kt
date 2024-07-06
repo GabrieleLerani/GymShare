@@ -1,4 +1,4 @@
-package com.project.gains.presentation
+package com.project.gains.presentation.exercises
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -49,17 +49,17 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun ExerciseDetailsScreen(
     navController: NavController,
-    generalViewModel: GeneralViewModel,
     shareContentViewModel: ShareContentViewModel,
     selectHandler:(SelectEvent)->Unit
 
 ) {
     // Sample list of workouts
-    val linkedApps by generalViewModel.linkedApps.observeAsState()
+    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
+    val showDialogShared by shareContentViewModel.showDialogShared.observeAsState()
+
     val showPopup2 = remember { mutableStateOf(false) }
-    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
     val showDialog = remember { mutableStateOf(false) }
-    val exercise by generalViewModel.selectedExercise.observeAsState()
+
     val notification = remember {
         mutableStateOf(false)
     }
@@ -68,7 +68,6 @@ fun ExerciseDetailsScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
                     message = "Chest",
                     button = {
                         androidx.compose.material.IconButton(
@@ -87,13 +86,12 @@ fun ExerciseDetailsScreen(
                                 }
                             )
                         }
-                    },
-                    button1 = {
-                        BackButton {
-                            navController.popBackStack()
-                        }
                     }
-                )
+                ) {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                }
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }
@@ -196,15 +194,11 @@ fun ExerciseDetailsScreen(
                         if (showDialog.value) {
                             FeedbackAlertDialog(
                                 title = "Select a social",
-                                message = "",
                                 onDismissRequest = { showDialog.value = false },
                                 onConfirm = {
                                     showDialog.value = false
                                     selectHandler(SelectEvent.SelectShowDialogShared(true))
                                 },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color = MaterialTheme.colorScheme.onError,
                                 showDialog
                             )
                         }
@@ -216,15 +210,11 @@ fun ExerciseDetailsScreen(
 
                     FeedbackAlertDialog(
                         title = "You have successfully Shared your content!",
-                        message = "",
                         onDismissRequest = {
                         },
                         onConfirm = {
                             selectHandler(SelectEvent.SelectShowDialogShared(false))
                         },
-                        confirmButtonText = "Ok",
-                        dismissButtonText = "",
-                        color = MaterialTheme.colorScheme.onError,
                         show = showPopup2
                     )
                 }
@@ -234,9 +224,10 @@ fun ExerciseDetailsScreen(
             ShareContentPagePopup(
                 showPopup2,
                 it,
-                showDialogShared,
                 { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
-                navController,shareContentViewModel)
+                navController,
+                shareContentViewModel
+            )
         }
 
     }
@@ -253,7 +244,6 @@ fun ExerciseDetailsScreenPreview() {
     val shareContentViewModel: ShareContentViewModel = hiltViewModel()
     ExerciseDetailsScreen(
         navController = navController,
-        generalViewModel = generalViewModel,
         shareContentViewModel = shareContentViewModel,
         selectHandler= {  }
 

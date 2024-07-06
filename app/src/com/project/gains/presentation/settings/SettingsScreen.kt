@@ -58,17 +58,15 @@ fun SettingsScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
-                    message = " General Settings" ,
+                    message = " General Settings",
                     button= {
                         LogoUser(
                             modifier = Modifier.size(60.dp), R.drawable.pexels5
                         ) { navController.navigate(Route.AccountScreen.route) }
-                    },
-                    button1 = {
-
                     }
-                )
+                ) {
+
+                }
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }

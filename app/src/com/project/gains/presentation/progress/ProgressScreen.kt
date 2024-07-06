@@ -33,7 +33,6 @@ import com.project.gains.theme.GainsAppTheme
 fun ProgressScreen(
     navController: NavController,
     selectHandler: (SelectEvent) -> Unit,
-    generalViewModel: GeneralViewModel
 
 ) {
     val plots = generateRandomPlots()
@@ -45,15 +44,13 @@ fun ProgressScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
-                    message = "Progress" ,
+                    message = "Progress",
                     button= {
                         LogoUser(
                             modifier = Modifier.size(60.dp), R.drawable.pexels5
                         ) { navController.navigate(Route.AccountScreen.route) }
-                    },
-                    button1 = {}
-                )
+                    }
+                ) {}
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }
@@ -83,8 +80,7 @@ fun ProgressScreen(
                             Spacer(modifier = Modifier.height(16.dp)) // Add spacing between cards
                         }
                     }
-
-                    }
+                 }
 
                 }
             }
@@ -97,9 +93,7 @@ fun ProgressScreenPreview() {
     val navController = rememberNavController()
     val generalViewModel:GeneralViewModel = hiltViewModel()
     ProgressScreen(
-        navController = navController,
-        selectHandler = {  },
-        generalViewModel
+        navController = navController
 
-    )
+    ) { }
 }

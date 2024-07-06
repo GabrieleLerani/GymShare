@@ -7,7 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
-import com.project.gains.presentation.ExerciseDetailsScreen
+import com.project.gains.presentation.exercises.ExerciseDetailsScreen
 import com.project.gains.presentation.HomeScreen
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
@@ -20,8 +20,8 @@ import com.project.gains.presentation.onboarding.OnBoardingViewModel
 import com.project.gains.presentation.settings.SettingsScreen
 import com.project.gains.presentation.settings.SettingsViewModel
 import com.project.gains.presentation.settings.ShareContentViewModel
-import com.project.gains.presentation.TypedExerciseScreen
-import com.project.gains.presentation.WorkoutModeScreen
+import com.project.gains.presentation.exercises.TypedExerciseScreen
+import com.project.gains.presentation.workout.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
 import com.project.gains.presentation.plan.AddGeneratedPlan
@@ -84,16 +84,18 @@ fun NavGraph(
                 // set screen as the node state
                 LinkedSocialSettingScreen(
                     navController = navController,
-                    linkHandler = generalViewModel::onLinkAppEvent,
+                    linkHandler = shareContentViewModel::onLinkAppEvent,
                     saveLinkHandler = shareContentViewModel::onSaveSharingPreferencesEvent,
-                    generalViewModel = generalViewModel
+                    shareContentViewModel = shareContentViewModel
                 )
             }
             composable(
                 route = Route.WorkoutScreen.route
             ) {
                 // set screen as the node state
-                WorkoutScreen(navController = navController, deleteHandler = workoutViewModel::onDeleteEvent, selectHandler = workoutViewModel::onSelectEvent,
+                WorkoutScreen(
+                    navController = navController,
+                    selectHandler = workoutViewModel::onSelectEvent,
                     workoutViewModel = workoutViewModel,
                     shareContentViewModel = shareContentViewModel
                 )
@@ -143,7 +145,10 @@ fun NavGraph(
                 route = Route.ProgressScreen.route
             ) {
                 // set screen as the node state
-                ProgressScreen(navController =navController, selectHandler = generalViewModel::onSelectEvent, generalViewModel = generalViewModel)
+                ProgressScreen(
+                    navController =navController,
+                    selectHandler = generalViewModel::onSelectEvent
+                )
             }
             composable(
                 route = Route.ProgressDetailsScreen.route
@@ -155,21 +160,25 @@ fun NavGraph(
                 route = Route.ExerciseDetailsScreen.route
             ) {
                 // set screen as the node state
-                ExerciseDetailsScreen(navController = navController,generalViewModel = generalViewModel, shareContentViewModel = shareContentViewModel, selectHandler = generalViewModel::onSelectEvent)
+                ExerciseDetailsScreen(navController = navController, shareContentViewModel = shareContentViewModel, selectHandler = generalViewModel::onSelectEvent)
             }
             composable(
                 route = Route.WorkoutModeScreen.route
             ) {
                 // set screen as the node state
-                WorkoutModeScreen(navController,generalViewModel::onMusicEvent,generalViewModel, selectHandler = generalViewModel::onSelectEvent
+                WorkoutModeScreen(
+                    navController, workoutViewModel::onMusicEvent, workoutViewModel = workoutViewModel
                 )
             }
             composable(
                 route = Route.TypedExerciseScreen.route
             ) {
                 // set screen as the node state
-                TypedExerciseScreen(navController = navController, selectHandler = generalViewModel::onSelectEvent, deleteHandler = generalViewModel::onDeleteEvent,
-                    createHandler = generalViewModel::onCreateEvent, generalViewModel = generalViewModel)            }
+                TypedExerciseScreen(
+                    navController = navController,
+                    selectHandler = generalViewModel::onSelectEvent,
+                    generalViewModel = generalViewModel
+                )            }
 
 
 

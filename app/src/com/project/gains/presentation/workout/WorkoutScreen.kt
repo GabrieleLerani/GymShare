@@ -41,7 +41,6 @@ import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
-import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 
 import com.project.gains.presentation.navgraph.Route
@@ -50,26 +49,26 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun WorkoutScreen(
     navController: NavController,
-    deleteHandler: (DeleteEvent.DeleteExercise) -> Unit,
     selectHandler: (SelectEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
     shareContentViewModel: ShareContentViewModel
 
 ) {
-    val linkedApps by workoutViewModel.linkedApps.observeAsState()
-    val showPopup2 = remember { mutableStateOf(false) }
-    val showDialogShared by workoutViewModel.showDialogShared.observeAsState()
-
-    var notification = remember { mutableStateOf(false) }
+    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
+    val showDialogShared by shareContentViewModel.showDialogShared.observeAsState()
 
     // Sample list of exercises
     val exercises by workoutViewModel.exercises.observeAsState()
     val workout by workoutViewModel.selectedWorkout.observeAsState()
+
+    val notification = remember { mutableStateOf(false) }
+    val showPopup2 = remember { mutableStateOf(false) }
+
+
     GainsAppTheme {
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
                     message = workout?.name ?: "Workout",
                     button = {
                         androidx.compose.material.IconButton(
@@ -88,14 +87,12 @@ fun WorkoutScreen(
                                 }
                             )
                         }
-                    },
-
-                    button1 = {
-                        BackButton {
-                            navController.popBackStack()
-                        }
                     }
-                )
+                ) {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                }
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }
@@ -163,15 +160,11 @@ fun WorkoutScreen(
 
                     FeedbackAlertDialog(
                         title = "You have successfully Shared your content!",
-                        message = "",
                         onDismissRequest = {
                         },
                         onConfirm = {
                             selectHandler(SelectEvent.SelectShowDialogShared(false))
                         },
-                        confirmButtonText = "Ok",
-                        dismissButtonText = "",
-                        color = MaterialTheme.colorScheme.onError,
                         show = showPopup2
                     )
                 }
@@ -182,7 +175,6 @@ fun WorkoutScreen(
                 ShareContentPagePopup(
                     showPopup2,
                     it,
-                    showDialogShared,
                     { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
                     navController,
                     shareContentViewModel
@@ -204,7 +196,6 @@ fun WorkoutScreen(
         val shareContentViewModel : ShareContentViewModel = hiltViewModel()
         WorkoutScreen(
             navController = navController,
-            deleteHandler = { },
             selectHandler = {},
             workoutViewModel = workoutViewModel,
             shareContentViewModel = shareContentViewModel

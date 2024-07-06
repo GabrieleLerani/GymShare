@@ -76,8 +76,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLocalUserManager(
-        application: Application,
-        firestore: FirebaseFirestore
+        application: Application
     ): LocalUserManager = LocalUserManagerImpl(context = application)
 
     @Provides
@@ -90,9 +89,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSettingsManager(firebaseAuth: FirebaseAuth,
-                               localUserManager: LocalUserManager,
-                               authManager: AuthManager
+    fun provideSettingsManager(
+        firebaseAuth: FirebaseAuth,
+        localUserManager: LocalUserManager
     ): SettingsManager = SettingsManagerImpl(
         firebaseAuth =firebaseAuth, localUserManager = localUserManager
     )
@@ -117,7 +116,6 @@ object AppModule {
     fun provideAuthUseCases(
         settingsManager: SettingsManager,
         authManager: AuthManager,
-        localUserManager: LocalUserManager,
 
         ) = AuthenticationUseCases(
         signIn = SignIn(authManager),

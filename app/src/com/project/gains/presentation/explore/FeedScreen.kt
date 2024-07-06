@@ -65,15 +65,13 @@ fun FeedScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
-                    message = " Explore Feed" ,
+                    message = " Explore Feed",
                     button= {
                         LogoUser(
                             modifier = Modifier.size(60.dp), R.drawable.pexels5
                         ) { navController.navigate(Route.AccountScreen.route) }
-                    },
-                    button1 = {}
-                )
+                    }
+                ) {}
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }

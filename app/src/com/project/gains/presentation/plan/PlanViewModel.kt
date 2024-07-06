@@ -67,7 +67,6 @@ class PlanViewModel @Inject constructor() : ViewModel() {
                 val workouts = generateRandomPlan(
                     _selectedTrainingType.value ?: TrainingType.STRENGTH,
                     event.selectedExerciseType,
-                    _selectedLvl.value ?: Level.BEGINNER,
                     num
                 )
 

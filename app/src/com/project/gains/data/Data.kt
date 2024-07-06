@@ -54,8 +54,7 @@ data class Exercise(
     val training: TrainingType,
     val sets: Int,
     val totalTime: Int
-) {
-}
+)
 
 data class Plan(
     val id: Int,
@@ -179,6 +178,7 @@ fun generateSampleWorkouts(): MutableList<Workout> {
         Workout(
             id = 1,
             name = "Workout 1",
+            workoutDay = Weekdays.WEDNESDAY,
             exercises = mutableListOf(
                 Exercise(
                     "Exercise 1", gifResId = R.drawable.arms, description = "Exercise 1",
@@ -197,6 +197,7 @@ fun generateSampleWorkouts(): MutableList<Workout> {
         Workout(
             id = 1,
             name = "Workout 2",
+            workoutDay = Weekdays.FRIDAY,
             exercises = mutableListOf(
                 Exercise(
                     "Exercise 1", gifResId = R.drawable.legs, description = "Exercise 1",
@@ -427,26 +428,23 @@ val trainingTypeExercises = mapOf(
 fun generateRandomPlan(
     trainingType: TrainingType,
     muscleGroups: MutableList<ExerciseType>,
-    level: Level,
     numberOfWorkouts: Int
 ): List<Workout> {
     val exerciseMap = trainingTypeExercises[trainingType] ?: return emptyList()
     val workouts = mutableListOf<Workout>()
     val exerciseTypes: List<ExerciseType> = muscleGroups
-    val hardness = level
 
     repeat(numberOfWorkouts) { index ->
         val workoutExercises = mutableListOf<Exercise>()
         for (exerciseType in exerciseTypes) {
             val exercises = exerciseMap[exerciseType] ?: continue
             val randomExercise = exercises.random()
-            val exerciseName = randomExercise
-            val exerciseDescription = "Sample description for $exerciseName"
+            val exerciseDescription = "Sample description for $randomExercise"
             val exerciseGif = getExerciseGif(exerciseType) // Replace with your logic to get GIFs
 
             workoutExercises.add(
                 Exercise(
-                    name = exerciseName,
+                    name = randomExercise,
                     gifResId = exerciseGif,
                     description = exerciseDescription,
                     type = exerciseType,
@@ -456,7 +454,7 @@ fun generateRandomPlan(
                 )
             )
         }
-        val workout = Workout(index, "Workout ${index + 1}", workoutExercises)
+        val workout = Workout(index,"Workout ${index + 1}", Weekdays.WEDNESDAY,workoutExercises)
         workouts.add(workout)
     }
 

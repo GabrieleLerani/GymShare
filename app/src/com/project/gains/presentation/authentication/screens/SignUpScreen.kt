@@ -293,14 +293,10 @@ fun DefaultSignUpContent(
         if (openErrorPopup.value == true) {
             FeedbackAlertDialog(
                 title = "",
-                message = "Something went wrong check your input and retry",
                 onDismissRequest = {  },
                 onConfirm = {
 
                 },
-                confirmButtonText = "Ok",
-                dismissButtonText = "",
-                color = MaterialTheme.colorScheme.onError,
                 openErrorPopup
             )
         }

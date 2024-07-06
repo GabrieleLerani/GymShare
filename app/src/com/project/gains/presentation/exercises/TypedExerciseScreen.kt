@@ -1,4 +1,4 @@
-package com.project.gains.presentation
+package com.project.gains.presentation.exercises
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,8 +31,6 @@ import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.events.CreateEvent
-import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
@@ -40,8 +38,6 @@ import com.project.gains.theme.GainsAppTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TypedExerciseScreen(
-    createHandler: (CreateEvent) -> Unit,
-    deleteHandler: (DeleteEvent) -> Unit,
     navController: NavController,
     selectHandler: (SelectEvent) -> Unit,
     generalViewModel: GeneralViewModel
@@ -54,7 +50,7 @@ fun TypedExerciseScreen(
     val searchedExercises = remember { mutableStateOf(listOf<Exercise>()) }
     val isSearchQueryEmpty = remember { mutableStateOf(searchQuery.value.isBlank()) }
     val localKeyboardController = LocalSoftwareKeyboardController.current
-    var notification = remember {
+    val notification = remember {
         mutableStateOf(false)
     }
 
@@ -62,15 +58,13 @@ fun TypedExerciseScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
                     message = "Exercises",
-                    button = {},
-                    button1 = {
-                        BackButton {
-                            navController.popBackStack()
-                        }
+                    button = {}
+                ) {
+                    BackButton {
+                        navController.popBackStack()
                     }
-                )
+                }
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }
@@ -194,7 +188,10 @@ fun TypedExerciseScreen(
 fun DefaultPreview() {
     val generalViewModel:GeneralViewModel= hiltViewModel()
     GainsAppTheme {
-        TypedExerciseScreen(navController = rememberNavController(), selectHandler = {}, deleteHandler = {},
-            createHandler = {}, generalViewModel = generalViewModel)
+        TypedExerciseScreen(
+            navController = rememberNavController(),
+            selectHandler = {},
+            generalViewModel = generalViewModel
+        )
     }
 }

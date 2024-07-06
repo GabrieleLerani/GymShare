@@ -36,7 +36,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.GeneralViewModel
 import com.project.gains.R
 
 import com.project.gains.presentation.components.BackButton
@@ -61,9 +60,9 @@ fun LinkedSocialSettingScreen(
     navController: NavController,
     linkHandler: (LinkAppEvent) -> Unit,
     saveLinkHandler: (SaveSharingPreferencesEvent) -> Unit,
-    generalViewModel: GeneralViewModel
+    shareContentViewModel: ShareContentViewModel
 ) {
-    val linkedApps by generalViewModel.linkedApps.observeAsState()
+    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
     val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
     val notification = remember {
         mutableStateOf(false)
@@ -84,19 +83,17 @@ fun LinkedSocialSettingScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
-                    message = "Sharing Preferences" ,
+                    message = "Sharing Preferences",
                     button= {
                         LogoUser(
                             modifier = Modifier.size(60.dp), R.drawable.pexels5
                         ) { navController.navigate(Route.AccountScreen.route) }
-                    },
-                    button1 = {
-                        BackButton {
-                            navController.popBackStack()
-                        }
                     }
-                )
+                ) {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                }
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }
@@ -161,15 +158,11 @@ fun LinkedSocialSettingScreen(
                     item {
                         if (showDialog.value) {
                             FeedbackAlertDialog(
-                                title =  "You have successfully updated your preferences!" ,
-                                message = "",
+                                title =  "You have successfully updated your preferences!",
                                 onDismissRequest = { showDialog.value = false },
                                 onConfirm = {
                                     showDialog.value = false
                                 },
-                                confirmButtonText = "Ok",
-                                dismissButtonText = "",
-                                color=   MaterialTheme.colorScheme.onSurface ,
                                 show = showDialog
 
                             )
@@ -186,11 +179,11 @@ fun LinkedSocialSettingScreen(
 @Composable
 fun SettingScreenPreview() {
     val navController = rememberNavController()
-    val generalViewModel :GeneralViewModel = hiltViewModel()
+    val shareContentViewModel : ShareContentViewModel = hiltViewModel()
     LinkedSocialSettingScreen(
         navController = navController,
         saveLinkHandler = {  },
         linkHandler = {},
-        generalViewModel = generalViewModel
+        shareContentViewModel = shareContentViewModel
     )
 }

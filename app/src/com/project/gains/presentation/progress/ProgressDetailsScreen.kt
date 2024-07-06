@@ -95,8 +95,7 @@ fun ProgressDetailsScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
-                    message = "Progress Details" ,
+                    message = "Progress Details",
                     button= {
                         androidx.compose.material.IconButton(
                             modifier = Modifier.size(45.dp),
@@ -114,13 +113,12 @@ fun ProgressDetailsScreen(
                                 }
                             )
                         }
-                    },
-                    button1 = {
-                        BackButton {
-                            navController.popBackStack()
-                        }
                     }
-                )
+                ) {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                }
                 if (notification.value){
                     NotificationCard(message ="Notification", onClose = {notification.value=false})
                 }
@@ -184,10 +182,9 @@ fun ProgressDetailsScreen(
                     }
 
                     item {    TrainingOverviewChart(
-                        trainingData =trainingData ,
+                        trainingData =trainingData,
                         selectedMetric = selectedMetric,
                         selectedPeriod = selectedPeriod,
-                        shareHandler = shareHandler,
                         selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plot3)
                     ) }
 
@@ -196,15 +193,11 @@ fun ProgressDetailsScreen(
 
                     FeedbackAlertDialog(
                         title = "You have successfully Shared your content!",
-                        message = "",
                         onDismissRequest = {
                         },
                         onConfirm = {
                             selectHandler(SelectEvent.SelectShowDialogShared(false))
                         },
-                        confirmButtonText = "Ok",
-                        dismissButtonText = "",
-                        color = MaterialTheme.colorScheme.onError,
                         show = showPopup2
                     )
                 }
@@ -214,9 +207,10 @@ fun ProgressDetailsScreen(
             ShareContentPagePopup(
                 showPopup2,
                 it,
-                showDialogShared,
                 { selectHandler(SelectEvent.SelectShowDialogShared(true))},
-                navController,shareContentViewModel)
+                navController,
+                shareContentViewModel
+            )
         } }
 
 }

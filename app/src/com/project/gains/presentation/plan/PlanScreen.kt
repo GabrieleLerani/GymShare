@@ -18,10 +18,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Circle
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
@@ -50,7 +48,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Level
 import com.project.gains.data.PeriodMetricType
@@ -58,14 +55,11 @@ import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 
 import com.project.gains.presentation.components.BottomNavigationBar
-import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.ManageDataStoreEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel
 
@@ -94,7 +88,6 @@ fun PlanScreen(
         Scaffold(
             topBar = {
                 TopBar(
-                    navController = navController,
                     message = selectedPlan?.name ?: "Your Plan",
                     button= {
                         IconButton(
@@ -112,22 +105,20 @@ fun PlanScreen(
                                 }
                             )
                         }
-                    },
-
-                    button1 = {
-                        IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
-                                // TODO go to progress screen
-                            }) {
-                            Icon(
-                                imageVector = Icons.Default.BarChart,
-                                contentDescription = "Stats",
-                                tint = MaterialTheme.colorScheme.surface
-                            )
-                        }
                     }
-                )
+                ) {
+                    IconButton(
+                        modifier = Modifier.size(45.dp),
+                        onClick = {
+                            // TODO go to progress screen
+                        }) {
+                        Icon(
+                            imageVector = Icons.Default.BarChart,
+                            contentDescription = "Stats",
+                            tint = MaterialTheme.colorScheme.surface
+                        )
+                    }
+                }
                 if (notification.value){
                     NotificationCard(
                         message ="Notification",
