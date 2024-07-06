@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -41,7 +41,7 @@ import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.events.SelectEvent
-import com.project.gains.presentation.navgraph.Route
+
 import com.project.gains.theme.GainsAppTheme
 
 
@@ -49,16 +49,17 @@ import com.project.gains.theme.GainsAppTheme
 fun ExerciseDetailsScreen(
     navController: NavController,
     generalViewModel: GeneralViewModel,
+    shareContentViewModel: ShareContentViewModel,
     selectHandler:(SelectEvent)->Unit
 
 ) {
     // Sample list of workouts
     val linkedApps by generalViewModel.linkedApps.observeAsState()
-    var showPopup2 = remember { mutableStateOf(false) }
+    val showPopup2 = remember { mutableStateOf(false) }
     val showDialogShared by generalViewModel.showDialogShared.observeAsState()
-    var showDialog = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
     val exercise by generalViewModel.selectedExercise.observeAsState()
-    var notification = remember {
+    val notification = remember {
         mutableStateOf(false)
     }
 
@@ -77,7 +78,7 @@ fun ExerciseDetailsScreen(
 
                             }) {
                             androidx.compose.material.Icon(
-                                imageVector = Icons.Default.Send,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
                                 contentDescription = "Share",
                                 tint = MaterialTheme.colorScheme.surface,
                                 modifier = Modifier.graphicsLayer {
@@ -234,7 +235,7 @@ fun ExerciseDetailsScreen(
                 it,
                 showDialogShared,
                 { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
-                navController,generalViewModel)
+                navController,shareContentViewModel)
         }
 
     }
@@ -248,9 +249,11 @@ fun ExerciseDetailsScreen(
 fun ExerciseDetailsScreenPreview() {
     val navController = rememberNavController()
     val generalViewModel:GeneralViewModel = hiltViewModel()
+    val shareContentViewModel:ShareContentViewModel = hiltViewModel()
     ExerciseDetailsScreen(
         navController = navController,
-        generalViewModel =generalViewModel,
+        generalViewModel = generalViewModel,
+        shareContentViewModel = shareContentViewModel,
         selectHandler= {  }
 
     )

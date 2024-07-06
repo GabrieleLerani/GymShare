@@ -20,6 +20,7 @@ import com.project.gains.presentation.onboarding.OnBoardingViewModel
 import com.project.gains.presentation.settings.SettingsScreen
 import com.project.gains.presentation.settings.SettingsViewModel
 import com.project.gains.presentation.MainViewModel
+import com.project.gains.presentation.ShareContentViewModel
 import com.project.gains.presentation.TypedExerciseScreen
 import com.project.gains.presentation.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
@@ -28,8 +29,8 @@ import com.project.gains.presentation.progress.ProgressDetailsScreen
 import com.project.gains.presentation.progress.ProgressScreen
 import com.project.gains.presentation.settings.AccountScreen
 import com.project.gains.presentation.settings.SettingScreen
-import com.project.gains.presentation.workout.SessionScreen
 import com.project.gains.presentation.workout.WorkoutScreen
+import com.project.gains.presentation.workout.WorkoutViewModel
 
 
 @Composable
@@ -39,6 +40,8 @@ fun NavGraph(
     val navController = rememberNavController()
     val authenticationViewModel : AuthenticationViewModel = init()
     val generalViewModel : GeneralViewModel = hiltViewModel()
+    val workoutViewModel : WorkoutViewModel = hiltViewModel()
+    val shareContentViewModel : ShareContentViewModel = hiltViewModel()
 
     NavHost(navController = navController, startDestination = startDestination){
         // construct a nested nav graph
@@ -82,17 +85,12 @@ fun NavGraph(
                 route = Route.WorkoutScreen.route
             ) {
                 // set screen as the node state
-                WorkoutScreen(navController = navController, deleteHandler = generalViewModel::onDeleteEvent, selectHandler = generalViewModel::onSelectEvent,
-                    generalViewModel = generalViewModel
+                WorkoutScreen(navController = navController, deleteHandler = workoutViewModel::onDeleteEvent, selectHandler = workoutViewModel::onSelectEvent,
+                    workoutViewModel = workoutViewModel,
+                    shareContentViewModel = ShareContentViewModel()
                 )
             }
-            composable(
-                route = Route.SessionScreen.route
-            ) {
-                // set screen as the node state
-                SessionScreen(navController,generalViewModel::onMusicEvent,generalViewModel, selectHandler = generalViewModel::onSelectEvent
-                )
-            }
+
             composable(
                 route = Route.FeedScreen.route
             ) {
@@ -123,13 +121,13 @@ fun NavGraph(
                 route = Route.ProgressDetailsScreen.route
             ) {
                 // set screen as the node state
-                ProgressDetailsScreen(navController = navController, shareHandler = generalViewModel::onShareContentEvent, generalViewModel,generalViewModel::onSelectEvent)
+                ProgressDetailsScreen(navController = navController, shareHandler = generalViewModel::onShareContentEvent, generalViewModel,shareContentViewModel = shareContentViewModel,generalViewModel::onSelectEvent)
             }
             composable(
                 route = Route.ExerciseDetailsScreen.route
             ) {
                 // set screen as the node state
-                ExerciseDetailsScreen(navController = navController,generalViewModel, selectHandler = generalViewModel::onSelectEvent)
+                ExerciseDetailsScreen(navController = navController,generalViewModel = generalViewModel, shareContentViewModel = shareContentViewModel, selectHandler = generalViewModel::onSelectEvent)
             }
             composable(
                 route = Route.WorkoutModeScreen.route

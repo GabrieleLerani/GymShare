@@ -126,6 +126,7 @@ import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.Workout
 import com.project.gains.data.bottomNavItems
 import com.project.gains.data.generateOptions
+import com.project.gains.presentation.ShareContentViewModel
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
@@ -1333,11 +1334,11 @@ fun ShareContentPagePopup(
     showPopup: MutableState<Boolean>, apps: MutableList<Int>, show: Boolean?,
     onItemClick: ()->Unit,
     navController: NavController,
-    generalViewModel: GeneralViewModel){
+    shareContentViewModel: ShareContentViewModel){
     var clickedApp by remember { mutableIntStateOf(1) }
-    var clickedMedia by remember { mutableStateOf<ImageVector>(Icons.Default.Home) }
+    var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
 
-    val sharingMedia by generalViewModel.linkedSharingMedia.observeAsState()
+    val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
 
     if (showPopup.value) {
         Box(

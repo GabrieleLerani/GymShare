@@ -42,6 +42,7 @@ import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
+import com.project.gains.presentation.ShareContentViewModel
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MetricPopup
@@ -62,6 +63,7 @@ fun ProgressDetailsScreen(
     navController: NavController,
     shareHandler: (ShareContentEvent.SharePlot) -> Unit,
     generalViewModel: GeneralViewModel,
+    shareContentViewModel: ShareContentViewModel,
     selectHandler:(SelectEvent)->Unit
 ) {
     var popupVisible1 = remember { mutableStateOf(false) }
@@ -215,7 +217,7 @@ fun ProgressDetailsScreen(
                 it,
                 showDialogShared,
                 { selectHandler(SelectEvent.SelectShowDialogShared(true))},
-                navController,generalViewModel)
+                navController,shareContentViewModel)
         } }
 
 }
@@ -231,10 +233,12 @@ fun ProgressDetailsScreen(
 fun ProgressDetailsScreenPreview() {
     val navController = rememberNavController()
     val generalViewModel:GeneralViewModel = hiltViewModel()
+    val shareContentViewModel:ShareContentViewModel = hiltViewModel()
     ProgressDetailsScreen(
         navController = navController,
         shareHandler = {  },
         generalViewModel,
+        shareContentViewModel,
         selectHandler = {}
 
     )

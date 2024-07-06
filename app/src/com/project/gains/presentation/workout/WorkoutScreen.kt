@@ -11,8 +11,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Send
+
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.GeneralViewModel
+import com.project.gains.presentation.ShareContentViewModel
+
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
 
@@ -50,20 +52,21 @@ fun WorkoutScreen(
     navController: NavController,
     deleteHandler: (DeleteEvent.DeleteExercise) -> Unit,
     selectHandler: (SelectEvent) -> Unit,
-    generalViewModel: GeneralViewModel
+    workoutViewModel: WorkoutViewModel,
+    shareContentViewModel: ShareContentViewModel
 
 ) {
-    val linkedApps by generalViewModel.linkedApps.observeAsState()
-    var showPopup2 = remember { mutableStateOf(false) }
-    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
+    val linkedApps by workoutViewModel.linkedApps.observeAsState()
+    val showPopup2 = remember { mutableStateOf(false) }
+    val showDialogShared by workoutViewModel.showDialogShared.observeAsState()
 
-    var notification = remember {
+    val notification = remember {
         mutableStateOf(false)
     }
 
     // Sample list of exercises
-    val exercises by generalViewModel.exercises.observeAsState()
-    val workout by generalViewModel.selectedWorkout.observeAsState()
+    val exercises by workoutViewModel.exercises.observeAsState()
+    val workout by workoutViewModel.selectedWorkout.observeAsState()
     GainsAppTheme {
         Scaffold(
             topBar = {
@@ -79,7 +82,7 @@ fun WorkoutScreen(
 
                             }) {
                             androidx.compose.material.Icon(
-                                imageVector = Icons.Default.Send,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
                                 contentDescription = "Share",
                                 tint = MaterialTheme.colorScheme.surface,
                                 modifier = Modifier.graphicsLayer {
@@ -111,7 +114,7 @@ fun WorkoutScreen(
                 ) {
                     IconButton(
                         onClick = {
-                            navController.navigate(Route.SessionScreen.route)
+                            // TODO navController.navigate(Route.SessionScreen.route)
                         },
                         modifier = Modifier.size(50.dp),
                         colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
@@ -144,7 +147,7 @@ fun WorkoutScreen(
                     exercises?.forEach { exercise ->
                         item {
                             AddExerciseItem(
-                                exercise = exercise, { exerciseToAdd ->
+                                exercise = exercise, {
                                     selectHandler(SelectEvent.SelectExercise(exercise))
                                     navController.navigate(Route.ExerciseDetailsScreen.route)
                                 },
@@ -156,7 +159,7 @@ fun WorkoutScreen(
                         }
                     }
 
-                    }
+                }
 
                 if (showDialogShared==true) {
 
@@ -176,13 +179,15 @@ fun WorkoutScreen(
                 }
                 }
             }
+            // TODO check general view model usage
             linkedApps?.let {
                 ShareContentPagePopup(
                     showPopup2,
                     it,
                     showDialogShared,
                     { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
-                    navController,generalViewModel
+                    navController,
+                    shareContentViewModel
                 )
             }
         }
@@ -197,13 +202,14 @@ fun WorkoutScreen(
     @Composable
     fun WorkoutScreenPreview() {
         val navController = rememberNavController()
-        val generalViewModel: GeneralViewModel = hiltViewModel()
+        val workoutViewModel: WorkoutViewModel = hiltViewModel()
+        val shareContentViewModel : ShareContentViewModel = hiltViewModel()
         WorkoutScreen(
             navController = navController,
             deleteHandler = { },
             selectHandler = {},
-            generalViewModel = generalViewModel
-
+            workoutViewModel = workoutViewModel,
+            shareContentViewModel = shareContentViewModel
         )
     }
 

@@ -414,7 +414,6 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
             is SelectEvent.SelectShowDialogShared -> {
                 _showDialogShared.value=event.value
 
-
             }
 
             is SelectEvent.SelectShowDialogPlan -> {
