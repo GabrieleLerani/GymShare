@@ -16,18 +16,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -58,12 +60,13 @@ import com.project.gains.data.Workout
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.PlanPagePopup
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
+import com.project.gains.presentation.settings.ShareContentViewModel
+import com.project.gains.presentation.workout.WorkoutViewModel
 
 import com.project.gains.theme.GainsAppTheme
 
@@ -71,7 +74,8 @@ import com.project.gains.theme.GainsAppTheme
 fun PlanScreen(
     navController: NavController,
     planViewModel: PlanViewModel,
-    selectDialogPlanHandler: (ManagePlanEvent) -> Unit
+    shareContentViewModel: ShareContentViewModel,
+    workoutViewModel: WorkoutViewModel
 ) {
     // Sample list of workouts
     val selectedPlan by planViewModel.selectedPlan.observeAsState()
@@ -79,17 +83,10 @@ fun PlanScreen(
     val selectedPeriod  by planViewModel.selectedPeriod.observeAsState()
     val selectedTraining  by planViewModel.selectedTrainingType.observeAsState()
 
-    val linkedApps by generalViewModel.linkedApps.observeAsState()
-    val showPopup1 by generalViewModel.showPopup.observeAsState()
-    var showPopup2 = remember { mutableStateOf(false) }
+    var showPopup = remember { mutableStateOf(false) }
     var notification = remember { mutableStateOf(false) }
 
-    val workouts by generalViewModel.workouts.observeAsState()
-    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
-    val showDialogWorkout by generalViewModel.showDialogWorkout.observeAsState()
-    val showDialogPlan by planViewModel.showDialogPlan.observeAsState()
-
-    var showDialog = remember { mutableStateOf(false) }
+    val workouts by workoutViewModel.workouts.observeAsState()
 
     GainsAppTheme {
 
@@ -97,15 +94,16 @@ fun PlanScreen(
             topBar = {
                 TopBar(
                     navController = navController,
-                    message = selectedPlan?.name ?: "Plan",
+                    message = selectedPlan?.name ?: "Your Plan",
                     button= {
-                        androidx.compose.material.IconButton(
+                        IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                showPopup2.value=true
-
-                            }) {
-                            androidx.compose.material.Icon(
+                                showPopup.value = true
+                                // TODO popup the share view
+                            }
+                        ) {
+                            Icon(
                                 imageVector = Icons.Default.Send,
                                 contentDescription = "Share",
                                 tint = MaterialTheme.colorScheme.surface,
@@ -117,31 +115,14 @@ fun PlanScreen(
                     },
 
                     button1 = {
-                        androidx.compose.material.IconButton(
+                        IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
-                                selectHandler(SelectEvent.SelectPlanPopup(true))
-                                selectHandler(SelectEvent.SelectPreviewsPage("Home"))
-
-                                selectHandler(SelectEvent.SelectClicked(false))
-                                selectHandler(SelectEvent.SelectShowPopup3(false))
-                                selectHandler(SelectEvent.SelectShowPopup4(false))
+                                // TODO go to progress screen
                             }) {
                             Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "New",
-                                tint = MaterialTheme.colorScheme.surface
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(4.dp))
-                        androidx.compose.material.IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
-                                navController.navigate(Route.WorkoutModeScreen.route)
-                            }) {
-                            Icon(
-                                imageVector = Icons.Default.FitnessCenter,
-                                contentDescription = "Workout",
+                                imageVector = Icons.Default.BarChart,
+                                contentDescription = "Stats",
                                 tint = MaterialTheme.colorScheme.surface
                             )
                         }
@@ -179,56 +160,11 @@ fun PlanScreen(
                             }
                         }
                     }
-
-                }
-                if (showDialogWorkout == true) {
-                    FeedbackAlertDialog(
-                        title = "You have successfully created your workout!",
-                        message = "",
-                        onDismissRequest = { selectHandler(SelectEvent.SelectShowDialogWorkout(false)) },
-                        onConfirm = {
-                            selectHandler(SelectEvent.SelectShowDialogWorkout(false))
-                        },
-                        confirmButtonText = "Ok",
-                        dismissButtonText = "",
-                        color = MaterialTheme.colorScheme.onError,
-                        show = showDialog
-                    )
-                }
-                if (showDialogPlan == true) {
-                    FeedbackAlertDialog(
-                        title = "You have successfully created your plan!",
-                        message = "",
-                        onDismissRequest = { selectDialogPlanHandler(ManagePlanEvent.SelectShowDialogPlan(false)) },
-                        onConfirm = {
-                            selectDialogPlanHandler(ManagePlanEvent.SelectShowDialogPlan(false))
-                        },
-                        confirmButtonText = "Ok",
-                        dismissButtonText = "",
-                        color = MaterialTheme.colorScheme.onError,
-                        show = showDialog
-                    )
-                }
-                if (showDialogShared==true) {
-
-                    FeedbackAlertDialog(
-                        title = "You have successfully Shared your content!",
-                        message = "",
-                        onDismissRequest = {
-                        },
-                        onConfirm = {
-                            selectHandler(SelectEvent.SelectShowDialogShared(false))
-                        },
-                        confirmButtonText = "Ok",
-                        dismissButtonText = "",
-                        color = MaterialTheme.colorScheme.onError,
-                        show = showPopup2
-                    )
                 }
             }
         }
-        // Page popups
-
+        // TODO no more PlanPagePopup nor linkedApps
+        /*
         workouts?.let {
             PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}
         linkedApps?.let {
@@ -239,6 +175,8 @@ fun PlanScreen(
                 { selectHandler(SelectEvent.SelectShowDialogShared(true))},
                 navController,generalViewModel)
         }
+
+         */
     }
 }
 
@@ -346,12 +284,13 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, onItemClick: () -> Unit) {
 @Composable
 fun PlanScreenPreview() {
     val navController = rememberNavController()
-    val generalViewModel:GeneralViewModel= hiltViewModel()
+    val planViewModel: PlanViewModel = hiltViewModel()
+    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
+    val workoutViewModel: WorkoutViewModel = hiltViewModel()
     PlanScreen(
         navController = navController,
-        deleteHandler = {},
-        selectHandler = {},
-        createHandler = {},
-        generalViewModel=generalViewModel
+        planViewModel = planViewModel,
+        shareContentViewModel = shareContentViewModel,
+        workoutViewModel = workoutViewModel
     )
 }

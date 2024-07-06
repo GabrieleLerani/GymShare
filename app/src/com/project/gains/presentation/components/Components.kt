@@ -516,53 +516,6 @@ fun SharingMediaIcon(icon: ImageVector, onClick: () -> Unit, isSelected: Boolean
 }
 
 @Composable
-fun OptionCheckbox(
-    option: Option,
-    onOptionSelected: (Boolean) -> Unit
-) {
-    val isChecked = remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(8.dp)
-            ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = option.name,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            Checkbox(
-                checked = isChecked.value,
-                onCheckedChange = {
-                    isChecked.value = it
-                    onOptionSelected(it)
-                },
-                colors = CheckboxDefaults.colors(
-                    checkmarkColor = MaterialTheme.colorScheme.onPrimary,
-                    uncheckedColor = MaterialTheme.colorScheme.primary,
-                    checkedColor = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier.padding(end = 8.dp)
-            )
-        }
-    }
-}
-
-@Composable
 fun TrainingOverviewChart(
     trainingData: List<TrainingData>,
     selectedMetric: TrainingMetricType,
@@ -862,49 +815,6 @@ fun SocialMediaRow(
 }
 
 @Composable
-fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp, horizontal = 8.dp)
-            .height(150.dp)
-            .background(Color.Gray, RoundedCornerShape(16.dp))
-            .clickable {
-                onItemClick()
-            }
-    ) {
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = title,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(RoundedCornerShape(16.dp)) // Clip to the rounded corners
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black),
-                        startY = 300f
-                    ),
-                    RoundedCornerShape(16.dp)
-                )
-        )
-        Text(
-            text = title,
-            color = MaterialTheme.colorScheme.onPrimary,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(16.dp)
-        )
-    }
-}
-
-@Composable
 fun BottomNavigationBar(navController: NavController) {
     val currentRoute = currentRoute(navController)
 
@@ -1107,42 +1017,6 @@ fun ShareContentPagePopup(
 }
 
 @Composable
-fun AddExerciseButton(onClick: () -> Unit) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(50.dp)
-            .background(color = Color.Cyan, shape = CircleShape)
-            .clickable(onClick = onClick)
-    ) {
-        Text(
-            text = "+",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
-fun DeleteExerciseButton(onClick: () -> Unit) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(50.dp)
-            .background(color = Color.Red, shape = CircleShape)
-            .clickable(onClick = onClick)
-    ) {
-        Text(
-            text = "-",
-            color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
-        )
-    }
-}
-
-@Composable
 fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
     Box(
         modifier = modifier
@@ -1161,8 +1035,6 @@ fun LogoUser(modifier: Modifier,res:Int, onClick: () -> Unit) {
         )
     }
 }
-
-
 
 @Composable
 fun NotificationCard(

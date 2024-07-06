@@ -8,7 +8,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.presentation.ExerciseDetailsScreen
-import com.project.gains.presentation.GainsHomeScreen
+import com.project.gains.presentation.HomeScreen
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.screens.SignInScreen
@@ -19,7 +19,6 @@ import com.project.gains.presentation.onboarding.OnBoardingViewModel
 
 import com.project.gains.presentation.settings.SettingsScreen
 import com.project.gains.presentation.settings.SettingsViewModel
-import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.TypedExerciseScreen
 import com.project.gains.presentation.WorkoutModeScreen
@@ -81,7 +80,10 @@ fun NavGraph(
                 route = Route.LinkedSocialSettingScreen.route
             ) {
                 // set screen as the node state
-                LinkedSocialSettingScreen(navController = navController, linkHandler = generalViewModel::onLinkAppEvent, saveLinkHandler = generalViewModel::onSaveSharingPreferencesEvent,
+                LinkedSocialSettingScreen(
+                    navController = navController,
+                    linkHandler = generalViewModel::onLinkAppEvent,
+                    saveLinkHandler = shareContentViewModel::onSaveSharingPreferencesEvent,
                     generalViewModel = generalViewModel
                 )
             }
@@ -111,7 +113,8 @@ fun NavGraph(
                 // set screen as the node state
                 PlanScreen(navController = navController,
                     planViewModel = planViewModel,
-                    selectDialogPlanHandler = planViewModel::onCreatePlanEvent
+                    workoutViewModel = workoutViewModel,
+                    shareContentViewModel = shareContentViewModel
                 )
             }
 
@@ -179,14 +182,9 @@ fun NavGraph(
         composable(
             route = Route.HomeScreen.route
         ) {
-            // set screen as the node state
-            val  viewModel : MainViewModel = hiltViewModel()
-            GainsHomeScreen(
+            HomeScreen(
                 navController = navController,
-                viewModel = viewModel,
-                generalViewModel = generalViewModel,
-                selectHandler=generalViewModel::onSelectEvent,
-                createHandler = generalViewModel::onCreateEvent
+                workoutViewModel = workoutViewModel,
             )
         }
     }

@@ -59,35 +59,18 @@ class GeneralViewModel @Inject constructor() : ViewModel() {
     private val _selectedExerciseType = MutableLiveData<ExerciseType>()
     val selectedExerciseType: MutableLiveData<ExerciseType> = _selectedExerciseType
 
-    private val _linkedApps = MutableLiveData<MutableList<Int>>()
-    val linkedApps: MutableLiveData<MutableList<Int>> = _linkedApps
-
     private val _showMusic = MutableLiveData<Boolean>()
     val showMusic: MutableLiveData<Boolean> = _showMusic
 
 // PAGE POPUP HANDLING
-private val _showDialogWorkout = MutableLiveData<Boolean>()
-    val showDialogWorkout: MutableLiveData<Boolean> = _showDialogWorkout
-    private val _showDialogShared = MutableLiveData<Boolean>()
-    val showDialogShared: MutableLiveData<Boolean> = _showDialogShared
     private val _workoutTitle = MutableLiveData<TextFieldValue>()
     val workoutTitle: MutableLiveData<TextFieldValue> = _workoutTitle
     private val _isToAdd = MutableLiveData<Boolean>()
     val isToAdd: MutableLiveData<Boolean> = _isToAdd
     private val _previewsPage = MutableLiveData<String>()
     val previewsPage: MutableLiveData<String> = _previewsPage
-    private val _clicked = MutableLiveData<Boolean>()
-    val clicked: MutableLiveData<Boolean> = _clicked
-    private val _showPopup = MutableLiveData<Boolean>()
-    val showPopup: MutableLiveData<Boolean> = _showPopup
-    private val _showPopup3 = MutableLiveData<Boolean>()
-    val showPopup3: MutableLiveData<Boolean> = _showPopup3
-    private val _showPopup4 = MutableLiveData<Boolean>()
-    val showPopup4: MutableLiveData<Boolean> = _showPopup4
     private val _addedExercises = MutableLiveData<MutableList<Exercise>>()
     val addedExercises: MutableLiveData<MutableList<Exercise>> = _addedExercises
-    private val _linkedSharingMedia = MutableLiveData<MutableList<ImageVector>>()
-    val linkedSharingMedia: MutableLiveData<MutableList<ImageVector>> = _linkedSharingMedia
 
     private val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
 
@@ -103,15 +86,12 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
         Log.d("LOAD","FETCHING DATA FROM DB")
         _exercises.value = generateSampleExercises(ExerciseType.ARMS,R.drawable.arms)
         _plots.value = generateRandomPlots()
-        _linkedApps.value = mutableListOf()
         _currentSong.value=Song("","","")
         _currentSessions.value = mutableListOf()
         _addedExercises.value= mutableListOf()
         _workoutTitle.value=TextFieldValue()
         _songs.value= generateRandomSongs(5)
         _selectedExercise.value= generateSampleExercises(ExerciseType.ARMS,R.drawable.arms2).get(0)
-        _linkedSharingMedia.value?.add(Icons.Default.Email)
-        _linkedSharingMedia.value?.add(Icons.Default.Message)
 
     }
 
@@ -152,25 +132,6 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
 
 
 
-            }
-        }
-    }
-
-    fun onSaveSharingPreferencesEvent(event: SaveSharingPreferencesEvent) {
-        when (event) {
-            is SaveSharingPreferencesEvent.SaveSharingPreferences -> {
-                _linkedApps.value = (_linkedApps.value?.plus(event.apps))?.toSet()?.toMutableList()
-            }
-
-        }
-    }
-
-
-
-    fun onLinkAppEvent(event: LinkAppEvent) {
-        when (event) {
-            is LinkAppEvent.LinkApp -> {
-                _linkedApps.value?.add(event.app)
             }
         }
     }
@@ -294,15 +255,7 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
             }
 
             is SelectEvent.SelectIsToAdd -> {
-
                     _isToAdd.value = event.value
-
-
-            }
-
-            is SelectEvent.SelectPlanPopup -> {
-                    _showPopup.value = event.showPopup
-
             }
 
             is SelectEvent.SelectExerciseToAdd -> {
@@ -320,52 +273,38 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
                 _selectedPlan.value = event.plan
             }
 */
+            /*
             is SelectEvent.SelectWorkout -> {
                 _selectedWorkout.value = event.workout
             }
+             */
 
             is SelectEvent.SelectExercise -> {
                 _selectedExercise.value = event.exercise
             }
 
-            is SelectEvent.SelectClicked -> {
-
-                _clicked.value=event.clicked
-            }
             is SelectEvent.SelectPreviewsPage -> {
-
                 _previewsPage.value=event.name
-            }
-            is SelectEvent.SelectShowPopup3 -> {
-
-                _showPopup3.value=event.showPopup3
-            }
-            is SelectEvent.SelectShowPopup4 -> {
-                _showPopup4.value=event.showPopup4
             }
 
             is SelectEvent.RemoveExerciseToAdd -> {
-
                 _addedExercises.value?.remove(event.exercise)
             }
 
             is SelectEvent.SelectWorkoutStored -> {
                 _workoutTitle.value=event.name
             }
-
+/*
             is SelectEvent.SelectShowDialogShared -> {
                 _showDialogShared.value=event.value
-
             }
+
 /*
+ */
             is SelectEvent.SelectShowDialogPlan -> {
                 _showDialogPlan.value=event.value
             }
  */
-            is SelectEvent.SelectShowDialogWorkout -> {
-                _showDialogWorkout.value=event.value
-
-            }
         }
     }
 }

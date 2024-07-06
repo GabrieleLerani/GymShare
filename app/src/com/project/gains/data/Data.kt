@@ -42,6 +42,10 @@ enum class PeriodMetricType {
     WEEK,MONTH, YEAR
 }
 
+enum class Weekdays {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
+
 data class Exercise(
     val name: String,
     val gifResId: Int?,  // Nullable Integer for resource ID
@@ -67,7 +71,10 @@ data class Song(
 )
 
 data class Workout(
-    val id:Int,val name:String,val exercises:MutableList<Exercise>
+    val id: Int,
+    val name: String,
+    val workoutDay: Weekdays,
+    val exercises: MutableList<Exercise>
 )
 
 data class Session(

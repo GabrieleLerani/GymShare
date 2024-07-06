@@ -31,8 +31,6 @@ private val darkColorScheme = darkColorScheme(
     tertiary = GBlue,
     errorContainer = GWarning,
     onSecondary = GWater
-
-
 )
 
 private val lightColorScheme = lightColorScheme(
@@ -47,13 +45,7 @@ private val lightColorScheme = lightColorScheme(
     secondary = GGreen,
     tertiary = GBlue,
     onSecondary = GWater
-
-
-
 )
-
-
-
 
 @Composable
 fun GainsAppTheme(

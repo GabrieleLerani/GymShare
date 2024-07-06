@@ -3,27 +3,29 @@ package com.project.gains.presentation
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Icon
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-
-//noinspection UsingMaterialAndMaterial3Libraries
-
-//noinspection UsingMaterialAndMaterial3Libraries
-
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 
@@ -31,50 +33,51 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 import androidx.navigation.NavController
 import com.project.gains.GeneralViewModel
 import com.project.gains.R
+import com.project.gains.data.Workout
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.PlanPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.SelectEvent
 
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.workout.WorkoutViewModel
 
 import com.project.gains.theme.GainsAppTheme
-
+import com.project.gains.util.currentWeekday
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 @Composable
-fun GainsHomeScreen(
+fun HomeScreen(
     navController: NavController,
-    viewModel: MainViewModel,
-    generalViewModel: GeneralViewModel,
-    selectHandler: (SelectEvent) -> Unit,
-    createHandler: (CreateEvent) -> Unit,
-
-
-    ) {
+    workoutViewModel: WorkoutViewModel
+) {
+    // TODO add favorites
     val openPopup = remember { mutableStateOf(false) }
-    val workouts by generalViewModel.workouts.observeAsState()
-    val plans by generalViewModel.plans.observeAsState()
-    val plots by generalViewModel.plots.observeAsState()
-    val showPopup1 by generalViewModel.showPopup.observeAsState()
-    val showDialogWorkout by generalViewModel.showDialogWorkout.observeAsState()
-    val showDialogPlan by generalViewModel.showDialogPlan.observeAsState()
+    val workouts by workoutViewModel.workouts.observeAsState()
 
-    var showDialog = remember { mutableStateOf(false) }
-    var notification = remember {
-        mutableStateOf(false)
-    }
+    var notification = remember { mutableStateOf(false) }
 
 
     CustomBackHandler(
@@ -85,47 +88,27 @@ fun GainsHomeScreen(
         openPopup.value = true
     }
 
-
    GainsAppTheme {
-
        Scaffold(
            topBar = {
                TopBar(
                    navController = navController,
-                   message = "Gym Share!" ,
-                   button= {
-                       LogoUser(
-                           modifier = Modifier.size(60.dp), R.drawable.pexels5
-                       ) { navController.navigate(Route.AccountScreen.route) }
+                   message = "Home" ,
+                   button = {
+                       IconButton(
+                           modifier = Modifier.size(45.dp),
+                           onClick = {
+                               // TODO Go to workout mode
+                           }) {
+                           Icon(
+                               imageVector = ImageVector.vectorResource(id = R.drawable.workout_mode),
+                               contentDescription = "Workout Mode",
+                               tint = MaterialTheme.colorScheme.surface
+                           )
+                       }
                    },
                    button1 = {
-                       androidx.compose.material.IconButton(
-                           modifier = Modifier.size(45.dp),
-                           onClick = {
-                               selectHandler(SelectEvent.SelectClicked(false))
-                               selectHandler(SelectEvent.SelectShowPopup3(false))
-                               selectHandler(SelectEvent.SelectShowPopup4(false))
-                               selectHandler(SelectEvent.SelectPreviewsPage("Home"))
-                               selectHandler(SelectEvent.SelectPlanPopup(true))
-                           }) {
-                           Icon(
-                               imageVector = Icons.Default.Add,
-                               contentDescription = "New",
-                               tint = MaterialTheme.colorScheme.surface
-                           )
-                       }
-                       Spacer(modifier = Modifier.width(4.dp))
-                       androidx.compose.material.IconButton(
-                           modifier = Modifier.size(45.dp),
-                           onClick = {
-                               navController.navigate(Route.TypedExerciseScreen.route)
-                           }) {
-                           Icon(
-                               imageVector = Icons.Default.Search,
-                               contentDescription = "Exercises",
-                               tint = MaterialTheme.colorScheme.surface
-                           )
-                       }
+
                    }
                )
                if (notification.value){
@@ -145,64 +128,26 @@ fun GainsHomeScreen(
                    verticalArrangement = Arrangement.Center
 
                ) {
-                   workouts?.forEach{ workout ->
-                       item {
-                           GeneralCard(imageResId = R.drawable.pexels1, title = workout.name){
-                               navController.navigate(Route.WorkoutScreen.route)
-                           }
-                       }
-                   }
-                   plans?.forEach{ plan ->
-                       item {
-                           GeneralCard(imageResId = R.drawable.pexels3, title = plan.name){
-                               selectHandler(SelectEvent.SelectPlan(plan))
-                               navController.navigate(Route.PlanScreen.route)
-                           }
-                       }
-                   }
-                   plots?.forEach{ plot ->
-                       item {
-                           GeneralCard(imageResId = plot.preview.imageResId, title = "plot"){
-                               selectHandler(SelectEvent.SelectPlotPreview(plot.preview))
-                               navController.navigate(Route.ProgressDetailsScreen.route)
-                           }
-                       }
-                   }
+                   val weekday = currentWeekday()
 
-               }
-               if (showDialogWorkout == true) {
-                   FeedbackAlertDialog(
-                       title = "You have successfully created your workout!",
-                       message = "",
-                       onDismissRequest = { selectHandler(SelectEvent.SelectShowDialogWorkout(false)) },
-                       onConfirm = {
-                           selectHandler(SelectEvent.SelectShowDialogWorkout(false))
-                       },
-                       confirmButtonText = "Ok",
-                       dismissButtonText = "",
-                       color = MaterialTheme.colorScheme.onError,
-                       showDialog
-                   )
-               }
-               if (showDialogPlan == true) {
-                   FeedbackAlertDialog(
-                       title = "You have successfully created your plan!",
-                       message = "",
-                       onDismissRequest = {  selectHandler(SelectEvent.SelectShowDialogPlan(false)) },
-                       onConfirm = {
-                           selectHandler(SelectEvent.SelectShowDialogPlan(false))
-                       },
-                       confirmButtonText = "Ok",
-                       dismissButtonText = "",
-                       color = MaterialTheme.colorScheme.onError,
-                       showDialog
-                   )
+                   // TODO test
+                   workouts?.forEach { workout ->
+                       if (workout.workoutDay.ordinal == weekday) {
+                           item {
+                               GeneralCard(imageResId = R.drawable.pexels1, title = workout.name) {
+                                   navController.navigate(Route.WorkoutScreen.route)
+                               }
+                           }
+                       }
+                   }
                }
            }
-
        }
+       // TODO no more PlanPagePopup (it has been copied to AddGeneratedPlan)
+       /*
        workouts?.let {
            PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}
+        */
    }
 }
 
@@ -220,7 +165,7 @@ fun CustomBackHandler(
         }
     }
 
-    androidx.activity.compose.LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher?.addCallback(backCallback)
+    LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher?.addCallback(backCallback)
 
     DisposableEffect(onBackPressedDispatcher) {
         backCallback.isEnabled = enabled
@@ -230,7 +175,45 @@ fun CustomBackHandler(
     }
 }
 
-
-
-
-
+@Composable
+fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 8.dp)
+            .height(150.dp)
+            .background(Color.Gray, RoundedCornerShape(16.dp))
+            .clickable {
+                onItemClick()
+            }
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp)) // Clip to the rounded corners
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black),
+                        startY = 300f
+                    ),
+                    RoundedCornerShape(16.dp)
+                )
+        )
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
+        )
+    }
+}

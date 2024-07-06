@@ -12,6 +12,7 @@ import com.project.gains.data.manager.UpdateListener
 import com.project.gains.domain.usecase.linkedSocial.LinkedSocialUseCases
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
+import com.project.gains.presentation.settings.events.ManageDialogEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,6 +29,9 @@ class ShareContentViewModel @Inject constructor(
     // used to store linked social network
     private val _linkedApps = MutableLiveData<MutableList<Int>>()
     val linkedApps: MutableLiveData<MutableList<Int>> = _linkedApps
+
+    private val _showDialogShared = MutableLiveData<Boolean>()
+    val showDialogShared: MutableLiveData<Boolean> = _showDialogShared
 
     init {
 
@@ -47,7 +51,6 @@ class ShareContentViewModel @Inject constructor(
                     linkedSocialUseCases.storeLinkedSocial.invoke(event.apps)
                 }
             }
-
         }
     }
 
@@ -57,6 +60,14 @@ class ShareContentViewModel @Inject constructor(
         when (event) {
             is LinkAppEvent.LinkApp -> {
                 _linkedApps.value?.add(event.app)
+            }
+        }
+    }
+
+    fun onManageDialogEvent(event: ManageDialogEvent) {
+        when (event) {
+            is ManageDialogEvent.SelectShowDialogShared -> {
+                _showDialogShared.value=event.value
             }
         }
     }
