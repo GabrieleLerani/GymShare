@@ -20,11 +20,18 @@ import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import com.project.gains.presentation.events.SelectEvent
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class WorkoutViewModel @Inject constructor() : ViewModel(){
+
+    private val _workouts = MutableLiveData<MutableList<Workout>>()
+    val workouts: MutableLiveData<MutableList<Workout>> = _workouts
+
+    private val _selectedWorkout = MutableLiveData<Workout>()
+    val selectedWorkout: MutableLiveData<Workout> = _selectedWorkout
 
     private val _linkedApps = MutableLiveData<MutableList<Int>>()
     val linkedApps: MutableLiveData<MutableList<Int>> = _linkedApps
@@ -36,12 +43,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     val currentSong: MutableLiveData<Song> = _currentSong
 
     private val _songs = MutableLiveData<MutableList<Song>>()
-
-    private val _selectedWorkout = MutableLiveData<Workout>()
-    val selectedWorkout: MutableLiveData<Workout> = _selectedWorkout
-
-    private val _workouts = MutableLiveData<MutableList<Workout>>()
-    val workouts: MutableLiveData<MutableList<Workout>> = _workouts
 
     private val _exercises = MutableLiveData<MutableList<Exercise>>()
     val exercises: MutableLiveData<MutableList<Exercise>> = _exercises
@@ -160,6 +161,20 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                 _exercises.value?.remove(event.exercise)
             }
 
+        }
+    }
+
+    fun onManageWorkoutEvent(event: ManageWorkoutEvent) {
+        when (event) {
+
+            is ManageWorkoutEvent.CreateWorkout -> {
+                _workouts.value?.add(event.workout)
+                _selectedWorkout.value = event.workout
+            }
+
+            is ManageWorkoutEvent.DeleteWorkout -> {
+                _workouts.value?.remove(event.workout)
+            }
         }
     }
 

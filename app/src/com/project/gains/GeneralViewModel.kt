@@ -1,8 +1,5 @@
 package com.project.gains
 
-
-
-import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -14,30 +11,21 @@ import androidx.lifecycle.ViewModel
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.GymPost
-import com.project.gains.data.Level
-import com.project.gains.data.PeriodMetricType
-import com.project.gains.data.Plan
 import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
-import com.project.gains.data.Session
 import com.project.gains.data.Song
-import com.project.gains.data.TrainingMetricType
-import com.project.gains.data.TrainingType
 
 import com.project.gains.data.Workout
 import com.project.gains.data.generateRandomGymPost
-import com.project.gains.data.generateRandomPlan
 import com.project.gains.data.generateRandomPlots
 import com.project.gains.data.generateRandomSongs
 import com.project.gains.data.generateSampleExercises
-import com.project.gains.data.generateSamplePlans
 import com.project.gains.data.generateSampleWorkouts
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
 
-import com.project.gains.presentation.events.SaveSessionEvent
 import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
@@ -49,12 +37,6 @@ import javax.inject.Inject
 @HiltViewModel
 class GeneralViewModel @Inject constructor() : ViewModel(){
 
-    private val _plans = MutableLiveData<MutableList<Plan>>()
-    val plans: MutableLiveData<MutableList<Plan>> = _plans
-
-    private val _workouts = MutableLiveData<MutableList<Workout>>()
-    val workouts: MutableLiveData<MutableList<Workout>> = _workouts
-
     private val _exercises = MutableLiveData<MutableList<Exercise>>()
     val exercises: MutableLiveData<MutableList<Exercise>> = _exercises
 
@@ -63,9 +45,6 @@ class GeneralViewModel @Inject constructor() : ViewModel(){
 
     private val _songs = MutableLiveData<MutableList<Song>>()
     val songs: MutableLiveData<MutableList<Song>> = _songs
-
-    private val _selectedPlan = MutableLiveData<Plan>()
-    val selectedPlan: MutableLiveData<Plan> = _selectedPlan
 
     private val _selectedApp = MutableLiveData<Int>()
 
@@ -115,86 +94,27 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
     val addedExercises: MutableLiveData<MutableList<Exercise>> = _addedExercises
     private val _linkedSharingMedia = MutableLiveData<MutableList<ImageVector>>()
     val linkedSharingMedia: MutableLiveData<MutableList<ImageVector>> = _linkedSharingMedia
-//
 
     private val _currentSong = MutableLiveData<Song>()
     val currentSong: MutableLiveData<Song> = _currentSong
 
-    private val _currentSessions = MutableLiveData<MutableList<Session>>()
-    val currentSessions: MutableLiveData<MutableList<Session>> = _currentSessions
-
-
-// FOR EACH PLAN
-
-    private val _selectedSessionsPlan = HashMap<Int,HashMap<Int,MutableList<Session>>>()
-    val _selectedMetricsMap = HashMap<Int,MutableList<TrainingMetricType>>()
-    val _selectedPeriodsMap = HashMap<Int,MutableList<PeriodMetricType>>()
-    val _selectedLevelMap = HashMap<Int,Level>()
-
-
-    private val _selectedMusicsMap = HashMap<Int,Boolean>()
-
-    private val _selectedBackupsMap = HashMap<Int,Boolean>()
-
-
-    private val _selectedLvl = MutableLiveData<Level>()
-    val selectedLvl : MutableLiveData<Level> = _selectedLvl
-    private val _selectedPeriod = MutableLiveData<PeriodMetricType>()
-    val selectedPeriod : MutableLiveData<PeriodMetricType> = _selectedPeriod
-    private val _selectedTrainingType = MutableLiveData<TrainingType>()
-    val selectedTrainingType : MutableLiveData<TrainingType> = _selectedTrainingType
-
-
-
-    private var int = 0
-
     private var songIndex = 0
-
-//
-
-
-
 
     init {
         Log.d("LOAD","FETCHING DATA FROM DB")
-        _plans.value = generateSamplePlans()
-        _workouts.value = generateSampleWorkouts()
         _exercises.value = generateSampleExercises(ExerciseType.ARMS,R.drawable.arms)
         _plots.value = generateRandomPlots()
         _posts.value = generateRandomGymPost(10).toMutableList()
-        _currentSessions.value = mutableListOf()
         _linkedApps.value = mutableListOf()
         _currentSong.value=Song("","","")
         _addedExercises.value= mutableListOf()
         _workoutTitle.value=TextFieldValue()
         _songs.value= generateRandomSongs(5)
-        _selectedLvl.value = Level.BEGINNER
-        _selectedPeriod.value=PeriodMetricType.WEEK
-        _selectedTrainingType.value=TrainingType.STRENGTH
         _selectedExercise.value= generateSampleExercises(ExerciseType.ARMS,R.drawable.arms2).get(0)
         _selectedWorkout.value= generateSampleWorkouts().get(0)
-        _selectedPlan.value= generateSamplePlans().get(0)
         _linkedSharingMedia.value?.add(Icons.Default.Email)
         _linkedSharingMedia.value?.add(Icons.Default.Message)
 
-    }
-
-
-    fun onSaveSessionEvent(event: SaveSessionEvent) {
-        when (event) {
-            is SaveSessionEvent.SaveSession -> {
-                _currentSessions.value?.add(event.session)
-                if (_selectedSessionsPlan[event.plan] != null) {
-                    _selectedSessionsPlan[event.plan]?.get(event.workout)?.add(event.session)
-                }
-                else{
-                    val hashMap: HashMap<Int,MutableList<Session>> = HashMap()
-                    hashMap[event.workout] = mutableListOf()
-                    _selectedSessionsPlan[event.plan] = hashMap
-                }
-            }
-
-        }
     }
 
     fun onMusicEvent(event: MusicEvent) {
@@ -272,6 +192,7 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
 
     fun onCreateEvent(event: CreateEvent) {
         when (event) {
+            /*
             is CreateEvent.CreatePlan -> {
                 val num = when(_selectedPeriod.value) {
                     PeriodMetricType.WEEK -> 4
@@ -309,16 +230,21 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
                 _selectedPlan.value = plan
 
             }
+             */
+            /*
             is CreateEvent.CreateWorkout -> {
                 _workouts.value?.add(event.workout)
                 _selectedWorkout.value = event.workout
 
             }
+             */
+            /*
             is CreateEvent.SetPlanOptions -> {
                 _selectedPeriod.value=event.selectedPeriod
                 _selectedLvl.value=event.selectedLevel
                 _selectedTrainingType.value=event.selectedTrainingType
             }
+             */
             is CreateEvent.CreateExercise -> {
                 _exercises.value?.add(event.exercise)
                 _selectedExercise.value = event.exercise
@@ -329,14 +255,17 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
 
     fun onDeleteEvent(event: DeleteEvent) {// delete exercise plan workout
         when (event) {
+/*
             is DeleteEvent.DeletePlan -> {
                 _plans.value?.remove(event.plan)
             }
 
+ */
+/*
             is DeleteEvent.DeleteWorkout -> {
                 _workouts.value?.remove(event.workout)
             }
-
+*/
             is DeleteEvent.DeleteExercise -> {
                 _exercises.value?.remove(event.exercise)
             }
@@ -373,11 +302,11 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
             is SelectEvent.SelectLinkedApp -> {
                 _selectedApp.value = event.app
             }
-
+/*
             is SelectEvent.SelectPlan -> {
                 _selectedPlan.value = event.plan
             }
-
+*/
             is SelectEvent.SelectWorkout -> {
                 _selectedWorkout.value = event.workout
             }

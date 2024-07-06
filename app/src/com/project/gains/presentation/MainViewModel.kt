@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.UserProfileBundle
+import com.project.gains.data.Workout
 import com.project.gains.domain.usecase.appEntry.AppEntryUseCases
 import com.project.gains.domain.usecase.auth.AuthenticationUseCases
 import com.project.gains.presentation.navgraph.Route
@@ -20,12 +21,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val appEntryUseCases: AppEntryUseCases,
     private val authenticationUseCases: AuthenticationUseCases,
-): ViewModel(){
-
+): ViewModel() {
 
     private var _userProfile = MutableLiveData(appEntryUseCases.readUser())
     val userProfile: LiveData<UserProfileBundle?> = _userProfile
-
 
     var startDestination by mutableStateOf(Route.AppStartNavigation.route)
     init {
@@ -36,7 +35,7 @@ class MainViewModel @Inject constructor(
                 } else {
                     Route.SignInScreen.route
                 }
-            }else {
+            } else {
                 Route.OnBoardingScreen.route
             }
         }
@@ -57,10 +56,6 @@ class MainViewModel @Inject constructor(
         _userProfile.value=appEntryUseCases.readUser()
         Log.d("MAIN VIEW","resuming resources ${_userProfile.value}")
     }
-
-
-
-
 
 }
 

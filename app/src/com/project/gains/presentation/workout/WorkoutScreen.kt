@@ -60,9 +60,7 @@ fun WorkoutScreen(
     val showPopup2 = remember { mutableStateOf(false) }
     val showDialogShared by workoutViewModel.showDialogShared.observeAsState()
 
-    val notification = remember {
-        mutableStateOf(false)
-    }
+    var notification = remember { mutableStateOf(false) }
 
     // Sample list of exercises
     val exercises by workoutViewModel.exercises.observeAsState()
