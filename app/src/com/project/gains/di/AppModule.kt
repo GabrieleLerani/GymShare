@@ -37,12 +37,10 @@ import com.mygdx.game.domain.usecase.settings.SettingsUseCases
 import com.mygdx.game.domain.usecase.settings.SignOut
 import com.mygdx.game.domain.usecase.settings.Update
 
-import com.project.gains.util.Constants.RANK_URL
 import com.project.gains.data.manager.AuthManagerImpl
 import com.project.gains.domain.manager.AuthManager
 import com.project.gains.domain.usecase.appEntry.AppEntryUseCases
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 import javax.inject.Singleton
 
 /*
@@ -66,16 +64,6 @@ object AppModule {
     }
 
 
-    @Provides
-    @Singleton
-    fun provideRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(RANK_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-
     @Singleton
     @Provides
     fun provideFirestore(): FirebaseFirestore {
@@ -87,7 +75,7 @@ object AppModule {
     fun provideLocalUserManager(
         application: Application,
         firestore: FirebaseFirestore
-    ): LocalUserManager = LocalUserManagerImpl(context = application,firestore= firestore )
+    ): LocalUserManager = LocalUserManagerImpl(context = application)
 
     @Provides
     @Singleton
@@ -103,7 +91,7 @@ object AppModule {
                                localUserManager: LocalUserManager,
                                authManager: AuthManager
     ): SettingsManager = SettingsManagerImpl(
-        firebaseAuth =firebaseAuth, localUserManager = localUserManager, authManager = authManager
+        firebaseAuth =firebaseAuth, localUserManager = localUserManager
     )
 
     @Provides
@@ -132,7 +120,7 @@ object AppModule {
         signIn = SignIn(authManager),
         signUp = SignUp(authManager),
         authCheck= AuthCheck(authManager),
-        subscribe = Subscribe(settingsManager,authManager,localUserManager)
+        subscribe = Subscribe(settingsManager, authManager)
 
     )
 
@@ -147,7 +135,7 @@ object AppModule {
         update= Update(settingsManager),
         fetch= FetchUserProfile(settingsManager),
         signOut = SignOut(settingsManager),
-        subscribe = Subscribe(settingsManager,authManager,localUserManager)
+        subscribe = Subscribe(settingsManager, authManager)
     )
 
 

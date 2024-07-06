@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.presentation.ShareContentViewModel
+import com.project.gains.presentation.settings.ShareContentViewModel
 
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton

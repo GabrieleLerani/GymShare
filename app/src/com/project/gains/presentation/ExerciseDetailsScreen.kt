@@ -41,6 +41,7 @@ import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.events.SelectEvent
+import com.project.gains.presentation.settings.ShareContentViewModel
 
 import com.project.gains.theme.GainsAppTheme
 
@@ -249,7 +250,7 @@ fun ExerciseDetailsScreen(
 fun ExerciseDetailsScreenPreview() {
     val navController = rememberNavController()
     val generalViewModel:GeneralViewModel = hiltViewModel()
-    val shareContentViewModel:ShareContentViewModel = hiltViewModel()
+    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
     ExerciseDetailsScreen(
         navController = navController,
         generalViewModel = generalViewModel,

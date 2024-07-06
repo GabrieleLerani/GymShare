@@ -175,6 +175,10 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
             is ManageWorkoutEvent.DeleteWorkout -> {
                 _workouts.value?.remove(event.workout)
             }
+
+            is ManageWorkoutEvent.SelectWorkout -> {
+                _selectedWorkout.value = event.workout
+            }
         }
     }
 

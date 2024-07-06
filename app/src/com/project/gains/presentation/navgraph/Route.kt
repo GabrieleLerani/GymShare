@@ -11,7 +11,7 @@ sealed class Route(
     data object SignUpScreen : Route(route = "signUpScreen")
 
     data object SettingsScreen : Route(route = "settingsScreen")
-    data object SettingScreen : Route(route = "settingScreen")
+    data object LinkedSocialSettingScreen : Route(route = "linkedSocialSettingScreen")
     data object AccountScreen : Route(route = "accountScreen")
 
     data object WorkoutScreen : Route(route = "workoutScreen")

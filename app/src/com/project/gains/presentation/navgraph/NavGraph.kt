@@ -20,7 +20,7 @@ import com.project.gains.presentation.onboarding.OnBoardingViewModel
 import com.project.gains.presentation.settings.SettingsScreen
 import com.project.gains.presentation.settings.SettingsViewModel
 import com.project.gains.presentation.MainViewModel
-import com.project.gains.presentation.ShareContentViewModel
+import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.TypedExerciseScreen
 import com.project.gains.presentation.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
@@ -31,7 +31,7 @@ import com.project.gains.presentation.plan.PlanViewModel
 import com.project.gains.presentation.progress.ProgressDetailsScreen
 import com.project.gains.presentation.progress.ProgressScreen
 import com.project.gains.presentation.settings.AccountScreen
-import com.project.gains.presentation.settings.SettingScreen
+import com.project.gains.presentation.settings.LinkedSocialSettingScreen
 import com.project.gains.presentation.workout.WorkoutScreen
 import com.project.gains.presentation.workout.WorkoutViewModel
 
@@ -75,13 +75,13 @@ fun NavGraph(
                 route = Route.SettingsScreen.route
             ) {
                 // set screen as the node state
-                SettingsScreen(viewModel = generalViewModel, navController = navController)
+                SettingsScreen(navController = navController)
             }
             composable(
-                route = Route.SettingScreen.route
+                route = Route.LinkedSocialSettingScreen.route
             ) {
                 // set screen as the node state
-                SettingScreen(navController = navController, linkHandler = generalViewModel::onLinkAppEvent, saveLinkHandler = generalViewModel::onSaveSharingPreferencesEvent,
+                LinkedSocialSettingScreen(navController = navController, linkHandler = generalViewModel::onLinkAppEvent, saveLinkHandler = generalViewModel::onSaveSharingPreferencesEvent,
                     generalViewModel = generalViewModel
                 )
             }
@@ -127,8 +127,7 @@ fun NavGraph(
                 route = Route.ProgressScreen.route
             ) {
                 // set screen as the node state
-                ProgressScreen(navController =navController, selectHandler = generalViewModel::onSelectEvent,                    generalViewModel = generalViewModel
-                )
+                ProgressScreen(navController =navController, selectHandler = generalViewModel::onSelectEvent, generalViewModel = generalViewModel)
             }
             composable(
                 route = Route.ProgressDetailsScreen.route

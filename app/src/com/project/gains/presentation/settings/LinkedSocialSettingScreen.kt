@@ -53,12 +53,11 @@ import com.project.gains.presentation.navgraph.Route
 
 
 import com.project.gains.theme.GainsAppTheme
-import com.project.gains.util.Constants
 
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun SettingScreen(
+fun LinkedSocialSettingScreen(
     navController: NavController,
     linkHandler: (LinkAppEvent) -> Unit,
     saveLinkHandler: (SaveSharingPreferencesEvent) -> Unit,
@@ -66,7 +65,7 @@ fun SettingScreen(
 ) {
     val linkedApps by generalViewModel.linkedApps.observeAsState()
     val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
-    var notification = remember {
+    val notification = remember {
         mutableStateOf(false)
     }
 
@@ -188,7 +187,7 @@ fun SettingScreen(
 fun SettingScreenPreview() {
     val navController = rememberNavController()
     val generalViewModel :GeneralViewModel = hiltViewModel()
-    SettingScreen(
+    LinkedSocialSettingScreen(
         navController = navController,
         saveLinkHandler = {  },
         linkHandler = {},

@@ -42,7 +42,7 @@ import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
-import com.project.gains.presentation.ShareContentViewModel
+import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MetricPopup
@@ -54,7 +54,6 @@ import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.TrainingOverviewChart
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
-import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
 
@@ -233,7 +232,7 @@ fun ProgressDetailsScreen(
 fun ProgressDetailsScreenPreview() {
     val navController = rememberNavController()
     val generalViewModel:GeneralViewModel = hiltViewModel()
-    val shareContentViewModel:ShareContentViewModel = hiltViewModel()
+    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
     ProgressDetailsScreen(
         navController = navController,
         shareHandler = {  },

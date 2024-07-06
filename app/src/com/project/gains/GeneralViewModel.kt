@@ -162,7 +162,6 @@ private val _showDialogWorkout = MutableLiveData<Boolean>()
                 _linkedApps.value = (_linkedApps.value?.plus(event.apps))?.toSet()?.toMutableList()
             }
 
-
         }
     }
 

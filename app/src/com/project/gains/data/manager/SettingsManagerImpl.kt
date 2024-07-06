@@ -7,7 +7,6 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.project.gains.data.UserProfileBundle
 
 
-import com.project.gains.domain.manager.AuthManager
 import com.project.gains.domain.manager.LocalUserManager
 import com.project.gains.domain.manager.SettingsManager
 import com.project.gains.util.Constants.SIGN_OUT_SUCCESS
@@ -20,7 +19,7 @@ import javax.inject.Inject
 class SettingsManagerImpl @Inject constructor(
     private val firebaseAuth: FirebaseAuth?,
     private val localUserManager: LocalUserManager,
-    private val authManager: AuthManager,
+
 ) : SettingsManager {
     private var updateListener: UpdateListener? = null
 
@@ -103,9 +102,7 @@ class SettingsManagerImpl @Inject constructor(
         try {
             // clear firebase
             firebaseAuth?.signOut()
-            // clear rank state
-            // clear anchor owner
-            localUserManager.saveAnchorId("")
+
             // clear user profile state
             val userProfileBundle= UserProfileBundle("", "")
             localUserManager.saveUserProfile(userProfileBundle)

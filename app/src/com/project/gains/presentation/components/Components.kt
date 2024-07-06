@@ -32,10 +32,8 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,16 +44,13 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -82,7 +77,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
@@ -98,8 +92,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import coil.ImageLoader
@@ -109,28 +101,20 @@ import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import coil.size.Size
 import coil.transform.CircleCropTransformation
-import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.data.ExerciseType
-import com.project.gains.data.GymPost
 import com.project.gains.data.Option
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.Song
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
-import com.project.gains.data.Workout
 import com.project.gains.data.bottomNavItems
-import com.project.gains.data.generateOptions
-import com.project.gains.presentation.ShareContentViewModel
-import com.project.gains.presentation.events.CreateEvent
+import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
 import kotlin.math.PI
@@ -1024,7 +1008,8 @@ fun ShareContentPagePopup(
     showPopup: MutableState<Boolean>, apps: MutableList<Int>, show: Boolean?,
     onItemClick: ()->Unit,
     navController: NavController,
-    shareContentViewModel: ShareContentViewModel){
+    shareContentViewModel: ShareContentViewModel
+){
     var clickedApp by remember { mutableIntStateOf(1) }
     var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
 

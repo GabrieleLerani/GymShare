@@ -13,21 +13,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Support
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -53,10 +49,9 @@ import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun SettingsScreen(
-    viewModel: GeneralViewModel,
     navController: NavController
 ) {
-    var notification = remember {
+    val notification = remember {
         mutableStateOf(false)
     }
     GainsAppTheme {
@@ -102,9 +97,9 @@ fun SettingsScreen(
                     }
                     item {
                         SettingItem(
-                            icon = Icons.Default.Send, // Replace with your desired icon
+                            icon = Icons.AutoMirrored.Filled.Send, // Replace with your desired icon
                             title = "Sharing Preferences",
-                            onClick = { navController.navigate(Route.SettingScreen.route) }
+                            onClick = { navController.navigate(Route.LinkedSocialSettingScreen.route) }
                         )
                         Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
                         Spacer(modifier = Modifier.height(20.dp))
@@ -162,7 +157,7 @@ fun SettingsScreen(
 fun settingsPreview(){
     val generalViewModel:GeneralViewModel= hiltViewModel()
     GainsAppTheme {
-        SettingsScreen(viewModel = generalViewModel, navController = rememberNavController())
+        SettingsScreen(navController = rememberNavController())
     }
 }
 

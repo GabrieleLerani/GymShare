@@ -79,9 +79,7 @@ import com.project.gains.presentation.authentication.events.SignInEvent
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
-import com.project.gains.util.Constants.BIO_AUTH_FAILED
-import com.project.gains.util.Constants.BIO_AUTH_SUCCESS
-import com.project.gains.util.Constants.BIO_NOT_AVAILABLE
+
 import com.project.gains.util.Constants.LOGIN_FAILED
 
 
@@ -277,9 +275,7 @@ fun DefaultSignInContent(
                     LOGIN_FAILED -> {
                        openErrorPopup.value=true
                     }
-                    BIO_AUTH_FAILED -> {
-                        openErrorPopup.value=true
-                    }
+
                 }
 
                 // Change page if all ok
