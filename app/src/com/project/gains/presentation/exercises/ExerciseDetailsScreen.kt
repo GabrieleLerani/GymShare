@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.GeneralViewModel
+
 import com.project.gains.R
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
@@ -40,8 +40,8 @@ import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.settings.ShareContentViewModel
+import com.project.gains.presentation.settings.events.ManageDialogEvent
 
 import com.project.gains.theme.GainsAppTheme
 
@@ -50,7 +50,7 @@ import com.project.gains.theme.GainsAppTheme
 fun ExerciseDetailsScreen(
     navController: NavController,
     shareContentViewModel: ShareContentViewModel,
-    selectHandler:(SelectEvent)->Unit
+    selectHandler:(ManageDialogEvent)->Unit
 
 ) {
     // Sample list of workouts
@@ -197,7 +197,7 @@ fun ExerciseDetailsScreen(
                                 onDismissRequest = { showDialog.value = false },
                                 onConfirm = {
                                     showDialog.value = false
-                                    selectHandler(SelectEvent.SelectShowDialogShared(true))
+                                    selectHandler(ManageDialogEvent.SelectShowDialogShared(true))
                                 },
                                 showDialog
                             )
@@ -213,7 +213,7 @@ fun ExerciseDetailsScreen(
                         onDismissRequest = {
                         },
                         onConfirm = {
-                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                            selectHandler(ManageDialogEvent.SelectShowDialogShared(false))
                         },
                         show = showPopup2
                     )
@@ -223,8 +223,7 @@ fun ExerciseDetailsScreen(
         linkedApps?.let {
             ShareContentPagePopup(
                 showPopup2,
-                it,
-                { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
+                { selectHandler(ManageDialogEvent.SelectShowDialogShared(true)) },
                 navController,
                 shareContentViewModel
             )
@@ -240,13 +239,11 @@ fun ExerciseDetailsScreen(
 @Composable
 fun ExerciseDetailsScreenPreview() {
     val navController = rememberNavController()
-    val generalViewModel:GeneralViewModel = hiltViewModel()
     val shareContentViewModel: ShareContentViewModel = hiltViewModel()
     ExerciseDetailsScreen(
         navController = navController,
         shareContentViewModel = shareContentViewModel,
         selectHandler= {  }
-
     )
 }
 

@@ -17,7 +17,8 @@ import com.project.gains.data.generateSampleWorkouts
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.events.SelectEvent
+import com.project.gains.presentation.events.PreviousPageEvent
+import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -40,6 +41,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private val _exercises = MutableLiveData<MutableList<Exercise>>()
     val exercises: MutableLiveData<MutableList<Exercise>> = _exercises
 
+
     private var songIndex = 0
 
 
@@ -50,6 +52,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
         _currentSong.value=Song("","","") // Dummy init
         _songs.value= generateRandomSongs(5)
         _selectedWorkout.value= generateSampleWorkouts()[0]
+
     }
 
 
@@ -95,31 +98,21 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
         }
     }
 
-    fun onSelectEvent(event: SelectEvent) {// delete exercise plan workout
+    fun onSelectEvent(event: ManageWorkoutEvent) {// delete exercise plan workout
         when (event) {
 
-            is SelectEvent.SelectShowDialogShared -> TODO()
-            is SelectEvent.RemoveExerciseToAdd -> TODO()
-            is SelectEvent.SelectClicked -> TODO()
-            is SelectEvent.SelectExercise -> TODO()
-            is SelectEvent.SelectExerciseToAdd -> TODO()
-            is SelectEvent.SelectExerciseType -> TODO()
-            is SelectEvent.SelectIsToAdd -> TODO()
-            is SelectEvent.SelectLinkedApp -> TODO()
-            is SelectEvent.SelectPlan -> TODO()
-            is SelectEvent.SelectPlanPopup -> TODO()
-            is SelectEvent.SelectPlotPreview -> TODO()
-            is SelectEvent.SelectPreviewsPage -> TODO()
-            is SelectEvent.SelectShowDialogPlan -> TODO()
-            is SelectEvent.SelectShowDialogWorkout -> TODO()
-            is SelectEvent.SelectShowPopup3 -> TODO()
-            is SelectEvent.SelectShowPopup4 -> TODO()
-            is SelectEvent.SelectWorkout -> {
+            is ManageWorkoutEvent.SelectWorkout -> {
                 _selectedWorkout.value = event.workout
             }
-            is SelectEvent.SelectWorkoutStored -> TODO()
+
+            is ManageWorkoutEvent.CreateWorkout -> TODO()
+            is ManageWorkoutEvent.DeleteWorkout -> TODO()
+
         }
     }
+
+
+
 
     fun onDeleteEvent(event: DeleteEvent) {// delete exercise plan workout
         when (event) {
@@ -151,6 +144,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
             is ManageWorkoutEvent.SelectWorkout -> {
                 _selectedWorkout.value = event.workout
             }
+
         }
     }
 

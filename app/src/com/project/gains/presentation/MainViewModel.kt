@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.UserProfileBundle
-import com.project.gains.data.Workout
+
 import com.project.gains.domain.usecase.appEntry.AppEntryUseCases
 import com.project.gains.domain.usecase.auth.AuthenticationUseCases
 import com.project.gains.presentation.navgraph.Route
@@ -47,7 +47,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    fun release(){
+    private fun release(){
         Log.d("MAIN VIEW","releasing resources")
         _userProfile.value=null
     }

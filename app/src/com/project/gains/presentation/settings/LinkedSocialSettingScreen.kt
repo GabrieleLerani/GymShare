@@ -47,8 +47,9 @@ import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.SocialMediaRow
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.LinkAppEvent
-import com.project.gains.presentation.events.SaveSharingPreferencesEvent
+import com.project.gains.presentation.events.ManageDataStoreEvent
 import com.project.gains.presentation.navgraph.Route
+
 
 
 import com.project.gains.theme.GainsAppTheme
@@ -59,7 +60,7 @@ import com.project.gains.theme.GainsAppTheme
 fun LinkedSocialSettingScreen(
     navController: NavController,
     linkHandler: (LinkAppEvent) -> Unit,
-    saveLinkHandler: (SaveSharingPreferencesEvent) -> Unit,
+    saveLinkHandler: (ManageDataStoreEvent) -> Unit,
     shareContentViewModel: ShareContentViewModel
 ) {
     val linkedApps by shareContentViewModel.linkedApps.observeAsState()
@@ -137,7 +138,7 @@ fun LinkedSocialSettingScreen(
                                     {
                                         showDialog.value = true
                                         saveLinkHandler(
-                                            SaveSharingPreferencesEvent.SaveSharingPreferences(
+                                            ManageDataStoreEvent.Save(
                                                 linkedApps ?: mutableListOf()
                                             )
                                         )

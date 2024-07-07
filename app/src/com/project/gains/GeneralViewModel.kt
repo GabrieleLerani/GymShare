@@ -1,34 +1,24 @@
 package com.project.gains
 
 import android.util.Log
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Message
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseType
-import com.project.gains.data.GymPost
 import com.project.gains.data.Plot
 import com.project.gains.data.ProgressChartPreview
 import com.project.gains.data.Session
 import com.project.gains.data.Song
 
-import com.project.gains.data.Workout
-import com.project.gains.data.generateRandomGymPost
 import com.project.gains.data.generateRandomPlots
 import com.project.gains.data.generateRandomSongs
 import com.project.gains.data.generateSampleExercises
-import com.project.gains.data.generateSampleWorkouts
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.DeleteEvent
-import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.events.SaveSessionEvent
 
-import com.project.gains.presentation.events.SaveSharingPreferencesEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.events.ShareContentEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,8 +57,8 @@ class GeneralViewModel @Inject constructor() : ViewModel() {
     val workoutTitle: MutableLiveData<TextFieldValue> = _workoutTitle
     private val _isToAdd = MutableLiveData<Boolean>()
     val isToAdd: MutableLiveData<Boolean> = _isToAdd
-    private val _previewsPage = MutableLiveData<String>()
-    val previewsPage: MutableLiveData<String> = _previewsPage
+    private val _previousPage = MutableLiveData<String>()
+    val previousPage: MutableLiveData<String> = _previousPage
     private val _addedExercises = MutableLiveData<MutableList<Exercise>>()
     val addedExercises: MutableLiveData<MutableList<Exercise>> = _addedExercises
 
@@ -164,6 +154,7 @@ class GeneralViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    /*
     fun onCreateEvent(event: CreateEvent) {
         when (event) {
             /*
@@ -284,7 +275,7 @@ class GeneralViewModel @Inject constructor() : ViewModel() {
             }
 
             is SelectEvent.SelectPreviewsPage -> {
-                _previewsPage.value=event.name
+                _previousPage.value=event.name
             }
 
             is SelectEvent.RemoveExerciseToAdd -> {
@@ -307,4 +298,6 @@ class GeneralViewModel @Inject constructor() : ViewModel() {
  */
         }
     }
+
+    */
 }

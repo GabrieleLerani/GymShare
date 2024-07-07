@@ -14,10 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.GeneralViewModel
+
 import com.project.gains.R
 import com.project.gains.data.generateRandomPlots
 import com.project.gains.presentation.components.TopBar
@@ -25,18 +25,18 @@ import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ProgressChartCard
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.progress.events.ProgressEvent
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun ProgressScreen(
     navController: NavController,
-    selectHandler: (SelectEvent) -> Unit,
+    selectHandler: (ProgressEvent) -> Unit,
 
 ) {
     val plots = generateRandomPlots()
-    var notification = remember {
+    val notification = remember {
         mutableStateOf(false)
     }
 
@@ -72,7 +72,7 @@ fun ProgressScreen(
                             ProgressChartCard(plot.preview) {
                                 navController.navigate(Route.ProgressDetailsScreen.route)
                                 selectHandler(
-                                    SelectEvent.SelectPlotPreview(
+                                    ProgressEvent.SelectPlotPreview(
                                         plot.preview
                                     )
                                 )
@@ -91,7 +91,7 @@ fun ProgressScreen(
 @Composable
 fun ProgressScreenPreview() {
     val navController = rememberNavController()
-    val generalViewModel:GeneralViewModel = hiltViewModel()
+
     ProgressScreen(
         navController = navController
 

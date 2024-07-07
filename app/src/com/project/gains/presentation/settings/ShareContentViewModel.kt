@@ -58,7 +58,6 @@ class ShareContentViewModel @Inject constructor(
 
 
     fun onLinkAppEvent(event: LinkAppEvent) {
-        // TODO implement saving on data store
         when (event) {
             is LinkAppEvent.LinkApp -> {
                 _linkedApps.value?.add(event.app)
