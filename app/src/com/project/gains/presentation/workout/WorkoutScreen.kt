@@ -171,6 +171,7 @@ fun WorkoutScreen(
                 }
             }
             // TODO check general view model usage
+            /*
             linkedApps?.let {
                 ShareContentPagePopup(
                     showPopup2,
@@ -180,27 +181,27 @@ fun WorkoutScreen(
                     shareContentViewModel
                 )
             }
-        }
-
+             */
     }
+}
 
 
 
 
 
-    @Preview(showBackground = true)
-    @Composable
-    fun WorkoutScreenPreview() {
-        val navController = rememberNavController()
-        val workoutViewModel: WorkoutViewModel = hiltViewModel()
-        val shareContentViewModel : ShareContentViewModel = hiltViewModel()
-        WorkoutScreen(
-            navController = navController,
-            selectHandler = {},
-            workoutViewModel = workoutViewModel,
-            shareContentViewModel = shareContentViewModel
-        )
-    }
+@Preview(showBackground = true)
+@Composable
+fun WorkoutScreenPreview() {
+    val navController = rememberNavController()
+    val workoutViewModel: WorkoutViewModel = hiltViewModel()
+    val shareContentViewModel : ShareContentViewModel = hiltViewModel()
+    WorkoutScreen(
+        navController = navController,
+        selectHandler = {},
+        workoutViewModel = workoutViewModel,
+        shareContentViewModel = shareContentViewModel
+    )
+}
 
 
 

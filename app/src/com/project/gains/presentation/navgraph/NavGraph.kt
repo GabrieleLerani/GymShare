@@ -26,6 +26,7 @@ import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
 import com.project.gains.presentation.plan.AddGeneratedPlan
 import com.project.gains.presentation.plan.AddManualWorkout
+import com.project.gains.presentation.plan.ManualWorkoutViewModel
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
 import com.project.gains.presentation.plan.PlanViewModel
@@ -132,13 +133,21 @@ fun NavGraph(
                 route = Route.AddGeneratedPlan.route
             ) {
                 // set screen as the node state
-                AddGeneratedPlan(navController = navController)
+                AddGeneratedPlan(navController = navController,
+                    planOptionsHandler = planViewModel::onCreatePlanEvent,
+                    createPlanHandler = planViewModel::onCreatePlanEvent
+                    )
             }
             composable(
                 route = Route.AddManualWorkout.route
             ) {
                 // set screen as the node state
-                AddManualWorkout(navController = navController)
+                val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()
+                AddManualWorkout(navController = navController,
+                    manualWorkoutViewModel = manualWorkoutViewModel,
+                    addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
+                    deleteExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
+                    createWorkoutHandler = workoutViewModel::onManageWorkoutEvent)
             }
 
             composable(
@@ -146,7 +155,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 ProgressScreen(
-                    navController =navController,
+                    navController = navController,
                     selectHandler = generalViewModel::onSelectEvent
                 )
             }
@@ -178,10 +187,8 @@ fun NavGraph(
                     navController = navController,
                     selectHandler = generalViewModel::onSelectEvent,
                     generalViewModel = generalViewModel
-                )            }
-
-
-
+                )
+            }
 
             // more nodes...
         }

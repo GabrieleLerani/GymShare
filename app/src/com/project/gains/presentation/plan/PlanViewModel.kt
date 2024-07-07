@@ -34,10 +34,8 @@ class PlanViewModel @Inject constructor() : ViewModel() {
 
     private val _selectedLvl = MutableLiveData<Level>()
     val selectedLvl : MutableLiveData<Level> = _selectedLvl
-
     private val _selectedPeriod = MutableLiveData<PeriodMetricType>()
     val selectedPeriod : MutableLiveData<PeriodMetricType> = _selectedPeriod
-
     private val _selectedTrainingType = MutableLiveData<TrainingType>()
     val selectedTrainingType : MutableLiveData<TrainingType> = _selectedTrainingType
 

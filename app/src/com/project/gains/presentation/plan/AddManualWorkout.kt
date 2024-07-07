@@ -1,5 +1,7 @@
 package com.project.gains.presentation.plan
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,19 +18,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.OutlinedTextField
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -40,27 +43,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.project.gains.GeneralViewModel
+import androidx.navigation.NavController
 import com.project.gains.data.Exercise
+import com.project.gains.data.Weekdays
+import com.project.gains.data.Workout
 import com.project.gains.presentation.components.AddExerciseItem
-import com.project.gains.presentation.components.DeleteExerciseButton
-import com.project.gains.presentation.events.SelectEvent
+import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.plan.events.ManageExercises
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddManualWorkout(
-    generalViewModel: GeneralViewModel
-){
-    var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
-    val workoutTitleStored by generalViewModel.workoutTitle.observeAsState()
-    val selectedExercises by generalViewModel.addedExercises.observeAsState()
-
-    val removedExercises = remember {
-        mutableStateOf(listOf<Exercise>())
-    }
-
+    navController: NavController,
+    manualWorkoutViewModel: ManualWorkoutViewModel,
+    addExerciseHandler: (ManageExercises.AddExercise) -> Unit,
+    deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
+    createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit
+) {
+    var workoutTitle by remember { mutableStateOf("") }
+    var workoutDay by remember { mutableStateOf(Weekdays.MONDAY) }
+    var expanded by remember { mutableStateOf(false) }
+    val selectedExercises by manualWorkoutViewModel.selectedExercises.observeAsState()
 
     Box(
         modifier = Modifier
@@ -84,7 +90,9 @@ fun AddManualWorkout(
                         .padding(end = 290.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
+                    IconButton(onClick = {
+                        navController.navigate(Route.NewPlanScreen.route)
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Close Icon"
@@ -108,61 +116,110 @@ fun AddManualWorkout(
             item { Spacer(modifier = Modifier.height(10.dp)) }
 
             item {
-
-                (if (workoutTitle.text == "") workoutTitleStored else workoutTitle)?.let {
-                    OutlinedTextField(
-                        value = it,
-                        onValueChange = { newValue ->
-                            workoutTitle = newValue
-                            selectHandler(SelectEvent.SelectWorkoutStored(newValue))
-                        },
-                        label = {
-                            Text(
-                                "Enter workout name...",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                        },
-                        shape = RoundedCornerShape(size = 20.dp),
-                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
-
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                OutlinedTextField(
+                    value = workoutTitle,
+                    onValueChange = { newValue ->
+                        workoutTitle = newValue
+                    },
+                    label = {
+                        Text(
+                            "Enter workout name...",
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
+                    },
+                    shape = RoundedCornerShape(size = 20.dp),
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
+
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
                     )
-                }
+                )
+
                 Spacer(modifier = Modifier.height(16.dp))
 
+                // TODO test it
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Monday") },
+                        onClick = {
+                            workoutDay = Weekdays.MONDAY
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Tuesday") },
+                        onClick = {
+                            workoutDay = Weekdays.TUESDAY
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Wednesday") },
+                        onClick = {
+                            workoutDay = Weekdays.WEDNESDAY
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Thursday") },
+                        onClick = {
+                            workoutDay = Weekdays.THURSDAY
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Friday") },
+                        onClick = {
+                            workoutDay = Weekdays.FRIDAY
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Saturday") },
+                        onClick = {
+                            workoutDay = Weekdays.SATURDAY
+                            expanded = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Sunday") },
+                        onClick = {
+                            workoutDay = Weekdays.SUNDAY
+                            expanded = false
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    selectedExercises?.forEach { exercise ->
-                        println(removedExercises)
-                        if (!removedExercises.value.contains(exercise)) {
-                            Row(
-                                horizontalArrangement = Arrangement.Start,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AddExerciseItem(
-                                    modifier = Modifier.weight(1f),
-                                    exercise = exercise,
-                                    onItemClick = {},
-                                    onItemClick2 = {},
-                                    isSelected = true,
-                                    isToAdd = false
-                                )
-                                Spacer(modifier = Modifier.width(5.dp))
+                    selectedExercises?.forEach { exercise: Exercise ->
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AddExerciseItem(
+                                modifier = Modifier.weight(1f),
+                                exercise = exercise,
+                                onItemClick = {},
+                                onItemClick2 = {},
+                                isSelected = true,
+                                isToAdd = false
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
 
-                                DeleteExerciseButton {
-                                    removedExercises.value = listOf(exercise)
-                                    selectHandler(SelectEvent.RemoveExerciseToAdd(exercise))
-                                }
-
+                            DeleteExerciseButton {
+                                deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
                             }
                         }
                     }
@@ -177,7 +234,9 @@ fun AddManualWorkout(
                         Spacer(modifier = Modifier.width(80.dp))
                         Spacer(modifier = Modifier.width(20.dp))
                         AddExerciseButton {
-                            onItemClick()
+                            // TODO insert a function to specify the behaviour
+                            // this could be an example
+                            //addExerciseHandler(ManageExercises.AddExercise(exercise = exercise))
                         }
                     }
                 }
@@ -187,13 +246,20 @@ fun AddManualWorkout(
             item {
                 Button(
                     onClick = {
-                        selectHandler(SelectEvent.SelectShowDialogWorkout(true))
-                        selectHandler(SelectEvent.SelectPlanPopup(false))
+                        val exercisesList: MutableList<Exercise> = selectedExercises?.toMutableList() ?: mutableListOf()
+                        // after the assignment, delete all exercises so it is ready for a new use
+                        selectedExercises?.forEach {
+                            deleteExerciseHandler(ManageExercises.DeleteExercise(it))
+                        }
+                        createWorkoutHandler(ManageWorkoutEvent.CreateWorkout(
+                            Workout(id = 0, name = workoutTitle, workoutDay = workoutDay, exercises = exercisesList)
+                        ))
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer)
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer),
+                    enabled = selectedExercises != null
                 ) {
                     Text(
                         text = "SAVE WORKOUT",
@@ -201,7 +267,6 @@ fun AddManualWorkout(
                     )
                 }
             }
-
         }
     }
 }

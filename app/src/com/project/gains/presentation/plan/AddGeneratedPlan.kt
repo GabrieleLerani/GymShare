@@ -48,16 +48,22 @@ import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.events.CreateEvent
 import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.onboarding.components.OnBoardingButton
+import com.project.gains.presentation.onboarding.components.OnBoardingTextButton
 import com.project.gains.presentation.onboarding.components.PagerIndicator
 import com.project.gains.presentation.plan.components.OnGeneratedPage
+import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.launch
 
-// TODO check entirely
+// TODO test it because it can be completely broken
+// TODO if it is, then insert the pages with checkboxes inside the onboardingpages
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddGeneratedPlan(
     navController: NavController,
+    planOptionsHandler: (ManagePlanEvent.SetPlanOptions) -> Unit,
+    createPlanHandler: (ManagePlanEvent.CreatePlan) -> Unit
 ) {
     val allOptions = remember { generateOptions() } // List to store selected options
     val options = remember { mutableStateListOf<Option>() } // List to store selected options
@@ -92,7 +98,12 @@ fun AddGeneratedPlan(
             }
 
             HorizontalPager(state = pagerState) { index ->
-                OnGeneratedPage(page = pages[index])
+                OnGeneratedPage(
+                    pagerState = pagerState,
+                    page = pages[index],
+                    navController = navController,
+                    planOptionsHandler = planOptionsHandler
+                )
             }
 
             Spacer(modifier = Modifier.weight(1f))
@@ -112,34 +123,32 @@ fun AddGeneratedPlan(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val scope = rememberCoroutineScope()
-                    //Hide the button when the first element of the list is empty
-                    if (buttonsState.value[0].isNotEmpty()) {
-                        OnBoardingTextButton(
-                            text = buttonsState.value[0],
-                            onClick = {
-                                scope.launch {
+                    OnBoardingTextButton(
+                        text = buttonsState.value[0],
+                        onClick = {
+                            scope.launch {
+                                // if the current page is not the first one, then simply go back
+                                // otherwise go back to the choice screen
+                                if (pagerState.currentPage != 0) {
                                     pagerState.animateScrollToPage(
                                         page = pagerState.currentPage - 1
                                     )
+                                } else {
+                                    navController.navigate(Route.NewPlanScreen.route)
                                 }
-
                             }
-                        )
-                    }
+                        }
+                    )
                     OnBoardingButton(
                         text = buttonsState.value[1],
                         onClick = {
                             scope.launch {
-                                if (pagerState.currentPage == 3){
-                                    // save a value in datastore preferences
-                                    // we launch an event that will be captured by the view model
-                                    event(OnBoardingEvent.SaveAppEntry)
+                                if (pagerState.currentPage == 2) {
+                                    // TODO test if the corresponding event on onGeneratedPage is triggered otherwise trigger it here
+                                    // TODO change the NewPlanScreen with the one suitable to storyboards
                                     // navigate to the main screen
-
-                                    navController.navigate(Route.SignInScreen.route)
-
-
-                                }else{
+                                    navController.navigate(Route.NewPlanScreen.route)
+                                } else {
                                     pagerState.animateScrollToPage(
                                         page = pagerState.currentPage + 1
                                     )
@@ -174,7 +183,9 @@ fun AddGeneratedPlan(
                         .padding(end = 290.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
+                    IconButton(onClick = {
+                        navController.navigate(Route.NewPlanScreen.route)
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Close Icon"
@@ -405,21 +416,15 @@ fun AddGeneratedPlan(
 
             item { Spacer(modifier = Modifier.height(10.dp)) }
 
-
             item {
                 Button(
                     onClick = {
-                        createHandler(
-                            CreateEvent.CreatePlan(
-                                selectedMetrics,
-                                selectedExerciseTypes,
-                                selectedMusic.value,
-                                selectedBackup.value
-                            )
-                        )
-
-                        selectHandler(SelectEvent.SelectPlanPopup(false))
-                        onItemClick()
+                        createPlanHandler(ManagePlanEvent.CreatePlan(
+                            selectedMetrics,
+                            selectedExerciseTypes,
+                            selectedMusic.value,
+                            selectedBackup.value
+                        ))
                     },
                     modifier = Modifier
                         .fillMaxWidth()

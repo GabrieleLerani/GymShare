@@ -1,46 +1,49 @@
 package com.project.gains.presentation.plan.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.project.gains.R
-import com.project.gains.presentation.Dimension
-import com.project.gains.presentation.plan.PlanPage
+import com.project.gains.data.TrainingType
+import com.project.gains.presentation.plan.PlanPages
 import com.project.gains.presentation.plan.pages
 import com.project.gains.theme.GainsAppTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.project.gains.data.Level
+import com.project.gains.data.PeriodMetricType
+import com.project.gains.presentation.GeneralCard
+import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.plan.events.ManagePlanEvent
+import kotlinx.coroutines.launch
 
-// TODO check which composable is correct
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NewPlanPage(
+fun OnGeneratedPage(
     pagerState: PagerState,
     page: PlanPages,
-    createHandler:(CreateEvent)->Unit,
-    selectHandler:(SelectEvent)->Unit,
-
     navController: NavController,
-    clicked: Boolean?
-
+    planOptionsHandler: (ManagePlanEvent.SetPlanOptions) -> Unit
 ) {
 
-    val selectedLevel = remember{ mutableStateOf(Level.BEGINNER) }
-    val selectedLPeriod = remember{ mutableStateOf(PeriodMetricType.WEEK) }
-    val selectedTraining = remember{ mutableStateOf(TrainingType.STRENGTH) }
-
+    val selectedLevel = remember { mutableStateOf(Level.BEGINNER) }
+    val selectedPeriod = remember { mutableStateOf(PeriodMetricType.WEEK) }
+    val selectedTraining = remember { mutableStateOf(TrainingType.STRENGTH) }
 
     LazyColumn(
         modifier = Modifier
@@ -54,7 +57,9 @@ fun NewPlanPage(
                     .padding(end = 290.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                IconButton(onClick = {selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
+                IconButton(onClick = {
+                    navController.navigate(Route.AddGeneratedPlan.route)
+                }) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Close Icon"
@@ -62,81 +67,46 @@ fun NewPlanPage(
                 }
             }
         }
-        item { Text(
-            text = page.title,
-            style = MaterialTheme.typography.headlineMedium
-        ) }
+        item {
+            Text(
+                text = page.title,
+                style = MaterialTheme.typography.headlineMedium
+            )
+        }
         page.pages.forEach{ content ->
 
             item {
                 val scope = rememberCoroutineScope()
 
-
-                GeneralCard(imageResId = content.image, title = content.title){
+                GeneralCard(imageResId = content.image, title = content.title) {
                     scope.launch {
                         when (pagerState.currentPage) {
 
-                            0 ->{ pagerState.animateScrollToPage(
-                                page = pagerState.currentPage + 1
-                            )}
-                            1 -> {pagerState.animateScrollToPage(
-                                page = pagerState.currentPage + 1
-                            )}
-                            2 -> {
-                                createHandler(CreateEvent.SetPlanOptions(
-                                    selectedLevel=selectedLevel.value,
-                                    selectedPeriod=selectedLPeriod.value,
-                                    selectedTrainingType=selectedTraining.value))
-                                selectHandler(SelectEvent.SelectClicked(true))
-                                selectHandler(SelectEvent.SelectShowPopup4(false))
-                                selectHandler(SelectEvent.SelectShowPopup3(true))
-
+                            0 -> {
+                                selectedLevel.value = content.level
+                                pagerState.animateScrollToPage(
+                                    page = pagerState.currentPage + 1
+                                )
                             }
-                            else -> ""
+                            1 -> {
+                                selectedTraining.value = content.trainingType
+                                pagerState.animateScrollToPage(
+                                    page = pagerState.currentPage + 1
+                                )
+                            }
+                            2 -> {
+                                selectedPeriod.value = content.periodMetricType
+                                // TODO test if this event is generated
+                                planOptionsHandler(ManagePlanEvent.SetPlanOptions(
+                                    selectedLevel = selectedLevel.value,
+                                    selectedPeriod = selectedPeriod.value,
+                                    selectedTrainingType = selectedTraining.value
+                                ))
+                            }
                         }
                     }
-                }}
+                }
+            }
         }
-    }
-}
-
-
-@Composable
-fun OnGeneratedPage(
-    modifier: Modifier = Modifier,
-    page: PlanPage,
-) {
-    Column(modifier = modifier){
-        Image(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.60f),
-            painter = painterResource(id = page.image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.height(Dimension.MediumPadding1))
-        Text(
-            text = page.title,
-            modifier= Modifier.padding(horizontal = Dimension.MediumPadding2),
-            style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-            color = colorResource(id = R.color.black)
-        )
-        Text(
-            text = page.description,
-            modifier= Modifier.padding(horizontal = Dimension.MediumPadding2),
-            style = MaterialTheme.typography.bodyMedium,
-            color = colorResource(id = R.color.black)
-        )
-
-    }
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OnBoardingPreview(){
-    GainsAppTheme {
-        com.project.gains.presentation.onboarding.components.OnBoardingPage(page = pages[0])
     }
 }
