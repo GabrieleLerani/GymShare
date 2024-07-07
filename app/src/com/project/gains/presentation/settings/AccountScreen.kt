@@ -73,13 +73,13 @@ fun AccountScreen(
 ) {
     val userProfile by viewModel.userProfile.collectAsState()
     val data by viewModel.data.observeAsState()
-    var flag = remember { mutableStateOf(false) }
-    var notification = remember { mutableStateOf(false) }
+    val flag = remember { mutableStateOf(false) }
+    val notification = remember { mutableStateOf(false) }
     var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
     var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Email") }
     var newPassword by remember { mutableStateOf("New Password") }
-    var showDialog = remember { mutableStateOf(false) }
-    var showDialogComplete = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
+    val showDialogComplete = remember { mutableStateOf(false) }
 
     GainsAppTheme {
         Scaffold(

@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import com.project.gains.GeneralViewModel
 import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.AddExerciseItem
-import com.project.gains.presentation.components.DeleteExerciseButton
 import com.project.gains.presentation.events.SelectEvent
 
 @Composable
@@ -84,7 +83,9 @@ fun AddManualWorkout(
                         .padding(end = 290.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    IconButton(onClick = { selectHandler(SelectEvent.SelectPlanPopup(false)) }) {
+                    IconButton(onClick = {
+                      //  selectHandler(SelectEvent.SelectPlanPopup(false))
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Close Icon"
@@ -114,7 +115,7 @@ fun AddManualWorkout(
                         value = it,
                         onValueChange = { newValue ->
                             workoutTitle = newValue
-                            selectHandler(SelectEvent.SelectWorkoutStored(newValue))
+                            //selectHandler(SelectEvent.SelectWorkoutStored(newValue))
                         },
                         label = {
                             Text(
@@ -160,7 +161,7 @@ fun AddManualWorkout(
 
                                 DeleteExerciseButton {
                                     removedExercises.value = listOf(exercise)
-                                    selectHandler(SelectEvent.RemoveExerciseToAdd(exercise))
+                                    //selectHandler(SelectEvent.RemoveExerciseToAdd(exercise))
                                 }
 
                             }
@@ -177,7 +178,7 @@ fun AddManualWorkout(
                         Spacer(modifier = Modifier.width(80.dp))
                         Spacer(modifier = Modifier.width(20.dp))
                         AddExerciseButton {
-                            onItemClick()
+                          //  onItemClick()
                         }
                     }
                 }
@@ -187,8 +188,8 @@ fun AddManualWorkout(
             item {
                 Button(
                     onClick = {
-                        selectHandler(SelectEvent.SelectShowDialogWorkout(true))
-                        selectHandler(SelectEvent.SelectPlanPopup(false))
+                        //selectHandler(SelectEvent.SelectShowDialogWorkout(true))
+                        //selectHandler(SelectEvent.SelectPlanPopup(false))
                     },
                     modifier = Modifier
                         .fillMaxWidth()

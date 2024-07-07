@@ -41,15 +41,19 @@ import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
-import com.project.gains.presentation.events.SelectEvent
+
+import com.project.gains.presentation.exercises.events.ExerciseEvent
 
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.settings.events.ManageDialogEvent
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun WorkoutScreen(
     navController: NavController,
-    selectHandler: (SelectEvent) -> Unit,
+    shareHandler: (ManageDialogEvent) -> Unit,
+    exerciseHandler: (ExerciseEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
     shareContentViewModel: ShareContentViewModel
 
@@ -143,7 +147,8 @@ fun WorkoutScreen(
                         item {
                             AddExerciseItem(
                                 exercise = exercise, {
-                                    selectHandler(SelectEvent.SelectExercise(exercise))
+
+                                    exerciseHandler(ExerciseEvent.SelectExercise(exercise))
                                     navController.navigate(Route.ExerciseDetailsScreen.route)
                                 },
                                 onItemClick2 = {},
@@ -163,7 +168,7 @@ fun WorkoutScreen(
                         onDismissRequest = {
                         },
                         onConfirm = {
-                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                            shareHandler(ManageDialogEvent.SelectShowDialogShared(false))
                         },
                         show = showPopup2
                     )
@@ -174,8 +179,7 @@ fun WorkoutScreen(
             linkedApps?.let {
                 ShareContentPagePopup(
                     showPopup2,
-                    it,
-                    { selectHandler(SelectEvent.SelectShowDialogShared(true)) },
+                    { shareHandler(ManageDialogEvent.SelectShowDialogShared(true))},
                     navController,
                     shareContentViewModel
                 )
@@ -196,7 +200,8 @@ fun WorkoutScreen(
         val shareContentViewModel : ShareContentViewModel = hiltViewModel()
         WorkoutScreen(
             navController = navController,
-            selectHandler = {},
+            shareHandler = {},
+            exerciseHandler = {},
             workoutViewModel = workoutViewModel,
             shareContentViewModel = shareContentViewModel
         )

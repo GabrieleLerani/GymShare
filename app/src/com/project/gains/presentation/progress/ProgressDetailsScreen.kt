@@ -14,8 +14,9 @@ import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Send
+
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -35,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.GeneralViewModel
 import com.project.gains.R
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.ProgressChartPreview
@@ -52,43 +52,41 @@ import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 
 import com.project.gains.presentation.components.TrainingOverviewChart
-import com.project.gains.presentation.events.SelectEvent
-import com.project.gains.presentation.events.ShareContentEvent
+import com.project.gains.presentation.settings.events.ManageDialogEvent
 
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun ProgressDetailsScreen(
     navController: NavController,
-    shareHandler: (ShareContentEvent.SharePlot) -> Unit,
-    generalViewModel: GeneralViewModel,
     shareContentViewModel: ShareContentViewModel,
-    selectHandler:(SelectEvent)->Unit
+    progressViewModel: ProgressViewModel,
+    selectHandler: (ManageDialogEvent) -> Unit
 ) {
-    var popupVisible1 = remember { mutableStateOf(false) }
-    var popupVisible2 = remember { mutableStateOf(false) }
-    var isTimerRunning by remember { mutableStateOf(false) }
-    val linkedApps by generalViewModel.linkedApps.observeAsState()
-    var showPopup2 = remember { mutableStateOf(false) }
-    val showDialogShared by generalViewModel.showDialogShared.observeAsState()
-    var showDialog = remember { mutableStateOf(false) }
+    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
+    val showDialogShared by shareContentViewModel.showDialogShared.observeAsState()
 
-    val selectedPlan by generalViewModel.selectedPlan.observeAsState()
-    //var selectedMetric = generalViewModel._selectedMetricsMap.get(selectedPlan?.id)?.get(0)
-    //var selectedPeriod = generalViewModel._selectedPeriodsMap.get(selectedPlan?.id)?.get(0)
+    val progressChartPreview by progressViewModel.selectedPlotPreview.observeAsState()
+
+
+    val popupVisible1 = remember { mutableStateOf(false) }
+    val popupVisible2 = remember { mutableStateOf(false) }
+
+    val showPopup2 = remember { mutableStateOf(false) }
+
 
     var selectedMetric by remember { mutableStateOf(TrainingMetricType.BPM) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
-    var trainingData: MutableList<TrainingData> = generateRandomTrainingData(10).toMutableList()
+    val trainingData: MutableList<TrainingData> = generateRandomTrainingData(10).toMutableList()
 
-    val progressChartPreview by generalViewModel.selectedPlotPreview.observeAsState()
+
     val metrics = remember {
         mutableListOf(TrainingMetricType.BPM,TrainingMetricType.DISTANCE,TrainingMetricType.DURATION)
     }
     val periods = remember {
         mutableListOf(PeriodMetricType.YEAR,PeriodMetricType.MONTH,PeriodMetricType.WEEK)
     }
-    var notification = remember {
+    val notification = remember {
         mutableStateOf(false)
     }
     GainsAppTheme {
@@ -97,7 +95,7 @@ fun ProgressDetailsScreen(
                 TopBar(
                     message = "Progress Details",
                     button= {
-                        androidx.compose.material.IconButton(
+                        IconButton(
                             modifier = Modifier.size(45.dp),
                             onClick = {
 
@@ -105,7 +103,7 @@ fun ProgressDetailsScreen(
 
                             }) {
                             androidx.compose.material.Icon(
-                                imageVector = Icons.Default.Send,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
                                 contentDescription = "Share",
                                 tint = MaterialTheme.colorScheme.surface,
                                 modifier = Modifier.graphicsLayer {
@@ -196,7 +194,7 @@ fun ProgressDetailsScreen(
                         onDismissRequest = {
                         },
                         onConfirm = {
-                            selectHandler(SelectEvent.SelectShowDialogShared(false))
+                            selectHandler(ManageDialogEvent.SelectShowDialogShared(false))
                         },
                         show = showPopup2
                     )
@@ -206,8 +204,7 @@ fun ProgressDetailsScreen(
         linkedApps?.let {
             ShareContentPagePopup(
                 showPopup2,
-                it,
-                { selectHandler(SelectEvent.SelectShowDialogShared(true))},
+                { selectHandler(ManageDialogEvent.SelectShowDialogShared(true))},
                 navController,
                 shareContentViewModel
             )
@@ -225,14 +222,12 @@ fun ProgressDetailsScreen(
 @Composable
 fun ProgressDetailsScreenPreview() {
     val navController = rememberNavController()
-    val generalViewModel:GeneralViewModel = hiltViewModel()
     val shareContentViewModel: ShareContentViewModel = hiltViewModel()
+    val progressViewModel : ProgressViewModel = hiltViewModel()
     ProgressDetailsScreen(
         navController = navController,
-        shareHandler = {  },
-        generalViewModel,
-        shareContentViewModel,
-        selectHandler = {}
-
+        shareContentViewModel = shareContentViewModel,
+        progressViewModel = progressViewModel,
+        shareContentViewModel::onManageDialogEvent
     )
 }

@@ -9,4 +9,5 @@ sealed class ManageWorkoutEvent {
 
     data class SelectWorkout(val workout : Workout) : ManageWorkoutEvent()
 
+
 }
