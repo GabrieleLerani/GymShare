@@ -56,6 +56,7 @@ import com.project.gains.data.Workout
 
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.NotificationCard
+import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.ManageDataStoreEvent
 import com.project.gains.presentation.events.SelectEvent

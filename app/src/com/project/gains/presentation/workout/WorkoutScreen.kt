@@ -179,7 +179,7 @@ fun WorkoutScreen(
             linkedApps?.let {
                 ShareContentPagePopup(
                     showPopup2,
-                    { shareHandler(ManageDialogEvent.SelectShowDialogShared(true))},
+                    { shareHandler(ManageDialogEvent.SelectShowDialogShared(true)) },
                     navController,
                     shareContentViewModel
                 )
