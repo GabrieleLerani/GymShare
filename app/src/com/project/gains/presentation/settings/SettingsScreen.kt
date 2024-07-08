@@ -153,7 +153,7 @@ fun SettingsScreen(
 @Composable
 @Preview
 fun settingsPreview(){
-    val generalViewModel:GeneralViewModel= hiltViewModel()
+
     GainsAppTheme {
         SettingsScreen(navController = rememberNavController())
     }

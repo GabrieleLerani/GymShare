@@ -51,7 +51,6 @@ class AuthenticationViewModel  @Inject constructor(
                 goSignIn(event.email, event.password)
             }
 
-            else -> {}
         }
     }
 
@@ -63,7 +62,6 @@ class AuthenticationViewModel  @Inject constructor(
                 goSignUp(event.name, event.email, event.password, event.confirmPass)
             }
 
-            else -> {}
         }
     }
 

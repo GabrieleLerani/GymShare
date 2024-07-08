@@ -87,10 +87,11 @@ fun HomeScreen(
                                navController.navigate(Route.WorkoutModeScreen.route)
                            }) {
                            Icon(
-                               imageVector = ImageVector.vectorResource(id = R.drawable.workout_mode),
+                               painter = painterResource(R.drawable.workout_mode),
                                contentDescription = "Workout Mode",
                                tint = MaterialTheme.colorScheme.surface
                            )
+
                        }
                    }
                ) {
