@@ -28,9 +28,6 @@ import androidx.navigation.compose.rememberNavController
 
 import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.AddExerciseItem
-import com.project.gains.presentation.components.BackButton
-import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.workout.WorkoutViewModel
@@ -58,124 +55,108 @@ fun TypedExerciseScreen(
     }
 
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Exercises",
-                    button = {}
-                ) {
-                    BackButton {
-                        navController.popBackStack()
-                    }
-                }
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            }
-        ) { paddingValues ->
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+
+        ) {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.Top
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp),
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    item {
-                        // Remember if the search query is empty
-                        TextField(
-                            colors = TextFieldDefaults.textFieldColors(
-                                containerColor = Color.DarkGray,
-                                cursorColor = MaterialTheme.colorScheme.surface,
-                                focusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                                focusedLabelColor = MaterialTheme.colorScheme.surface,
-                                unfocusedLabelColor = MaterialTheme.colorScheme.surface
-                            ),
-                            value = searchQuery.value,
-                            onValueChange = { query ->
-                                searchQuery.value = query
-                                isSearchQueryEmpty.value = query.isBlank()
-                                searchedExercises.value = if (query.isNotBlank()) {
-                                    allExercises?.filter {
-                                        it.name.contains(query, ignoreCase = true)
-                                    } ?: listOf()
-                                } else {
-                                    listOf()
-                                }
-                            },
-                            label = {
-                                if (isSearchQueryEmpty.value) {
-                                    Text("Search Exercise", color = MaterialTheme.colorScheme.surface)
-                                }
-                            },
-                            leadingIcon = {
-                                IconButton(
-                                    onClick = {
-                                        searchedExercises.value = allExercises?.filter {
-                                            it.name.contains(searchQuery.value, ignoreCase = true)
-                                        } ?: listOf()
-                                        localKeyboardController?.hide()
-                                    },
-                                    content = {
-                                        Icon(
-                                            imageVector = Icons.Default.Search,
-                                            contentDescription = "Search Icon",
-                                            tint = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    }
-                                )
-                            },
-                            keyboardActions = KeyboardActions(
-                                onSearch = {
+                item {
+                    // Remember if the search query is empty
+                    TextField(
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color.DarkGray,
+                            cursorColor = MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = MaterialTheme.colorScheme.surface,
+                            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
+                            focusedLabelColor = MaterialTheme.colorScheme.surface,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.surface
+                        ),
+                        value = searchQuery.value,
+                        onValueChange = { query ->
+                            searchQuery.value = query
+                            isSearchQueryEmpty.value = query.isBlank()
+                            searchedExercises.value = if (query.isNotBlank()) {
+                                allExercises?.filter {
+                                    it.name.contains(query, ignoreCase = true)
+                                } ?: listOf()
+                            } else {
+                                listOf()
+                            }
+                        },
+                        label = {
+                            if (isSearchQueryEmpty.value) {
+                                Text("Search Exercise", color = MaterialTheme.colorScheme.surface)
+                            }
+                        },
+                        leadingIcon = {
+                            IconButton(
+                                onClick = {
                                     searchedExercises.value = allExercises?.filter {
                                         it.name.contains(searchQuery.value, ignoreCase = true)
                                     } ?: listOf()
                                     localKeyboardController?.hide()
+                                },
+                                content = {
+                                    Icon(
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "Search Icon",
+                                        tint = MaterialTheme.colorScheme.onSurface
+                                    )
                                 }
-                            ),
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Search
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 16.dp)
-                                .clip(RoundedCornerShape(20.dp))
-                        )
-                    }
+                            )
+                        },
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                searchedExercises.value = allExercises?.filter {
+                                    it.name.contains(searchQuery.value, ignoreCase = true)
+                                } ?: listOf()
+                                localKeyboardController?.hide()
+                            }
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Search
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                    )
+                }
 
-                    items(searchedExercises.value) { exercise ->
-                        AddExerciseItem(
-                            exercise = exercise,
-                            onItemClick = { exerciseToAdd ->
-                                searchedExercises.value = searchedExercises.value.toMutableList().apply {
-                                    add(exerciseToAdd)
-                                }
-                                selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
-                                navController.navigate(Route.ExerciseDetailsScreen.route)
-                            },
-                            onItemClick2 = {
-                                selectExerciseHandler(ExerciseEvent.SelectExerciseToAdd(exercise))
-                                // TODO review according to add plan and manual workout
-                                /*selectHandler(SelectEvent.SelectPlanPopup(true))
-                                selectHandler(SelectEvent.SelectClicked(true))
-                                selectHandler(SelectEvent.SelectShowPopup3(false))
-                                selectHandler(SelectEvent.SelectShowPopup4(true))*/
-                                if (previousPage=="Home"){
-                                    navController.navigate(Route.HomeScreen.route)
-                                } else{
-                                    navController.navigate(Route.PlanScreen.route)
+                items(searchedExercises.value) { exercise ->
+                    AddExerciseItem(
+                        exercise = exercise,
+                        onItemClick = { exerciseToAdd ->
+                            searchedExercises.value = searchedExercises.value.toMutableList().apply {
+                                add(exerciseToAdd)
+                            }
+                            selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
+                            navController.navigate(Route.ExerciseDetailsScreen.route)
+                        },
+                        onItemClick2 = {
+                            selectExerciseHandler(ExerciseEvent.SelectExerciseToAdd(exercise))
+                            // TODO review according to add plan and manual workout
+                            /*selectHandler(SelectEvent.SelectPlanPopup(true))
+                            selectHandler(SelectEvent.SelectClicked(true))
+                            selectHandler(SelectEvent.SelectShowPopup3(false))
+                            selectHandler(SelectEvent.SelectShowPopup4(true))*/
+                            if (previousPage=="Home"){
+                                navController.navigate(Route.HomeScreen.route)
+                            } else{
+                                navController.navigate(Route.PlanScreen.route)
 
-                                }
-                            },
-                            isSelected = true,
-                            isToAdd = isToAdd ?: false,
-                            modifier = Modifier
-                        )
-                    }
+                            }
+                        },
+                        isSelected = true,
+                        isToAdd = isToAdd ?: false,
+                        modifier = Modifier
+                    )
                 }
             }
         }

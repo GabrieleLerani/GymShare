@@ -58,39 +58,23 @@ fun FeedScreen(
     feedViewModel: FeedViewModel
 ) {
     val gymPosts by feedViewModel.posts.observeAsState()
-    var notification = remember { mutableStateOf(false) }
+
 
     // Assuming you have a function to fetch gym posts from an API or elsewhere
     // You'll need to implement this function accordingly
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = " Explore Feed",
-                    button= {
-                        LogoUser(
-                            modifier = Modifier.size(60.dp), R.drawable.pexels5
-                        ) { navController.navigate(Route.AccountScreen.route) }
-                    }
-                ) {}
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            },            bottomBar = { BottomNavigationBar(navController = navController) }
-        ) { paddingValues ->
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+
+        ) {
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                    .fillMaxSize() ,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize() ,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    gymPosts?.forEach{gymPost ->
-                        item { FeedPost(gymPost) }
-                    }
+                gymPosts?.forEach{gymPost ->
+                    item { FeedPost(gymPost) }
                 }
             }
         }

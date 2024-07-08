@@ -122,22 +122,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-@Composable
-fun BackButton(onClick: () -> Unit) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.size(45.dp),
-    ) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Share Icon",
-            modifier = Modifier
-                .size(60.dp)
-                .padding(10.dp),
-            tint = MaterialTheme.colorScheme.surface
-        )
-    }
-}
+
 
 @Composable
 fun AddExerciseItem(
@@ -611,105 +596,6 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String) {
             }
         }
     }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    val currentRoute = currentRoute(navController)
-
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.onSurface,
-        contentColor = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.height(64.dp) // Adjust the height of the BottomNavigation
-    ) {
-        bottomNavItems.forEach { item ->
-            val isSelected = currentRoute == item.route
-            val iconColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.surface
-            val iconSize = 32.dp
-            val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.surface
-
-            BottomNavigationItem(
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title,
-                            modifier = Modifier.size(iconSize), // Adjust the size of the icon
-                            tint = iconColor
-                        )
-                        //Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
-                    }
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        fontSize = 12.sp, // Set the desired text size here
-                        maxLines = 1, // Limit to one line to prevent overflow
-                        color = textColor
-                    )
-                },
-                selected = isSelected,
-                onClick = {
-                    navController.navigate(item.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                    }
-                },
-                alwaysShowLabel = true // This will hide labels when not selected
-            )
-        }
-    }
-}
-
-@Composable
-fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
-    TopAppBar(
-        backgroundColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        elevation = 4.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            button1()
-
-            Text(
-                text = message,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
-                    shadow = Shadow(
-                        color = Color.Black,
-                        offset = Offset(2f, 2f),
-                        blurRadius = 4f
-                    )
-                ),
-                color = MaterialTheme.colorScheme.onPrimary,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
-            )
-            button()
-        }
-    }
-}
-
-@Composable
-fun currentRoute(navController: NavController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
 }
 
 @Composable

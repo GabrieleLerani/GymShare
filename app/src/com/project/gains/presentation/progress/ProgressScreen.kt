@@ -41,51 +41,35 @@ fun ProgressScreen(
     }
 
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Progress",
-                    button= {
-                        LogoUser(
-                            modifier = Modifier.size(60.dp), R.drawable.pexels5
-                        ) { navController.navigate(Route.AccountScreen.route) }
-                    }
-                ) {}
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            },            bottomBar = { BottomNavigationBar(navController = navController) }
-        ) { paddingValues ->
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+
+        ) {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(20.dp),
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    ) {
-                    plots.forEach{plot ->
+                plots.forEach{plot ->
 
-                        item{
-                            ProgressChartCard(plot.preview) {
-                                navController.navigate(Route.ProgressDetailsScreen.route)
-                                selectHandler(
-                                    ProgressEvent.SelectPlotPreview(
-                                        plot.preview
-                                    )
+                    item{
+                        ProgressChartCard(plot.preview) {
+                            navController.navigate(Route.ProgressDetailsScreen.route)
+                            selectHandler(
+                                ProgressEvent.SelectPlotPreview(
+                                    plot.preview
                                 )
-                            }
-                            Spacer(modifier = Modifier.height(16.dp)) // Add spacing between cards
+                            )
                         }
+                        Spacer(modifier = Modifier.height(16.dp)) // Add spacing between cards
                     }
-                 }
-
                 }
             }
+
         }
     }
+}
 
 @Preview(showBackground = true)
 @Composable

@@ -82,145 +82,126 @@ fun AccountScreen(
     val showDialogComplete = remember { mutableStateOf(false) }
 
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Account Settings",
-                    button = {
-                    }
-                ) {
-                    BackButton {
-                        showDialog.value = false
-                        navController.popBackStack()
-                    }
-                }
-                if (notification.value) {
-                    NotificationCard(message = "Notification", onClose = { notification.value = false })
-                }
-            },
-        ) { paddingValues ->
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
+                item {
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                        // Profile Picture
-                        Box(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.pexels1), // Placeholder image
-                                contentDescription = "Profile Picture",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        // Display Name
-                        Text(
-                            text = userProfile?.displayName ?: "Username",
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = FontWeight.Bold
+                    // Profile Picture
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.pexels1), // Placeholder image
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
                         )
+                    }
 
-                        // Display Email
-                        Text(
-                            text = userProfile?.email ?: "Email",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                    // Display Name
+                    Text(
+                        text = userProfile?.displayName ?: "Username",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontWeight = FontWeight.Bold
+                    )
 
-                        // Edit Profile Button
-                        Button(
-                            onClick = { showDialog.value = true },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 32.dp),
-                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
-                        ) {
-                            Text(text = "Edit Profile", color = MaterialTheme.colorScheme.surface)
+                    // Display Email
+                    Text(
+                        text = userProfile?.email ?: "Email",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Edit Profile Button
+                    Button(
+                        onClick = { showDialog.value = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp),
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
+                    ) {
+                        Text(text = "Edit Profile", color = MaterialTheme.colorScheme.surface)
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Logout Button
+                    Button(
+                        onClick = { signOutHandler(SignOutEvent.SignOut) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 32.dp),
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.onError)
+                    ) {
+                        Text(text = "Logout", color = MaterialTheme.colorScheme.onSurface)
+                    }
+
+                    // Observe changes in data
+                    if (data?.isNotEmpty() == true) {
+                        if (data == UPDATE_SUCCESS && !flag.value) {
+                            showDialog.value = true
+                            flag.value = true
+                        } else if (data != SIGN_OUT_SUCCESS && data != UPDATE_SUCCESS && !flag.value) {
+                            showDialog.value = true
+                            flag.value = true
                         }
-
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        // Logout Button
-                        Button(
-                            onClick = { signOutHandler(SignOutEvent.SignOut) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 32.dp),
-                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.onError)
-                        ) {
-                            Text(text = "Logout", color = MaterialTheme.colorScheme.onSurface)
-                        }
-
-                        // Observe changes in data
-                        if (data?.isNotEmpty() == true) {
-                            if (data == UPDATE_SUCCESS && !flag.value) {
-                                showDialog.value = true
-                                flag.value = true
-                            } else if (data != SIGN_OUT_SUCCESS && data != UPDATE_SUCCESS && !flag.value) {
-                                showDialog.value = true
-                                flag.value = true
-                            }
-                            else if (data == SIGN_OUT_SUCCESS) {
-                                // Change page if all ok
-                                if (viewModel.navigateToAnotherScreen.value == true) {
-                                    navController.navigate(Route.SignInScreen.route)
-                                    viewModel.onNavigationComplete()
-                                }
+                        else if (data == SIGN_OUT_SUCCESS) {
+                            // Change page if all ok
+                            if (viewModel.navigateToAnotherScreen.value == true) {
+                                navController.navigate(Route.SignInScreen.route)
+                                viewModel.onNavigationComplete()
                             }
                         }
                     }
                 }
+            }
 
-                if (showDialog.value) {
-                    EditProfileDialog(
-                        newName = newName,
-                        newEmail = newEmail,
-                        newPassword = newPassword,
-                        onNameChange = { newName = it },
-                        onEmailChange = { newEmail = it },
-                        onPasswordChange = { newPassword = it },
-                        onSave = {
-                            settingsHandler(UpdateEvent.Update(newName, newEmail, newPassword))
-                            showDialog.value = false
-                            flag.value=true
-                            showDialogComplete.value = true
-                        },
-                        onDismiss = { showDialog.value = false }
-                    )
-                }
+            if (showDialog.value) {
+                EditProfileDialog(
+                    newName = newName,
+                    newEmail = newEmail,
+                    newPassword = newPassword,
+                    onNameChange = { newName = it },
+                    onEmailChange = { newEmail = it },
+                    onPasswordChange = { newPassword = it },
+                    onSave = {
+                        settingsHandler(UpdateEvent.Update(newName, newEmail, newPassword))
+                        showDialog.value = false
+                        flag.value=true
+                        showDialogComplete.value = true
+                    },
+                    onDismiss = { showDialog.value = false }
+                )
+            }
 
-                if (showDialogComplete.value) {
+            if (showDialogComplete.value) {
 
-                    FeedbackAlertDialog(
-                        title = "You have successfully Updated your profile!",
-                        onDismissRequest = {
-                        },
-                        onConfirm = {
-                            showDialogComplete.value=false
-                        },
-                        show = showDialogComplete
-                    )
-                }
+                FeedbackAlertDialog(
+                    title = "You have successfully Updated your profile!",
+                    onDismissRequest = {
+                    },
+                    onConfirm = {
+                        showDialogComplete.value=false
+                    },
+                    show = showDialogComplete
+                )
             }
         }
     }

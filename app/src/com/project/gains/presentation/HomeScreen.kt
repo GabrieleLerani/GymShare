@@ -35,10 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,9 +64,6 @@ fun HomeScreen(
     val openPopup = remember { mutableStateOf(false) }
     val workouts by workoutViewModel.workouts.observeAsState()
 
-    var notification = remember { mutableStateOf(false) }
-
-
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
             ?: return,
@@ -76,62 +72,35 @@ fun HomeScreen(
         openPopup.value = true
     }
 
+
    GainsAppTheme {
-       Scaffold(
-           topBar = {
-               TopBar(
-                   message = "Home",
-                   button = {
-                       IconButton(
-                           modifier = Modifier.size(45.dp),
-                           onClick = {
-                               // TODO Go to workout mode
-                               navController.navigate(Route.WorkoutModeScreen.route)
-                           }) {
-                           Icon(
-                               imageVector = Icons.Default.FitnessCenter,
-                               contentDescription = "Workout Mode",
-                               tint = MaterialTheme.colorScheme.surface
-                           )
-
-                       }
-                   }
-               ) {
-
-               }
-               if (notification.value){
-                   NotificationCard(message ="CIAO", onClose = {notification.value=false})
-               }
-           },
-           bottomBar = { BottomNavigationBar(navController = navController) }
-       ) { paddingValues ->
-           Box(
+       Box(
+           modifier = Modifier
+               .fillMaxSize()
+       ) {
+           LazyColumn(
                modifier = Modifier
-                   .fillMaxSize()
-                   .padding(paddingValues)
+                   .fillMaxSize(),
+               verticalArrangement = Arrangement.Center
+
            ) {
-               LazyColumn(
-                   modifier = Modifier
-                       .fillMaxSize(),
-                   verticalArrangement = Arrangement.Center
+               val weekday = currentWeekday()
 
-               ) {
-                   val weekday = currentWeekday()
-
-                   // TODO test
-                   workouts?.forEach { workout ->
-                       if (workout.workoutDay.ordinal == weekday) {
-                           item {
-                               GeneralCard(imageResId = R.drawable.pexels1, title = workout.name) {
-                                   navController.navigate(Route.WorkoutScreen.route)
-                               }
+               // TODO test
+               workouts?.forEach { workout ->
+                   if (workout.workoutDay.ordinal == weekday) {
+                       item {
+                           GeneralCard(imageResId = R.drawable.pexels1, title = workout.name) {
+                               navController.navigate(Route.WorkoutScreen.route)
                            }
                        }
                    }
                }
            }
        }
-       // TODO no more PlanPagePopup (it has been copied to AddGeneratedPlan)
+
+
+       // TODO no more PlanPagePopup (it has been copied to AddGeneratedPlanScreen)
        /*
        workouts?.let {
            PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}

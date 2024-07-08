@@ -83,80 +83,28 @@ fun PlanScreen(
     val workouts by workoutViewModel.workouts.observeAsState()
 
     GainsAppTheme {
-
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = selectedPlan?.name ?: "Your Plan",
-                    button= {
-                        IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
-                                showPopup.value = true
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "Share",
-                                tint = MaterialTheme.colorScheme.surface,
-                                modifier = Modifier.graphicsLayer {
-                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
-                                }
-                            )
-                        }
-                    }
-                ) {
-                    IconButton(
-                        modifier = Modifier.size(45.dp),
-                        onClick = {
-                            // TODO go to progress screen
-                        }) {
-                        Icon(
-                            imageVector = Icons.Default.BarChart,
-                            contentDescription = "Stats",
-                            tint = MaterialTheme.colorScheme.surface
-                        )
-                    }
-                }
-                if (notification.value){
-                    NotificationCard(
-                        message ="Notification",
-                        onClose = {
-                            notification.value = false
-                        }
-                    )
-                }
-            },
-            bottomBar = {
-                BottomNavigationBar(
-                    navController = navController
-                )
-            }
-        ) { paddingValues ->
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Center
+
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center
 
-                ) {
-
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            WorkoutHeader(selectedLevel, selectedPeriod, selectedTraining)
-                            Spacer(modifier = Modifier.height(16.dp))
-                            WorkoutDaysList(workouts ?: mutableListOf()) {
-                                navController.navigate(Route.WorkoutScreen.route)
-                            }
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        WorkoutHeader(selectedLevel, selectedPeriod, selectedTraining)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        WorkoutDaysList(workouts ?: mutableListOf()) {
+                            navController.navigate(Route.WorkoutScreen.route)
                         }
                     }
                 }
@@ -170,6 +118,7 @@ fun PlanScreen(
             shareContentViewModel = shareContentViewModel
         )
     }
+
 }
 
 @Composable

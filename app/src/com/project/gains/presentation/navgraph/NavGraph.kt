@@ -1,11 +1,14 @@
 package com.project.gains.presentation.navgraph
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.compose.rememberNavController
 import com.project.gains.presentation.exercises.ExerciseDetailsScreen
 import com.project.gains.presentation.HomeScreen
 
@@ -41,9 +44,11 @@ import com.project.gains.presentation.workout.WorkoutViewModel
 
 @Composable
 fun NavGraph(
-    startDestination: String
+    startDestination: String,
+    navController: NavHostController,
+    paddingValues: PaddingValues
 ) {
-    val navController = rememberNavController()
+    //val navController = rememberNavController()
     val authenticationViewModel : AuthenticationViewModel = init()
     val workoutViewModel : WorkoutViewModel = hiltViewModel()
     val shareContentViewModel : ShareContentViewModel = hiltViewModel()
@@ -51,7 +56,7 @@ fun NavGraph(
     val progressViewModel : ProgressViewModel = hiltViewModel()
     val exerciseViewModel : ExerciseViewModel = hiltViewModel()
 
-    NavHost(navController = navController, startDestination = startDestination){
+    NavHost(navController = navController, startDestination = startDestination, modifier = Modifier.padding(paddingValues)){
         // construct a nested nav graph
         navigation(
             route = Route.AppStartNavigation.route,
@@ -133,7 +138,7 @@ fun NavGraph(
                 NewPlanScreen(navController = navController)
             }
             composable(
-                route = Route.AddGeneratedPlan.route
+                route = Route.AddGeneratedPlanScreen.route
             ) {
                 // set screen as the node state
                 AddGeneratedPlan(navController = navController,
@@ -142,7 +147,7 @@ fun NavGraph(
                     )
             }
             composable(
-                route = Route.AddManualWorkout.route
+                route = Route.AddManualWorkoutScreen.route
             ) {
                 // set screen as the node state
                 val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()

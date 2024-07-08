@@ -11,11 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.data.TrainingType
 import com.project.gains.presentation.plan.PlanPages
-import com.project.gains.presentation.plan.pages
-import com.project.gains.theme.GainsAppTheme
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
@@ -58,7 +55,7 @@ fun OnGeneratedPage(
                 horizontalArrangement = Arrangement.Center
             ) {
                 IconButton(onClick = {
-                    navController.navigate(Route.AddGeneratedPlan.route)
+                    navController.navigate(Route.AddGeneratedPlanScreen.route)
                 }) {
                     Icon(
                         imageVector = Icons.Default.Close,

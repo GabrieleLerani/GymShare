@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -14,12 +14,11 @@ import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.ArrowDropDown
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+
 
 
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,13 +41,13 @@ import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
 import com.project.gains.presentation.settings.ShareContentViewModel
-import com.project.gains.presentation.components.BackButton
+
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MetricPopup
-import com.project.gains.presentation.components.NotificationCard
+
 import com.project.gains.presentation.components.PeriodPopup
 import com.project.gains.presentation.components.ShareContentPagePopup
-import com.project.gains.presentation.components.TopBar
+
 
 import com.project.gains.presentation.components.TrainingOverviewChart
 import com.project.gains.presentation.settings.events.ManageDialogEvent
@@ -90,51 +88,19 @@ fun ProgressDetailsScreen(
         mutableStateOf(false)
     }
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Progress Details",
-                    button= {
-                        IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
 
-                                showPopup2.value=true
-
-                            }) {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "Share",
-                                tint = MaterialTheme.colorScheme.surface,
-                                modifier = Modifier.graphicsLayer {
-                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
-                                }
-                            )
-                        }
-                    }
-                ) {
-                    BackButton {
-                        navController.popBackStack()
-                    }
-                }
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            }
-        ) { paddingValues ->
-            Box(
+        ) {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 20.dp, end = 20.dp),
+                    .padding(start = 20.dp, end = 20.dp),
 
                 ) {
-                    item {
-                        Row(
+                item {
+                    Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(vertical = 8.dp)
@@ -154,8 +120,8 @@ fun ProgressDetailsScreen(
                         }
                     } }
 
-                    item {
-                        MetricPopup(
+                item {
+                    MetricPopup(
                         selectedMetricMap = metrics,
                         popupVisible = popupVisible1,
                         onDismiss = { popupVisible1.value = false },
@@ -165,42 +131,42 @@ fun ProgressDetailsScreen(
                         },
                         selectedMetric = selectedMetric
                     )
-                    }
-                    item {
-                        PeriodPopup(
-                            periods,
-                            popupVisible = popupVisible2,
-                            onDismiss = { popupVisible2.value = false },
-                            onOptionSelected = { period ->
-                                selectedPeriod = period
-                                popupVisible2.value = false
-                            },
-                            selectedMetric = selectedPeriod
-                        )
-                    }
-
-                    item {    TrainingOverviewChart(
-                        trainingData =trainingData,
-                        selectedMetric = selectedMetric,
-                        selectedPeriod = selectedPeriod,
-                        selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plot3)
-                    ) }
-
-                    }
-                if (showDialogShared==true) {
-
-                    FeedbackAlertDialog(
-                        title = "You have successfully Shared your content!",
-                        onDismissRequest = {
+                }
+                item {
+                    PeriodPopup(
+                        periods,
+                        popupVisible = popupVisible2,
+                        onDismiss = { popupVisible2.value = false },
+                        onOptionSelected = { period ->
+                            selectedPeriod = period
+                            popupVisible2.value = false
                         },
-                        onConfirm = {
-                            selectHandler(ManageDialogEvent.SelectShowDialogShared(false))
-                        },
-                        show = showPopup2
+                        selectedMetric = selectedPeriod
                     )
                 }
-                }
+
+                item {    TrainingOverviewChart(
+                    trainingData =trainingData,
+                    selectedMetric = selectedMetric,
+                    selectedPeriod = selectedPeriod,
+                    selectedPlotType = progressChartPreview ?: ProgressChartPreview("", R.drawable.plot3)
+                ) }
+
             }
+            if (showDialogShared==true) {
+
+                FeedbackAlertDialog(
+                    title = "You have successfully Shared your content!",
+                    onDismissRequest = {
+                    },
+                    onConfirm = {
+                        selectHandler(ManageDialogEvent.SelectShowDialogShared(false))
+                    },
+                    show = showPopup2
+                )
+            }
+        }
+
         linkedApps?.let {
             ShareContentPagePopup(
                 showPopup2,
@@ -208,8 +174,8 @@ fun ProgressDetailsScreen(
                 navController,
                 shareContentViewModel
             )
-        } }
-
+        }
+    }
 }
 
 

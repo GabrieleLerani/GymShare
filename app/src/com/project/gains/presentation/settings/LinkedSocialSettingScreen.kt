@@ -85,97 +85,77 @@ fun LinkedSocialSettingScreen(
 
 
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Sharing Preferences",
-                    button= {
-                        LogoUser(
-                            modifier = Modifier.size(60.dp), R.drawable.pexels5
-                        ) { navController.navigate(Route.AccountScreen.route) }
-                    }
-                ) {
-                    BackButton {
-                        navController.popBackStack()
-                    }
-                }
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            },
-        ) { paddingValues ->
-            Box(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+
+        ) {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(bottom = 50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 50.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    item {
-                        icons.forEach { icon ->
-                            SocialMediaRow(
-                                icon = icon,
-                                isLinked = linkedApps?.contains(icon) == true,
-                                linkHandler = linkHandler,
-                                clickedApps = clickedApps
-                            )
-                            Spacer(modifier = Modifier.height(20.dp))
+                item {
+                    icons.forEach { icon ->
+                        SocialMediaRow(
+                            icon = icon,
+                            isLinked = linkedApps?.contains(icon) == true,
+                            linkHandler = linkHandler,
+                            clickedApps = clickedApps
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        }
-
-                        Spacer(modifier = Modifier.height(30.dp))
                     }
-                    item {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick =
-                                    {
-                                        showDialog.value = true
-                                        saveLinkHandler(
-                                            ManageDataStoreEvent.Save(
-                                                linkedApps ?: mutableListOf()
-                                            )
-                                        )
-                                    },
-                                modifier = Modifier.size(60.dp),
-                                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                            ) {
-                                androidx.compose.material3.Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = "Save Icon",
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .padding(10.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                            }
-                        } }
-                    item {
-                        if (showDialog.value) {
-                            FeedbackAlertDialog(
-                                title =  "You have successfully updated your preferences!",
-                                onDismissRequest = { showDialog.value = false },
-                                onConfirm = {
-                                    showDialog.value = false
-                                },
-                                show = showDialog
 
+                    Spacer(modifier = Modifier.height(30.dp))
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick =
+                            {
+                                showDialog.value = true
+                                saveLinkHandler(
+                                    ManageDataStoreEvent.Save(
+                                        linkedApps ?: mutableListOf()
+                                    )
+                                )
+                            },
+                            modifier = Modifier.size(60.dp),
+                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+                        ) {
+                            androidx.compose.material3.Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Save Icon",
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .padding(10.dp),
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
+                    } }
+                item {
+                    if (showDialog.value) {
+                        FeedbackAlertDialog(
+                            title =  "You have successfully updated your preferences!",
+                            onDismissRequest = { showDialog.value = false },
+                            onConfirm = {
+                                showDialog.value = false
+                            },
+                            show = showDialog
+
+                        )
                     }
                 }
-
             }
+
         }
     }
 }

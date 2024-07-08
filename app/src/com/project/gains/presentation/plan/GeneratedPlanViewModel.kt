@@ -6,5 +6,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GeneratedPlanViewModel @Inject constructor() : ViewModel() {
-    // TODO populate it and use it to save things coming from AddGeneratedPlan
+    // TODO populate it and use it to save things coming from AddGeneratedPlanScreen
 }

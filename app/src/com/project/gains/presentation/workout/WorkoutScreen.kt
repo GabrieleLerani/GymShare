@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Icon
 
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -70,121 +71,63 @@ fun WorkoutScreen(
 
 
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = workout?.name ?: "Workout",
-                    button = {
-                        androidx.compose.material.IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
 
-                                showPopup2.value = true
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.Center
 
-                            }) {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "Share",
-                                tint = MaterialTheme.colorScheme.surface,
-                                modifier = Modifier.graphicsLayer {
-                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
-                                }
-                            )
-                        }
-                    }
-                ) {
-                    BackButton {
-                        navController.popBackStack()
-                    }
-                }
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            },
-            bottomBar = {
+            ) {
+                exercises?.forEach { exercise ->
+                    item {
+                        AddExerciseItem(
+                            exercise = exercise, {
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(64.dp)
-                        .background(MaterialTheme.colorScheme.onSurface),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = {
-                            // TODO navController.navigate(Route.SessionScreen.route)
-                        },
-                        modifier = Modifier.size(50.dp),
-                        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-                    ) {
-                        androidx.compose.material3.Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "Start Icon",
+                                exerciseHandler(ExerciseEvent.SelectExercise(exercise))
+                                navController.navigate(Route.ExerciseDetailsScreen.route)
+                            },
+                            onItemClick2 = {},
+                            isSelected = true,
+                            isToAdd = false,
                             modifier = Modifier
-                                .size(50.dp)
-                                .padding(10.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }
 
             }
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp),
-                    verticalArrangement = Arrangement.Center
 
-                ) {
-                    exercises?.forEach { exercise ->
-                        item {
-                            AddExerciseItem(
-                                exercise = exercise, {
+            if (showDialogShared==true) {
 
-                                    exerciseHandler(ExerciseEvent.SelectExercise(exercise))
-                                    navController.navigate(Route.ExerciseDetailsScreen.route)
-                                },
-                                onItemClick2 = {},
-                                isSelected = true,
-                                isToAdd = false,
-                                modifier = Modifier
-                            )
-                        }
-                    }
-
-                }
-
-                if (showDialogShared==true) {
-
-                    FeedbackAlertDialog(
-                        title = "You have successfully Shared your content!",
-                        onDismissRequest = {
-                        },
-                        onConfirm = {
-                            shareHandler(ManageDialogEvent.SelectShowDialogShared(false))
-                        },
-                        show = showPopup2
-                    )
-                }
-                }
-            }
-            // TODO check general view model usage
-            linkedApps?.let {
-                ShareContentPagePopup(
-                    showPopup2,
-                    { shareHandler(ManageDialogEvent.SelectShowDialogShared(true)) },
-                    navController,
-                    shareContentViewModel
+                FeedbackAlertDialog(
+                    title = "You have successfully Shared your content!",
+                    onDismissRequest = {
+                    },
+                    onConfirm = {
+                        shareHandler(ManageDialogEvent.SelectShowDialogShared(false))
+                    },
+                    show = showPopup2
                 )
             }
+        }
+
+
+        linkedApps?.let {
+            ShareContentPagePopup(
+                showPopup2,
+                { shareHandler(ManageDialogEvent.SelectShowDialogShared(true)) },
+                navController,
+                shareContentViewModel
+            )
+        }
     }
+
+
+
 }
 
 

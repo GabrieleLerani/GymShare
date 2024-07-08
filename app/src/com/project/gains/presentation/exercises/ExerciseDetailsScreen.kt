@@ -60,166 +60,130 @@ fun ExerciseDetailsScreen(
     val showPopup2 = remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
 
-    val notification = remember {
-        mutableStateOf(false)
-    }
-
     GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Chest",
-                    button = {
-                        androidx.compose.material.IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
 
-                                showPopup2.value = true
-
-                            }) {
-                            androidx.compose.material.Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "Share",
-                                tint = MaterialTheme.colorScheme.surface,
-                                modifier = Modifier.graphicsLayer {
-                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
-                                }
-                            )
-                        }
-                    }
-                ) {
-                    BackButton {
-                        navController.popBackStack()
-                    }
-                }
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            },
-        ) { paddingValues ->
-            Box(
+        ) {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
 
-                    item {
-                        Image(
-                            painter = painterResource(R.drawable.legs),
-                            contentDescription = "Exercise",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(400.dp)
-                                .padding(bottom = 16.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    item {
-                        androidx.compose.material.Text(
-                            text = "30-degree incline dumbbell bench press",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
-
-                    item {
-                        androidx.compose.material.Text(
-                            text = "The inclined dumbbell bench press is considered as the best basic exercise for developing the pectoral muscles and increasing general strength. This exercise allows a greater amplitude of movement than the classic bar press, and allows you to work out the muscles more efficiently.",
-                            fontSize = 16.sp
-                        )
-                    }
-                    item { Spacer(modifier = Modifier.height(30.dp)) }
-
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Instruction",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
-
-                    item { Spacer(modifier = Modifier.height(30.dp)) }
-                    val instructionList = listOf(
-                        "1) Lie down on the incline bench at an angle of 30 degrees, holding dumbbells in bent arms at the sides of your chest (palms facing forward).",
-                        "2) After taking a deep breath, squeeze the dumbbells up into fully straightened arms. At the uppermost point, exhale.",
-                        "3) Smoothly return to the starting position. Your elbows should be out to the sides and move along an imaginary line...",
-                        // Add more instructions here
-                    )
-
-                    val warningList = listOf(
-                        "Keep your back straight.",
-                        "Avoid locking your elbows.",
-                        "Maintain a consistent speed."
-                    )
-
-
-                    instructionList.forEach { instruction ->
-                        item {
-                            InstructionCard(text = instruction)
-
-                        }
-                    }
-
-                    item { Spacer(modifier = Modifier.height(30.dp)) }
-
-                    item {
-                        androidx.compose.material.Text(
-                            text = "Warning",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                    }
-
-                    item { Spacer(modifier = Modifier.height(30.dp)) }
-
-                    warningList.forEach { warning ->
-                        item {
-                            WarningCard(message = warning)
-
-                        }
-                        item { Spacer(Modifier.height(5.dp)) }
-                    }
-
-                    item {
-                        if (showDialog.value) {
-                            FeedbackAlertDialog(
-                                title = "Select a social",
-                                onDismissRequest = { showDialog.value = false },
-                                onConfirm = {
-                                    showDialog.value = false
-                                    selectHandler(ManageDialogEvent.SelectShowDialogShared(true))
-                                },
-                                showDialog
-                            )
-                        }
-                    }
-
-
-                }
-                if (showDialogShared==true) {
-
-                    FeedbackAlertDialog(
-                        title = "You have successfully Shared your content!",
-                        onDismissRequest = {
-                        },
-                        onConfirm = {
-                            selectHandler(ManageDialogEvent.SelectShowDialogShared(false))
-                        },
-                        show = showPopup2
+                item {
+                    Image(
+                        painter = painterResource(R.drawable.legs),
+                        contentDescription = "Exercise",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(400.dp)
+                            .padding(bottom = 16.dp),
+                        contentScale = ContentScale.Crop
                     )
                 }
+
+                item {
+                    androidx.compose.material.Text(
+                        text = "30-degree incline dumbbell bench press",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                item {
+                    androidx.compose.material.Text(
+                        text = "The inclined dumbbell bench press is considered as the best basic exercise for developing the pectoral muscles and increasing general strength. This exercise allows a greater amplitude of movement than the classic bar press, and allows you to work out the muscles more efficiently.",
+                        fontSize = 16.sp
+                    )
+                }
+                item { Spacer(modifier = Modifier.height(30.dp)) }
+
+                item {
+                    androidx.compose.material.Text(
+                        text = "Instruction",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(30.dp)) }
+                val instructionList = listOf(
+                    "1) Lie down on the incline bench at an angle of 30 degrees, holding dumbbells in bent arms at the sides of your chest (palms facing forward).",
+                    "2) After taking a deep breath, squeeze the dumbbells up into fully straightened arms. At the uppermost point, exhale.",
+                    "3) Smoothly return to the starting position. Your elbows should be out to the sides and move along an imaginary line...",
+                    // Add more instructions here
+                )
+
+                val warningList = listOf(
+                    "Keep your back straight.",
+                    "Avoid locking your elbows.",
+                    "Maintain a consistent speed."
+                )
+
+
+                instructionList.forEach { instruction ->
+                    item {
+                        InstructionCard(text = instruction)
+
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.height(30.dp)) }
+
+                item {
+                    androidx.compose.material.Text(
+                        text = "Warning",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+
+                item { Spacer(modifier = Modifier.height(30.dp)) }
+
+                warningList.forEach { warning ->
+                    item {
+                        WarningCard(message = warning)
+
+                    }
+                    item { Spacer(Modifier.height(5.dp)) }
+                }
+
+                item {
+                    if (showDialog.value) {
+                        FeedbackAlertDialog(
+                            title = "Select a social",
+                            onDismissRequest = { showDialog.value = false },
+                            onConfirm = {
+                                showDialog.value = false
+                                selectHandler(ManageDialogEvent.SelectShowDialogShared(true))
+                            },
+                            showDialog
+                        )
+                    }
+                }
+
+
+            }
+            if (showDialogShared==true) {
+
+                FeedbackAlertDialog(
+                    title = "You have successfully Shared your content!",
+                    onDismissRequest = {
+                    },
+                    onConfirm = {
+                        selectHandler(ManageDialogEvent.SelectShowDialogShared(false))
+                    },
+                    show = showPopup2
+                )
             }
         }
+
         linkedApps?.let {
             ShareContentPagePopup(
                 showPopup2,
@@ -228,8 +192,8 @@ fun ExerciseDetailsScreen(
                 shareContentViewModel
             )
         }
-
     }
+
 }
 
 

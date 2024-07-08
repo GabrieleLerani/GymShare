@@ -49,98 +49,77 @@ import com.project.gains.theme.GainsAppTheme
 fun SettingsScreen(
     navController: NavController
 ) {
-    val notification = remember {
-        mutableStateOf(false)
-    }
-    GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = " General Settings",
-                    button= {
-                        LogoUser(
-                            modifier = Modifier.size(60.dp), R.drawable.pexels5
-                        ) { navController.navigate(Route.AccountScreen.route) }
-                    }
-                ) {
 
-                }
-                if (notification.value){
-                    NotificationCard(message ="Notification", onClose = {notification.value=false})
-                }
-            },
-            bottomBar = { BottomNavigationBar(navController = navController) }
-        ) { paddingValues ->
-            Box(
+    GainsAppTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+
+        ) {
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(16.dp),
             ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                ) {
-                    item {
-                        SettingItem(
-                            icon = Icons.Default.Person, // Replace with your desired icon
-                            title = "Account Preferences",
-                            onClick = {navController.navigate(Route.AccountScreen.route) }
-                        )
-                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                        Spacer(modifier = Modifier.height(20.dp))
+                item {
+                    SettingItem(
+                        icon = Icons.Default.Person, // Replace with your desired icon
+                        title = "Account Preferences",
+                        onClick = {navController.navigate(Route.AccountScreen.route) }
+                    )
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    }
-                    item {
-                        SettingItem(
-                            icon = Icons.AutoMirrored.Filled.Send, // Replace with your desired icon
-                            title = "Sharing Preferences",
-                            onClick = { navController.navigate(Route.LinkedSocialSettingScreen.route) }
-                        )
-                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                        Spacer(modifier = Modifier.height(20.dp))
+                }
+                item {
+                    SettingItem(
+                        icon = Icons.AutoMirrored.Filled.Send, // Replace with your desired icon
+                        title = "Sharing Preferences",
+                        onClick = { navController.navigate(Route.LinkedSocialSettingScreen.route) }
+                    )
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    }
-                    item {
-                        SettingItem(
-                            icon = Icons.Default.Group, // Replace with your desired icon
-                            title = "Tutorial",
-                            onClick = { /* Handle click */ }
-                        )
-                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                        Spacer(modifier = Modifier.height(20.dp))
+                }
+                item {
+                    SettingItem(
+                        icon = Icons.Default.Group, // Replace with your desired icon
+                        title = "Tutorial",
+                        onClick = { /* Handle click */ }
+                    )
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    }
-                    item {
-                        SettingItem(
-                            icon = Icons.Default.Support, // Replace with your desired icon
-                            title = "Write to support",
-                            onClick = {  }
-                        )
-                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                        Spacer(modifier = Modifier.height(20.dp))
+                }
+                item {
+                    SettingItem(
+                        icon = Icons.Default.Support, // Replace with your desired icon
+                        title = "Write to support",
+                        onClick = {  }
+                    )
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    }
-                    item {
-                        SettingItem(
-                            icon = Icons.Default.Share, // Replace with your desired icon
-                            title = "Tell a friend",
-                            onClick = { /* Handle click */ }
-                        )
-                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                        Spacer(modifier = Modifier.height(20.dp))
+                }
+                item {
+                    SettingItem(
+                        icon = Icons.Default.Share, // Replace with your desired icon
+                        title = "Tell a friend",
+                        onClick = { /* Handle click */ }
+                    )
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    }
-                    item {
-                        SettingItem(
-                            icon = Icons.Default.Star, // Replace with your desired icon
-                            title = "Rate the app",
-                            onClick = { /* Handle click */ }
-                        )
-                        Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                        Spacer(modifier = Modifier.height(20.dp))
+                }
+                item {
+                    SettingItem(
+                        icon = Icons.Default.Star, // Replace with your desired icon
+                        title = "Rate the app",
+                        onClick = { /* Handle click */ }
+                    )
+                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    }
                 }
             }
         }
