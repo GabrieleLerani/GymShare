@@ -1,10 +1,5 @@
 package com.project.gains.presentation.components
 
-//noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
-
-import android.graphics.Paint
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,35 +22,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.AlertDialog
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.BottomNavigation
-//noinspection UsingMaterialAndMaterial3Libraries,
-import androidx.compose.material.BottomNavigationItem
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Divider
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.LinearProgressIndicator
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.TopAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FastForward
-import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -63,66 +43,28 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
-import coil.ImageLoader
-import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.GifDecoder
-import coil.request.ImageRequest
-import coil.size.Size
-import coil.transform.CircleCropTransformation
 import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.data.PeriodMetricType
-import com.project.gains.data.ProgressChartPreview
-import com.project.gains.data.Song
-import com.project.gains.data.TrainingData
-import com.project.gains.data.TrainingMetricType
-import com.project.gains.data.bottomNavItems
 import com.project.gains.presentation.settings.ShareContentViewModel
-import com.project.gains.presentation.events.LinkAppEvent
-import com.project.gains.presentation.events.ManageDataStoreEvent
-import com.project.gains.presentation.events.MusicEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
-import kotlinx.coroutines.delay
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.random.Random
-
-
 
 @Composable
 fun AddExerciseItem(
@@ -176,123 +118,6 @@ fun AddExerciseItem(
 }
 
 @Composable
-fun PeriodPopup(
-    selectedPeriodMap: MutableList<PeriodMetricType>?,
-    popupVisible: MutableState<Boolean>,
-    onDismiss: () -> Unit,
-    onOptionSelected: (PeriodMetricType) -> Unit,
-    selectedMetric: PeriodMetricType
-) {
-    if (popupVisible.value) {
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            title = {
-
-            },
-            text = {
-                Spacer(modifier = Modifier.height(10.dp))
-                Column(Modifier.padding(top=20.dp)) {
-                    selectedPeriodMap?.forEach { metric ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .clickable { onOptionSelected(metric) }
-                        ) {
-                            Text(
-                                text = metric.name,
-                                color = if (metric == selectedMetric)MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-            },
-            buttons = {
-                Column {
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.padding(5.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Cancel",color = Color.Red)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(50.dp)
-                                .background(Color.Gray)
-                        )
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
-        )
-    }
-}
-
-@Composable
-fun ProgressChartCard(
-    chartPreview: ProgressChartPreview,
-    onItemClick: (ProgressChartPreview) -> Unit
-) {
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onItemClick(chartPreview)
-            },
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
-        ),
-        shape = RoundedCornerShape(8.dp) // Add rounded corners to the card
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = chartPreview.name,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Image(
-                painter = painterResource(id = chartPreview.imageResId),
-                contentDescription = null, // Provide a meaningful content description
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-
-@Composable
 fun SocialMediaIcon(icon: Int, onClick: () -> Unit, isSelected: Boolean) {
     androidx.compose.material.IconButton(onClick = onClick) {
         Box(
@@ -336,264 +161,6 @@ fun SharingMediaIcon(icon: ImageVector, onClick: () -> Unit, isSelected: Boolean
                 modifier = Modifier
                     .size(38.dp) // Adjust the size of the icon to fit within the padding
             )
-        }
-    }
-}
-
-@Composable
-fun TrainingOverviewChart(
-    trainingData: List<TrainingData>,
-    selectedMetric: TrainingMetricType,
-    selectedPeriod: PeriodMetricType,
-    selectedPlotType: ProgressChartPreview
-) {
-    val values= remember {
-        mutableListOf<Float>()
-    }
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        trainingData.forEachIndexed { _, data ->
-            values.add(data.value.toFloat())
-        }
-            when (selectedPlotType.imageResId) {
-                R.drawable.plot2 -> {
-                    // Bar plot (Vertical bar plot)
-                    BarPlot(trainingData,selectedPeriod.toString(),selectedMetric.toString())
-                }
-                R.drawable.plot3 -> {
-                    // Pie plot (Circular pie chart)
-                    PiePlot(trainingData, selectedPeriod.toString())
-                }
-            }
-    }
-}
-
-
-
-
-@Composable
-fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: String) {
-    val maxValue = trainingData.maxOf { it.value }
-    val barSpacing: Dp = 4.dp
-    val density = LocalDensity.current
-
-    Canvas(modifier = Modifier
-        .size(400.dp)
-        .padding(20.dp)) {
-        val totalBars = trainingData.size
-        val totalSpacing = (totalBars - 1) * barSpacing.toPx()
-        val barWidth = (size.width - totalSpacing) / totalBars
-        val graphHeight = size.height
-
-        // Draw X-axis label (Metric Type)
-        drawIntoCanvas {
-            val textWidth = with(density) { size.width.toDp() }
-            val textHeight = with(density) { 16.dp.toPx() }
-
-            it.nativeCanvas.drawText(
-                valueType,
-                (size.width - textWidth.toPx()) / 2,
-                graphHeight + textHeight + 24.dp.toPx(),
-                Paint().apply {
-                    color = Color.Black.toArgb()
-                    textSize = density.run { 16f.sp.toPx() }
-                    isAntiAlias = true
-                }
-            )
-        }
-
-        // Draw X-axis
-        drawRoundRect(
-            color = Color.Gray,
-            topLeft = Offset(0f, graphHeight),
-            size = androidx.compose.ui.geometry.Size(size.width, 4.dp.toPx()),
-            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
-        )
-
-        // Draw Y-axis label
-        drawIntoCanvas {
-            val maxLabel = maxValue.toString()
-            val textWidth = with(density) { 16.dp.toPx() }
-            val textHeight = with(density) { 12.dp.toPx() }
-            rotate(degrees = 90f, pivot = Offset(-textWidth -50 , textHeight + 900)) {
-
-                it.nativeCanvas.drawText(
-                    metricType,
-                    -textWidth - 50,
-                    textHeight + 900,
-                    Paint().apply {
-                        color = Color.Black.toArgb()
-                        textSize = density.run { 14f.sp.toPx() }
-                        isAntiAlias = true
-                    }
-                )
-            }
-
-            it.nativeCanvas.drawText(
-                maxLabel,
-                -textWidth -50 ,
-                 textHeight,
-                Paint().apply {
-                    color = Color.Black.toArgb()
-                    textSize = density.run { 14f.sp.toPx() }
-                    isAntiAlias = true
-                }
-            )
-        }
-
-        // Draw Y-axis
-        drawRoundRect(
-            color = Color.Gray,
-            topLeft = Offset(0f, 0f),
-            size = androidx.compose.ui.geometry.Size(4.dp.toPx(), graphHeight),
-            cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
-        )
-
-        // Draw X-axis labels (Bar indices)
-        trainingData.forEachIndexed { index, _ ->
-            val startX = index * (barWidth + barSpacing.toPx())
-            val label = "${index + 1}"
-
-            drawIntoCanvas {
-                val textWidth = with(density) { (barWidth - 8.dp.toPx()).toDp() }
-                val textHeight = with(density) { 16.dp.toPx() }
-
-                it.nativeCanvas.drawText(
-                    label,
-                    startX + (barWidth - textWidth.toPx()) / 2,
-                    graphHeight + textHeight + 4.dp.toPx(),
-                    Paint().apply {
-                        color = Color.Black.toArgb()
-                        textSize = density.run { 14f.sp.toPx() }
-                        isAntiAlias = true
-                    }
-                )
-            }
-        }
-
-        // Draw bars
-        trainingData.forEachIndexed { index, data ->
-            val barHeight = data.value / maxValue.toFloat()
-            val startX = index * (barWidth + barSpacing.toPx())
-            val startY = graphHeight * (1 - barHeight)
-
-            // Random color generation for the bars
-            val color = Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
-
-            // Draw background bar
-            drawRoundRect(
-                color = Color.LightGray,
-                topLeft = Offset(startX, startY),
-                size = androidx.compose.ui.geometry.Size(barWidth, graphHeight * barHeight),
-                cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
-            )
-
-            // Draw actual bar
-            drawRoundRect(
-                color = color,
-                topLeft = Offset(startX, startY),
-                size = androidx.compose.ui.geometry.Size(barWidth, graphHeight * barHeight),
-                cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx())
-            )
-        }
-    }
-}
-@Composable
-fun PiePlot(trainingData: List<TrainingData>, valueType: String) {
-    val totalValue = trainingData.sumOf { it.value }
-    val colorMap = HashMap<Int, Color>()
-    Row(modifier = Modifier.padding(30.dp)) {
-        // Canvas for pie plot
-        Canvas(modifier = Modifier.size(200.dp)) {
-            val canvasWidth = size.width
-            val canvasHeight = size.height
-            val radius = size.minDimension / 2
-            val innerRadius = radius * 0.4f // Adjust inner radius to create the donut effect
-
-            var startAngle = 0f
-            val centerX = canvasWidth / 2
-            val centerY = canvasHeight - radius / 2
-
-            trainingData.forEachIndexed { index, data ->
-                val sweepAngle = (data.value / totalValue.toFloat()) * 360
-
-                // Calculate slice color
-                val sliceColor =Color(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
-
-                colorMap[index] = sliceColor
-
-                // Draw pie segment
-                drawArc(
-                    color = sliceColor,
-                    startAngle = startAngle,
-                    sweepAngle = sweepAngle,
-                    useCenter = false,
-                    topLeft = Offset(centerX - radius, centerY - radius),
-                    size = androidx.compose.ui.geometry.Size(radius * 2, radius * 2),
-                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = radius - innerRadius)
-                )
-
-                // Calculate the middle angle for label position
-                val middleAngle = startAngle + sweepAngle / 2
-                val middleAngleRad = middleAngle * (PI / 180) // Convert to radians
-                val labelRadius = (radius + innerRadius) / 1.3f
-
-                val labelX = centerX + labelRadius * cos(middleAngleRad).toFloat()
-                val labelY = centerY + labelRadius * sin(middleAngleRad).toFloat()
-
-                // Draw percentage label
-                drawIntoCanvas {
-                    it.nativeCanvas.drawText(
-                        "${(data.value / totalValue.toFloat() * 100).toInt()}%",
-                        labelX,
-                        labelY,
-                        Paint().apply {
-                            color = if (sliceColor != Color.Yellow) android.graphics.Color.WHITE else android.graphics.Color.BLACK
-                            textSize = 30f
-                            textAlign = android.graphics.Paint.Align.CENTER
-                            isAntiAlias = true
-                        }
-                    )
-                }
-
-                startAngle += sweepAngle
-            }
-        }
-
-        Spacer(modifier = Modifier.width(30.dp))
-        // Canvas for legend
-        Canvas(modifier = Modifier.size(100.dp)) {
-            val legendOffsetY = 20.dp.toPx()
-            val legendBoxSize = 20.dp.toPx()
-            val legendTextSize = 30f
-
-            trainingData.forEachIndexed { index, _ ->
-                val legendX = 20.dp.toPx()
-                val legendY = legendOffsetY + index * (legendBoxSize + 8.dp.toPx())
-
-                // Legend box
-                drawRoundRect(
-                    color = colorMap[index] ?: Color.White,
-                    topLeft = Offset(legendX, legendY),
-                    size = androidx.compose.ui.geometry.Size(legendBoxSize, legendBoxSize),
-                    cornerRadius = CornerRadius(4.dp.toPx(), 4.dp.toPx())
-                )
-
-                // Legend text
-                drawIntoCanvas {
-                    it.nativeCanvas.drawText(
-                        "$valueType ${index + 1}",
-                        legendX + legendBoxSize + 8.dp.toPx(),
-                        legendY + legendBoxSize * 0.75f,
-                        Paint().apply {
-                            color = android.graphics.Color.BLACK
-                            textSize = legendTextSize
-                            isAntiAlias = true
-                        }
-                    )
-                }
-            }
         }
     }
 }
@@ -988,94 +555,6 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface
-        )
-    }
-}
-
-
-
-// PROGRESS SCREEN
-@Composable
-fun MetricPopup(
-    selectedMetricMap: MutableList<TrainingMetricType>?,
-    popupVisible: MutableState<Boolean>,
-    onDismiss: () -> Unit,
-    onOptionSelected: (TrainingMetricType) -> Unit,
-    selectedMetric: TrainingMetricType
-) {
-    if (popupVisible.value) {
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            title = {
-
-            },
-            text = {
-                Spacer(modifier = Modifier.height(10.dp))
-                Column(Modifier.padding(top = 20.dp)) {
-                    selectedMetricMap?.forEach { metric ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 10.dp)
-                                .border(
-                                    width = 1.dp,
-                                    color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    RoundedCornerShape(8.dp)
-                                )
-                                .clickable { onOptionSelected(metric) }
-                        ) {
-                            Text(
-                                text = metric.name,
-                                color = if (metric == selectedMetric) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxWidth()
-                            )
-                        }
-                    }
-                }
-            },
-            buttons = {
-                Column {
-                    Divider(
-                        color = Color.Gray,
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(5.dp)
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Cancel", color = Color.Red)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(50.dp)
-                                .background(Color.Gray)
-                        )
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Confirm", color = MaterialTheme.colorScheme.onPrimary)
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
         )
     }
 }

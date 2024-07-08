@@ -295,7 +295,7 @@ fun DynamicTopBar(navController: NavController) {
         Route.PlanScreen.route -> {
             TopBar(
                 message = "Your plan", //selectedPlan?.name ?: "Your Plan",
-                button= {
+                button = {
                     IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
@@ -310,29 +310,22 @@ fun DynamicTopBar(navController: NavController) {
                             }
                         )
                     }
+                },
+                button1 = {
+                    IconButton(
+                        modifier = Modifier.size(45.dp),
+                        onClick = {
+                            navController.navigate(Route.ProgressDetailsScreen.route)
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.BarChart,
+                            contentDescription = "Stats",
+                            tint = MaterialTheme.colorScheme.surface
+                        )
+                    }
                 }
-            ) {
-                IconButton(
-                    modifier = Modifier.size(45.dp),
-                    onClick = {
-                        // TODO go to progress screen
-                    }) {
-                    Icon(
-                        imageVector = Icons.Default.BarChart,
-                        contentDescription = "Stats",
-                    )
-                }
-            }
-        }
-        Route.ProgressScreen.route -> {
-            TopBar(
-                message = "Progress",
-                button= {
-                    LogoUser(
-                        modifier = Modifier.size(60.dp), R.drawable.pexels5
-                    ) { navController.navigate(Route.AccountScreen.route) }
-                }
-            ) {}
+            )
         }
         Route.ProgressDetailsScreen.route -> {
             TopBar(

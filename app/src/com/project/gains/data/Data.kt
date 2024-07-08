@@ -1,5 +1,5 @@
 package com.project.gains.data
-import androidx.annotation.DrawableRes
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Analytics
@@ -11,36 +11,28 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.project.gains.R
 import com.project.gains.presentation.navgraph.Route
 
-
 // structures
-
-
 enum class TrainingType {
-    STRENGTH,
-    CALISTHENICS,
-    CROSSFIT
+    STRENGTH, CALISTHENICS, CROSSFIT
 }
 
 enum class Level {
-    BEGINNER,
-    INTERMEDIATE,
-    EXPERT
+    BEGINNER, INTERMEDIATE, EXPERT
 }
 
 enum class ExerciseType {
-    CHEST,
-    BACK,
-    LEGS,
-    ARMS,
-    SHOULDERS,
-    CORE
+    CHEST, BACK, LEGS, ARMS, SHOULDERS, CORE
 }
 
 enum class TrainingMetricType {
-    DURATION, BPM, KCAL, INTENSITY, DISTANCE,
+    BPM, EXERCISE_WEIGHTS, ATTENDANCE_FREQUENCY, KCAL
 }
 enum class PeriodMetricType {
-    WEEK,MONTH, YEAR
+    WEEK, MONTH, YEAR
+}
+
+enum class PlotType {
+    HISTOGRAM, PIE
 }
 
 enum class Weekdays {
@@ -77,15 +69,6 @@ data class Workout(
     val exercises: MutableList<Exercise>
 )
 
-data class Session(
-    val kcal: Int,
-    val bpm: Int,  // Nullable Integer for resource ID
-    val restTime: Int,
-    val duration: Int,
-    val distance: Int,
-    val intensity: Int,
-)
-
 data class UserProfileBundle(
     var displayName: String,
     var email: String
@@ -104,16 +87,16 @@ data class GymPost(
     // Add other necessary properties
 )
 
-data class Plot(val preview: ProgressChartPreview, val data: List<TrainingData>)
-// Data class to hold chart preview information
-data class ProgressChartPreview(val name: String, @DrawableRes val imageResId: Int)
-
 // Data class to hold chart data
-data class TrainingData(val type: TrainingMetricType, var value: Int)
+data class TrainingData(
+    val type: TrainingMetricType,
+    var value: Int
+)
 
-
-data class Option(val name: String, var isChecked: Boolean = false)
-
+data class Option(
+    val name: String,
+    var isChecked: Boolean = false
+)
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Default.Home, "Home")
@@ -223,7 +206,7 @@ fun generateOptions(): List<Option> {
         Option("BACKUP"),
         Option(TrainingMetricType.BPM.toString()),
         Option(TrainingMetricType.KCAL.toString()),
-        Option(TrainingMetricType.DURATION.toString()),
+        Option(TrainingMetricType.EXERCISE_WEIGHTS.toString()),
         Option(ExerciseType.CHEST.toString()),
         Option(ExerciseType.BACK.toString()),
         Option(ExerciseType.SHOULDERS.toString()),
@@ -319,7 +302,7 @@ fun generateRandomSongs(count: Int): MutableList<Song> {
 }
 
 fun generateRandomTrainingData(months: Int): List<TrainingData> {
-    val metrics = listOf(TrainingMetricType.DURATION, TrainingMetricType.INTENSITY, TrainingMetricType.DISTANCE)
+    val metrics = listOf(TrainingMetricType.BPM, TrainingMetricType.EXERCISE_WEIGHTS, TrainingMetricType.ATTENDANCE_FREQUENCY, TrainingMetricType.KCAL)
     return List(months) {
         TrainingData(
             type = metrics.random(),
@@ -327,33 +310,6 @@ fun generateRandomTrainingData(months: Int): List<TrainingData> {
         )
     }
 }
-
-// Function to generate a random Plot object
-fun generateRandomPlot(): Plot {
-    val names = mutableListOf(PeriodMetricType.WEEK.toString(),PeriodMetricType.MONTH.toString(),PeriodMetricType.YEAR.toString())
-    // List of drawable resource IDs
-    val drawableResources = listOf(
-        R.drawable.plot2,
-        R.drawable.plot3,
-    )
-
-    val preview = ProgressChartPreview(
-        name = names.random(),
-        imageResId = drawableResources.random()  // Assuming drawable resources are in the range 1 to 100
-    )
-
-    val trainingData = generateRandomTrainingData(4)
-
-    return Plot(preview, trainingData)
-}
-
-// Function to generate a list of random Plot objects
-fun generateRandomPlots(): MutableList<Plot> {
-    return MutableList(2) { generateRandomPlot() }
-}
-
-
-
 
 // Define exercise maps and types
 val calisthenicsExercises = mapOf(

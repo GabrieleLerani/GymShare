@@ -45,13 +45,11 @@ import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
 import com.project.gains.presentation.plan.PlanViewModel
 import com.project.gains.presentation.progress.ProgressDetailsScreen
-import com.project.gains.presentation.progress.ProgressScreen
 import com.project.gains.presentation.progress.ProgressViewModel
 import com.project.gains.presentation.settings.AccountScreen
 import com.project.gains.presentation.settings.LinkedSocialSettingScreen
 import com.project.gains.presentation.workout.WorkoutScreen
 import com.project.gains.presentation.workout.WorkoutViewModel
-
 
 @Composable
 fun NavGraph(
@@ -64,7 +62,6 @@ fun NavGraph(
     val workoutViewModel : WorkoutViewModel = hiltViewModel()
     val shareContentViewModel : ShareContentViewModel = hiltViewModel()
     val planViewModel : PlanViewModel = hiltViewModel()
-    val progressViewModel : ProgressViewModel = hiltViewModel()
     val exerciseViewModel : ExerciseViewModel = hiltViewModel()
     val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()
     val generatedPlanViewModel: GeneratedPlanViewModel = hiltViewModel()
@@ -205,23 +202,12 @@ fun NavGraph(
             }
 
             composable(
-                route = Route.ProgressScreen.route
-            ) {
-                // set screen as the node state
-                ProgressScreen(
-                    navController =navController,
-                    selectHandler = progressViewModel::onSelectEvent
-                )
-            }
-            composable(
                 route = Route.ProgressDetailsScreen.route
             ) {
                 // set screen as the node state
                 ProgressDetailsScreen(
                     navController = navController,
-                    shareContentViewModel = shareContentViewModel,
-                    progressViewModel = progressViewModel,
-                    selectHandler = shareContentViewModel::onManageDialogEvent
+                    shareContentViewModel = shareContentViewModel
                 )
             }
             composable(
