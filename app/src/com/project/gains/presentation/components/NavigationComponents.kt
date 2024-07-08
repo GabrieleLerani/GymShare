@@ -345,12 +345,12 @@ fun DynamicTopBar(navController: NavController) {
             TopBar(
                 message = "Progress Details",
                 button= {
-                    androidx.compose.material.IconButton(
+                    IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
                             //showPopup2.value = true
                         }) {
-                        androidx.compose.material.Icon(
+                        Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Share",
                             tint = MaterialTheme.colorScheme.surface,
@@ -372,13 +372,13 @@ fun DynamicTopBar(navController: NavController) {
             TopBar(
                 message = "Chest",
                 button = {
-                    androidx.compose.material.IconButton(
+                    IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
                             //showPopup2.value = true
 
                         }) {
-                        androidx.compose.material.Icon(
+                        Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Share",
                             tint = MaterialTheme.colorScheme.surface,
@@ -407,6 +407,11 @@ fun DynamicBottomBar(navController: NavController) {
         Route.WorkoutScreen.route, Route.WorkoutModeScreen.route -> {
             WorkoutBottomBar()
         }
+
+        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, -> {
+            // Empty because new plan has no bottom bar
+        }
+
         else -> {
             BottomNavigationBar(navController = navController)
         }

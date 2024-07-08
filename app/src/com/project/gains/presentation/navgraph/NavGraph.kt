@@ -1,5 +1,14 @@
 package com.project.gains.presentation.navgraph
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -48,7 +57,7 @@ fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues
 ) {
-    //val navController = rememberNavController()
+
     val authenticationViewModel : AuthenticationViewModel = init()
     val workoutViewModel : WorkoutViewModel = hiltViewModel()
     val shareContentViewModel : ShareContentViewModel = hiltViewModel()
@@ -56,7 +65,11 @@ fun NavGraph(
     val progressViewModel : ProgressViewModel = hiltViewModel()
     val exerciseViewModel : ExerciseViewModel = hiltViewModel()
 
-    NavHost(navController = navController, startDestination = startDestination, modifier = Modifier.padding(paddingValues)){
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = Modifier.padding(paddingValues)
+        ){
         // construct a nested nav graph
         navigation(
             route = Route.AppStartNavigation.route,
@@ -132,10 +145,31 @@ fun NavGraph(
             }
 
             composable(
-                route = Route.NewPlanScreen.route
-            ) {
+                route = Route.NewPlanScreen.route,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            325, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                })
+            {
                 // set screen as the node state
                 NewPlanScreen(navController = navController)
+
             }
             composable(
                 route = Route.AddGeneratedPlanScreen.route
@@ -235,6 +269,7 @@ fun NavGraph(
             HomeScreen(
                 navController = navController,
                 workoutViewModel = workoutViewModel,
+
             )
         }
     }

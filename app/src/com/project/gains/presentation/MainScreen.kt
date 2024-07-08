@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.Scaffold
 
-import com.project.gains.presentation.components.BottomNavigationBar
+
 import com.project.gains.presentation.components.DynamicBottomBar
 import com.project.gains.presentation.components.DynamicTopBar
 
