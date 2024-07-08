@@ -118,7 +118,7 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Default.Home, "Home")
     data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Default.Analytics, "Add")
     data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Default.Event, "Plan")
-    data object Settings : BottomNavItem(Route.LinkedSocialSettingScreen.route, Icons.Default.Settings, "Settings")
+    data object Settings : BottomNavItem(Route.SettingsScreen.route, Icons.Default.Settings, "Settings")
     data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Explore, "Explore")
 }
 

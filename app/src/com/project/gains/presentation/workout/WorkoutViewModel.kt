@@ -1,6 +1,5 @@
 package com.project.gains.presentation.workout
 
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.R
@@ -14,11 +13,7 @@ import com.project.gains.data.generateRandomSongs
 import com.project.gains.data.generateSampleExercises
 
 import com.project.gains.data.generateSampleWorkouts
-import com.project.gains.presentation.events.CreateEvent
-import com.project.gains.presentation.events.DeleteEvent
 import com.project.gains.presentation.events.MusicEvent
-import com.project.gains.presentation.events.PreviousPageEvent
-import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -32,7 +27,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private val _selectedWorkout = MutableLiveData<Workout>()
     val selectedWorkout: MutableLiveData<Workout> = _selectedWorkout
 
-
     private val _currentSong = MutableLiveData<Song>()
     val currentSong: MutableLiveData<Song> = _currentSong
 
@@ -41,21 +35,15 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private val _exercises = MutableLiveData<MutableList<Exercise>>()
     val exercises: MutableLiveData<MutableList<Exercise>> = _exercises
 
-
     private var songIndex = 0
 
-
     init {
-
         _workouts.value = generateSampleWorkouts()
         _exercises.value = generateSampleExercises(ExerciseType.ARMS,R.drawable.arms)
         _currentSong.value=Song("","","") // Dummy init
         _songs.value= generateRandomSongs(5)
         _selectedWorkout.value= generateSampleWorkouts()[0]
-
     }
-
-
 
     fun onMusicEvent(event: MusicEvent) {
         when (event) {
@@ -63,75 +51,20 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                 _songs.value = generateRandomSongs(10)
                 _currentSong.value= _songs.value?.get(songIndex)
             }
-
             is MusicEvent.Forward -> {
                 songIndex+=1
                 _currentSong.value= _songs.value?.get(songIndex)
-
             }
             is MusicEvent.Rewind -> {
                 songIndex-=1
 
                 _currentSong.value= _songs.value?.get(songIndex)
-
-
             }
-        }
-    }
-
-    fun onCreateEvent(event: CreateEvent) {
-        when (event) {
-
-            is CreateEvent.CreateWorkout -> {
-                _workouts.value?.add(event.workout)
-                _selectedWorkout.value = event.workout
-
-            }
-
-            is CreateEvent.CreateExercise -> {
-                _exercises.value?.add(event.exercise)
-                // TODO create exercise is on exercises details
-                //_selectedExercise.value = event.exercise
-            }
-            is CreateEvent.CreatePlan -> TODO()
-            is CreateEvent.SetPlanOptions -> TODO()
-        }
-    }
-
-    fun onSelectEvent(event: ManageWorkoutEvent) {// delete exercise plan workout
-        when (event) {
-
-            is ManageWorkoutEvent.SelectWorkout -> {
-                _selectedWorkout.value = event.workout
-            }
-
-            is ManageWorkoutEvent.CreateWorkout -> TODO()
-            is ManageWorkoutEvent.DeleteWorkout -> TODO()
-
-        }
-    }
-
-
-
-
-    fun onDeleteEvent(event: DeleteEvent) {// delete exercise plan workout
-        when (event) {
-            is DeleteEvent.DeletePlan -> TODO()
-
-            is DeleteEvent.DeleteWorkout -> {
-                _workouts.value?.remove(event.workout)
-            }
-
-            is DeleteEvent.DeleteExercise -> {
-                _exercises.value?.remove(event.exercise)
-            }
-
         }
     }
 
     fun onManageWorkoutEvent(event: ManageWorkoutEvent) {
         when (event) {
-
             is ManageWorkoutEvent.CreateWorkout -> {
                 _workouts.value?.add(event.workout)
                 _selectedWorkout.value = event.workout
@@ -144,8 +77,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
             is ManageWorkoutEvent.SelectWorkout -> {
                 _selectedWorkout.value = event.workout
             }
-
         }
     }
-
 }

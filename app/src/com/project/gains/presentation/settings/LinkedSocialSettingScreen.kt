@@ -11,18 +11,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -43,8 +47,8 @@ import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.NotificationCard
+import com.project.gains.presentation.components.SocialMediaIcon
 
-import com.project.gains.presentation.components.SocialMediaRow
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.ManageDataStoreEvent
@@ -171,6 +175,47 @@ fun LinkedSocialSettingScreen(
                     }
                 }
 
+            }
+        }
+    }
+}
+
+@Composable
+fun SocialMediaRow(
+    icon: Int,
+    isLinked: Boolean,
+    linkHandler: (LinkAppEvent) -> Unit,
+    clickedApps: MutableState<MutableList<Int>>
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        SocialMediaIcon(icon = icon, onClick = {  }, isSelected = isLinked)
+        Spacer(modifier = Modifier.width(50.dp))
+        if (isLinked || clickedApps.value.contains(icon)) {
+            androidx.compose.material.Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Linked Icon",
+                modifier = Modifier.padding(20.dp)
+            )
+        } else if (!clickedApps.value.contains(icon)){
+            IconButton(
+                onClick =
+                {
+                    clickedApps.value = clickedApps.value.toMutableList().apply { add(icon) }
+                    linkHandler(LinkAppEvent.LinkApp(icon)) },
+                modifier = Modifier.size(60.dp),
+                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Save Icon",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(10.dp),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
             }
         }
     }

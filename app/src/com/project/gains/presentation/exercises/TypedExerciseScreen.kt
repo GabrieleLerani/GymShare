@@ -31,12 +31,9 @@ import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.events.PreviousPageEvent
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.workout.WorkoutViewModel
-import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

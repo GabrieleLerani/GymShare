@@ -22,7 +22,6 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 
@@ -59,8 +58,6 @@ import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.events.ManageDataStoreEvent
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel

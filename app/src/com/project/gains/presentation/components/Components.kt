@@ -270,167 +270,6 @@ fun PeriodPopup(
         )
     }
 }
-@Composable
-fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: Song) {
-    if (popup) {
-        val play = remember { mutableStateOf(false) }
-        var currentTime by remember { mutableFloatStateOf(0f) }
-        val songTotalTime = 165f
-
-        // Simulate a timer to update the current playback position
-        LaunchedEffect(play.value) {
-            if (play.value) {
-                while (currentTime < songTotalTime && play.value) {
-                    delay(100L) // Shorter delay for finer granularity
-                    currentTime += 0.1f // Increment by 0.1 second
-
-                    // Adjust the timer to handle seconds incrementing correctly
-                    if (currentTime % 1.0f >= 0.9f) {
-                        currentTime = (currentTime - (currentTime % 1.0f)) + 1f
-                    }
-
-                    if (currentTime >= songTotalTime) {
-                        play.value = false
-                        musicHandler(MusicEvent.Forward)
-                    }
-                }
-            }
-        }
-
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(240.dp),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp
-            ),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(Color.Black)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.spotify2),
-                    contentDescription = "App Icon",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .padding(2.dp)
-                )
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Song: ${currentSong.title}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = "Artist: ${currentSong.singer}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    Text(
-                        text = "Album: ${currentSong.album}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-
-                LinearProgressIndicator(
-                    progress = currentTime / songTotalTime,
-                    color = MaterialTheme.colorScheme.surface,
-                    backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .size(16.dp)
-                        .height(8.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = formatTime(currentTime),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
-                    )
-                    Text(
-                        text = formatTime(songTotalTime),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
-                    )
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = {
-                            musicHandler(MusicEvent.Rewind)
-                            currentTime = 0f
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FastRewind,
-                            contentDescription = "Rewind",
-                            tint = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            play.value = !play.value
-                            musicHandler(MusicEvent.Music)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
-                            contentDescription = if (play.value) "Stop" else "Play",
-                            tint = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                    IconButton(
-                        onClick = {
-                            musicHandler(MusicEvent.Forward)
-                            currentTime = 0f
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FastForward,
-                            contentDescription = "Forward",
-                            tint = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-fun formatTime(time: Float): String {
-    val totalSeconds = time.toInt()
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return String.format("%02d:%02d", minutes, seconds)
-}
-
 
 @Composable
 fun ProgressChartCard(
@@ -467,6 +306,7 @@ fun ProgressChartCard(
         }
     }
 }
+
 @Composable
 fun SocialMediaIcon(icon: Int, onClick: () -> Unit, isSelected: Boolean) {
     androidx.compose.material.IconButton(onClick = onClick) {
@@ -772,45 +612,6 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String) {
         }
     }
 }
-@Composable
-fun SocialMediaRow(
-    icon: Int,
-    isLinked: Boolean,
-    linkHandler: (LinkAppEvent) -> Unit,
-    clickedApps: MutableState<MutableList<Int>>) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        SocialMediaIcon(icon = icon, onClick = {  }, isSelected = isLinked)
-        Spacer(modifier = Modifier.width(50.dp))
-        if (isLinked || clickedApps.value.contains(icon)) {
-            androidx.compose.material.Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Linked Icon",
-                modifier = Modifier.padding(20.dp)
-            )
-        } else if (!clickedApps.value.contains(icon)){
-            IconButton(
-                onClick =
-                {
-                    clickedApps.value = clickedApps.value.toMutableList().apply { add(icon) }
-                    linkHandler(LinkAppEvent.LinkApp(icon)) },
-                modifier = Modifier.size(60.dp),
-                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Save Icon",
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(10.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -904,6 +705,7 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
         }
     }
 }
+
 @Composable
 fun currentRoute(navController: NavController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -1110,34 +912,6 @@ fun NotificationCard(
 }
 
 @Composable
-fun GifLoader(gif: Int) {
-
-    val context = LocalContext.current
-
-
-    val imageLoader = ImageLoader.Builder(context)
-        .components {
-            add(GifDecoder.Factory()) // Use built-in decoder for Android P+
-        }
-        .build()
-    val painter = // Adjust the size as needed
-        rememberAsyncImagePainter(
-            ImageRequest // Optional: Apply transformations
-                .Builder(LocalContext.current).data(data = gif)
-                .apply(block = fun ImageRequest.Builder.() {
-                    size(Size.ORIGINAL) // Adjust the size as needed
-                    transformations(CircleCropTransformation()) // Optional: Apply transformations
-                }).build(), imageLoader = imageLoader
-        )
-
-    Image(
-        painter = painter,
-        contentDescription = null, // Provide content description if necessary
-        modifier = Modifier.size(200.dp) // Example: Set image size
-    )
-}
-
-@Composable
 fun InstructionCard(text: String) {
     androidx.compose.material.Card(
         modifier = Modifier
@@ -1186,32 +960,6 @@ fun WarningCard(message: String) {
         }
     }
 }
-
-@Composable
-fun ExerciseGif(exercise: Exercise, onClick: (Exercise) -> Unit) {
-    val context = LocalContext.current
-    val gifResourceId = R.drawable.gi
-
-    AsyncImage(
-        model = ImageRequest.Builder(context)
-            .data(gifResourceId)
-            .size(Size.ORIGINAL)
-            .parameters(
-                coil.request.Parameters.Builder()
-                    .set("coil-request-animated", true)
-                    .build()
-            )
-            .build(),
-        contentDescription = "Exercise GIF",
-        modifier = Modifier
-            .size(200.dp)
-            .clickable { onClick(exercise) }
-            .graphicsLayer {
-                // Add any additional transformations or animations if needed
-            },
-    )
-}
-
 
 @Preview
 @Composable
@@ -1459,5 +1207,3 @@ fun MetricPopup(
         )
     }
 }
-
-

@@ -3,7 +3,6 @@ package com.project.gains.util
 /*
 * Object to hold constant in all the application*/
 object Constants {
-
     // values used in login and signup screen
     const val LOGIN_SUCCESS = "Login success"
     const val LOGIN_FAILED = "Login Failed"
@@ -20,9 +19,4 @@ object Constants {
     const val APP_ENTRY = "appEntry"
     const val FIRESTORE_ID = "firestore"
     const val LINKED_APPS = "linkedApps"
-
-
-
-
-
 }

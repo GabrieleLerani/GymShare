@@ -1,9 +1,8 @@
 package com.project.gains.presentation.plan
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,17 +19,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.R
-import com.project.gains.data.Level
-import com.project.gains.data.PeriodMetricType
-import com.project.gains.data.TrainingType
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
@@ -42,7 +36,7 @@ fun NewPlanScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 40.dp)
+            .padding(top = 10.dp)
             .background(
                 MaterialTheme.colorScheme.surface,
                 RoundedCornerShape(20.dp)
@@ -51,18 +45,15 @@ fun NewPlanScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(40.dp)
+                .padding(10.dp)
         ) {
             item {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 290.dp),
-                    horizontalArrangement = Arrangement.Center
+                        .fillMaxWidth(),
                 ) {
                     IconButton(onClick = {
-                        // TODO test it
-                        navController.popBackStack()
+                        navController.navigate(Route.HomeScreen.route)
                     }) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -72,41 +63,48 @@ fun NewPlanScreen(
                 }
             }
             item {
-                Text(
-                    text = "Add Pre-Made Workout",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-            item {
-                Text(
-                    text = "Choose a pre-made workout from our library or use the workout builder to create your own.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            item { Spacer(modifier = Modifier.height(10.dp)) }
-            item {
-                Button(
-                    onClick = {
-                        navController.navigate(Route.AddGeneratedPlan.route)
-                    },
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(55.dp),
+                        .padding(30.dp),
                 ) {
-                    Text(text = "USE PLAN BUILDER")
-                }
-            }
-            item { Spacer(modifier = Modifier.height(10.dp)) }
-            item {
-                Button(
-                    onClick = {
-                        navController.navigate(Route.AddManualWorkout.route)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(55.dp),
-                ) {
-                    Text(text = "ADD MANUAL WORKOUT")
+                    Text(
+                        text = "Create a new Workout/Plan",
+                        style = MaterialTheme.typography.headlineLarge,
+                    )
+
+                    Spacer(modifier = Modifier.height(15.dp))
+
+                    Text(
+                        text = "In order to create your own workout, sse the workout builder or do it manually.",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+
+                    Spacer(modifier = Modifier.height(50.dp))
+
+                    Button(
+                        onClick = {
+                            navController.navigate(Route.AddGeneratedPlan.route)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(75.dp),
+                    ) {
+                        Text(text = "USE PLAN BUILDER")
+                    }
+
+                    Spacer(modifier = Modifier.height(25.dp))
+
+                    Button(
+                        onClick = {
+                            navController.navigate(Route.AddManualWorkout.route)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(75.dp),
+                    ) {
+                        Text(text = "ADD MANUAL WORKOUT")
+                    }
                 }
             }
         }

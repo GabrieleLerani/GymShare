@@ -45,8 +45,6 @@ import com.project.gains.data.Option
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateOptions
 import com.project.gains.presentation.Dimension
-import com.project.gains.presentation.events.CreateEvent
-import com.project.gains.presentation.events.SelectEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.onboarding.components.OnBoardingButton
 import com.project.gains.presentation.onboarding.components.OnBoardingTextButton
