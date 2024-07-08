@@ -847,20 +847,6 @@ fun WarningCard(message: String) {
     }
 }
 
-@Preview
-@Composable
-fun Preview(){
-    GainsAppTheme {
-        FeedbackAlertDialogOptions(
-            message = "Are you sure your credentials are correct?",
-            popupVisible = remember {
-                mutableStateOf(true)
-            }
-        ) {
-        }
-    }
-}
-
 @Composable
 fun FeedbackAlertDialogOptions(
     message: String,

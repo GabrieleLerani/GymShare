@@ -29,6 +29,8 @@ sealed class Route(
     data object AddManualWorkoutScreen : Route(route = "addManualWorkout")
 
     data object ExerciseDetailsScreen : Route(route = "exerciseDetailsScreen")
+    data object LastNewPlanScreen : Route(route = "lastNewPlanScreen")
+
 
     data object AppStartNavigation : Route(route = "appStartNavigation")
 

@@ -88,7 +88,6 @@ fun FeedPost(gymPost: GymPost) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
     ) {
         // Header Row
@@ -160,14 +159,12 @@ fun FeedPost(gymPost: GymPost) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Like Icon",
-                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = gymPost.likes,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
@@ -176,14 +173,12 @@ fun FeedPost(gymPost: GymPost) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Comment,
                     contentDescription = "Comment Icon",
-                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = gymPost.comment,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

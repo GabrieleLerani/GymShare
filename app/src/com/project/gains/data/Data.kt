@@ -1,6 +1,7 @@
 package com.project.gains.data
 import androidx.annotation.DrawableRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Explore
@@ -116,7 +117,7 @@ data class Option(val name: String, var isChecked: Boolean = false)
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Default.Home, "Home")
-    data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Default.Analytics, "Add")
+    data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Default.AddCircleOutline, "Add")
     data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Default.Event, "Plan")
     data object Settings : BottomNavItem(Route.SettingsScreen.route, Icons.Default.Settings, "Settings")
     data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Explore, "Explore")

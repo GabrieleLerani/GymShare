@@ -78,7 +78,6 @@ fun OnGeneratedPage(
                 GeneralCard(imageResId = content.image, title = content.title) {
                     scope.launch {
                         when (pagerState.currentPage) {
-
                             0 -> {
                                 selectedLevel.value = content.level
                                 pagerState.animateScrollToPage(
@@ -93,12 +92,12 @@ fun OnGeneratedPage(
                             }
                             2 -> {
                                 selectedPeriod.value = content.periodMetricType
-                                // TODO test if this event is generated
                                 planOptionsHandler(ManagePlanEvent.SetPlanOptions(
                                     selectedLevel = selectedLevel.value,
                                     selectedPeriod = selectedPeriod.value,
                                     selectedTrainingType = selectedTraining.value
                                 ))
+                                navController.navigate(Route.LastNewPlanScreen.route)
                             }
                         }
                     }

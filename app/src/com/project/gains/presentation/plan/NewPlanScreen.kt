@@ -80,7 +80,7 @@ fun NewPlanScreen(
                     Spacer(modifier = Modifier.height(15.dp))
 
                     Text(
-                        text = "In order to create your own workout, sse the workout builder or do it manually.",
+                        text = "In order to create your own workout, choose the workout builder or do it manually.",
                         style = MaterialTheme.typography.bodyLarge,
                     )
 

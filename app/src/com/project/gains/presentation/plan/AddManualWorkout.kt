@@ -228,8 +228,8 @@ fun AddManualWorkout(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        TextButton(onClick = { /* Add exercise action */ }) {
-                            Text(text = "Add new exercise", color = Color.Cyan)
+                        TextButton(onClick = { navController.navigate(Route.TypedExerciseScreen.route) }) {
+                            Text(text = "Add new exercise")
                         }
                         Spacer(modifier = Modifier.width(80.dp))
                         Spacer(modifier = Modifier.width(20.dp))
@@ -237,6 +237,7 @@ fun AddManualWorkout(
                             // TODO insert a function to specify the behaviour
                             // this could be an example
                             //addExerciseHandler(ManageExercises.AddExercise(exercise = exercise))
+                            navController.navigate(Route.TypedExerciseScreen.route)
                         }
                     }
                 }
@@ -258,12 +259,10 @@ fun AddManualWorkout(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp),
-                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primaryContainer),
                     enabled = selectedExercises != null
                 ) {
                     Text(
                         text = "SAVE WORKOUT",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }

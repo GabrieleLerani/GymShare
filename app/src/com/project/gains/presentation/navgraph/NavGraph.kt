@@ -38,6 +38,8 @@ import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
 import com.project.gains.presentation.plan.AddGeneratedPlan
 import com.project.gains.presentation.plan.AddManualWorkout
+import com.project.gains.presentation.plan.GeneratedPlanViewModel
+import com.project.gains.presentation.plan.LastNewPlanScreen
 import com.project.gains.presentation.plan.ManualWorkoutViewModel
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
@@ -64,6 +66,10 @@ fun NavGraph(
     val planViewModel : PlanViewModel = hiltViewModel()
     val progressViewModel : ProgressViewModel = hiltViewModel()
     val exerciseViewModel : ExerciseViewModel = hiltViewModel()
+    val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()
+    val generatedPlanViewModel: GeneratedPlanViewModel = hiltViewModel()
+
+
 
     NavHost(
         navController = navController,
@@ -172,6 +178,13 @@ fun NavGraph(
 
             }
             composable(
+                route = Route.LastNewPlanScreen.route
+            ) {
+                // set screen as the node state
+
+                LastNewPlanScreen(navController = navController,generatedPlanViewModel::onManageGeneratePlanEvent)
+            }
+            composable(
                 route = Route.AddGeneratedPlanScreen.route
             ) {
                 // set screen as the node state
@@ -184,7 +197,6 @@ fun NavGraph(
                 route = Route.AddManualWorkoutScreen.route
             ) {
                 // set screen as the node state
-                val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()
                 AddManualWorkout(navController = navController,
                     manualWorkoutViewModel = manualWorkoutViewModel,
                     addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,

@@ -19,33 +19,54 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val darkColorScheme = darkColorScheme(
-    primary = GWhite,
-    onPrimary = GOrange,
-    primaryContainer = GOrange,
-    onPrimaryContainer = GBlack,
-    surface = GBlack,
-    onSurface = GWhite,
-    onError = GRed,
+private val darkColorScheme = lightColorScheme(
+    primary = GOrange,
+    onPrimary = GBlack,
+    inversePrimary = GOrange,
+    primaryContainer = GBlack,
+    onPrimaryContainer = GWhite,
+    background = GBeige,
+    onBackground = GWhite,
     secondary = GGreen,
+    onSecondary = GGreen,
+    secondaryContainer = GGreen,
+    onSecondaryContainer = GWhite,
     tertiary = GBlue,
-    errorContainer = GWarning,
-    onSecondary = GWater
+    onTertiary = GBlue,
+    tertiaryContainer = GBlue,
+    onTertiaryContainer = GWhite,
+    surface = GBlack, // Bottom bar background color
+    onSurface = GWhite, // Bottom bar text/icon color
+    error = GRed,
+    onError = GBlack,
+    errorContainer = GRed,
+    onErrorContainer = GRed,
 )
 
 private val lightColorScheme = lightColorScheme(
-    primary = GBlack,
-    onPrimary = GOrange,
-    primaryContainer = GOrange,
+    primary = GOrange,
+    onPrimary = GWhite,
+    inversePrimary = GOrange,
+    primaryContainer = GWhite,
     onPrimaryContainer = GBlack,
-    surface = GWhite,
-    onSurface = GBlack,
-    onError = GRed,
-    errorContainer = GWarning,
+    background = GBeige,
+    onBackground = GBlack,
     secondary = GGreen,
+    onSecondary = GGreen,
+    secondaryContainer = GGreen,
+    onSecondaryContainer = GBlack,
     tertiary = GBlue,
-    onSecondary = GWater
+    onTertiary = GBlue,
+    tertiaryContainer = GBlue,
+    onTertiaryContainer = GBlack,
+    surface = GWhite, // Bottom bar background color
+    onSurface = GBlack, // Bottom bar text/icon color
+    error = GRed,
+    onError = GWhite,
+    errorContainer = GRed,
+    onErrorContainer = GRed,
 )
+
 
 @Composable
 fun GainsAppTheme(
@@ -70,7 +91,6 @@ fun GainsAppTheme(
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
-
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

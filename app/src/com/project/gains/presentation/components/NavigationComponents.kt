@@ -46,16 +46,16 @@ import com.project.gains.presentation.navgraph.Route
 fun BottomNavigationBar(navController: NavController) {
 
     BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.onSurface,
-        contentColor = MaterialTheme.colorScheme.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         modifier = Modifier.height(64.dp) // Adjust the height of the BottomNavigation
     ) {
         val currentRoute = currentRoute(navController)
         bottomNavItems.forEach { item ->
             val isSelected = currentRoute == item.route
-            val iconColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.surface
+            val iconColor = if (isSelected) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.onSurface
             val iconSize = 32.dp
-            val textColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.surface
+            val textColor = if (isSelected) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.onSurface
 
             BottomNavigationItem(
                 icon = {
@@ -101,8 +101,7 @@ fun WorkoutBottomBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .size(64.dp)
-            .background(MaterialTheme.colorScheme.onSurface),
+            .size(64.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -111,7 +110,7 @@ fun WorkoutBottomBar() {
                 // TODO navController.navigate(Route.SessionScreen.route)
             },
             modifier = Modifier.size(50.dp),
-            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
+            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary)
         ) {
             Icon(
                 imageVector = Icons.Default.PlayArrow,
@@ -119,7 +118,7 @@ fun WorkoutBottomBar() {
                 modifier = Modifier
                     .size(50.dp)
                     .padding(10.dp),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                tint = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
@@ -130,8 +129,8 @@ fun WorkoutBottomBar() {
 fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
 
     TopAppBar(
-        backgroundColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
         elevation = 4.dp,
         modifier = Modifier
             .fillMaxWidth()
@@ -157,7 +156,6 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
                         blurRadius = 4f
                     )
                 ),
-                color = MaterialTheme.colorScheme.onPrimary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .weight(1f)
@@ -190,7 +188,6 @@ fun DynamicTopBar(navController: NavController) {
                         Icon(
                             imageVector = Icons.Default.FitnessCenter,
                             contentDescription = "Workout Mode",
-                            tint = MaterialTheme.colorScheme.surface
                         )
 
                     }
@@ -247,7 +244,6 @@ fun DynamicTopBar(navController: NavController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Share",
-                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.graphicsLayer {
                                 rotationZ = -45f // Rotate 45 degrees counterclockwise
                             }
@@ -269,7 +265,6 @@ fun DynamicTopBar(navController: NavController) {
                     Icon(
                         Icons.Default.Close,
                         contentDescription = "Close Icon",
-                        tint = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.size(50.dp)
                     )
                 }
@@ -310,7 +305,6 @@ fun DynamicTopBar(navController: NavController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Share",
-                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.graphicsLayer {
                                 rotationZ = -45f // Rotate 45 degrees counterclockwise
                             }
@@ -326,7 +320,6 @@ fun DynamicTopBar(navController: NavController) {
                     Icon(
                         imageVector = Icons.Default.BarChart,
                         contentDescription = "Stats",
-                        tint = MaterialTheme.colorScheme.surface
                     )
                 }
             }
@@ -353,7 +346,6 @@ fun DynamicTopBar(navController: NavController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Share",
-                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.graphicsLayer {
                                 rotationZ = -45f // Rotate 45 degrees counterclockwise
                             }
@@ -381,7 +373,6 @@ fun DynamicTopBar(navController: NavController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = "Share",
-                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.graphicsLayer {
                                 rotationZ = -45f // Rotate 45 degrees counterclockwise
                             }
@@ -432,7 +423,6 @@ fun BackButton(onClick: () -> Unit) {
             modifier = Modifier
                 .size(60.dp)
                 .padding(10.dp),
-            tint = MaterialTheme.colorScheme.surface
         )
     }
 }
