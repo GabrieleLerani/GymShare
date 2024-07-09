@@ -3,7 +3,6 @@ package com.project.gains.presentation.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,7 +33,10 @@ fun SearchAppBar(
     onTextChange: (String) -> Unit,
     onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit,
-    onClick: () -> Unit
+    // set enabled to false if you want to have onClick function triggered when the user clicks on the search bar
+    // otherwise set it to false (it should be the default behaviour)
+    onClick: () -> Unit,
+    enabled: Boolean
 ) {
     Surface(
         modifier = Modifier
@@ -48,7 +50,7 @@ fun SearchAppBar(
             modifier = Modifier
                 .clickable { onClick() }
                 .fillMaxWidth(),
-            enabled = false,
+            enabled = enabled,
             value = text,
             onValueChange = {
                 onTextChange(it)
@@ -114,7 +116,7 @@ fun SearchAppBar(
 @Composable
 fun ResearchFilter(
     categories: List<Categories>,
-    selectedCategory: Categories,
+    selectedCategory: Categories?,
     onCategorySelected: (Categories) -> Unit
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
@@ -178,7 +180,8 @@ fun SearchAppBarPreview() {
         onTextChange = {},
         onCloseClicked = {},
         onSearchClicked = {},
-        onClick = {}
+        onClick = {},
+        enabled = true
     )
 }
 

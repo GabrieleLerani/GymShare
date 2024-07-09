@@ -70,7 +70,8 @@ fun FeedScreen(
                         onSearchClicked = {},
                         onClick = {
                             navController.navigate(Route.SearchScreen.route)
-                        }
+                        },
+                        enabled = false
                     )
                 }
 

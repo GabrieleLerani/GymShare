@@ -22,7 +22,6 @@ class SearchViewModel @Inject constructor() : ViewModel() {
     val searchTextState: State<String> = _searchTextState
 
     val categories = listOf(Categories.User, Categories.Workout, Categories.Keyword, Categories.Social)
-    val socials = listOf(Socials.Facebook, Socials.TikTok, Socials.Instagram, Socials.X)
 
     private var _selectedCategory: MutableLiveData<Categories> = MutableLiveData<Categories>()
     val selectedCategory: LiveData<Categories> = _selectedCategory

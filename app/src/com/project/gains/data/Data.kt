@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.project.gains.R
 import com.project.gains.presentation.navgraph.Route
+import kotlin.random.Random
 
 // structures
 enum class TrainingType {
@@ -91,6 +92,7 @@ data class GymPost(
     val userResourceId: Int,
     val imageResourceId: Int, // Resource ID of the image
     val username: String,
+    val social: String,
     val randomSocialId: Int,
     val caption: String,
     val time:String,
@@ -357,15 +359,23 @@ fun generateRandomGymPost(count: Int): List<GymPost> {
         R.drawable.pexels4,
         R.drawable.pexels5
     )
+    val socials = listOf(
+        "Facebook",
+        "TikTok",
+        "Instagram",
+        "X"
+    )
 
 
     repeat(count) {
         val randomUsername = usernames.random()
         val randomUserImageResourceId = userResourceIconsIds.random()
         val randomImageResourceId = imageResourceIds.random()
-        val randomSocialId = socialResourceIconsIds.random()
+        val socialId = Random.nextInt(4)
+        val randomSocial = socials[socialId]
+        val randomSocialId = socialResourceIconsIds[socialId]
         val postId = "post_$it"
-        val post = GymPost(postId, randomUserImageResourceId,randomImageResourceId, randomUsername, randomSocialId, "Good morning Fit-Family. Happy Sunday to you and your families. " +
+        val post = GymPost(postId, randomUserImageResourceId,randomImageResourceId, randomUsername, randomSocial, randomSocialId, "Good morning Fit-Family. Happy Sunday to you and your families. " +
                 "I hope you have the best day and the most amazing week ahead. " +
                 "I love you and stay blessed 🏋🏽‍♂️🤸🏽‍♀️🏋🏽‍♀️🤸🏽‍♂️, now let’s get MOVING 😁😁😃😄🙂😊😌🤗👍🏽👏🏽👊🏽✊🏽✌🏽🙏🏽","Today 13:13","125 Likes","25 Comments")
         posts.add(post)

@@ -30,7 +30,6 @@ fun SearchScreen(
 ) {
     val placeholder = "Look for posts on other social media"
     val categories = searchViewModel.categories
-    val socials = searchViewModel.socials
 
     var text by remember { mutableStateOf("") }
     val selectedCategory by searchViewModel.selectedCategory.observeAsState()
@@ -56,29 +55,28 @@ fun SearchScreen(
                         },
                         onCloseClicked = {},
                         onSearchClicked = {
-                            gymSearch(text, selectedCategory, posts, socials)
+                            gymSearch(text, selectedCategory, posts)
                         },
                         // this is empty because it is used for a different purpose
-                        onClick = {}
+                        onClick = {},
+                        enabled = true
                     )
                 }
                 item {
-                    selectedCategory?.let {
-                        ResearchFilter(
-                            categories = categories,
-                            selectedCategory = it,
-                            onCategorySelected = { category ->
-                                assignCategoryHandler(ManageCategoriesEvent.AssignCategoryEvent(category))
-                            }
-                        )
-                    }
+                    ResearchFilter(
+                        categories = categories,
+                        selectedCategory = selectedCategory,
+                        onCategorySelected = { category ->
+                            assignCategoryHandler(ManageCategoriesEvent.AssignCategoryEvent(category))
+                        }
+                    )
                 }
             }
         }
     }
 }
 
-fun gymSearch(text: String, selectedCategories: Categories?, posts: List<GymPost>?, socials: List<Socials>) {
+fun gymSearch(text: String, selectedCategories: Categories?, posts: List<GymPost>?) {
     val results: MutableList<GymPost> = mutableListOf()
 
     when(selectedCategories) {
@@ -106,7 +104,7 @@ fun gymSearch(text: String, selectedCategories: Categories?, posts: List<GymPost
         }
         Categories.Social -> {
             posts?.forEach { post ->
-                if (socials[post.randomSocialId].toString().contains(text)) {
+                if (post.social.contains(text)) {
                     results.add(post)
                 }
             }
@@ -116,7 +114,7 @@ fun gymSearch(text: String, selectedCategories: Categories?, posts: List<GymPost
                 if (post.username.contains(text) ||
                     post.caption.contains(text) && post.caption.contains("Workout") ||
                     post.caption.contains(text) ||
-                    socials[post.randomSocialId].toString().contains(text)) {
+                    post.social.contains(text)) {
                     results.add(post)
                 }
             }
