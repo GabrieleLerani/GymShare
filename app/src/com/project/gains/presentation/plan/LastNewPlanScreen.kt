@@ -35,6 +35,7 @@ import com.project.gains.data.Option
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateOptions
 import com.project.gains.presentation.Dimension
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.onboarding.components.OnBoardingButton
 import com.project.gains.presentation.onboarding.components.PagerIndicator
@@ -51,6 +52,7 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
     val selectedBackup = remember { mutableStateOf(false) } // List to store selected options
     val allOptions = remember { generateOptions() } // List to store selected options
     val options = remember { mutableStateListOf<Option>() } // List to store selected options
+    val showDialog = remember { mutableStateOf(false) }
 
     // Function to handle checkbox state change
     fun onOptionSelected(option: Option, isChecked: Boolean) {
@@ -342,7 +344,7 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                                     selectedBackup.value
                                 )
                             )
-                            navController.navigate(Route.PlanScreen.route)
+                                    showDialog.value=true
                         },
                     ) {
                         Text(
@@ -351,6 +353,22 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                     }
                 }
 
+            }
+            item {
+                if (showDialog.value) {
+                    FeedbackAlertDialog(
+                        title =  "You have successfully generated your plan!",
+                        onDismissRequest = { showDialog.value = false
+                            navController.navigate(Route.PlanScreen.route)
+                                           },
+                        onConfirm = {
+                            showDialog.value = false
+                            navController.navigate(Route.PlanScreen.route)
+                        },
+                        show = showDialog
+
+                    )
+                }
             }
         }
     }
