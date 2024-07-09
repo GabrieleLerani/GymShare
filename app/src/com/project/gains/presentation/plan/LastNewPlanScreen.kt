@@ -229,7 +229,7 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                 OptionCheckbox(
                     option = allOptions[4],
                     onOptionSelected = { isChecked ->
-                        selectedMetrics.add(TrainingMetricType.FREQUENCY)
+                        selectedMetrics.add(TrainingMetricType.FRQNCY)
                         onOptionSelected(
                             allOptions[4],
                             isChecked

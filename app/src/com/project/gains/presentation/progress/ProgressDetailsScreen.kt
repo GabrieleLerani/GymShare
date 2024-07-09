@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -128,6 +129,8 @@ fun ProgressDetailsScreen(
                                     horizontalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
+                                    Spacer(modifier = Modifier.weight(0.3f))
+
                                     androidx.compose.material3.Text(
                                         text = selectedPeriod.toString(),
                                         style = MaterialTheme.typography.bodySmall.copy(
@@ -162,11 +165,12 @@ fun ProgressDetailsScreen(
                                     DropdownMenuItem(
                                         text = {
                                             androidx.compose.material3.Text(
-                                                period.toString(),
+                                                text = period.toString().take(15) + if (period.toString().length > 15) "..." else "",
                                                 style = MaterialTheme.typography.bodySmall.copy(
-                                                    fontWeight = FontWeight.Bold
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 12.sp
                                                 ),
-                                                color = MaterialTheme.colorScheme.onSurface
+                                                color = MaterialTheme.colorScheme.onSurface,
                                             )
                                         },
                                         onClick = {
@@ -185,7 +189,7 @@ fun ProgressDetailsScreen(
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 ), shape = RoundedCornerShape(16.dp)
                                             )
-                                            .padding(16.dp)
+                                            .padding(8.dp)
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                 }
@@ -218,13 +222,15 @@ fun ProgressDetailsScreen(
                                     horizontalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
+                                    Spacer(modifier = Modifier.weight(0.3f))
+
                                     androidx.compose.material3.Text(
                                         text = selectedMetric.toString(),
                                         style = MaterialTheme.typography.bodySmall.copy(
                                             fontWeight = FontWeight.Bold
                                         ),
                                         color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.weight(1f)  // Use weight to make the text flexible
+                                        modifier = Modifier.weight(5f)  // Use weight to make the text flexible
                                     )
                                     androidx.compose.material3.IconButton(
                                         onClick = { expandedMetric = !expandedMetric }
@@ -252,11 +258,12 @@ fun ProgressDetailsScreen(
                                     DropdownMenuItem(
                                         text = {
                                             androidx.compose.material3.Text(
-                                                metric.toString(),
+                                                text = metric.toString().take(15) + if (metric.toString().length > 15) "..." else "",
                                                 style = MaterialTheme.typography.bodySmall.copy(
-                                                    fontWeight = FontWeight.Bold
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 12.sp
                                                 ),
-                                                color = MaterialTheme.colorScheme.onSurface
+                                                color = MaterialTheme.colorScheme.onSurface,
                                             )
                                         },
                                         onClick = {
@@ -275,7 +282,7 @@ fun ProgressDetailsScreen(
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 ), shape = RoundedCornerShape(16.dp)
                                             )
-                                            .padding(16.dp)
+                                            .padding(8.dp)
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                 }
@@ -308,6 +315,7 @@ fun ProgressDetailsScreen(
                                     horizontalArrangement = Arrangement.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
+                                    Spacer(modifier = Modifier.weight(0.3f))
                                     androidx.compose.material3.Text(
                                         text = selectedPlot.toString(),
                                         style = MaterialTheme.typography.bodySmall.copy(
@@ -336,17 +344,17 @@ fun ProgressDetailsScreen(
                                         shape = RoundedCornerShape(16.dp),
                                         color = MaterialTheme.colorScheme.surface
                                     )
-                                    .padding(10.dp)
                             ) {
                                 PlotType.entries.forEach { plot ->
                                     DropdownMenuItem(
                                         text = {
                                             androidx.compose.material3.Text(
-                                                plot.toString(),
+                                                text = plot.toString().take(15) + if (plot.toString().length > 15) "..." else "",
                                                 style = MaterialTheme.typography.bodySmall.copy(
-                                                    fontWeight = FontWeight.Bold
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 12.sp
                                                 ),
-                                                color = MaterialTheme.colorScheme.onSurface
+                                                color = MaterialTheme.colorScheme.onSurface,
                                             )
                                         },
                                         onClick = {
@@ -365,7 +373,7 @@ fun ProgressDetailsScreen(
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 ), shape = RoundedCornerShape(16.dp)
                                             )
-                                            .padding(16.dp)
+                                            .padding(8.dp)
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
                                 }
@@ -384,6 +392,8 @@ fun ProgressDetailsScreen(
         }
     }
 }
+
+
 
 
 
