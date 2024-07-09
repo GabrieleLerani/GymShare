@@ -3,20 +3,26 @@ package com.project.gains.presentation
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
@@ -24,6 +30,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -102,54 +109,120 @@ fun HomeScreen(
 
            ) {
                item {
-                   // TODO CHANGE
                    Column(
                        horizontalAlignment = Alignment.CenterHorizontally,
-                       verticalArrangement = Arrangement.Top
+                       verticalArrangement = Arrangement.Top,
+                       modifier = Modifier.padding(16.dp)
                    ) {
-                       TextField(
-                           readOnly = true,
-                           value = selectedPlan.toString(),
-                           onValueChange = { },
-                           label = {
-                           },
-                           trailingIcon = {
-                               androidx.compose.material.IconButton(onClick = {
-                                   expanded = !expanded
-                               }) {
+                       Box(
+                           modifier = Modifier
+                               .fillMaxWidth()
+                               .padding(bottom = 16.dp)
+                               .background(
+                                   MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                   RoundedCornerShape(16.dp)
+                               )
+                               .border(
+                                   border = BorderStroke(
+                                       width = 3.dp,
+                                       color = MaterialTheme.colorScheme.onSurface
+                                   ), shape = RoundedCornerShape(16.dp)
+                               )
+
+                               .padding(16.dp)
+                       ) {
+                           Row(
+                               verticalAlignment = Alignment.CenterVertically,
+                               modifier = Modifier.fillMaxWidth()
+                           ) {
+                               Text(
+                                   text = "Your current plan: ${selectedPlan.toString()}",
+                                   style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                                   color = MaterialTheme.colorScheme.onSurface,
+                                   modifier = Modifier.weight(1f)
+                                   // Take up the remaining space
+                               )
+                               IconButton(
+                                   onClick = {  expanded =!expanded }
+                               ) {
                                    Icon(
                                        imageVector = Icons.Default.ArrowDropDown,
                                        contentDescription = "Dropdown Icon"
                                    )
                                }
-                           },
-                           colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                           modifier = Modifier
-                               .padding(start = 60.dp)
-                               .background(
-                                   shape = RoundedCornerShape(20.dp),
-                                   color = MaterialTheme.colorScheme.background
-                               )
-                       )
+                           }
+                       }
+
                        DropdownMenu(
                            expanded = expanded,
-                           onDismissRequest = {
-                               expanded = false
-                           }
+                           onDismissRequest = { expanded=false },
+                           modifier = Modifier
+                               .fillMaxWidth(0.7f)
+                               .background(
+                                   shape = RoundedCornerShape(16.dp),
+                                   color = MaterialTheme.colorScheme.surface
+                               )
+                               .padding(10.dp) // Padding to match the Text above
                        ) {
                            plans?.forEach { plan ->
                                DropdownMenuItem(
-                                   text = { androidx.compose.material.Text(plan.name) },
+                                   text = {
+                                       Text(
+                                           plan.name,
+                                           style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold),
+                                           color = MaterialTheme.colorScheme.onSurface
+                                       )
+                                   },
                                    onClick = {
+                                       selectedPlan=plan.name
                                        selectHandler(ManagePlanEvent.SelectPlan(plan))
-                                       selectedPlan = plan.name
-                                       expanded = false
-                                   }
+                                       expanded=false
+                                   },
+                                   modifier = Modifier
+                                       .fillMaxWidth()
+                                       .background(
+                                           color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                           shape = RoundedCornerShape(16.dp)
+                                       )
+                                       .border(
+                                           border = BorderStroke(
+                                               width = 3.dp,
+                                               color = MaterialTheme.colorScheme.onSurface
+                                           ), shape = RoundedCornerShape(16.dp)
+                                       )
+                                       .padding(16.dp) // Inner padding for the item
                                )
+                               Spacer(modifier = Modifier.height(2.dp))
                            }
                        }
                    }
                }
+
+
+
+               item {
+                   Text(
+                       text = "Your daily workout",
+                       style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                       color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                       modifier = Modifier
+                           .fillMaxWidth()
+                           .padding(16.dp) // Add padding for better spacing
+                           .background(
+                               MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                               RoundedCornerShape(16.dp)
+                           )
+                           .border(
+                               border = BorderStroke(
+                                   width = 3.dp,
+                                   color = MaterialTheme.colorScheme.onSurface
+                               ), shape = RoundedCornerShape(16.dp)
+                           )
+
+                           .padding(16.dp) // Inner padding for the text itself
+                   )
+               }
+
                val weekday = currentWeekday()
 
                workouts?.forEach { workout ->
@@ -162,6 +235,53 @@ fun HomeScreen(
                    }
                }
 
+               item {
+                   if (favouriteExercises?.isEmpty()==true){
+                       Text(
+                           text = "No favorites exercises yet ",
+                           style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                           color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                           modifier = Modifier
+                               .fillMaxWidth()
+                               .padding(16.dp) // Add padding for better spacing
+                               .background(
+                                   MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                   RoundedCornerShape(16.dp)
+                               )
+                               .border(
+                                   border = BorderStroke(
+                                       width = 3.dp,
+                                       color = MaterialTheme.colorScheme.onSurface
+                                   ), shape = RoundedCornerShape(16.dp)
+                               )
+
+                               .padding(16.dp) // Inner padding for the text itself
+                       )
+                   }else{
+                       Text(
+                           text = "Your favorites exercises",
+                           style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                           color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                           modifier = Modifier
+                               .fillMaxWidth()
+                               .padding(16.dp) // Add padding for better spacing
+                               .background(
+                                   MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                   RoundedCornerShape(16.dp)
+                               )
+                               .border(
+                                   border = BorderStroke(
+                                       width = 3.dp,
+                                       color = MaterialTheme.colorScheme.onSurface
+                                   ), shape = RoundedCornerShape(16.dp)
+                               )
+
+                               .padding(16.dp) // Inner padding for the text itself
+                       )
+                   }
+
+               }
+
                favouriteExercises?.forEach { exercise ->
                    item {
                        GeneralCard(imageResId = R.drawable.pexels1, title = exercise.name) {
@@ -169,6 +289,53 @@ fun HomeScreen(
                        }
                    }
 
+               }
+
+               item {
+                   if (favouriteWorkouts?.isEmpty()==true) {
+
+                       Text(
+                           text = "No favorites workouts yet ",
+                           style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                           color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                           modifier = Modifier
+                               .fillMaxWidth()
+                               .padding(16.dp) // Add padding for better spacing
+                               .background(
+                                   MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                   RoundedCornerShape(16.dp)
+                               )
+                               .border(
+                                   border = BorderStroke(
+                                       width = 3.dp,
+                                       color = MaterialTheme.colorScheme.onSurface
+                                   ), shape = RoundedCornerShape(16.dp)
+                               )
+
+                               .padding(16.dp) // Inner padding for the text itself
+                       )
+                   }else{
+                       Text(
+                           text = "Your favorites workouts",
+                           style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
+                           color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                           modifier = Modifier
+                               .fillMaxWidth()
+                               .padding(16.dp) // Add padding for better spacing
+                               .background(
+                                   MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                   RoundedCornerShape(16.dp)
+                               )
+                               .border(
+                                   border = BorderStroke(
+                                       width = 3.dp,
+                                       color = MaterialTheme.colorScheme.onSurface
+                                   ), shape = RoundedCornerShape(16.dp)
+                               )
+
+                               .padding(16.dp) // Inner padding for the text itself
+                       )
+                   }
                }
 
                favouriteWorkouts?.forEach { workout ->
