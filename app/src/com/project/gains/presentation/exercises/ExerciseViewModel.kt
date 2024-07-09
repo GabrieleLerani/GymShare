@@ -26,6 +26,7 @@ class ExerciseViewModel @Inject constructor() : ViewModel(){
 
 
 
+
     init {
         favouriteExercises.value= mutableListOf()
         _selectedExercise.value= generateSampleExercises().get(0)
@@ -44,11 +45,20 @@ class ExerciseViewModel @Inject constructor() : ViewModel(){
 
             ExerciseEvent.AddExercise -> {
 
-                selectedExercise.value?.let { _favouriteExercises.value?.add(it) }
+                System.out.println(favouriteExercises)
+
+                selectedExercise.value?.let {
+                    if (!_favouriteExercises.value?.contains(it)!!){
+                        _favouriteExercises.value?.add(it) }
+                }
 
             }
             ExerciseEvent.DeleteExercise -> {
-                selectedExercise.value?.let { _favouriteExercises.value?.remove(it) }
+                selectedExercise.value?.let {
+                    if (_favouriteExercises.value?.contains(it)==true){
+                        _favouriteExercises.value?.remove(it) }
+                }
+
 
             }
         }

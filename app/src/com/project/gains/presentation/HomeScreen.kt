@@ -168,7 +168,7 @@ fun HomeScreen(
                favouriteExercises?.forEach { exercise ->
                    item {
                        GeneralCard(imageResId = R.drawable.pexels1, title = exercise.name) {
-                           navController.navigate(Route.WorkoutScreen.route)
+                           navController.navigate(Route.ExerciseDetailsScreen.route)
                        }
                    }
 

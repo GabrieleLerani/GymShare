@@ -1,11 +1,9 @@
 package com.project.gains.presentation
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.tooling.preview.Preview
 
 
 import com.project.gains.presentation.components.DynamicBottomBar
@@ -15,12 +13,13 @@ import com.project.gains.presentation.exercises.ExerciseViewModel
 
 import com.project.gains.presentation.navgraph.NavGraph
 import com.project.gains.presentation.workout.WorkoutViewModel
-import com.project.gains.theme.GOrange
 import com.project.gains.theme.GainsAppTheme
 
 
 @Composable
-fun MainScreen(startDestination: String, searchViewModel: SearchViewModel,exerciseViewModel: ExerciseViewModel,workoutViewModel: WorkoutViewModel) {
+fun MainScreen(
+    startDestination: String, searchViewModel: SearchViewModel,
+) {
     val navController = rememberNavController()
 
     val searchWidgetState by searchViewModel.searchWidgetState
@@ -29,7 +28,7 @@ fun MainScreen(startDestination: String, searchViewModel: SearchViewModel,exerci
 
     GainsAppTheme {
         Scaffold(
-            topBar = { DynamicTopBar(navController = navController, addFavouriteExerciseHandler =exerciseViewModel::onExerciseEvent, addFavouriteWorkoutHandler = workoutViewModel::onManageWorkoutEvent ) },
+            topBar = { DynamicTopBar(navController = navController ) },
             bottomBar = {
                     DynamicBottomBar(navController = navController)
               },
@@ -38,8 +37,6 @@ fun MainScreen(startDestination: String, searchViewModel: SearchViewModel,exerci
             NavGraph(
                 startDestination = startDestination,
                 navController = navController,
-                exerciseViewModel=exerciseViewModel,
-                workoutViewModel=workoutViewModel,
                 paddingValues = paddingValues)
         }
     }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.TopAppBar
@@ -171,7 +170,6 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
 }
 @Composable
 fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit,button2: @Composable () -> Unit) {
-
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
@@ -236,7 +234,9 @@ fun currentRoute(navController: NavController): String? {
 }
 
 @Composable
-fun DynamicTopBar(navController: NavController,addFavouriteExerciseHandler: (ExerciseEvent.AddExercise) -> Unit,addFavouriteWorkoutHandler:(ManageWorkoutEvent.AddWorkoutFavourite)->Unit) {
+fun DynamicTopBar(
+    navController: NavController,
+) {
     val currentRoute = currentRoute(navController = navController)
 
     when (currentRoute) {
@@ -298,39 +298,6 @@ fun DynamicTopBar(navController: NavController,addFavouriteExerciseHandler: (Exe
             }
         }
         Route.WorkoutScreen.route -> {
-            FavoriteTopBar(
-                message = "Workout",
-                button2 = {
-                    IconButton(
-                        modifier = Modifier.size(45.dp),
-                        onClick = {
-                            addFavouriteWorkoutHandler(ManageWorkoutEvent.AddWorkoutFavourite)
-                        }) {
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite",
-                        )
-                    }},
-                button = {
-                    IconButton(
-                        modifier = Modifier.size(45.dp),
-                        onClick = {
-                            navController.navigate(Route.ShareScreen.route)
-
-                        }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Share",
-                            modifier = Modifier.graphicsLayer {
-                                rotationZ = -45f // Rotate 45 degrees counterclockwise
-                            }
-                        )
-                    }
-                }, button1 = {
-                    BackButton {
-                        navController.popBackStack()
-                    }
-                })
         }
         Route.WorkoutModeScreen.route -> {
             TopBar(
@@ -367,7 +334,7 @@ fun DynamicTopBar(navController: NavController,addFavouriteExerciseHandler: (Exe
                     ) { navController.navigate(Route.AccountScreen.route) }
                 },
                 button1 = {
-                    IconButton(onClick = { addFavouriteExerciseHandler(ExerciseEvent.AddExercise) }) {
+                    IconButton(onClick = {  }) {
                         Icon(
                             Icons.Default.FavoriteBorder,
                             contentDescription = "Favorite Icon",
@@ -456,39 +423,7 @@ fun DynamicTopBar(navController: NavController,addFavouriteExerciseHandler: (Exe
 
 
         Route.ExerciseDetailsScreen.route -> {
-            FavoriteTopBar(
-                message = "Exercise",
-                button2 = {
-                    IconButton(
-                        modifier = Modifier.size(45.dp),
-                        onClick = {
-                            addFavouriteExerciseHandler(ExerciseEvent.AddExercise)
-                        }) {
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite",
-                        )
-                }},
-                button = {
-                        IconButton(
-                            modifier = Modifier.size(45.dp),
-                            onClick = {
-                                navController.navigate(Route.ShareScreen.route)
 
-                            }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "Share",
-                                modifier = Modifier.graphicsLayer {
-                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
-                                }
-                            )
-                        }
-                    }, button1 = {
-                    BackButton {
-                        navController.popBackStack()
-                    }
-                })
         }
 
     }
@@ -504,7 +439,7 @@ fun DynamicBottomBar(navController: NavController) {
             WorkoutBottomBar(navController)
         }
 
-        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, Route.WorkoutModeScreen.route,Route.ShareScreen.route,  -> {
+        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, Route.WorkoutModeScreen.route,Route.ShareScreen.route,Route.ExerciseDetailsScreen.route -> {
             // Empty because new plan has no bottom bar
         }
 

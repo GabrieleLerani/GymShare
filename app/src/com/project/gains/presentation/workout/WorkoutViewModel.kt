@@ -38,9 +38,12 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private var _favouriteWorkouts = MutableLiveData<MutableList<Workout>>()
     val favouriteWorkouts : MutableLiveData<MutableList<Workout>> = _favouriteWorkouts
 
+
+
     private var songIndex = 0
 
     init {
+
         _favouriteWorkouts.value= mutableListOf()
         _workouts.value = generateSampleWorkouts()
         _exercises.value = generateSampleExercises()
@@ -84,12 +87,21 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
 
 
             is ManageWorkoutEvent.AddWorkoutFavourite -> {
-                selectedWorkout.value?.let { _favouriteWorkouts.value?.add(it) }
+                selectedWorkout.value?.let {
+                    if (!_favouriteWorkouts.value?.contains(it)!!) {
+
+                        _favouriteWorkouts.value?.add(it)
+                    }
+                }
 
             }
             is ManageWorkoutEvent.DeleteWorkoutFavourite -> {
-                selectedWorkout.value?.let { _favouriteWorkouts.value?.remove(it) }
+                    selectedWorkout.value?.let {
+                        if (_favouriteWorkouts.value?.contains(it)==true) {
 
+                            _favouriteWorkouts.value?.remove(it)
+                        }
+                    }
 
             }
         }

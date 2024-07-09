@@ -11,8 +11,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -33,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 
 import com.project.gains.R
 import com.project.gains.presentation.components.BackButton
+import com.project.gains.presentation.components.FavoriteTopBar
 import com.project.gains.presentation.components.FeedbackAlertDialog
 
 import com.project.gains.presentation.components.InstructionCard
@@ -40,6 +46,7 @@ import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.exercises.events.ExerciseEvent
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.settings.events.ManageDialogEvent
@@ -49,22 +56,25 @@ import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun ExerciseDetailsScreen(
-exerciseViewModel: ExerciseViewModel
+    navController:NavController,
+    exerciseViewModel: ExerciseViewModel,
+    addFavouriteExerciseHandler:(ExerciseEvent.AddExercise)->Unit,
+    removeFavouriteExerciseHandler:(ExerciseEvent.DeleteExercise)->Unit
+
 ) {
     val selectExercise by exerciseViewModel.selectedExercise.observeAsState()
+    val favoriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
+    val favorite = remember { mutableStateOf(false) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Second Box (main content)
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = 50.dp)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             item {
                 Image(
                     painter = painterResource(selectExercise?.gifResId ?: R.drawable.arms2),
@@ -78,7 +88,7 @@ exerciseViewModel: ExerciseViewModel
             }
 
             item {
-                androidx.compose.material.Text(
+                Text(
                     text = selectExercise?.name ?: "Dumbbell",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -87,7 +97,7 @@ exerciseViewModel: ExerciseViewModel
             }
 
             item {
-                androidx.compose.material.Text(
+                Text(
                     text = "The inclined dumbbell bench press is considered as the best basic exercise for developing the pectoral muscles and increasing general strength. This exercise allows a greater amplitude of movement than the classic bar press, and allows you to work out the muscles more efficiently.",
                     fontSize = 16.sp
                 )
@@ -95,7 +105,7 @@ exerciseViewModel: ExerciseViewModel
             item { Spacer(modifier = Modifier.height(30.dp)) }
 
             item {
-                androidx.compose.material.Text(
+                Text(
                     text = "Instruction",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -105,19 +115,16 @@ exerciseViewModel: ExerciseViewModel
 
             item { Spacer(modifier = Modifier.height(30.dp)) }
 
-
-
             selectExercise?.description?.forEach { instruction ->
                 item {
                     InstructionCard(text = instruction)
-
                 }
             }
 
             item { Spacer(modifier = Modifier.height(30.dp)) }
 
             item {
-                androidx.compose.material.Text(
+                Text(
                     text = "Warning",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -130,17 +137,66 @@ exerciseViewModel: ExerciseViewModel
             selectExercise?.warnings?.forEach { warning ->
                 item {
                     WarningCard(message = warning)
-
                 }
                 item { Spacer(Modifier.height(5.dp)) }
             }
-
-
-
         }
 
+        // First Box (Top bar)
+        FavoriteTopBar(
+            message = "Exercise",
+            button2 = {
+                IconButton(
+                    modifier = Modifier
+                        .size(45.dp)
+                        .fillMaxWidth(),
+                    onClick = {
+                        if (favorite.value){
+                            removeFavouriteExerciseHandler(ExerciseEvent.DeleteExercise)
+                            favorite.value=false
+                        }
+                        else{
+                            addFavouriteExerciseHandler(ExerciseEvent.AddExercise)
+                            favorite.value=true
+                        }
+                    }) {
+                    Icon(
+                        imageVector = if (favorite.value){
+                            Icons.Default.Favorite
+                        }else if (favoriteExercises?.contains(selectExercise) == true) {
+                            Icons.Default.Favorite
+                        }
+                        else {
+                            Icons.Default.FavoriteBorder
+                        },
+                        contentDescription = "Favorite",
+                    )
+                }
+            },
+            button = {
+                IconButton(
+                    modifier = Modifier.size(45.dp),
+                    onClick = {
+                        navController.navigate(Route.ShareScreen.route)
+                    }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Send,
+                        contentDescription = "Share",
+                        modifier = Modifier.graphicsLayer {
+                            rotationZ = -45f // Rotate 45 degrees counterclockwise
+                        }
+                    )
+                }
+            },
+            button1 = {
+                BackButton {
+                    navController.popBackStack()
+                }
+            },
+        )
     }
-    }
+}
+
 
 
 
@@ -149,9 +205,13 @@ exerciseViewModel: ExerciseViewModel
 @Preview(showBackground = true)
 @Composable
 fun ExerciseDetailsScreenPreview() {
+    val navController= rememberNavController()
     val exerciseViewModel: ExerciseViewModel = hiltViewModel()
     ExerciseDetailsScreen(
         exerciseViewModel = exerciseViewModel,
+        addFavouriteExerciseHandler = {},
+        navController = navController,
+        removeFavouriteExerciseHandler = {}
 
     )
 }

@@ -1,14 +1,21 @@
 package com.project.gains.presentation.workout
 
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.runtime.Composable
@@ -16,19 +23,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 
 
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.project.gains.presentation.settings.ShareContentViewModel
 
 import com.project.gains.presentation.components.AddExerciseItem
-
+import com.project.gains.presentation.components.BackButton
+import com.project.gains.presentation.components.FavoriteTopBar
 
 
 import com.project.gains.presentation.components.FeedbackAlertDialog
@@ -38,6 +45,7 @@ import com.project.gains.presentation.exercises.events.ExerciseEvent
 
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.settings.events.ManageDialogEvent
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
@@ -46,16 +54,20 @@ fun WorkoutScreen(
     shareHandler: (ManageDialogEvent) -> Unit,
     exerciseHandler: (ExerciseEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
-    shareContentViewModel: ShareContentViewModel
+    shareContentViewModel: ShareContentViewModel,
+    addFavouriteWorkoutHandler:(ManageWorkoutEvent.AddWorkoutFavourite)->Unit,
+    removeFavouriteWorkoutHandler:(ManageWorkoutEvent.DeleteWorkoutFavourite)->Unit
+
 
 ) {
-    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
     val showDialogShared by shareContentViewModel.showDialogShared.observeAsState()
+    val favoriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
 
     // Sample list of exercises
-    val workout by workoutViewModel.selectedWorkout.observeAsState()
+    val selectedWorkout by workoutViewModel.selectedWorkout.observeAsState()
 
     val showPopup2 = remember { mutableStateOf(false) }
+    val favorite = remember { mutableStateOf(false) }
 
 
     GainsAppTheme {
@@ -67,11 +79,11 @@ fun WorkoutScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.Center
-
+                    .padding(top=50.dp)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                workout?.exercises?.forEach { exercise ->
+                selectedWorkout?.exercises?.forEach { exercise ->
                     item {
                         AddExerciseItem(
                             exercise = exercise, {
@@ -88,6 +100,59 @@ fun WorkoutScreen(
                 }
 
             }
+
+            // First Box (Top bar)
+            FavoriteTopBar(
+                message = "Workout",
+                button2 = {
+                    IconButton(
+                        modifier = Modifier
+                            .size(45.dp)
+                            .fillMaxWidth(),
+                        onClick = {
+                            if (favorite.value){
+                                removeFavouriteWorkoutHandler(ManageWorkoutEvent.DeleteWorkoutFavourite)
+                                favorite.value=false
+                            }
+                            else{
+                                addFavouriteWorkoutHandler(ManageWorkoutEvent.AddWorkoutFavourite)
+                                favorite.value=true
+                            }
+                        }) {
+                        Icon(
+                            imageVector = if (favorite.value){
+                                Icons.Default.Favorite
+                            }else if (favoriteWorkouts?.contains(selectedWorkout) == true) {
+                                Icons.Default.Favorite
+                            }
+                            else {
+                                Icons.Default.FavoriteBorder
+                            },
+                            contentDescription = "Favorite",
+                        )
+                    }
+                },
+                button = {
+                    IconButton(
+                        modifier = Modifier.size(45.dp),
+                        onClick = {
+                            navController.navigate(Route.ShareScreen.route)
+                        }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "Share",
+                            modifier = Modifier.graphicsLayer {
+                                rotationZ = -45f // Rotate 45 degrees counterclockwise
+                            }
+                        )
+                    }
+                },
+                button1 = {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                },
+            )
 
             if (showDialogShared==true) {
 
@@ -110,21 +175,7 @@ fun WorkoutScreen(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun WorkoutScreenPreview() {
 
-    val navController = rememberNavController()
-    val workoutViewModel: WorkoutViewModel = hiltViewModel()
-    val shareContentViewModel : ShareContentViewModel = hiltViewModel()
-    WorkoutScreen(
-        navController = navController,
-        shareHandler = {},
-        exerciseHandler = {},
-        workoutViewModel = workoutViewModel,
-        shareContentViewModel = shareContentViewModel
-    )
-}
 
 
 
