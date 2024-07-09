@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 
@@ -50,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -63,12 +65,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.project.gains.R
 import com.project.gains.presentation.CustomBackHandler
 import com.project.gains.presentation.Dimension.ButtonCornerShape
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignInEvent
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.SharingMediaIcon
+import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
@@ -135,7 +140,6 @@ fun DefaultSignInContent(
             text = "Login",
             style = MaterialTheme.typography.displayMedium,
             fontSize = 45.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 35.dp)
         )
@@ -146,7 +150,6 @@ fun DefaultSignInContent(
                 Text(
                     text = "Email",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -155,15 +158,14 @@ fun DefaultSignInContent(
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
             )
 
         )
@@ -175,7 +177,6 @@ fun DefaultSignInContent(
                 Text(
                     text = "Password",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -186,7 +187,6 @@ fun DefaultSignInContent(
                     focusManager.clearFocus()
                 }
             ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image = if (passwordVisible)
@@ -205,8 +205,8 @@ fun DefaultSignInContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary
             )
         )
         Button(
@@ -218,16 +218,18 @@ fun DefaultSignInContent(
             modifier = Modifier
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary, // Green
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
+                containerColor = MaterialTheme.colorScheme.primary, // Green
+                contentColor = MaterialTheme.colorScheme.onPrimary // Text color
             )
         ) {
             Text(
                 text = "Sign In",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
+        }
+        Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
+            SocialMediaIcon(icon = R.drawable.google, onClick = { navController.navigate(Route.HomeScreen.route) }, isSelected = false)
         }
         val text = AnnotatedString.Builder().apply {
             pushStringAnnotation(
