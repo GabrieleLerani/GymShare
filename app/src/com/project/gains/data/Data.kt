@@ -46,6 +46,10 @@ enum class Categories {
     User, Workout, Keyword, Social
 }
 
+enum class Socials {
+    Facebook, TikTok, Instagram, X
+}
+
 data class Exercise(
     val name: String,
     val description: List<String>,  // Nullable Integer for resource ID
@@ -346,7 +350,6 @@ fun generateRandomGymPost(count: Int): List<GymPost> {
         R.drawable.instagram_icon,
         R.drawable.x_logo_icon
     )
-
     val userResourceIconsIds = listOf(
         R.drawable.pexels1,
         R.drawable.pexels2,

@@ -3,12 +3,12 @@ package com.project.gains.presentation.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -30,20 +30,25 @@ import com.project.gains.data.Categories
 @Composable
 fun SearchAppBar(
     text: String,
+    placeholder: String,
     onTextChange: (String) -> Unit,
     onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit,
+    onClick: () -> Unit
 ) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(56.dp)
+            .padding(top = 10.dp, start = 10.dp, end = 10.dp),
         elevation = AppBarDefaults.TopAppBarElevation,
-        color = MaterialTheme.colors.primary
+        color = MaterialTheme.colors.primary,
     ) {
         TextField(
             modifier = Modifier
+                .clickable { onClick() }
                 .fillMaxWidth(),
+            enabled = false,
             value = text,
             onValueChange = {
                 onTextChange(it)
@@ -52,7 +57,7 @@ fun SearchAppBar(
                 Text(
                     modifier = Modifier
                         .alpha(ContentAlpha.medium),
-                    text = "Search here...",
+                    text = placeholder,
                     color = Color.White
                 )
             },
@@ -109,7 +114,7 @@ fun SearchAppBar(
 @Composable
 fun ResearchFilter(
     categories: List<Categories>,
-    selectedCategories: List<Categories>,
+    selectedCategory: Categories,
     onCategorySelected: (Categories) -> Unit
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
@@ -118,7 +123,7 @@ fun ResearchFilter(
         Spacer(modifier = Modifier.height(8.dp))
 
         categories.forEach { category ->
-            val isSelected = selectedCategories.contains(category)
+            val isSelected = selectedCategory == category
             FilterChip(
                 category = category,
                 isSelected = isSelected,
@@ -153,17 +158,13 @@ fun FilterChip(
 @Preview(showBackground = true)
 @Composable
 fun ResearchFilterPreview() {
-    var selectedCategories by remember { mutableStateOf(listOf<Categories>()) }
+    var selectedCategory by remember { mutableStateOf(Categories.User) }
 
     ResearchFilter(
         categories = listOf(Categories.User, Categories.Workout, Categories.Keyword, Categories.Social),
-        selectedCategories = selectedCategories,
+        selectedCategory = selectedCategory,
         onCategorySelected = { category ->
-            selectedCategories = if (selectedCategories.contains(category)) {
-                selectedCategories - category
-            } else {
-                selectedCategories + category
-            }
+            selectedCategory = category
         }
     )
 }
@@ -172,10 +173,12 @@ fun ResearchFilterPreview() {
 @Preview
 fun SearchAppBarPreview() {
     SearchAppBar(
-        text = "Some random text",
+        text = "",
+        placeholder = "Some random text",
         onTextChange = {},
         onCloseClicked = {},
-        onSearchClicked = {}
+        onSearchClicked = {},
+        onClick = {}
     )
 }
 

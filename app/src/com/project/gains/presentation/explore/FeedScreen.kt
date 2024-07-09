@@ -38,6 +38,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.GymPost
 import com.project.gains.presentation.components.LogoUser
+import com.project.gains.presentation.components.SearchAppBar
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
@@ -53,7 +55,6 @@ fun FeedScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -61,7 +62,16 @@ fun FeedScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-
+                    SearchAppBar(
+                        text = "",
+                        placeholder = "Search here...",
+                        onTextChange = {},
+                        onCloseClicked = {},
+                        onSearchClicked = {},
+                        onClick = {
+                            navController.navigate(Route.SearchScreen.route)
+                        }
+                    )
                 }
 
                 gymPosts?.forEach{gymPost ->
