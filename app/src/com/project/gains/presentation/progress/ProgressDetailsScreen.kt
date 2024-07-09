@@ -83,8 +83,6 @@ fun ProgressDetailsScreen(
     var expandedMetric by remember { mutableStateOf(false) }
     var expandedPlot by remember { mutableStateOf(false) }
 
-    val share = remember { mutableStateOf(false) }
-
     GainsAppTheme {
         Box(
             modifier = Modifier

@@ -1,6 +1,8 @@
 package com.project.gains.presentation.navgraph
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.LinearEasing
@@ -277,7 +279,9 @@ fun NavGraph(
             HomeScreen(
                 navController = navController,
                 workoutViewModel = workoutViewModel,
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                selectHandler = planViewModel::onCreatePlanEvent,
+                planViewModel = planViewModel
             )
         }
     }
