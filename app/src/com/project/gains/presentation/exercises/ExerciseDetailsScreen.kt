@@ -39,6 +39,8 @@ import com.project.gains.presentation.components.InstructionCard
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
+import com.project.gains.presentation.exercises.events.ExerciseEvent
+import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.settings.events.ManageDialogEvent
 
@@ -47,17 +49,9 @@ import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun ExerciseDetailsScreen(
-    navController: NavController,
-    shareContentViewModel: ShareContentViewModel,
-    selectHandler:(ManageDialogEvent)->Unit
-
+exerciseViewModel: ExerciseViewModel
 ) {
-    // Sample list of workouts
-    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
-    val showDialogShared by shareContentViewModel.showDialogShared.observeAsState()
-
-    val showPopup2 = remember { mutableStateOf(false) }
-    val showDialog = remember { mutableStateOf(false) }
+    val selectExercise by exerciseViewModel.selectedExercise.observeAsState()
 
     GainsAppTheme {
         Box(
@@ -74,7 +68,7 @@ fun ExerciseDetailsScreen(
 
                 item {
                     Image(
-                        painter = painterResource(R.drawable.legs),
+                        painter = painterResource(selectExercise?.gifResId ?: R.drawable.arms2),
                         contentDescription = "Exercise",
                         modifier = Modifier
                             .fillMaxWidth()
@@ -86,7 +80,7 @@ fun ExerciseDetailsScreen(
 
                 item {
                     androidx.compose.material.Text(
-                        text = "30-degree incline dumbbell bench press",
+                        text = selectExercise?.name ?: "Dumbbell",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -111,21 +105,10 @@ fun ExerciseDetailsScreen(
                 }
 
                 item { Spacer(modifier = Modifier.height(30.dp)) }
-                val instructionList = listOf(
-                    "1) Lie down on the incline bench at an angle of 30 degrees, holding dumbbells in bent arms at the sides of your chest (palms facing forward).",
-                    "2) After taking a deep breath, squeeze the dumbbells up into fully straightened arms. At the uppermost point, exhale.",
-                    "3) Smoothly return to the starting position. Your elbows should be out to the sides and move along an imaginary line...",
-                    // Add more instructions here
-                )
-
-                val warningList = listOf(
-                    "Keep your back straight.",
-                    "Avoid locking your elbows.",
-                    "Maintain a consistent speed."
-                )
 
 
-                instructionList.forEach { instruction ->
+
+                selectExercise?.description?.forEach { instruction ->
                     item {
                         InstructionCard(text = instruction)
 
@@ -145,7 +128,7 @@ fun ExerciseDetailsScreen(
 
                 item { Spacer(modifier = Modifier.height(30.dp)) }
 
-                warningList.forEach { warning ->
+                selectExercise?.warnings?.forEach { warning ->
                     item {
                         WarningCard(message = warning)
 
@@ -153,44 +136,11 @@ fun ExerciseDetailsScreen(
                     item { Spacer(Modifier.height(5.dp)) }
                 }
 
-                item {
-                    if (showDialog.value) {
-                        FeedbackAlertDialog(
-                            title = "Select a social",
-                            onDismissRequest = { showDialog.value = false },
-                            onConfirm = {
-                                showDialog.value = false
-                                selectHandler(ManageDialogEvent.SelectShowDialogShared(true))
-                            },
-                            showDialog
-                        )
-                    }
-                }
 
 
             }
-            if (showDialogShared==true) {
 
-                FeedbackAlertDialog(
-                    title = "You have successfully Shared your content!",
-                    onDismissRequest = {
-                    },
-                    onConfirm = {
-                        selectHandler(ManageDialogEvent.SelectShowDialogShared(false))
-                    },
-                    show = showPopup2
-                )
-            }
         }
-
-     /*   linkedApps?.let {
-            ShareContentPagePopup(
-                showPopup2,
-                { selectHandler(ManageDialogEvent.SelectShowDialogShared(true)) },
-                navController,
-                shareContentViewModel
-            )
-        }*/
     }
 
 }
@@ -202,11 +152,10 @@ fun ExerciseDetailsScreen(
 @Composable
 fun ExerciseDetailsScreenPreview() {
     val navController = rememberNavController()
-    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
+    val exerciseViewModel: ExerciseViewModel = hiltViewModel()
     ExerciseDetailsScreen(
-        navController = navController,
-        shareContentViewModel = shareContentViewModel,
-        selectHandler= {  }
+        exerciseViewModel = exerciseViewModel,
+
     )
 }
 

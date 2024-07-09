@@ -21,7 +21,7 @@ class ExerciseViewModel @Inject constructor() : ViewModel(){
     val selectedExercise: MutableLiveData<Exercise> = _selectedExercise
 
     init {
-        _selectedExercise.value= generateSampleExercises(ExerciseType.ARMS, R.drawable.arms2).get(0)
+        _selectedExercise.value= generateSampleExercises().get(0)
     }
 
 

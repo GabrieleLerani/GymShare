@@ -1,8 +1,6 @@
 package com.project.gains.presentation.navgraph
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.LinearEasing
@@ -38,14 +36,12 @@ import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
 import com.project.gains.presentation.plan.AddGeneratedPlan
 import com.project.gains.presentation.plan.AddManualWorkout
-import com.project.gains.presentation.plan.GeneratedPlanViewModel
 import com.project.gains.presentation.plan.LastNewPlanScreen
 import com.project.gains.presentation.plan.ManualWorkoutViewModel
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
 import com.project.gains.presentation.plan.PlanViewModel
 import com.project.gains.presentation.progress.ProgressDetailsScreen
-import com.project.gains.presentation.progress.ProgressViewModel
 import com.project.gains.presentation.settings.AccountScreen
 import com.project.gains.presentation.settings.LinkedSocialSettingScreen
 import com.project.gains.presentation.share.ShareScreen
@@ -65,7 +61,6 @@ fun NavGraph(
     val planViewModel : PlanViewModel = hiltViewModel()
     val exerciseViewModel : ExerciseViewModel = hiltViewModel()
     val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()
-    val generatedPlanViewModel: GeneratedPlanViewModel = hiltViewModel()
 
 
 
@@ -144,7 +139,7 @@ fun NavGraph(
                 PlanScreen(navController = navController,
                     planViewModel = planViewModel,
                     workoutViewModel = workoutViewModel,
-                    shareContentViewModel = shareContentViewModel
+                    selectHandler = workoutViewModel::onManageWorkoutEvent
                 )
             }
 
@@ -180,7 +175,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
 
-                LastNewPlanScreen(navController = navController,generatedPlanViewModel::onManageGeneratePlanEvent)
+                LastNewPlanScreen(navController = navController,planViewModel::onCreatePlanEvent)
             }
             composable(
                 route = Route.AddGeneratedPlanScreen.route
@@ -226,9 +221,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 ExerciseDetailsScreen(
-                    navController = navController,
-                    shareContentViewModel = shareContentViewModel,
-                    selectHandler = shareContentViewModel::onManageDialogEvent
+                    exerciseViewModel = exerciseViewModel,
                 )
             }
             composable(

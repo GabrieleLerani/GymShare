@@ -43,6 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
+import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
@@ -51,6 +52,7 @@ import com.project.gains.data.Workout
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 import com.project.gains.theme.GainsAppTheme
 
@@ -58,11 +60,12 @@ import com.project.gains.theme.GainsAppTheme
 fun PlanScreen(
     navController: NavController,
     planViewModel: PlanViewModel,
-    shareContentViewModel: ShareContentViewModel,
+    selectHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,
     workoutViewModel: WorkoutViewModel
 ) {
     // Sample list of workouts
     val selectedPlan by planViewModel.selectedPlan.observeAsState()
+    val selectedFrequency by planViewModel.selectedFrequency.observeAsState()
     val selectedLevel by planViewModel.selectedLvl.observeAsState()
     val selectedPeriod  by planViewModel.selectedPeriod.observeAsState()
     val selectedTraining  by planViewModel.selectedTrainingType.observeAsState()
@@ -90,9 +93,9 @@ fun PlanScreen(
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        WorkoutHeader(selectedLevel, selectedPeriod, selectedTraining)
+                        WorkoutHeader(selectedLevel, selectedPeriod, selectedTraining,selectedFrequency)
                         Spacer(modifier = Modifier.height(16.dp))
-                        WorkoutDaysList(workouts ?: mutableListOf()) {
+                        WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
                             navController.navigate(Route.WorkoutScreen.route)
                         }
                     }
@@ -105,7 +108,7 @@ fun PlanScreen(
 }
 
 @Composable
-fun WorkoutHeader(selectedLevel: Level?, selectedPeriod: PeriodMetricType?, selectedTraining: TrainingType?) {
+fun WorkoutHeader(selectedLevel: Level?, selectedPeriod: PeriodMetricType?, selectedTraining: TrainingType?,selectedFrequency:Frequency?) {
 
     Column(
         modifier = Modifier
@@ -141,20 +144,16 @@ fun WorkoutHeader(selectedLevel: Level?, selectedPeriod: PeriodMetricType?, sele
             text = "Workouts done: 0",
             fontSize = 14.sp,
         )
+        Text(
+            text = "Workouts week frequency • $selectedFrequency",
+            fontSize = 14.sp,
+        )
     }
 }
 
 @Composable
-fun WorkoutDaysList(workouts: MutableList<Workout>, onItemClick: () -> Unit) {
+fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,) {
 
-    val workoutsDays = mutableListOf<String>()
-
-    val workoutsIds = mutableListOf<Int>()
-
-    workouts.forEach { workout ->
-        workoutsDays.add(workout.name)
-        workoutsIds.add(workout.id)
-    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -166,12 +165,14 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, onItemClick: () -> Unit) {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        workoutsDays.forEachIndexed { index, day ->
+        workouts.forEachIndexed { index,workout ->
             androidx.compose.material.Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
-                    .clickable { onItemClick() },
+                    .clickable {
+                        selectHandler(ManageWorkoutEvent.SelectWorkout(workout))
+                         },
                 elevation = 4.dp
             ) {
                 Row(
@@ -189,13 +190,13 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, onItemClick: () -> Unit) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "workout day ${workoutsIds[index]}",
+                            text = "workout day ${index}",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = day,
-                            fontSize = 14.sp
+                            text = workout.workoutDay.toString(),
+                            fontSize = 14.sp,
                         )
                     }
                 }
@@ -214,7 +215,7 @@ fun PlanScreenPreview() {
     PlanScreen(
         navController = navController,
         planViewModel = planViewModel,
-        shareContentViewModel = shareContentViewModel,
+       selectHandler = {},
         workoutViewModel = workoutViewModel
     )
 }

@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.PlayArrow
@@ -38,7 +37,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.data.Song
-import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.MusicEvent
 
 import com.project.gains.theme.GainsAppTheme
@@ -132,7 +130,8 @@ fun WorkoutModeScreen(
                                 .clip(RoundedCornerShape(16.dp))
                         ) {
                             Image(
-                                painter = painterResource(id = workout?.exercises?.get(currentExerciseIndex)?.gifResId ?: R.drawable.arms2),
+                                painter = painterResource(id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
+                                    ?: R.drawable.arms2),
                                 contentDescription = workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier

@@ -39,7 +39,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
 
     init {
         _workouts.value = generateSampleWorkouts()
-        _exercises.value = generateSampleExercises(ExerciseType.ARMS,R.drawable.arms)
+        _exercises.value = generateSampleExercises()
         _currentSong.value=Song("","","") // Dummy init
         _songs.value= generateRandomSongs(5)
         _selectedWorkout.value= generateSampleWorkouts()[0]

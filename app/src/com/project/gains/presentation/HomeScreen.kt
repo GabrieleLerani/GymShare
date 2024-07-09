@@ -86,7 +86,6 @@ fun HomeScreen(
            ) {
                val weekday = currentWeekday()
 
-               // TODO test
                workouts?.forEach { workout ->
                    if (workout.workoutDay.ordinal == weekday) {
                        item {
@@ -98,13 +97,6 @@ fun HomeScreen(
                }
            }
        }
-
-
-       // TODO no more PlanPagePopup (it has been copied to AddGeneratedPlanScreen)
-       /*
-       workouts?.let {
-           PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}
-        */
    }
 }
 

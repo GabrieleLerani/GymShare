@@ -355,7 +355,7 @@ fun DynamicTopBar(navController: NavController) {
 
         Route.ExerciseDetailsScreen.route -> {
             TopBar(
-                message = "Chest",
+                message = "Exercise",
                 button = {
                     IconButton(
                         modifier = Modifier.size(45.dp),

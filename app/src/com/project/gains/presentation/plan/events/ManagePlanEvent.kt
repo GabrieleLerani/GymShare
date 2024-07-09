@@ -28,5 +28,4 @@ sealed class ManagePlanEvent {
 
     data class DeletePlan(val plan: Plan) : ManagePlanEvent()
 
-    data class SelectShowDialogPlan(val value:Boolean) : ManagePlanEvent()
 }

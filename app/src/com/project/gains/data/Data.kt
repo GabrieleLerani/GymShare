@@ -2,7 +2,6 @@ package com.project.gains.data
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
@@ -45,12 +44,13 @@ enum class Frequency {
 
 data class Exercise(
     val name: String,
-    val gifResId: Int?,  // Nullable Integer for resource ID
-    val description: String,
+    val description: List<String>,  // Nullable Integer for resource ID
+    val gifResId: Int?,
     val type: ExerciseType,
     val training: TrainingType,
     val sets: Int,
-    val totalTime: Int
+    val totalTime: Int,
+    val warnings: List<String> = listOf("")
 )
 
 data class Plan(
@@ -113,53 +113,165 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
 
 // init data and functions
 
-fun generateSampleExercises(exerciseType: ExerciseType,res:Int): MutableList<Exercise> {
+fun generateSampleExercises(): MutableList<Exercise> {
     return mutableListOf(
         Exercise(
-            "Exercise 1", gifResId = res, description = "Exercise: Dumbbell Bicep Curl\n" +
-                    "Execution:\n" +
-                    "1. Stand upright with a dumbbell in each hand, arms fully extended by your sides, palms facing forward.\n" +
-                    "2. Keep your elbows close to your torso and engage your core for stability.\n" +
-                    "3. Begin the movement by flexing your elbows, curling the dumbbells towards your shoulders while keeping your upper arms stationary.\n" +
-                    "4. Continue to curl until the dumbbells are at shoulder level, and your biceps are fully contracted.\n" +
-                    "5. Hold the contracted position for a moment, then slowly lower the dumbbells back to the starting position with control.\n" +
-                    "6. Repeat for the desired number of repetitions.\n" +
-                    "\n" +
-                    "Tips:\n" +
-                    "- Use a controlled motion throughout the exercise, avoiding swinging or momentum.\n" +
-                    "- Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists.\n" +
-                    "- Focus on squeezing the biceps at the top of the movement to maximize muscle engagement.\n" +
-                    "- Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing.\n" +
-                    "- Choose an appropriate weight that allows you to perform the exercise with proper form and control.\n",
-            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
+            "Dumbell Curl",
+            description = listOf(
+                    "1. Stand upright with a dumbbell in each hand, arms fully extended by your sides, palms facing forward.",
+                    "2. Keep your elbows close to your torso and engage your core for stability.",
+                    "3. Begin the movement by flexing your elbows, curling the dumbbells towards your shoulders while keeping your upper arms stationary." ,
+                    "4. Continue to curl until the dumbbells are at shoulder level, and your biceps are fully contracted." ,
+                    "5. Hold the contracted position for a moment, then slowly lower the dumbbells back to the starting position with control." ,
+                    "6. Repeat for the desired number of repetitions." ,),
+            warnings = listOf(
+                    "- Use a controlled motion throughout the exercise, avoiding swinging or momentum." ,
+                    "- Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists." ,
+                    "- Focus on squeezing the biceps at the top of the movement to maximize muscle engagement." ,
+                    "- Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing." ,
+                    "- Choose an appropriate weight that allows you to perform the exercise with proper form and control.",),
+            gifResId = R.drawable.arms2,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90
         ),
         Exercise(
-            "Exercise 2", gifResId = res, description = "Exercise 2",
-            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
+            "Bench Press",
+            description = listOf(     "1. Lie flat on a bench with your feet firmly planted on the ground." ,
+                "2. Grip the barbell slightly wider than shoulder-width apart, with your palms facing forward." ,
+                "3. Lower the barbell slowly towards your chest, keeping your elbows at a 45-degree angle." ,
+                "4. Push the barbell back up to the starting position, fully extending your arms." ,
+                "5. Repeat for the desired number of repetitions." ,),
+            warnings = listOf("- Keep your back flat against the bench and avoid arching excessively." ,
+                "- Maintain a steady breathing pattern, exhaling as you push the barbell up." ,
+                "- Ensure the barbell is balanced and controlled throughout the movement.",),
+            gifResId = R.drawable.chest,
+            type = ExerciseType.CHEST,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90
         ),
         Exercise(
-            "Exercise 3", gifResId = res, description = "Exercise 3",
-            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
+            "Squat",
+            description = listOf(  "1. Stand with your feet shoulder-width apart, toes pointing slightly outward." ,
+                "2. Place the barbell on your upper back, gripping it firmly with your hands." ,
+                "3. Lower your body by bending your knees and hips, keeping your chest up and back straight." ,
+                "4. Continue lowering until your thighs are parallel to the ground." ,
+                "5. Push through your heels to return to the starting position." ,
+                "6. Repeat for the desired number of repetitions." ,),
+            warnings = listOf(
+                        "- Keep your knees in line with your toes throughout the movement." ,
+                        "- Avoid leaning forward excessively; maintain an upright posture." ,
+                        "- Breathe in as you lower your body and exhale as you push back up.",),
+            gifResId = R.drawable.legs4,
+            type = ExerciseType.LEGS,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90
         ),
         Exercise(
-            "Exercise 4", gifResId = res, description = "Exercise 4",
-            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
+            "Deadlift",
+            description = listOf(
+                    "1. Stand with your feet hip-width apart, toes pointing forward." ,
+                    "2. Bend at your hips and knees to grip the barbell with your hands slightly wider than shoulder-width apart." ,
+                    "3. Keep your back straight and chest up as you lift the barbell by extending your hips and knees." ,
+                    "4. Stand up fully, bringing the barbell to hip level." ,
+                    "5. Lower the barbell back to the ground with control." ,
+                    "6. Repeat for the desired number of repetitions." ,),
+               warnings = listOf(              "- Engage your core and keep your back straight to prevent injury." ,
+                   "- Use a mixed grip or overhand grip for better control." ,
+                   "- Breathe in as you lift the barbell and exhale as you lower it.",),
+            gifResId = R.drawable.backk,
+            type = ExerciseType.BACK,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90
         ),
         Exercise(
-            "Exercise 5", gifResId = res, description = "Exercise 5",
-            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
+            "Shoulder Press",
+            description = listOf(   "1. Sit on a bench with back support and hold a dumbbell in each hand at shoulder level." ,
+                "2. Press the dumbbells upward until your arms are fully extended." ,
+                "3. Lower the dumbbells back to shoulder level with control." ,
+                "4. Repeat for the desired number of repetitions." ,),
+            warnings = listOf(
+                "- Keep your core engaged and back straight throughout the exercise." ,
+                "- Avoid locking your elbows at the top of the movement." ,
+                "- Breathe out as you press the dumbbells up and breathe in as you lower them.",),
+            gifResId = R.drawable.shoulders,
+            type = ExerciseType.SHOULDERS,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90
         ),
         Exercise(
-            "Exercise 6", gifResId = res, description = "Exercise 6",
-            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
+            "Lunges",
+            description = listOf(      "1. Stand upright with a dumbbell in each hand, arms by your sides." ,
+                "2. Step forward with one leg, lowering your hips until both knees are bent at a 90-degree angle." ,
+                "3. Push through the front heel to return to the starting position." ,
+                "4. Repeat on the other leg." ,
+                "5. Continue alternating legs for the desired number of repetitions." ,),
+            warnings = listOf(   "- Keep your upper body straight and core engaged." ,
+                "- Ensure your front knee does not extend past your toes." ,
+                "- Maintain balance by keeping your feet hip-width apart.",),
+            gifResId = R.drawable.legs,
+            type = ExerciseType.LEGS,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90
         ),
         Exercise(
-            "Exercise 7", gifResId = res, description = "Exercise 7",
-            type = exerciseType, training = TrainingType.STRENGTH, 4, 90
+            "Plank", description = listOf(                    "1. Start in a push-up position, with your forearms on the ground and elbows directly below your shoulders." ,
+                "2. Keep your body in a straight line from head to heels." ,
+                "3. Hold this position for the desired amount of time." ,),
+            warnings = listOf(  "- Engage your core and glutes to maintain a straight line." ,
+                "- Avoid letting your hips sag or rise too high." ,
+                "- Breathe steadily throughout the hold.",) ,
+            gifResId = R.drawable.abs,
+            type = ExerciseType.CORE, training = TrainingType.STRENGTH, sets = 4, totalTime = 90
         ),
-
+        Exercise(
+            "Pull-Ups", description = listOf(                    "1. Hang from a pull-up bar with your palms facing forward and hands slightly wider than shoulder-width apart." ,
+                "2. Pull your body upward until your chin is above the bar." ,
+                "3. Lower yourself back to the starting position with control." ,
+                "4. Repeat for the desired number of repetitions." ,),
+            warnings = listOf(
+                "- Engage your back and biceps to pull yourself up." ,
+                "- Avoid swinging or using momentum." ,
+                "- Keep your core tight and legs slightly bent.",) ,
+            gifResId = R.drawable.back2,
+            type = ExerciseType.BACK, training = TrainingType.STRENGTH, sets = 4, totalTime = 90
+        ),
+        Exercise(
+            "Tricep Push Ups", description = listOf(  "1. Position your hands shoulder-width apart on a stable bench or chair." ,
+                    "2. Extend your legs out in front of you." ,
+                    "3. Lower your body by bending your elbows until your upper arms are parallel to the ground." ,
+                    "4. Push back up to the starting position." ,
+                    "5. Repeat for the desired number of repetitions." ,),
+            warnings = listOf("- Keep your back close to the bench." ,
+                "- Avoid locking your elbows at the top of the movement." ,
+                "- Maintain control throughout the exercise.",) ,
+            gifResId = R.drawable.arms3,
+            type = ExerciseType.ARMS, training = TrainingType.STRENGTH, sets = 4, totalTime = 90
+        ),
+        Exercise(
+            "Leg Extension",
+            description = listOf(  "1. Sit on the leg press machine with your feet shoulder-width apart on the platform." ,
+                "2. Push the platform away by extending your legs." ,
+                "3. Slowly lower the platform back to the starting position." ,
+                "4. Repeat for the desired number of repetitions." ,),
+            warnings = listOf(        "- Keep your knees in line with your toes." ,
+                "- Avoid locking your knees at the top of the movement." ,
+                "- Breathe out as you push the platform and breathe in as you lower it.",),
+            gifResId = R.drawable.legs2,
+            type = ExerciseType.LEGS,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90
         )
+    )
 }
+
 
 fun generateSampleWorkouts(): MutableList<Workout> {
     return mutableListOf(
@@ -167,39 +279,14 @@ fun generateSampleWorkouts(): MutableList<Workout> {
             id = 1,
             name = "Workout 1",
             workoutDay = Weekdays.WEDNESDAY,
-            exercises = mutableListOf(
-                Exercise(
-                    "Exercise 1", gifResId = R.drawable.arms, description = "Exercise 1",
-                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH, 4, 90
-                ),
-                Exercise(
-                    "Exercise 2", gifResId = R.drawable.arms2, description = "Exercise 2",
-                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH, 4, 90
-                ),
-                Exercise(
-                    "Exercise 3", gifResId = R.drawable.arms3, description = "Exercise 3",
-                    type = ExerciseType.ARMS, training = TrainingType.STRENGTH, 4, 90
-                ),
-            )
+            exercises = generateSampleExercises()
         ),
         Workout(
             id = 1,
             name = "Workout 2",
             workoutDay = Weekdays.FRIDAY,
-            exercises = mutableListOf(
-                Exercise(
-                    "Exercise 1", gifResId = R.drawable.legs, description = "Exercise 1",
-                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH, 4, 90
-                ),
-                Exercise(
-                    "Exercise 2", gifResId = R.drawable.legs2, description = "Exercise 2",
-                    type = ExerciseType.LEGS, training = TrainingType.STRENGTH, 4, 90
-                ),
-                Exercise(
-                    "Exercise 3", gifResId = R.drawable.legs3, description = "Exercise 3",
-                    type =ExerciseType.LEGS, training = TrainingType.STRENGTH, 4, 90
-                ),
-            )
+            exercises  = generateSampleExercises()
+
         ),
         // Define more workouts as needed
     )
@@ -400,14 +487,14 @@ fun generateRandomPlan(
         for (exerciseType in exerciseTypes) {
             val exercises = exerciseMap[exerciseType] ?: continue
             val randomExercise = exercises.random()
-            val exerciseDescription = "Sample description for $randomExercise"
+            val exerciseDescription = listOf("Sample description for $randomExercise")
             val exerciseGif = getExerciseGif(exerciseType) // Replace with your logic to get GIFs
 
             workoutExercises.add(
                 Exercise(
                     name = randomExercise,
-                    gifResId = exerciseGif,
                     description = exerciseDescription,
+                    gifResId = exerciseGif,
                     type = exerciseType,
                     training = trainingType,
                     sets = 4,
