@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.ButtonElevation
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -34,6 +36,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -131,7 +134,7 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        elevation = 4.dp,
+        elevation = 0.dp,
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
@@ -191,7 +194,8 @@ fun DynamicTopBar(navController: NavController) {
                         )
 
                     }
-                }
+                },
+
             ) {}
         }
         Route.SettingsScreen.route -> {
@@ -201,7 +205,8 @@ fun DynamicTopBar(navController: NavController) {
                     LogoUser(
                         modifier = Modifier.size(60.dp), R.drawable.pexels5
                     ) { navController.navigate(Route.AccountScreen.route) }
-                }
+                },
+
             ) {}
         }
 
@@ -327,6 +332,23 @@ fun DynamicTopBar(navController: NavController) {
                 }
             )
         }
+
+        Route.NewPlanScreen.route -> {
+            TopBar(
+                message = "",
+                button = {}
+            ) {
+                IconButton(onClick = {
+                    navController.navigate(Route.HomeScreen.route)
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Icon"
+                    )
+                }
+            }
+        }
+
         Route.ProgressDetailsScreen.route -> {
             TopBar(
                 message = "Progress Details",

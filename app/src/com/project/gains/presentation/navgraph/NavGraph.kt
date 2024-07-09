@@ -68,11 +68,12 @@ fun NavGraph(
     val generatedPlanViewModel: GeneratedPlanViewModel = hiltViewModel()
 
 
-
     NavHost(
         navController = navController,
         startDestination = startDestination,
-        modifier = Modifier.padding(paddingValues)
+        modifier = Modifier.padding(paddingValues),
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
         ){
         // construct a nested nav graph
         navigation(
@@ -163,7 +164,7 @@ fun NavGraph(
                 exitTransition = {
                     fadeOut(
                         animationSpec = tween(
-                            325, easing = LinearEasing
+                            300, easing = LinearEasing
                         )
                     ) + slideOutOfContainer(
                         animationSpec = tween(300, easing = EaseOut),
@@ -172,7 +173,10 @@ fun NavGraph(
                 })
             {
                 // set screen as the node state
-                NewPlanScreen(navController = navController)
+                NewPlanScreen(
+                    navController = navController,
+                    paddingValues = paddingValues
+                )
 
             }
             composable(
@@ -280,7 +284,7 @@ fun NavGraph(
             HomeScreen(
                 navController = navController,
                 workoutViewModel = workoutViewModel,
-
+                paddingValues = paddingValues
             )
         }
     }

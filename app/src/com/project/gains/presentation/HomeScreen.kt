@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,7 +59,8 @@ import com.project.gains.util.currentWeekday
 @Composable
 fun HomeScreen(
     navController: NavController,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
+    paddingValues: PaddingValues
 ) {
     // TODO add favorites
     val openPopup = remember { mutableStateOf(false) }
@@ -76,7 +78,7 @@ fun HomeScreen(
    GainsAppTheme {
        Box(
            modifier = Modifier
-               .fillMaxSize()
+               .padding(paddingValues)
        ) {
            LazyColumn(
                modifier = Modifier
@@ -99,12 +101,6 @@ fun HomeScreen(
            }
        }
 
-
-       // TODO no more PlanPagePopup (it has been copied to AddGeneratedPlanScreen)
-       /*
-       workouts?.let {
-           PlanPagePopup(showPopup1, it, selectHandler,createHandler,navController,generalViewModel,showDialogWorkout,showDialogPlan)}
-        */
    }
 }
 

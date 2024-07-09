@@ -18,20 +18,20 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun MainScreen(startDestination: String) {
     val navController = rememberNavController()
-GainsAppTheme {
-    Scaffold(
-        topBar = { DynamicTopBar(navController = navController) },
-        bottomBar = {
-                DynamicBottomBar(navController = navController)
-          },
-    ) {
-            paddingValues ->
-        NavGraph(
-            startDestination = startDestination,
-            navController = navController,
-            paddingValues = paddingValues)
+    GainsAppTheme {
+        Scaffold(
+            topBar = { DynamicTopBar(navController = navController) },
+            bottomBar = {
+                    DynamicBottomBar(navController = navController)
+              },
+        ) {
+                paddingValues ->
+            NavGraph(
+                startDestination = startDestination,
+                navController = navController,
+                paddingValues = paddingValues)
+        }
     }
-}
 
 
 }
