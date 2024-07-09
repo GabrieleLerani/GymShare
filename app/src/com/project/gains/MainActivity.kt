@@ -14,7 +14,9 @@ import androidx.compose.ui.Modifier
 import com.project.gains.presentation.MainScreen
 import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.components.SearchViewModel
+import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.navgraph.NavGraph
+import com.project.gains.presentation.workout.WorkoutViewModel
 import com.project.gains.theme.GainsAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,6 +25,10 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<MainViewModel>()
     private val searchViewModel by viewModels<SearchViewModel>()
+    private val exerciseViewModel by viewModels<ExerciseViewModel>()
+    private val workoutViewModel by viewModels<WorkoutViewModel>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +43,9 @@ class MainActivity : ComponentActivity() {
                     val startDestination = viewModel.startDestination
                     MainScreen(
                         startDestination = startDestination,
-                        searchViewModel = searchViewModel
+                        searchViewModel = searchViewModel,
+                        exerciseViewModel,
+                        workoutViewModel
                     )
                 }
             }

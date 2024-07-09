@@ -35,9 +35,13 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private val _exercises = MutableLiveData<MutableList<Exercise>>()
     val exercises: MutableLiveData<MutableList<Exercise>> = _exercises
 
+    private var _favouriteWorkouts = MutableLiveData<MutableList<Workout>>()
+    val favouriteWorkouts : MutableLiveData<MutableList<Workout>> = _favouriteWorkouts
+
     private var songIndex = 0
 
     init {
+        _favouriteWorkouts.value= mutableListOf()
         _workouts.value = generateSampleWorkouts()
         _exercises.value = generateSampleExercises()
         _currentSong.value=Song("","","") // Dummy init
@@ -76,6 +80,17 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
 
             is ManageWorkoutEvent.SelectWorkout -> {
                 _selectedWorkout.value = event.workout
+            }
+
+
+            is ManageWorkoutEvent.AddWorkoutFavourite -> {
+                selectedWorkout.value?.let { _favouriteWorkouts.value?.add(it) }
+
+            }
+            is ManageWorkoutEvent.DeleteWorkoutFavourite -> {
+                selectedWorkout.value?.let { _favouriteWorkouts.value?.remove(it) }
+
+
             }
         }
     }

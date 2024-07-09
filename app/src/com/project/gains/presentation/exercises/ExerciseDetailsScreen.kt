@@ -53,97 +53,95 @@ exerciseViewModel: ExerciseViewModel
 ) {
     val selectExercise by exerciseViewModel.selectedExercise.observeAsState()
 
-    GainsAppTheme {
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+
+    ) {
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
 
-                item {
-                    Image(
-                        painter = painterResource(selectExercise?.gifResId ?: R.drawable.arms2),
-                        contentDescription = "Exercise",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp)
-                            .padding(bottom = 16.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                item {
-                    androidx.compose.material.Text(
-                        text = selectExercise?.name ?: "Dumbbell",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-
-                item {
-                    androidx.compose.material.Text(
-                        text = "The inclined dumbbell bench press is considered as the best basic exercise for developing the pectoral muscles and increasing general strength. This exercise allows a greater amplitude of movement than the classic bar press, and allows you to work out the muscles more efficiently.",
-                        fontSize = 16.sp
-                    )
-                }
-                item { Spacer(modifier = Modifier.height(30.dp)) }
-
-                item {
-                    androidx.compose.material.Text(
-                        text = "Instruction",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-
-                item { Spacer(modifier = Modifier.height(30.dp)) }
-
-
-
-                selectExercise?.description?.forEach { instruction ->
-                    item {
-                        InstructionCard(text = instruction)
-
-                    }
-                }
-
-                item { Spacer(modifier = Modifier.height(30.dp)) }
-
-                item {
-                    androidx.compose.material.Text(
-                        text = "Warning",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-
-                item { Spacer(modifier = Modifier.height(30.dp)) }
-
-                selectExercise?.warnings?.forEach { warning ->
-                    item {
-                        WarningCard(message = warning)
-
-                    }
-                    item { Spacer(Modifier.height(5.dp)) }
-                }
-
-
-
+            item {
+                Image(
+                    painter = painterResource(selectExercise?.gifResId ?: R.drawable.arms2),
+                    contentDescription = "Exercise",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp)
+                        .padding(bottom = 16.dp),
+                    contentScale = ContentScale.Crop
+                )
             }
 
+            item {
+                androidx.compose.material.Text(
+                    text = selectExercise?.name ?: "Dumbbell",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+
+            item {
+                androidx.compose.material.Text(
+                    text = "The inclined dumbbell bench press is considered as the best basic exercise for developing the pectoral muscles and increasing general strength. This exercise allows a greater amplitude of movement than the classic bar press, and allows you to work out the muscles more efficiently.",
+                    fontSize = 16.sp
+                )
+            }
+            item { Spacer(modifier = Modifier.height(30.dp)) }
+
+            item {
+                androidx.compose.material.Text(
+                    text = "Instruction",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(30.dp)) }
+
+
+
+            selectExercise?.description?.forEach { instruction ->
+                item {
+                    InstructionCard(text = instruction)
+
+                }
+            }
+
+            item { Spacer(modifier = Modifier.height(30.dp)) }
+
+            item {
+                androidx.compose.material.Text(
+                    text = "Warning",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(30.dp)) }
+
+            selectExercise?.warnings?.forEach { warning ->
+                item {
+                    WarningCard(message = warning)
+
+                }
+                item { Spacer(Modifier.height(5.dp)) }
+            }
+
+
+
         }
+
+    }
     }
 
-}
 
 
 
@@ -151,7 +149,6 @@ exerciseViewModel: ExerciseViewModel
 @Preview(showBackground = true)
 @Composable
 fun ExerciseDetailsScreenPreview() {
-    val navController = rememberNavController()
     val exerciseViewModel: ExerciseViewModel = hiltViewModel()
     ExerciseDetailsScreen(
         exerciseViewModel = exerciseViewModel,

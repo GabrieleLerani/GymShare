@@ -15,20 +15,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -47,19 +43,13 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 import androidx.navigation.NavController
 import com.project.gains.R
-import com.project.gains.data.PeriodMetricType
-
-import com.project.gains.presentation.components.BottomNavigationBar
-import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.favourite.FavouriteViewModel
+import com.project.gains.presentation.exercises.ExerciseViewModel
 
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.PlanViewModel
@@ -77,7 +67,8 @@ fun HomeScreen(
     selectHandler:(ManagePlanEvent.SelectPlan)->Unit,
     paddingValues: PaddingValues,
     planViewModel: PlanViewModel,
-    favouriteViewModel:FavouriteViewModel
+    exerciseViewModel: ExerciseViewModel
+
 ) {
     val openPopup = remember { mutableStateOf(false) }
     var selectedPlan = remember {
@@ -85,8 +76,8 @@ fun HomeScreen(
     }
     val plans by planViewModel.plans.observeAsState()
     var expanded by remember { mutableStateOf(false) }
-    val favouriteExercises by favouriteViewModel.favouriteExercises.observeAsState()
-    val favouriteWorkouts by favouriteViewModel.favouriteWorkouts.observeAsState()
+    val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
+    val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
 
 
 
@@ -115,7 +106,7 @@ fun HomeScreen(
            ) {
                item {
                    // TODO CHANGE
-                   Column (
+                   Column(
                        horizontalAlignment = Alignment.CenterHorizontally,
                        verticalArrangement = Arrangement.Top
                    ) {
@@ -124,9 +115,11 @@ fun HomeScreen(
                            value = selectedPlan.toString(),
                            onValueChange = { },
                            label = {
-                                },
+                           },
                            trailingIcon = {
-                               androidx.compose.material.IconButton(onClick = { expanded = !expanded }) {
+                               androidx.compose.material.IconButton(onClick = {
+                                   expanded = !expanded
+                               }) {
                                    Icon(
                                        imageVector = Icons.Default.ArrowDropDown,
                                        contentDescription = "Dropdown Icon"
@@ -144,15 +137,15 @@ fun HomeScreen(
                        DropdownMenu(
                            expanded = expanded,
                            onDismissRequest = {
-                               expanded= false
+                               expanded = false
                            }
                        ) {
-                           plans?.forEach {plan ->
+                           plans?.forEach { plan ->
                                DropdownMenuItem(
                                    text = { androidx.compose.material.Text(plan.name) },
                                    onClick = {
                                        selectHandler(ManagePlanEvent.SelectPlan(plan))
-                                       selectedPlan=plan.name
+                                       selectedPlan = plan.name
                                        expanded = false
                                    }
                                )
@@ -190,12 +183,13 @@ fun HomeScreen(
                    }
 
                }
+           }
 
 
            }
        }
    }
-}
+
 
 @Composable
 fun CustomBackHandler(

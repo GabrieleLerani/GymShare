@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.TopAppBar
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
@@ -40,7 +42,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
+import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -124,7 +128,6 @@ fun WorkoutBottomBar(navController: NavController) {
     }
 }
 
-
 @Composable
 fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
 
@@ -162,10 +165,52 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
                     .padding(horizontal = 8.dp)
             )
             button()
+
         }
     }
 }
+@Composable
+fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit,button2: @Composable () -> Unit) {
 
+    TopAppBar(
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        elevation = 0.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            button1()
+
+            Text(
+                text = message,
+                style = MaterialTheme.typography.displayLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 30.sp,
+                    shadow = Shadow(
+                        color = Color.Black,
+                        offset = Offset(2f, 2f),
+                        blurRadius = 4f
+                    )
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 8.dp)
+            )
+            button2()
+            button()
+
+        }
+    }
+}
 
 @Composable
 fun SearchTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
@@ -191,7 +236,7 @@ fun currentRoute(navController: NavController): String? {
 }
 
 @Composable
-fun DynamicTopBar(navController: NavController) {
+fun DynamicTopBar(navController: NavController,addFavouriteExerciseHandler: (ExerciseEvent.AddExercise) -> Unit,addFavouriteWorkoutHandler:(ManageWorkoutEvent.AddWorkoutFavourite)->Unit) {
     val currentRoute = currentRoute(navController = navController)
 
     when (currentRoute) {
@@ -253,13 +298,25 @@ fun DynamicTopBar(navController: NavController) {
             }
         }
         Route.WorkoutScreen.route -> {
-            TopBar(
-                message = "Workout", //workout?.name ?: "Workout",
+            FavoriteTopBar(
+                message = "Workout",
+                button2 = {
+                    IconButton(
+                        modifier = Modifier.size(45.dp),
+                        onClick = {
+                            addFavouriteWorkoutHandler(ManageWorkoutEvent.AddWorkoutFavourite)
+                        }) {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
+                        )
+                    }},
                 button = {
                     IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
                             navController.navigate(Route.ShareScreen.route)
+
                         }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
@@ -269,12 +326,11 @@ fun DynamicTopBar(navController: NavController) {
                             }
                         )
                     }
-                }
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
+                }, button1 = {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                })
         }
         Route.WorkoutModeScreen.route -> {
             TopBar(
@@ -309,8 +365,17 @@ fun DynamicTopBar(navController: NavController) {
                     LogoUser(
                         modifier = Modifier.size(60.dp), R.drawable.pexels5
                     ) { navController.navigate(Route.AccountScreen.route) }
-                }
-            ) {}
+                },
+                button1 = {
+                    IconButton(onClick = { addFavouriteExerciseHandler(ExerciseEvent.AddExercise) }) {
+                        Icon(
+                            Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite Icon",
+                            modifier = Modifier.size(50.dp)
+                        )
+                    }
+                },
+            )
         }
         Route.PlanScreen.route -> {
             TopBar(
@@ -391,29 +456,39 @@ fun DynamicTopBar(navController: NavController) {
 
 
         Route.ExerciseDetailsScreen.route -> {
-            TopBar(
+            FavoriteTopBar(
                 message = "Exercise",
-                button = {
+                button2 = {
                     IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
-                            navController.navigate(Route.ShareScreen.route)
-
+                            addFavouriteExerciseHandler(ExerciseEvent.AddExercise)
                         }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Share",
-                            modifier = Modifier.graphicsLayer {
-                                rotationZ = -45f // Rotate 45 degrees counterclockwise
-                            }
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
                         )
+                }},
+                button = {
+                        IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = {
+                                navController.navigate(Route.ShareScreen.route)
+
+                            }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Share",
+                                modifier = Modifier.graphicsLayer {
+                                    rotationZ = -45f // Rotate 45 degrees counterclockwise
+                                }
+                            )
+                        }
+                    }, button1 = {
+                    BackButton {
+                        navController.popBackStack()
                     }
-                }
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
+                })
         }
 
     }

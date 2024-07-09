@@ -1,5 +1,6 @@
 package com.project.gains.presentation.workout
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -103,170 +104,170 @@ fun WorkoutModeScreen(
     val restTime = String.format("%02d", restCountdown)
 
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.onSurface)
-            ) {
-                LazyColumn(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.onSurface)
+    ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            item {
+                MusicPopup(
+                    popup = show.value,
+                    musicHandler = musicHandler,
+                    currentSong = currentSong ?: Song("", "", "")
+                )
+            }
+            item {
+                // Exercise Image (Animated GIF)
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(10.dp),
-                    verticalArrangement = Arrangement.Center
+                        .height(360.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
                 ) {
-                    item {
-                        MusicPopup(
-                            popup = show.value,
-                            musicHandler = musicHandler,
-                            currentSong = currentSong ?: Song("", "", "")
+                    Image(
+                        painter = painterResource(id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
+                            ?: R.drawable.arms2),
+                        contentDescription = workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .matchParentSize()
+                    )
+                    Text(
+                        text =  workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .background(
+                                Color.Black.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(20.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Counters Section
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Sets Done Counter
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "${setsDone + 1}/$totalSets",
+                            color = Color.White,
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text("Sets Done", color = Color.Gray, fontSize = 20.sp)
+                    }
+
+                    // Timer
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            if (!rest.value) formattedTime else restTime,
+                            color = Color.White,
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            if (!rest.value) "Time Left" else "Rest Left",
+                            color = Color.Gray,
+                            fontSize = 20.sp
                         )
                     }
-                    item {
-                        // Exercise Image (Animated GIF)
-                        Box(
-                            modifier = Modifier
-                                .height(360.dp)
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(16.dp))
-                        ) {
-                            Image(
-                                painter = painterResource(id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
-                                    ?: R.drawable.arms2),
-                                contentDescription = workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .matchParentSize()
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Action Row (Previous, Start/Stop, Next Buttons)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Previous Exercise Button
+                    Button(
+                        onClick = {
+                            if (currentExerciseIndex > 0) {
+                                currentExerciseIndex--
+                            } else {
+                                currentExerciseIndex = workout?.exercises?.size!! - 1
+                            }
+                            isTimerRunning = false
+                            timerState = currentExerciseTime
+                            setsDone = 0
+                            restCountdown = 60
+                            rest.value = false
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Previous",
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+
+                    // Start/Stop Button
+                    Button(
+                        onClick = {
+                            isTimerRunning = !isTimerRunning
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        if (isTimerRunning) {
+                            Icon(
+                                imageVector = Icons.Default.Stop,
+                                contentDescription = "Stop",
+                                modifier = Modifier.size(60.dp)
                             )
-                            Text(
-                                text =  workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
-                                color = Color.White,
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .background(
-                                        Color.Black.copy(alpha = 0.5f),
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .padding(20.dp)
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "Start",
+                                modifier = Modifier.size(60.dp)
                             )
                         }
+                    }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Counters Section
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // Sets Done Counter
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    "${setsDone + 1}/$totalSets",
-                                    color = Color.White,
-                                    fontSize = 40.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text("Sets Done", color = Color.Gray, fontSize = 20.sp)
+                    // Next Exercise Button
+                    Button(
+                        onClick = {
+                            if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
+                                currentExerciseIndex++
+                            } else {
+                                currentExerciseIndex = 0
                             }
-
-                            // Timer
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    if (!rest.value) formattedTime else restTime,
-                                    color = Color.White,
-                                    fontSize = 40.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    if (!rest.value) "Time Left" else "Rest Left",
-                                    color = Color.Gray,
-                                    fontSize = 20.sp
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Action Row (Previous, Start/Stop, Next Buttons)
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // Previous Exercise Button
-                            Button(
-                                onClick = {
-                                    if (currentExerciseIndex > 0) {
-                                        currentExerciseIndex--
-                                    } else {
-                                        currentExerciseIndex = workout?.exercises?.size!! - 1
-                                    }
-                                    isTimerRunning = false
-                                    timerState = currentExerciseTime
-                                    setsDone = 0
-                                    restCountdown = 60
-                                    rest.value = false
-                                },
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Previous",
-                                    modifier = Modifier.size(60.dp)
-                                )
-                            }
-
-                            // Start/Stop Button
-                            Button(
-                                onClick = {
-                                    isTimerRunning = !isTimerRunning
-                                },
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            ) {
-                                if (isTimerRunning) {
-                                    Icon(
-                                        imageVector = Icons.Default.Stop,
-                                        contentDescription = "Stop",
-                                        modifier = Modifier.size(60.dp)
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = "Start",
-                                        modifier = Modifier.size(60.dp)
-                                    )
-                                }
-                            }
-
-                            // Next Exercise Button
-                            Button(
-                                onClick = {
-                                    if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
-                                        currentExerciseIndex++
-                                    } else {
-                                        currentExerciseIndex = 0
-                                    }
-                                    isTimerRunning = false
-                                    timerState = currentExerciseTime
-                                    setsDone = 0
-                                    restCountdown = 60
-                                    rest.value = false
-                                },
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                    contentDescription = "Next",
-                                    modifier = Modifier.size(60.dp)
-                                )
-                            }
-                        }
+                            isTimerRunning = false
+                            timerState = currentExerciseTime
+                            setsDone = 0
+                            restCountdown = 60
+                            rest.value = false
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Next",
+                            modifier = Modifier.size(60.dp)
+                        )
                     }
                 }
             }
         }
+    }
+}
 
 @Composable
 fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: Song) {

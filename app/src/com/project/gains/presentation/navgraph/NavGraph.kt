@@ -54,15 +54,16 @@ import com.project.gains.presentation.workout.WorkoutViewModel
 fun NavGraph(
     startDestination: String,
     navController: NavHostController,
-    paddingValues: PaddingValues
+    exerciseViewModel:ExerciseViewModel,
+    workoutViewModel : WorkoutViewModel,
+            paddingValues: PaddingValues
 ) {
 
     val authenticationViewModel : AuthenticationViewModel = init()
-    val workoutViewModel : WorkoutViewModel = hiltViewModel()
     val shareContentViewModel : ShareContentViewModel = hiltViewModel()
     val planViewModel : PlanViewModel = hiltViewModel()
-    val exerciseViewModel : ExerciseViewModel = hiltViewModel()
     val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()
+
 
 
     NavHost(
@@ -281,7 +282,8 @@ fun NavGraph(
                 workoutViewModel = workoutViewModel,
                 paddingValues = paddingValues,
                 selectHandler = planViewModel::onCreatePlanEvent,
-                planViewModel = planViewModel
+                planViewModel = planViewModel,
+                exerciseViewModel = exerciseViewModel
             )
         }
     }
