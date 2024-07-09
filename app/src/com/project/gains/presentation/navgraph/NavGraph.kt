@@ -24,6 +24,7 @@ import com.project.gains.presentation.HomeScreen
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.screens.SignInScreen
 import com.project.gains.presentation.authentication.screens.SignUpScreen
+import com.project.gains.presentation.components.SearchViewModel
 import com.project.gains.presentation.exercises.ExerciseViewModel
 
 import com.project.gains.presentation.onboarding.OnBoardingScreen
@@ -64,7 +65,7 @@ fun NavGraph(
     val manualWorkoutViewModel: ManualWorkoutViewModel = hiltViewModel()
     val exerciseViewModel: ExerciseViewModel = hiltViewModel()
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
-
+    val feedViewModel : FeedViewModel = hiltViewModel()
 
 
 
@@ -134,7 +135,6 @@ fun NavGraph(
             composable(
                 route = Route.FeedScreen.route
             ) {
-                val feedViewModel : FeedViewModel = hiltViewModel()
                 // set screen as the node state
                 FeedScreen(
                     navController = navController,
@@ -144,8 +144,13 @@ fun NavGraph(
             composable(
                 route = Route.SearchScreen.route
             ) {
+                val searchViewModel : SearchViewModel = hiltViewModel()
                 // set screen as the node state
-                SearchScreen()
+                SearchScreen(
+                    searchViewModel = searchViewModel,
+                    feedViewModel = feedViewModel,
+                    assignCategoryHandler = searchViewModel::onCategoriesEvent
+                )
             }
             composable(
                 route = Route.PlanScreen.route
