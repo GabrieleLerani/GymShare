@@ -1,6 +1,7 @@
 package com.project.gains.presentation.plan.events
 
 import com.project.gains.data.ExerciseType
+import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.Plan
@@ -19,6 +20,7 @@ sealed class ManagePlanEvent {
         val selectedLevel: Level,
         val selectedPeriod: PeriodMetricType,
         val selectedTrainingType: TrainingType,
+        val selectedFrequency: Frequency
 
         ) : ManagePlanEvent()
 

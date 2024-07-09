@@ -54,7 +54,6 @@ fun WorkoutScreen(
     val showDialogShared by shareContentViewModel.showDialogShared.observeAsState()
 
     // Sample list of exercises
-    val exercises by workoutViewModel.exercises.observeAsState()
     val workout by workoutViewModel.selectedWorkout.observeAsState()
 
     val showPopup2 = remember { mutableStateOf(false) }
@@ -73,7 +72,7 @@ fun WorkoutScreen(
                 verticalArrangement = Arrangement.Center
 
             ) {
-                exercises?.forEach { exercise ->
+                workout?.exercises?.forEach { exercise ->
                     item {
                         AddExerciseItem(
                             exercise = exercise, {

@@ -97,7 +97,7 @@ fun BottomNavigationBar(navController: NavController) {
 }
 
 @Composable
-fun WorkoutBottomBar() {
+fun WorkoutBottomBar(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,7 +107,7 @@ fun WorkoutBottomBar() {
     ) {
         IconButton(
             onClick = {
-                // TODO navController.navigate(Route.SessionScreen.route)
+                navController.navigate(Route.WorkoutModeScreen.route)
             },
             modifier = Modifier.size(50.dp),
             colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary)
@@ -388,11 +388,11 @@ fun DynamicBottomBar(navController: NavController) {
 
     // Show the bottom bar only for specific routes
     when (currentRoute) {
-        Route.WorkoutScreen.route, Route.WorkoutModeScreen.route -> {
-            WorkoutBottomBar()
+        Route.WorkoutScreen.route -> {
+            WorkoutBottomBar(navController)
         }
 
-        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, -> {
+        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, Route.WorkoutModeScreen.route  -> {
             // Empty because new plan has no bottom bar
         }
 

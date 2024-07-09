@@ -39,6 +39,10 @@ enum class Weekdays {
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 }
 
+enum class Frequency {
+    TWO,THREE,FOUR
+}
+
 data class Exercise(
     val name: String,
     val gifResId: Int?,  // Nullable Integer for resource ID

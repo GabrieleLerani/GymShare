@@ -104,28 +104,10 @@ fun WorkoutModeScreen(
     val formattedTime = String.format("%02d:%02d", minutes, seconds)
     val restTime = String.format("%02d", restCountdown)
 
-    GainsAppTheme {
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Workout Mode",
-                    button = { }
-                ) {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = "Close Icon",
-                            tint = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier.size(50.dp)
-                        )
-                    }
-                }
-            },
-        ) { paddingValues ->
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
                     .background(MaterialTheme.colorScheme.onSurface)
             ) {
                 LazyColumn(
@@ -286,8 +268,6 @@ fun WorkoutModeScreen(
                 }
             }
         }
-    }
-}
 
 @Composable
 fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: Song) {
