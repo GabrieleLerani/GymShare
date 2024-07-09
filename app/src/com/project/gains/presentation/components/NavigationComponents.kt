@@ -376,7 +376,6 @@ fun DynamicTopBar(
                         Icon(
                             imageVector = Icons.Default.BarChart,
                             contentDescription = "Stats",
-                            tint = MaterialTheme.colorScheme.surface
                         )
                     }
                 }

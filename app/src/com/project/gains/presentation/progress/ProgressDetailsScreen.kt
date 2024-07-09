@@ -1,7 +1,10 @@
 package com.project.gains.presentation.progress
 
 import android.graphics.Paint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,22 +12,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.TextField
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,6 +46,7 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -75,7 +78,7 @@ fun ProgressDetailsScreen(
 
     var selectedMetric by remember { mutableStateOf(TrainingMetricType.BPM) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
-    var selectedPlot by remember { mutableStateOf(PlotType.HISTOGRAM) }
+    var selectedPlot by remember { mutableStateOf(PlotType.BAR) }
 
     val trainingData: MutableList<TrainingData> = generateRandomTrainingData(10).toMutableList()
 
@@ -92,7 +95,7 @@ fun ProgressDetailsScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 20.dp, end = 20.dp),
-                ) {
+            ) {
                 item {
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -101,155 +104,269 @@ fun ProgressDetailsScreen(
                             .fillMaxWidth()
                             .padding(top = 10.dp, bottom = 10.dp)
                     ) {
-
-                        Column (
-                            modifier = Modifier
-                                .weight(1f)
+                        // Period Column
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Top
                         ) {
-                            TextField(
-                                readOnly = true,
-                                value = selectedPeriod.toString(),
-                                onValueChange = { },
-                                label = { Text("Time") },
-                                trailingIcon = {
-                                    IconButton(onClick = { expandedPeriod = !expandedPeriod }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                        RoundedCornerShape(16.dp)
+                                    )
+                                    .border(
+                                        border = BorderStroke(
+                                            width = 3.dp,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        ), shape = RoundedCornerShape(16.dp)
+                                    )
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    androidx.compose.material3.Text(
+                                        text = selectedPeriod.toString(),
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                    androidx.compose.material3.IconButton(
+                                        onClick = { expandedPeriod = !expandedPeriod }
+                                    ) {
                                         Icon(
                                             imageVector = Icons.Default.ArrowDropDown,
                                             contentDescription = "Dropdown Icon"
                                         )
                                     }
-                                },
-                                colors = ExposedDropdownMenuDefaults.textFieldColors()
-                            )
+                                }
+                            }
+
                             DropdownMenu(
                                 expanded = expandedPeriod,
-                                onDismissRequest = {
-                                    expandedPeriod = false
-                                }
+                                onDismissRequest = { expandedPeriod = false },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = MaterialTheme.colorScheme.surface
+                                    )
+                                    .padding(10.dp)
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text("Week") },
-                                    onClick = {
-                                        selectedPeriod = PeriodMetricType.WEEK
-                                        expandedPeriod = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Month") },
-                                    onClick = {
-                                        selectedPeriod = PeriodMetricType.MONTH
-                                        expandedPeriod = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Year") },
-                                    onClick = {
-                                        selectedPeriod = PeriodMetricType.YEAR
-                                        expandedPeriod = false
-                                    }
-                                )
+                                PeriodMetricType.entries.forEach { period ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            androidx.compose.material3.Text(
+                                                period.toString(),
+                                                style = MaterialTheme.typography.bodySmall.copy(
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        },
+                                        onClick = {
+                                            selectedPeriod = period
+                                            expandedPeriod = false
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .border(
+                                                border = BorderStroke(
+                                                    width = 3.dp,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                ), shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .padding(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                }
                             }
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        Column (
-                            modifier = Modifier
-                                .weight(1f)
+                        // Metric Column
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.Top,
                         ) {
-                            TextField(
-                                readOnly = true,
-                                value = selectedMetric.toString(),
-                                onValueChange = { },
-                                label = { Text("Metric") },
-                                trailingIcon = {
-                                    IconButton(onClick = { expandedMetric = !expandedMetric }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                        RoundedCornerShape(16.dp)
+                                    )
+                                    .border(
+                                        border = BorderStroke(
+                                            width = 3.dp,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        ), shape = RoundedCornerShape(16.dp)
+                                    )
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    androidx.compose.material3.Text(
+                                        text = selectedMetric.toString(),
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                    androidx.compose.material3.IconButton(
+                                        onClick = { expandedMetric = !expandedMetric }
+                                    ) {
                                         Icon(
                                             imageVector = Icons.Default.ArrowDropDown,
                                             contentDescription = "Dropdown Icon"
                                         )
                                     }
-                                },
-                                colors = ExposedDropdownMenuDefaults.textFieldColors()
-                            )
+                                }
+                            }
+
                             DropdownMenu(
                                 expanded = expandedMetric,
-                                onDismissRequest = {
-                                    expandedMetric = false
-                                }
+                                onDismissRequest = { expandedMetric = false },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = MaterialTheme.colorScheme.surface
+                                    )
+                                    .padding(10.dp)
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text("BPM") },
-                                    onClick = {
-                                        selectedMetric = TrainingMetricType.BPM
-                                        expandedMetric = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Exercise weights") },
-                                    onClick = {
-                                        selectedMetric = TrainingMetricType.EXERCISE_WEIGHTS
-                                        expandedMetric = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Attendance frequency") },
-                                    onClick = {
-                                        selectedMetric = TrainingMetricType.ATTENDANCE_FREQUENCY
-                                        expandedMetric = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("KCal") },
-                                    onClick = {
-                                        selectedMetric = TrainingMetricType.KCAL
-                                        expandedMetric = false
-                                    }
-                                )
+                                TrainingMetricType.entries.forEach { metric ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            androidx.compose.material3.Text(
+                                                metric.toString(),
+                                                style = MaterialTheme.typography.bodySmall.copy(
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        },
+                                        onClick = {
+                                            selectedMetric = metric
+                                            expandedMetric = false
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .border(
+                                                border = BorderStroke(
+                                                    width = 3.dp,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                ), shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .padding(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                }
                             }
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        Column (
-                            modifier = Modifier
-                                .weight(1f)
+                        // Plot Column
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.Top,
                         ) {
-                            TextField(
-                                readOnly = true,
-                                value = selectedPlot.toString(),
-                                onValueChange = { },
-                                label = { Text("Plot") },
-                                trailingIcon = {
-                                    IconButton(onClick = { expandedPlot = !expandedPlot }) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                        RoundedCornerShape(16.dp)
+                                    )
+                                    .border(
+                                        border = BorderStroke(
+                                            width = 3.dp,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        ), shape = RoundedCornerShape(16.dp)
+                                    )
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    androidx.compose.material3.Text(
+                                        text = selectedPlot.toString(),
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    )
+                                    androidx.compose.material3.IconButton(
+                                        onClick = { expandedPlot = !expandedPlot }
+                                    ) {
                                         Icon(
                                             imageVector = Icons.Default.ArrowDropDown,
                                             contentDescription = "Dropdown Icon"
                                         )
                                     }
-                                },
-                                colors = ExposedDropdownMenuDefaults.textFieldColors()
-                            )
+                                }
+                            }
+
                             DropdownMenu(
                                 expanded = expandedPlot,
-                                onDismissRequest = {
-                                    expandedPlot = false
-                                }
+                                onDismissRequest = { expandedPlot = false },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        shape = RoundedCornerShape(16.dp),
+                                        color = MaterialTheme.colorScheme.surface
+                                    )
+                                    .padding(10.dp)
                             ) {
-                                DropdownMenuItem(
-                                    text = { Text("Histogram") },
-                                    onClick = {
-                                        selectedPlot = PlotType.HISTOGRAM
-                                        expandedPlot = false
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = { Text("Pie") },
-                                    onClick = {
-                                        selectedPlot = PlotType.PIE
-                                        expandedPlot = false
-                                    }
-                                )
+                                PlotType.entries.forEach { plot ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            androidx.compose.material3.Text(
+                                                plot.toString(),
+                                                style = MaterialTheme.typography.bodySmall.copy(
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        },
+                                        onClick = {
+                                            selectedPlot = plot
+                                            expandedPlot = false
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                                shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .border(
+                                                border = BorderStroke(
+                                                    width = 3.dp,
+                                                    color = MaterialTheme.colorScheme.onSurface
+                                                ), shape = RoundedCornerShape(16.dp)
+                                            )
+                                            .padding(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                }
                             }
                         }
                     }
@@ -264,8 +381,8 @@ fun ProgressDetailsScreen(
             }
         }
     }
-
 }
+
 
 @Composable
 fun TrainingOverviewChart(
@@ -284,7 +401,7 @@ fun TrainingOverviewChart(
             values.add(data.value.toFloat())
         }
         when (selectedPlotType) {
-            PlotType.HISTOGRAM -> {
+            PlotType.BAR -> {
                 // Bar plot (Vertical bar plot)
                 BarPlot(trainingData, selectedPeriod.toString(), selectedMetric.toString())
             }
@@ -341,7 +458,7 @@ fun BarPlot(trainingData: List<TrainingData>, valueType: String, metricType: Str
             val maxLabel = maxValue.toString()
             val textWidth = with(density) { 16.dp.toPx() }
             val textHeight = with(density) { 12.dp.toPx() }
-            rotate(degrees = 270f, pivot = Offset(-textWidth -50 , textHeight + 900)) {
+            rotate(degrees = 270f, pivot = Offset(-textWidth -20 , textHeight + 900)) {
 
                 it.nativeCanvas.drawText(
                     metricType,

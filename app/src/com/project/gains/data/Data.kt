@@ -31,7 +31,7 @@ enum class PeriodMetricType {
 }
 
 enum class PlotType {
-    HISTOGRAM, PIE
+    BAR, PIE
 }
 
 enum class Weekdays {
