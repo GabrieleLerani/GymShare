@@ -36,6 +36,7 @@ import com.project.gains.presentation.exercises.TypedExerciseScreen
 import com.project.gains.presentation.workout.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
+import com.project.gains.presentation.explore.SearchScreen
 import com.project.gains.presentation.plan.AddGeneratedPlan
 import com.project.gains.presentation.plan.AddManualWorkout
 import com.project.gains.presentation.plan.LastNewPlanScreen
@@ -141,6 +142,12 @@ fun NavGraph(
                 )
             }
             composable(
+                route = Route.SearchScreen.route
+            ) {
+                // set screen as the node state
+                SearchScreen()
+            }
+            composable(
                 route = Route.PlanScreen.route
             ) {
                 // set screen as the node state
@@ -150,7 +157,6 @@ fun NavGraph(
                     selectHandler = workoutViewModel::onManageWorkoutEvent
                 )
             }
-
             composable(
                 route = Route.NewPlanScreen.route,
                 enterTransition = {
@@ -179,13 +185,11 @@ fun NavGraph(
                     navController = navController,
                     paddingValues = paddingValues
                 )
-
             }
             composable(
                 route = Route.LastNewPlanScreen.route
             ) {
                 // set screen as the node state
-
                 LastNewPlanScreen(navController = navController,planViewModel::onCreatePlanEvent)
             }
             composable(
@@ -195,7 +199,7 @@ fun NavGraph(
                 AddGeneratedPlan(navController = navController,
                     planOptionsHandler = planViewModel::onCreatePlanEvent,
                     createPlanHandler = planViewModel::onCreatePlanEvent
-                    )
+                )
             }
             composable(
                 route = Route.AddManualWorkoutScreen.route
@@ -215,9 +219,7 @@ fun NavGraph(
                     navController =navController ,
                     shareContentViewModel = shareContentViewModel
                 )
-
             }
-
             composable(
                 route = Route.ProgressDetailsScreen.route
             ) {
@@ -259,7 +261,6 @@ fun NavGraph(
                     removeExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent
                 )
             }
-
 
 
 

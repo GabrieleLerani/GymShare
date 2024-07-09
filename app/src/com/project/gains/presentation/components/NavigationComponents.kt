@@ -344,6 +344,18 @@ fun DynamicTopBar(
                 },
             )
         }
+
+        Route.SearchScreen.route -> {
+            TopBar(
+                message = " Search on GymFeed",
+                button= {},
+            ) {
+                BackButton {
+                    navController.popBackStack()
+                }
+            }
+        }
+
         Route.PlanScreen.route -> {
             TopBar(
                 message = "Your plan", //selectedPlan?.name ?: "Your Plan",

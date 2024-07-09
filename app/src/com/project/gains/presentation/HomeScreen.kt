@@ -79,9 +79,6 @@ fun HomeScreen(
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
 
-
-
-
     val workouts by workoutViewModel.workouts.observeAsState()
 
     CustomBackHandler(
