@@ -1,11 +1,15 @@
 package com.project.gains.presentation.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -21,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.project.gains.data.Categories
+import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun SearchAppBar(
@@ -38,18 +44,23 @@ fun SearchAppBar(
     onClick: () -> Unit,
     enabled: Boolean
 ) {
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(top = 10.dp, start = 10.dp, end = 10.dp),
-        elevation = AppBarDefaults.TopAppBarElevation,
-        color = MaterialTheme.colors.primary,
-    ) {
+
         TextField(
             modifier = Modifier
+                .background(
+                    androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                    RoundedCornerShape(16.dp)
+                )
                 .clickable { onClick() }
-                .fillMaxWidth(),
+                .padding(15.dp)
+                .border(
+                    border = BorderStroke(
+                        width = 3.dp,
+                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
+                    ), shape = RoundedCornerShape(16.dp)
+                )
+                .fillMaxWidth()
+            ,
             enabled = enabled,
             value = text,
             onValueChange = {
@@ -60,7 +71,6 @@ fun SearchAppBar(
                     modifier = Modifier
                         .alpha(ContentAlpha.medium),
                     text = placeholder,
-                    color = Color.White
                 )
             },
             textStyle = TextStyle(
@@ -76,7 +86,6 @@ fun SearchAppBar(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search Icon",
-                        tint = Color.White
                     )
                 }
             },
@@ -93,7 +102,6 @@ fun SearchAppBar(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Close Icon",
-                        tint = Color.White
                     )
                 }
             },
@@ -105,13 +113,10 @@ fun SearchAppBar(
                     onSearchClicked(text)
                 }
             ),
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                cursorColor = Color.White.copy(alpha = ContentAlpha.medium)
-            )
+            colors = TextFieldDefaults.textFieldColors(androidx.compose.material3.MaterialTheme.colorScheme.surface)
         )
     }
-}
+
 
 @Composable
 fun ResearchFilter(
@@ -119,10 +124,10 @@ fun ResearchFilter(
     selectedCategory: Categories?,
     onCategorySelected: (Categories) -> Unit
 ) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(Modifier.padding(15.dp)) {
         Text(text = "Filter by Categories", style = MaterialTheme.typography.h6)
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         categories.forEach { category ->
             val isSelected = selectedCategory == category
@@ -131,6 +136,7 @@ fun ResearchFilter(
                 isSelected = isSelected,
                 onCategorySelected = onCategorySelected
             )
+            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }
@@ -141,21 +147,31 @@ fun FilterChip(
     isSelected: Boolean,
     onCategorySelected: (Categories) -> Unit
 ) {
-    Surface(
-        modifier = Modifier
-            .padding(4.dp)
-            .clickable { onCategorySelected(category) },
-        shape = MaterialTheme.shapes.small,
-        color = if (isSelected) MaterialTheme.colors.primary else MaterialTheme.colors.surface,
-        contentColor = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.onSurface,
-        elevation = 4.dp
-    ) {
-        Text(
-            text = category.toString(),
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-        )
-    }
-}
+
+            androidx.compose.material3.Text(
+                text = category.toString(),
+                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold
+                ), // Make it bigger and bold
+                color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.primary else MaterialTheme.colors.onSurface,
+                modifier = Modifier
+                    .clickable { onCategorySelected(category) }
+                    .background(
+                        androidx.compose.material3.MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                        RoundedCornerShape(16.dp)
+                    )
+                    .border(
+                        border = BorderStroke(
+                            width = 3.dp,
+                            color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.primary else androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+                        ), shape = RoundedCornerShape(16.dp)
+                    )
+                    .fillMaxWidth()
+                    .padding(16.dp) // Add padding for better spacing
+                    .padding(16.dp) // Inner padding for the text itself
+            )
+        }
+
 
 @Preview(showBackground = true)
 @Composable
