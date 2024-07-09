@@ -40,82 +40,78 @@ fun SearchAppBar(
     onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit,
     // set enabled to false if you want to have onClick function triggered when the user clicks on the search bar
-    // otherwise set it to false (it should be the default behaviour)
+    // otherwise set it to false (it should be the default behavior)
     onClick: () -> Unit,
     enabled: Boolean
 ) {
 
-        TextField(
-            modifier = Modifier
-                .background(
-                    androidx.compose.material3.MaterialTheme.colorScheme.surface,
-                    RoundedCornerShape(16.dp)
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(15.dp),
+        enabled = enabled,
+        value = text,
+        onValueChange = {
+            onTextChange(it)
+        },
+        placeholder = {
+            Text(
+                modifier = Modifier
+                    .alpha(ContentAlpha.medium),
+                text = placeholder,
+            )
+        },
+        textStyle = TextStyle(
+            fontSize = MaterialTheme.typography.subtitle1.fontSize
+        ),
+        singleLine = true,
+        leadingIcon = {
+            IconButton(
+                modifier = Modifier
+                    .alpha(ContentAlpha.medium),
+                onClick = {}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon",
                 )
-                .clickable { onClick() }
-                .padding(15.dp)
-                .border(
-                    border = BorderStroke(
-                        width = 3.dp,
-                        color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface
-                    ), shape = RoundedCornerShape(16.dp)
-                )
-                .fillMaxWidth()
-            ,
-            enabled = enabled,
-            value = text,
-            onValueChange = {
-                onTextChange(it)
-            },
-            placeholder = {
-                Text(
-                    modifier = Modifier
-                        .alpha(ContentAlpha.medium),
-                    text = placeholder,
-                )
-            },
-            textStyle = TextStyle(
-                fontSize = MaterialTheme.typography.subtitle1.fontSize
-            ),
-            singleLine = true,
-            leadingIcon = {
-                IconButton(
-                    modifier = Modifier
-                        .alpha(ContentAlpha.medium),
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Icon",
-                    )
-                }
-            },
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        if (text.isNotEmpty()) {
-                            onTextChange("")
-                        } else {
-                            onCloseClicked()
-                        }
+            }
+        },
+        trailingIcon = {
+            IconButton(
+                onClick = {
+                    if (text.isNotEmpty()) {
+                        onTextChange("")
+                    } else {
+                        onCloseClicked()
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close Icon",
-                    )
                 }
-            },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Search
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearchClicked(text)
-                }
-            ),
-            colors = TextFieldDefaults.textFieldColors(androidx.compose.material3.MaterialTheme.colorScheme.surface)
-        )
-    }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close Icon",
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                onSearchClicked(text)
+            }
+        ),
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(16.dp)
+    )
+}
+
 
 
 @Composable
