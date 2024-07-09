@@ -291,8 +291,6 @@ fun DynamicTopBar(
                 }
             ) {
                 BackButton {
-                    // TODO
-                    //showDialog.value = false
                     navController.popBackStack()
                 }
             }
@@ -334,13 +332,6 @@ fun DynamicTopBar(
                     ) { navController.navigate(Route.AccountScreen.route) }
                 },
                 button1 = {
-                    IconButton(onClick = {  }) {
-                        Icon(
-                            Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite Icon",
-                            modifier = Modifier.size(50.dp)
-                        )
-                    }
                 },
             )
         }
@@ -358,7 +349,7 @@ fun DynamicTopBar(
 
         Route.PlanScreen.route -> {
             TopBar(
-                message = "Your plan", //selectedPlan?.name ?: "Your Plan",
+                message = "Your plan",
                 button = {
                     IconButton(
                         modifier = Modifier.size(45.dp),

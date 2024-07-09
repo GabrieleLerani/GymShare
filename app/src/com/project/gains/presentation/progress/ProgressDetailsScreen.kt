@@ -101,6 +101,7 @@ fun ProgressDetailsScreen(
                             .fillMaxWidth()
                             .padding(top = 10.dp, bottom = 10.dp)
                     ) {
+
                         Column (
                             modifier = Modifier
                                 .weight(1f)
