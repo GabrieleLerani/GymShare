@@ -20,7 +20,6 @@ class ShareContentViewModel @Inject constructor(
     private val linkedSocialUseCases: LinkedSocialUseCases
 ) : ViewModel(){
 
-    // TODO check if used
     private val _linkedSharingMedia = MutableLiveData<MutableList<ImageVector>>()
     val linkedSharingMedia: MutableLiveData<MutableList<ImageVector>> = _linkedSharingMedia
 

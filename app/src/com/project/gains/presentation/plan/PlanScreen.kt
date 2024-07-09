@@ -48,7 +48,6 @@ import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 
-import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel
@@ -101,12 +100,7 @@ fun PlanScreen(
             }
         }
 
-        ShareContentPagePopup(
-            showPopup = showPopup,
-            onItemClick = {},
-            navController = navController,
-            shareContentViewModel = shareContentViewModel
-        )
+
     }
 }
 

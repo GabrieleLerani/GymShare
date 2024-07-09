@@ -57,7 +57,6 @@ import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
 import com.project.gains.presentation.settings.ShareContentViewModel
-import com.project.gains.presentation.components.ShareContentPagePopup
 
 
 import com.project.gains.theme.GainsAppTheme
@@ -266,14 +265,7 @@ fun ProgressDetailsScreen(
             }
         }
     }
-    linkedApps?.let {
-        ShareContentPagePopup(
-            share,
-            {},
-            navController,
-            shareContentViewModel
-        )
-    }
+
 }
 
 @Composable

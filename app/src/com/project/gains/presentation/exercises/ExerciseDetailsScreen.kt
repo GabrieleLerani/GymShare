@@ -37,7 +37,6 @@ import com.project.gains.presentation.components.FeedbackAlertDialog
 
 import com.project.gains.presentation.components.InstructionCard
 import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.ShareContentPagePopup
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.settings.ShareContentViewModel
@@ -184,14 +183,14 @@ fun ExerciseDetailsScreen(
             }
         }
 
-        linkedApps?.let {
+     /*   linkedApps?.let {
             ShareContentPagePopup(
                 showPopup2,
                 { selectHandler(ManageDialogEvent.SelectShowDialogShared(true)) },
                 navController,
                 shareContentViewModel
             )
-        }
+        }*/
     }
 
 }

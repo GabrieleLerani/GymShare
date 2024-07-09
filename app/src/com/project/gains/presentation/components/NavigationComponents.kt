@@ -239,7 +239,7 @@ fun DynamicTopBar(navController: NavController) {
                     IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
-                            //showPopup2.value = true
+                            navController.navigate(Route.ShareScreen.route)
                         }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
@@ -299,7 +299,7 @@ fun DynamicTopBar(navController: NavController) {
                     IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
-                            //showPopup.value = true
+                            navController.navigate(Route.ShareScreen.route)
                         }
                     ) {
                         Icon(
@@ -334,7 +334,7 @@ fun DynamicTopBar(navController: NavController) {
                     IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
-                            //showPopup2.value = true
+                            navController.navigate(Route.ShareScreen.route)
                         }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
@@ -360,7 +360,7 @@ fun DynamicTopBar(navController: NavController) {
                     IconButton(
                         modifier = Modifier.size(45.dp),
                         onClick = {
-                            //showPopup2.value = true
+                            navController.navigate(Route.ShareScreen.route)
 
                         }) {
                         Icon(
@@ -392,7 +392,7 @@ fun DynamicBottomBar(navController: NavController) {
             WorkoutBottomBar(navController)
         }
 
-        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, Route.WorkoutModeScreen.route  -> {
+        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, Route.WorkoutModeScreen.route,Route.ShareScreen.route,  -> {
             // Empty because new plan has no bottom bar
         }
 

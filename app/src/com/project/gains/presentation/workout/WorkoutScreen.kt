@@ -33,7 +33,6 @@ import com.project.gains.presentation.components.AddExerciseItem
 
 import com.project.gains.presentation.components.FeedbackAlertDialog
 
-import com.project.gains.presentation.components.ShareContentPagePopup
 
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 
@@ -105,14 +104,7 @@ fun WorkoutScreen(
         }
 
 
-        linkedApps?.let {
-            ShareContentPagePopup(
-                showPopup2,
-                { shareHandler(ManageDialogEvent.SelectShowDialogShared(true)) },
-                navController,
-                shareContentViewModel
-            )
-        }
+
     }
 
 }

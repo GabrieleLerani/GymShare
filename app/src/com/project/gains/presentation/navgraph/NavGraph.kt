@@ -48,6 +48,7 @@ import com.project.gains.presentation.progress.ProgressDetailsScreen
 import com.project.gains.presentation.progress.ProgressViewModel
 import com.project.gains.presentation.settings.AccountScreen
 import com.project.gains.presentation.settings.LinkedSocialSettingScreen
+import com.project.gains.presentation.share.ShareScreen
 import com.project.gains.presentation.workout.WorkoutScreen
 import com.project.gains.presentation.workout.WorkoutViewModel
 
@@ -200,6 +201,15 @@ fun NavGraph(
                     deleteExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     createWorkoutHandler = workoutViewModel::onManageWorkoutEvent)
+            }
+            composable(
+                route = Route.ShareScreen.route
+            ) {
+                ShareScreen(
+                    navController =navController ,
+                    shareContentViewModel = shareContentViewModel
+                )
+
             }
 
             composable(

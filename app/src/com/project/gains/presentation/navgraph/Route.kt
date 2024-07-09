@@ -28,6 +28,9 @@ sealed class Route(
     data object AddGeneratedPlanScreen : Route(route = "addGeneratedPlan")
     data object AddManualWorkoutScreen : Route(route = "addManualWorkout")
 
+
+    data object ShareScreen : Route(route = "shareScreen")
+
     data object ExerciseDetailsScreen : Route(route = "exerciseDetailsScreen")
     data object LastNewPlanScreen : Route(route = "lastNewPlanScreen")
 
