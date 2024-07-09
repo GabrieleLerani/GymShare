@@ -59,6 +59,7 @@ import com.project.gains.data.PeriodMetricType
 import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.TopBar
+import com.project.gains.presentation.favourite.FavouriteViewModel
 
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.PlanViewModel
@@ -75,15 +76,18 @@ fun HomeScreen(
     workoutViewModel: WorkoutViewModel,
     selectHandler:(ManagePlanEvent.SelectPlan)->Unit,
     paddingValues: PaddingValues,
-    planViewModel: PlanViewModel
+    planViewModel: PlanViewModel,
+    favouriteViewModel:FavouriteViewModel
 ) {
-    // TODO add favorites
     val openPopup = remember { mutableStateOf(false) }
     var selectedPlan = remember {
         planViewModel.selectedPlan.value?.name
     }
     val plans by planViewModel.plans.observeAsState()
     var expanded by remember { mutableStateOf(false) }
+    val favouriteExercises by favouriteViewModel.favouriteExercises.observeAsState()
+    val favouriteWorkouts by favouriteViewModel.favouriteWorkouts.observeAsState()
+
 
 
 
@@ -130,7 +134,12 @@ fun HomeScreen(
                                }
                            },
                            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                           modifier = Modifier.padding(start=60.dp).background(shape=RoundedCornerShape(20.dp),color=MaterialTheme.colorScheme.background)
+                           modifier = Modifier
+                               .padding(start = 60.dp)
+                               .background(
+                                   shape = RoundedCornerShape(20.dp),
+                                   color = MaterialTheme.colorScheme.background
+                               )
                        )
                        DropdownMenu(
                            expanded = expanded,
@@ -161,6 +170,25 @@ fun HomeScreen(
                            }
                        }
                    }
+               }
+
+               favouriteExercises?.forEach { exercise ->
+                   item {
+                       GeneralCard(imageResId = R.drawable.pexels1, title = exercise.name) {
+                           navController.navigate(Route.WorkoutScreen.route)
+                       }
+                   }
+
+               }
+
+               favouriteWorkouts?.forEach { workout ->
+                   item {
+                       GeneralCard(imageResId = R.drawable.pexels1, title = workout.name) {
+                           navController.navigate(Route.WorkoutScreen.route)
+                       }
+
+                   }
+
                }
 
 
