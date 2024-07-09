@@ -19,6 +19,7 @@ sealed class Route(
     data object WorkoutModeScreen : Route(route = "workoutModeScreen")
 
     data object FeedScreen : Route(route = "feedScreen")
+    data object SearchScreen : Route(route = "searchScreen")
 
     data object PlanScreen : Route(route = "planScreen")
     data object ProgressScreen : Route(route = "progressScreen")

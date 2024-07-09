@@ -42,6 +42,10 @@ enum class Frequency {
     TWO,THREE,FOUR
 }
 
+enum class Categories {
+    User, Workout, Keyword, Social
+}
+
 data class Exercise(
     val name: String,
     val description: List<String>,  // Nullable Integer for resource ID

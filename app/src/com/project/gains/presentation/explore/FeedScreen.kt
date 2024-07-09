@@ -1,7 +1,6 @@
 package com.project.gains.presentation.explore
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,16 +19,10 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.MaterialTheme
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,13 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.R
 import com.project.gains.data.GymPost
-import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.components.BottomNavigationBar
 import com.project.gains.presentation.components.LogoUser
-import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
@@ -58,7 +46,6 @@ fun FeedScreen(
     feedViewModel: FeedViewModel
 ) {
     val gymPosts by feedViewModel.posts.observeAsState()
-
 
     // Assuming you have a function to fetch gym posts from an API or elsewhere
     // You'll need to implement this function accordingly
@@ -73,6 +60,10 @@ fun FeedScreen(
                     .fillMaxSize() ,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                item {
+
+                }
+
                 gymPosts?.forEach{gymPost ->
                     item { FeedPost(gymPost) }
                 }
