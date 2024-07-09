@@ -1,6 +1,5 @@
 package com.project.gains.presentation.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,10 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.ButtonElevation
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,7 +34,6 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -169,6 +165,24 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
         }
     }
 }
+
+
+@Composable
+fun SearchTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
+
+    TopAppBar(
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        elevation = 0.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)
+    ) {
+
+    }
+}
+
+
 
 @Composable
 fun currentRoute(navController: NavController): String? {

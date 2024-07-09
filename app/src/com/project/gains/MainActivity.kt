@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.project.gains.presentation.MainScreen
 import com.project.gains.presentation.MainViewModel
+import com.project.gains.presentation.components.SearchViewModel
 import com.project.gains.presentation.navgraph.NavGraph
 import com.project.gains.theme.GainsAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<MainViewModel>()
+    private val searchViewModel by viewModels<SearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,13 +35,10 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val startDestination = viewModel.startDestination
-                    MainScreen(startDestination = startDestination)
-                    /*Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                        val startDestination = viewModel.startDestination
-                        NavGraph(
-                            startDestination = startDestination
-                        )
-                    }*/
+                    MainScreen(
+                        startDestination = startDestination,
+                        searchViewModel = searchViewModel
+                    )
                 }
             }
         }
