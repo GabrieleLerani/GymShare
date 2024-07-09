@@ -6,8 +6,10 @@ package com.project.gains.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -229,11 +231,10 @@ fun EditProfileDialog(
                     onValueChange = onNameChange,
                     label = { Text("New Name") },
                     shape = RoundedCornerShape(size = 20.dp),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -242,11 +243,10 @@ fun EditProfileDialog(
                     onValueChange = onEmailChange,
                     label = { Text("New Email") },
                     shape = RoundedCornerShape(size = 20.dp),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -256,24 +256,25 @@ fun EditProfileDialog(
                     label = { Text("New Password") },
                     visualTransformation = PasswordVisualTransformation(),
                     shape = RoundedCornerShape(size = 20.dp),
-                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
                     )
                 )
             }
         },
         confirmButton = {
+
             TextButton(onClick = onSave) {
                 Text("Save", color = MaterialTheme.colorScheme.secondary)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel", color = MaterialTheme.colorScheme.onError)
-            }
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel", color = MaterialTheme.colorScheme.error)
+                }
+
         }
     )
 }

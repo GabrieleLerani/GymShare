@@ -1,6 +1,8 @@
 package com.project.gains.presentation.plan
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -127,6 +129,12 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                             MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             RoundedCornerShape(16.dp)
                         ) // Optional background for emphasis
+                        .border(
+                            border = BorderStroke(
+                                width = 3.dp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ), shape = RoundedCornerShape(16.dp)
+                        )
                         .padding(16.dp) // Inner padding for the text itself
                 )
             }
@@ -154,6 +162,12 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                             MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             RoundedCornerShape(16.dp)
                         )
+                        .border(
+                            border = BorderStroke(
+                                width = 3.dp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ), shape = RoundedCornerShape(16.dp)
+                        )
                         .padding(16.dp) // Inner padding for the text itself
                 )
             }
@@ -180,6 +194,12 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                         .background(
                             MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             RoundedCornerShape(16.dp)
+                        )
+                        .border(
+                            border = BorderStroke(
+                                width = 3.dp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ), shape = RoundedCornerShape(16.dp)
                         )
                         .padding(16.dp) // Inner padding for the text itself
                 )
@@ -232,6 +252,12 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                         .background(
                             MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             RoundedCornerShape(16.dp)
+                        )
+                        .border(
+                            border = BorderStroke(
+                                width = 3.dp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ), shape = RoundedCornerShape(16.dp)
                         )
                         .padding(16.dp) // Inner padding for the text itself
                 )
@@ -348,7 +374,7 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                         },
                     ) {
                         Text(
-                            text = "GENERATE",
+                            text = "Generate",
                         )
                     }
                 }

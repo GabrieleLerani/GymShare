@@ -51,6 +51,7 @@ import com.project.gains.data.Exercise
 import com.project.gains.data.Weekdays
 import com.project.gains.data.Workout
 import com.project.gains.presentation.components.AddExerciseItem
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
@@ -69,6 +70,8 @@ fun AddManualWorkout(
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
     var workoutDay by remember { mutableStateOf(Weekdays.MONDAY) }
     var expanded by remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
+
     val selectedExercises by manualWorkoutViewModel.selectedExercises.observeAsState()
     val workoutTitleStored by manualWorkoutViewModel.workoutTitle.observeAsState()
     val removedExercises = remember {
@@ -260,6 +263,7 @@ fun AddManualWorkout(
             item {
                 Button(
                     onClick = {
+                        showDialog.value=true
                         val exercisesList: MutableList<Exercise> = selectedExercises?.toMutableList() ?: mutableListOf()
                         // after the assignment, delete all exercises so it is ready for a new use
                         selectedExercises?.forEach {
@@ -269,7 +273,7 @@ fun AddManualWorkout(
                         createWorkoutHandler(ManageWorkoutEvent.CreateWorkout(
                             Workout(id = 0, name = workoutTitle.text, workoutDay = workoutDay, exercises = exercisesList)
                         ))
-                        navController.navigate(Route.HomeScreen.route)
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -278,6 +282,20 @@ fun AddManualWorkout(
                 ) {
                     Text(
                         text = "SAVE WORKOUT",
+                    )
+                }
+            }
+            item {
+                if (showDialog.value) {
+                    FeedbackAlertDialog(
+                        title =  "You have successfully added your workout!",
+                        onDismissRequest = { showDialog.value = false
+                            navController.navigate(Route.HomeScreen.route)                        },
+                        onConfirm = {
+                            showDialog.value = false
+                            navController.navigate(Route.HomeScreen.route)                        },
+                        show = showDialog
+
                     )
                 }
             }

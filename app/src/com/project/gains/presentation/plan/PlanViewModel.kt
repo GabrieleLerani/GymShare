@@ -96,7 +96,7 @@ class PlanViewModel @Inject constructor() : ViewModel() {
 
                 }
                 _selectedPeriodsMap[int] = periods
-                val plan  = Plan(int,"plan+$int", workouts = workouts.toMutableList(), period = _selectedPeriod.value ?: PeriodMetricType.WEEK)
+                val plan  = Plan(int,"plan $int", workouts = workouts.toMutableList(), period = _selectedPeriod.value ?: PeriodMetricType.WEEK)
                 _plans.value?.add(plan)
                 _selectedPlan.value = plan
 
