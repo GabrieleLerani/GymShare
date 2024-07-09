@@ -23,8 +23,8 @@ fun OnBoardingButton(
         onClick = onClick,
         shape = RoundedCornerShape(size = 16.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
+            containerColor = MaterialTheme.colorScheme.primary, // Orange
+            contentColor = MaterialTheme.colorScheme.onPrimary // Text color
         )
     ) {
         Text(

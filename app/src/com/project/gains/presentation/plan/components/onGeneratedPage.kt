@@ -58,7 +58,7 @@ fun OnGeneratedPage(
                 horizontalArrangement = Arrangement.Center
             ) {
                 IconButton(onClick = {
-                    navController.navigate(Route.AddGeneratedPlanScreen.route)
+                    navController.navigate(Route.HomeScreen.route)
                 }) {
                     Icon(
                         imageVector = Icons.Default.Close,
