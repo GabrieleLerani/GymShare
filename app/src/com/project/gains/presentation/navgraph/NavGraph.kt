@@ -69,7 +69,6 @@ fun NavGraph(
 
 
 
-
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -148,8 +147,9 @@ fun NavGraph(
                 // set screen as the node state
                 SearchScreen(
                     searchViewModel = searchViewModel,
-                    feedViewModel = feedViewModel,
-                    assignCategoryHandler = searchViewModel::onCategoriesEvent
+                    searchGymPostHandler = feedViewModel::onSearchEvent,
+                    assignCategoryHandler = searchViewModel::onCategoriesEvent,
+                    navController = navController
                 )
             }
             composable(

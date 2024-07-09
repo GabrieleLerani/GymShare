@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.Categories
 import com.project.gains.data.GymPost
 import com.project.gains.data.Socials
@@ -20,20 +22,22 @@ import com.project.gains.presentation.components.ResearchFilter
 import com.project.gains.presentation.components.SearchAppBar
 import com.project.gains.presentation.components.SearchViewModel
 import com.project.gains.presentation.components.events.ManageCategoriesEvent
+import com.project.gains.presentation.explore.events.SearchEvent
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel,
-    feedViewModel: FeedViewModel,
+    searchGymPostHandler: (SearchEvent.SearchGymPostEvent) -> Unit,
     assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit,
+    navController: NavController
 ) {
     val placeholder = "Look for posts on other social media"
     val categories = searchViewModel.categories
 
     var text by remember { mutableStateOf("") }
     val selectedCategory by searchViewModel.selectedCategory.observeAsState()
-    val posts by feedViewModel.posts.observeAsState()
 
     GainsAppTheme {
         Box(
@@ -46,16 +50,17 @@ fun SearchScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    // TODO fill searchappbar
                     SearchAppBar(
                         text = text,
                         placeholder = placeholder,
                         onTextChange = {
                             text = it
                         },
+                        // TODO fill onCloseClicked
                         onCloseClicked = {},
                         onSearchClicked = {
-                            gymSearch(text, selectedCategory, posts)
+                            searchGymPostHandler(SearchEvent.SearchGymPostEvent(text = text, selectedCategory = selectedCategory))
+                            navController.navigate(Route.FeedScreen.route)
                         },
                         // this is empty because it is used for a different purpose
                         onClick = {},
@@ -76,60 +81,15 @@ fun SearchScreen(
     }
 }
 
-fun gymSearch(text: String, selectedCategories: Categories?, posts: List<GymPost>?) {
-    val results: MutableList<GymPost> = mutableListOf()
-
-    when(selectedCategories) {
-        Categories.User -> {
-            posts?.forEach { post ->
-                if (post.username.contains(text)) {
-                    results.add(post)
-                }
-            }
-        }
-        Categories.Workout -> {
-            posts?.forEach { post ->
-                // TODO whenever a new post is added to the system, insert the "Workout" string inside the caption automatically
-                if (post.caption.contains(text) && post.caption.contains("Workout")) {
-                    results.add(post)
-                }
-            }
-        }
-        Categories.Keyword -> {
-            posts?.forEach { post ->
-                if (post.caption.contains(text)) {
-                    results.add(post)
-                }
-            }
-        }
-        Categories.Social -> {
-            posts?.forEach { post ->
-                if (post.social.contains(text)) {
-                    results.add(post)
-                }
-            }
-        }
-        else -> {
-            posts?.forEach { post ->
-                if (post.username.contains(text) ||
-                    post.caption.contains(text) && post.caption.contains("Workout") ||
-                    post.caption.contains(text) ||
-                    post.social.contains(text)) {
-                    results.add(post)
-                }
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun SearchScreenPreview() {
     val searchViewModel: SearchViewModel = hiltViewModel()
-    val feedViewModel: FeedViewModel = hiltViewModel()
+    val navController = rememberNavController()
     SearchScreen(
         searchViewModel = searchViewModel,
-        feedViewModel = feedViewModel,
-        assignCategoryHandler = {}
+        searchGymPostHandler = {},
+        assignCategoryHandler = {},
+        navController = navController
     )
 }
