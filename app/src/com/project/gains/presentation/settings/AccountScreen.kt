@@ -135,9 +135,8 @@ fun AccountScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 32.dp),
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
                     ) {
-                        Text(text = "Edit Profile", color = MaterialTheme.colorScheme.surface)
+                        Text(text = "Edit Profile")
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -148,9 +147,9 @@ fun AccountScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 32.dp),
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.onError)
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.errorContainer)
                     ) {
-                        Text(text = "Logout", color = MaterialTheme.colorScheme.onSurface)
+                        Text(text = "Logout")
                     }
 
                     // Observe changes in data

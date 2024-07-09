@@ -129,7 +129,7 @@ fun SocialMediaIcon(icon: Int, onClick: () -> Unit, isSelected: Boolean) {
             modifier = Modifier
                 .size(50.dp)
                 .background(
-                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                     shape = CircleShape
                 )
                 .clip(CircleShape)
@@ -153,7 +153,7 @@ fun SharingMediaIcon(icon: ImageVector, onClick: () -> Unit, isSelected: Boolean
             modifier = Modifier
                 .size(50.dp)
                 .background(
-                    color = if (isSelected) MaterialTheme.colorScheme.onPrimary else Color.Transparent,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
                     shape = CircleShape
                 )
                 .clip(CircleShape)

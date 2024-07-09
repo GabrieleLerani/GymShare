@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.SharingMediaIcon
 import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.navgraph.Route
@@ -44,6 +45,9 @@ fun ShareScreen(
 ) {
     var clickedApp by remember { mutableIntStateOf(1) }
     var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
+    val showDialog = remember { mutableStateOf(false) }
+    val showErrorDialog = remember { mutableStateOf(false) }
+
 
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
     val apps by shareContentViewModel.linkedApps.observeAsState()
@@ -70,7 +74,7 @@ fun ShareScreen(
                         horizontalArrangement = Arrangement.Center) {
                         IconButton(
                             onClick = {
-                                // TODO NAVIGATIOn
+                                navController.popBackStack()
                             }
                         ) {
                             Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
@@ -130,8 +134,7 @@ fun ShareScreen(
                         Spacer(modifier = Modifier.height(20.dp))
                         Button(
                             onClick = {
-                                // TODO NAVIGATIOn
-                                navController.navigate(Route.SettingsScreen.route)
+                                navController.navigate(Route.LinkedSocialSettingScreen.route)
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -143,7 +146,8 @@ fun ShareScreen(
                     } else if (apps?.isEmpty() == false) {
                         Button(
                             onClick = {
-                                // TODO NAVIGATIOn
+                                showDialog.value=true
+
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -152,20 +156,39 @@ fun ShareScreen(
                             Text(text = "SHARE CONTENT")
                         }
                     } else {
-                        Text(
-                            text = "An error has occurred",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        Button(
-                            onClick = {
-                                // TODO NAVIGATIOn
+
+                    }
+                }
+                item {
+                    if (showDialog.value) {
+                        FeedbackAlertDialog(
+                            title =  "You have successfully shared your content!",
+                            onDismissRequest = { showDialog.value = false
+                                navController.navigate(Route.HomeScreen.route)
+
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp),
-                        ) {
-                            Text(text = "Go back")
-                        }
+                            onConfirm = {
+                                showDialog.value = false
+                                navController.navigate(Route.HomeScreen.route)
+                            },
+                            show = showDialog
+
+                        )
+                    }
+                    if (showErrorDialog.value) {
+                        FeedbackAlertDialog(
+                            title = "An error has occurred,check your connection and retry later!",
+                            onDismissRequest = {
+                                showErrorDialog.value = false
+
+                            },
+                            onConfirm = {
+                                showErrorDialog.value = false
+
+                            },
+                            show = showErrorDialog
+
+                        )
                     }
                 }
             }

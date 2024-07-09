@@ -119,7 +119,8 @@ fun LinkedSocialSettingScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick =
+                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
+                                    onClick =
                             {
                                 showDialog.value = true
                                 saveLinkHandler(
@@ -129,15 +130,14 @@ fun LinkedSocialSettingScreen(
                                 )
                             },
                             modifier = Modifier.size(60.dp),
-                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
                         ) {
                             androidx.compose.material3.Icon(
                                 imageVector = Icons.Default.Check,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = "Save Icon",
                                 modifier = Modifier
                                     .size(60.dp)
                                     .padding(10.dp),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
                     } }
@@ -181,20 +181,20 @@ fun SocialMediaRow(
             )
         } else if (!clickedApps.value.contains(icon)){
             IconButton(
-                onClick =
+                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
+                        onClick =
                 {
                     clickedApps.value = clickedApps.value.toMutableList().apply { add(icon) }
                     linkHandler(LinkAppEvent.LinkApp(icon)) },
                 modifier = Modifier.size(60.dp),
-                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = "Save Icon",
                     modifier = Modifier
                         .size(60.dp)
                         .padding(10.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
         }
