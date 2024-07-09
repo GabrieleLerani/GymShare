@@ -32,9 +32,6 @@ class ShareContentViewModel @Inject constructor(
 
     init {
         _linkedApps.value = mutableListOf()
-
-        _linkedSharingMedia.value?.add(Icons.Default.Email)
-        _linkedSharingMedia.value?.add(Icons.AutoMirrored.Filled.Message)
     }
 
     fun onSaveSharingPreferencesEvent(event: ManageDataStoreEvent) {

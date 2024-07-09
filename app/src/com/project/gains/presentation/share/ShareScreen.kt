@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Home
@@ -28,7 +29,12 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.gains.presentation.components.FeedbackAlertDialog
@@ -48,149 +54,205 @@ fun ShareScreen(
     val showDialog = remember { mutableStateOf(false) }
     val showErrorDialog = remember { mutableStateOf(false) }
 
-
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
     val apps by shareContentViewModel.linkedApps.observeAsState()
 
-
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 40.dp)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                RoundedCornerShape(20.dp)
+            )
+    ) {
+        LazyColumn(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 40.dp)
-                .background(
-                    MaterialTheme.colorScheme.surface,
-                    RoundedCornerShape(20.dp)
-                )
+                .fillMaxWidth()
+                .padding(40.dp)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(40.dp)
-            ) {
-                item {
-                    Row(modifier = Modifier
+            item {
+                Row(
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(end = 290.dp),
-                        horizontalArrangement = Arrangement.Center) {
-                        IconButton(
-                            onClick = {
-                                navController.popBackStack()
-                            }
-                        ) {
-                            Icon(imageVector = Icons.Default.Close , contentDescription = "Close Icon")
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
                         }
+                    ) {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = "Close Icon")
                     }
                 }
+            }
 
-                item {
-                    Text(
-                        text = "Share Your Content!",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
+            item {
+                Text(
+                    text = "Share Your Content!",
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+
+            item {
+                Text(
+                    text = "Share Your Content with your friends showing your progress, your workouts and your plans",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(10.dp)) }
+
+            item {
+                Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
+                    apps?.forEach { app ->
+                        SocialMediaIcon(
+                            icon = app,
+                            onClick = {
+                                clickedApp = app
+                            },
+                            isSelected = clickedApp == app
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                    }
+                    sharingMedia?.forEach { media ->
+                        SharingMediaIcon(
+                            icon = media,
+                            onClick = {
+                                clickedMedia = media
+                            },
+                            isSelected = clickedMedia == media
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                    }
                 }
+            }
 
-                item {
+            item { Spacer(modifier = Modifier.height(20.dp)) }
+
+            item {
+                if (apps?.isEmpty() == true) {
                     Text(
-                        text = "Share Your Content with your friends showing your progress, your workouts and your plans",
+                        text = "You have no linked apps to link an app go to settings -> sharing preferences or click the link apps button below",
                         style = MaterialTheme.typography.bodySmall,
                     )
-                }
-
-                item { Spacer(modifier = Modifier.height(10.dp)) }
-
-                item {
-                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
-                        apps?.forEach{ app ->
-                            SocialMediaIcon(
-                                icon = app,
-                                onClick = {
-                                    clickedApp = app
-                                },
-                                isSelected = clickedApp == app
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Button(
+                        onClick = {
+                            navController.navigate(Route.LinkedSocialSettingScreen.route)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp),
+                    ) {
+                        Text(text = "LINK APPS")
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    val text = AnnotatedString.Builder().apply {
+                        pushStringAnnotation(
+                            tag = "LINK",
+                            annotation = "destination_page"
+                        )
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                textDecoration = TextDecoration.Underline
                             )
-                            Spacer(modifier = Modifier.width(2.dp))
+                        ) {
+                            append("Share via e-mail")
                         }
-                        sharingMedia?.forEach { media ->
-                            SharingMediaIcon(
-                                icon = media,
-                                onClick = {
-                                    clickedMedia = media
-                                },
-                                isSelected = clickedMedia == media
+                        pop()
+                    }.toAnnotatedString()
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 5.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        ClickableText(
+                            text = text,
+                            onClick = { offset ->
+                                showDialog.value = true
+                            },
+
+                        )
+                    }
+                } else if (apps?.isEmpty() == false) {
+                    Button(
+                        onClick = {
+                            showDialog.value = true
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(55.dp),
+                    ) {
+                        Text(text = "SHARE CONTENT")
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    val text = AnnotatedString.Builder().apply {
+                        pushStringAnnotation(
+                            tag = "LINK",
+                            annotation = "destination_page"
+                        )
+                        withStyle(
+                            style = SpanStyle(
+                                color = MaterialTheme.colorScheme.tertiary,
+                                textDecoration = TextDecoration.Underline
                             )
-                            Spacer(modifier = Modifier.width(2.dp))
-                        }
-                    }
-                }
-
-                item { Spacer(modifier = Modifier.height(20.dp)) }
-
-                item {
-                    if (apps?.isEmpty() == true) {
-                        Text(
-                            text = "You have no linked apps to link an app go to settings -> sharing preferences or click the link apps button below",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        Button(
-                            onClick = {
-                                navController.navigate(Route.LinkedSocialSettingScreen.route)
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp),
                         ) {
-                            Text(text = "LINK APPS")
+                            append("Share via e-mail")
                         }
+                        pop()
+                    }.toAnnotatedString()
 
-                    } else if (apps?.isEmpty() == false) {
-                        Button(
-                            onClick = {
-                                showDialog.value=true
-
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 5.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        ClickableText(
+                            text = text,
+                            onClick = { offset ->
+                                showDialog.value = true
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(55.dp),
-                        ) {
-                            Text(text = "SHARE CONTENT")
-                        }
-                    } else {
-
+                        )
                     }
+                } else {
+                    showErrorDialog.value = true
                 }
-                item {
-                    if (showDialog.value) {
-                        FeedbackAlertDialog(
-                            title =  "You have successfully shared your content!",
-                            onDismissRequest = { showDialog.value = false
-                                navController.navigate(Route.HomeScreen.route)
-
-                            },
-                            onConfirm = {
-                                showDialog.value = false
-                                navController.navigate(Route.HomeScreen.route)
-                            },
-                            show = showDialog
-
-                        )
-                    }
-                    if (showErrorDialog.value) {
-                        FeedbackAlertDialog(
-                            title = "An error has occurred,check your connection and retry later!",
-                            onDismissRequest = {
-                                showErrorDialog.value = false
-
-                            },
-                            onConfirm = {
-                                showErrorDialog.value = false
-
-                            },
-                            show = showErrorDialog
-
-                        )
-                    }
+            }
+            item {
+                if (showDialog.value) {
+                    FeedbackAlertDialog(
+                        title = "You have successfully shared your content!",
+                        onDismissRequest = {
+                            showDialog.value = false
+                            navController.navigate(Route.HomeScreen.route)
+                        },
+                        onConfirm = {
+                            showDialog.value = false
+                            navController.navigate(Route.HomeScreen.route)
+                        },
+                        show = showDialog
+                    )
+                }
+                if (showErrorDialog.value) {
+                    FeedbackAlertDialog(
+                        title = "An error has occurred, check your connection and retry later!",
+                        onDismissRequest = {
+                            showErrorDialog.value = false
+                        },
+                        onConfirm = {
+                            showErrorDialog.value = false
+                        },
+                        show = showErrorDialog
+                    )
                 }
             }
         }
     }
+}
+

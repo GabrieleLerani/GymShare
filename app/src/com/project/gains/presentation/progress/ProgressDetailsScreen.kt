@@ -68,7 +68,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressDetailsScreen(
     navController: NavController,
@@ -135,6 +134,7 @@ fun ProgressDetailsScreen(
                                             fontWeight = FontWeight.Bold
                                         ),
                                         color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.weight(1f)  // Use weight to make the text flexible
                                     )
                                     androidx.compose.material3.IconButton(
                                         onClick = { expandedPeriod = !expandedPeriod }
@@ -224,6 +224,7 @@ fun ProgressDetailsScreen(
                                             fontWeight = FontWeight.Bold
                                         ),
                                         color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.weight(1f)  // Use weight to make the text flexible
                                     )
                                     androidx.compose.material3.IconButton(
                                         onClick = { expandedMetric = !expandedMetric }
@@ -313,6 +314,7 @@ fun ProgressDetailsScreen(
                                             fontWeight = FontWeight.Bold
                                         ),
                                         color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.weight(1f)  // Use weight to make the text flexible
                                     )
                                     androidx.compose.material3.IconButton(
                                         onClick = { expandedPlot = !expandedPlot }
@@ -382,6 +384,7 @@ fun ProgressDetailsScreen(
         }
     }
 }
+
 
 
 @Composable

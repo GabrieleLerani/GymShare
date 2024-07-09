@@ -112,7 +112,6 @@ fun DefaultSignUpContent(
             text = "Sign up",
             style = MaterialTheme.typography.displayMedium,
             fontSize = 45.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 35.dp)
         )
@@ -123,7 +122,6 @@ fun DefaultSignUpContent(
                 Text(
                     "Name",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -132,15 +130,14 @@ fun DefaultSignUpContent(
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = 20.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
             )
         )
         OutlinedTextField(
@@ -150,7 +147,6 @@ fun DefaultSignUpContent(
                 Text(
                     "Email",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -159,15 +155,14 @@ fun DefaultSignUpContent(
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer), // Set the text color to white
 
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = 20.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
             )
         )
         OutlinedTextField(
@@ -177,7 +172,6 @@ fun DefaultSignUpContent(
                 Text(
                     text = "Password",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -188,7 +182,6 @@ fun DefaultSignUpContent(
                     focusManager.clearFocus()
                 }
             ),
-            textStyle = TextStyle(color = MaterialTheme.colorScheme.onPrimaryContainer),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image = if (passwordVisible)
@@ -207,8 +200,8 @@ fun DefaultSignUpContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary
             )
         )
         Button(
@@ -222,11 +215,11 @@ fun DefaultSignUpContent(
                 .fillMaxWidth()
                 .padding(top = 10.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary, // Green
-                contentColor = MaterialTheme.colorScheme.onPrimaryContainer // Text color
+                containerColor = MaterialTheme.colorScheme.primary, // Orange
+                contentColor = MaterialTheme.colorScheme.onPrimary // Text color
             )
         ) {
-            Text("Sign Up", color = MaterialTheme.colorScheme.onPrimaryContainer)
+            Text("Sign Up")
         }
         val text = AnnotatedString.Builder().apply {
             pushStringAnnotation(

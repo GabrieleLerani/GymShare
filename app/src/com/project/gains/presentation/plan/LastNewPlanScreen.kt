@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -39,10 +38,7 @@ import com.project.gains.data.generateOptions
 import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.onboarding.components.OnBoardingButton
-import com.project.gains.presentation.onboarding.components.PagerIndicator
 import com.project.gains.presentation.plan.events.ManagePlanEvent
-import kotlinx.coroutines.launch
 
 @Composable
 fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePlanEvent.CreatePlan) -> Unit) {
@@ -233,7 +229,7 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                 OptionCheckbox(
                     option = allOptions[4],
                     onOptionSelected = { isChecked ->
-                        selectedMetrics.add(TrainingMetricType.ATTENDANCE_FREQUENCY)
+                        selectedMetrics.add(TrainingMetricType.FREQUENCY)
                         onOptionSelected(
                             allOptions[4],
                             isChecked
