@@ -4,6 +4,7 @@ package com.project.gains.presentation.plan
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,38 +35,26 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun NewPlanScreen(
     navController: NavController,
+    paddingValues: PaddingValues
 ) {
 
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 10.dp)
+            //.padding(top = 10.dp)
+            //.padding(paddingValues)
             .background(
                 MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(20.dp)
+                //RoundedCornerShape(20.dp)
             )
     ) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                //.padding(10.dp)
         ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                ) {
-                    IconButton(onClick = {
-                        navController.navigate(Route.HomeScreen.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close Icon"
-                        )
-                    }
-                }
-            }
+
             item {
                 Column(
                     modifier = Modifier
@@ -121,7 +110,8 @@ fun NewPlanPagePreview() {
     val navController = rememberNavController()
     GainsAppTheme {
         NewPlanScreen(
-            navController = navController
+            navController = navController,
+            paddingValues = PaddingValues(5.dp)
         )
     }
 }
