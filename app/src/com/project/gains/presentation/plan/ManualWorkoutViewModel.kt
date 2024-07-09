@@ -1,5 +1,6 @@
 package com.project.gains.presentation.plan
 
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.Exercise
@@ -11,8 +12,11 @@ import javax.inject.Inject
 class ManualWorkoutViewModel @Inject constructor() : ViewModel() {
     private var _selectedExercises = MutableLiveData<MutableList<Exercise>>()
     val selectedExercises : MutableLiveData<MutableList<Exercise>> = _selectedExercises
-
+    private val _workoutTitle = MutableLiveData<TextFieldValue>()
+    val workoutTitle: MutableLiveData<TextFieldValue> = _workoutTitle
     init {
+        _workoutTitle.value=TextFieldValue()
+
         _selectedExercises.value = mutableListOf()
     }
 
@@ -23,6 +27,9 @@ class ManualWorkoutViewModel @Inject constructor() : ViewModel() {
             }
             is ManageExercises.DeleteExercise -> {
                 _selectedExercises.value?.remove(event.exercise)
+            }
+            is ManageExercises.SelectWorkoutStored -> {
+                _workoutTitle.value=event.name
             }
         }
     }

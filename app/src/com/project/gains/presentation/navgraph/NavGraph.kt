@@ -196,8 +196,9 @@ fun NavGraph(
                 // set screen as the node state
                 AddManualWorkout(navController = navController,
                     manualWorkoutViewModel = manualWorkoutViewModel,
-                    addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
+                    addNameHandler =  manualWorkoutViewModel::onManageExercisesEvent,
                     deleteExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
+                    selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     createWorkoutHandler = workoutViewModel::onManageWorkoutEvent)
             }
 
@@ -236,7 +237,9 @@ fun NavGraph(
                     navController = navController,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     workoutViewModel = workoutViewModel,
-                    exerciseViewModel = exerciseViewModel
+                    exerciseViewModel = exerciseViewModel,
+                    addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
+                    removeExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent
                 )
             }
 

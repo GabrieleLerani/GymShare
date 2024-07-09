@@ -11,8 +11,5 @@ sealed class ExerciseEvent {
 
     data class SelectExercise(val exercise: Exercise) : ExerciseEvent()
     data class SelectIsToAdd(val value: Boolean) : ExerciseEvent()
-    data class SelectExerciseType(val exerciseType: ExerciseType) : ExerciseEvent()
-    data class SelectExerciseToAdd(val exercise: Exercise) : ExerciseEvent()
 
-    data class RemoveExerciseToAdd(val exercise: Exercise) : ExerciseEvent()
 }

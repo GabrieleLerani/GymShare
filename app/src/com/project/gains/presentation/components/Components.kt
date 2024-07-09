@@ -103,15 +103,20 @@ fun AddExerciseItem(
             horizontalArrangement = Arrangement.End
         )  {
             if (isSelected) {
+                if (isToAdd){
                 IconButton(onClick = {
-                    if (isToAdd){
-                        onItemClick2()
-                    } else {
-                        onItemClick(exercise)
-                    }
+                    onItemClick2()
                 }) {
-                    Icon(imageVector = if(isToAdd) Icons.Default.Add else Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+                    Icon(imageVector = Icons.Default.Add , contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
                 }
+                    }
+                IconButton(onClick = {
+                        onItemClick(exercise)
+
+                }) {
+                    Icon(imageVector =  Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
+                }
+
             }
         }
     }

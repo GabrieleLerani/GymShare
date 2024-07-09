@@ -211,8 +211,7 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                 OptionCheckbox(
                     option = allOptions[4],
                     onOptionSelected = { isChecked ->
-                        selectedMetrics.add(TrainingMetricType.DURATION)
-
+                        selectedMetrics.add(TrainingMetricType.ATTENDANCE_FREQUENCY)
                         onOptionSelected(
                             allOptions[4],
                             isChecked
@@ -324,6 +323,8 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                         onClick = {
                             navController.navigate(Route.NewPlanScreen.route)
                         },
+                        modifier = Modifier.weight(1f)  // Added weight modifier
+
                     ) {
                         Text(
                             text = "Back",
@@ -331,7 +332,8 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                     }
                     Spacer(modifier = Modifier.width(5.dp))
                     Button(
-                        onClick = {
+                        modifier = Modifier.weight(1f),  // Added weight modifier
+                                onClick = {
                             createPlanHandler(
                                 ManagePlanEvent.CreatePlan(
                                     selectedMetrics,

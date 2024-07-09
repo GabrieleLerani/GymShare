@@ -30,6 +30,7 @@ import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.WorkoutViewModel
 import com.project.gains.theme.GainsAppTheme
 
@@ -37,12 +38,13 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun TypedExerciseScreen(
     navController: NavController,
-    selectExerciseHandler: (ExerciseEvent) -> Unit,
+    addExerciseHandler: (ManageExercises.AddExercise) -> Unit,
+    removeExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
+    selectExerciseHandler:(ExerciseEvent.SelectExercise)->Unit,
     workoutViewModel: WorkoutViewModel,
     exerciseViewModel: ExerciseViewModel
     ) {
     val isToAdd by exerciseViewModel.isToAdd.observeAsState()
-    val previousPage by exerciseViewModel.previousPage.observeAsState()
     val allExercises by workoutViewModel.exercises.observeAsState()
 
 
@@ -140,18 +142,8 @@ fun TypedExerciseScreen(
                             navController.navigate(Route.ExerciseDetailsScreen.route)
                         },
                         onItemClick2 = {
-                            selectExerciseHandler(ExerciseEvent.SelectExerciseToAdd(exercise))
-                            // TODO review according to add plan and manual workout
-                            /*selectHandler(SelectEvent.SelectPlanPopup(true))
-                            selectHandler(SelectEvent.SelectClicked(true))
-                            selectHandler(SelectEvent.SelectShowPopup3(false))
-                            selectHandler(SelectEvent.SelectShowPopup4(true))*/
-                            if (previousPage=="Home"){
-                                navController.navigate(Route.HomeScreen.route)
-                            } else{
-                                navController.navigate(Route.PlanScreen.route)
-
-                            }
+                            addExerciseHandler(ManageExercises.AddExercise(exercise))
+                            navController.navigate(Route.AddManualWorkoutScreen.route)
                         },
                         isSelected = true,
                         isToAdd = isToAdd ?: false,
@@ -163,9 +155,6 @@ fun TypedExerciseScreen(
     }
 }
 
-/*AddExerciseItem(exercise = exercise, onItemClick = {onItemClick()}, onItemClick2 = {
-    selectedExercises.add(exercise)
-    onItemClick2()},isSelected = false,isToAdd = true)*/
 
 
 @Preview(showBackground = true)
@@ -179,7 +168,9 @@ fun DefaultPreview() {
             navController = rememberNavController(),
             selectExerciseHandler = {},
             workoutViewModel = workoutViewModel,
-            exerciseViewModel = exerciseViewModel
+            exerciseViewModel = exerciseViewModel,
+            addExerciseHandler = {},
+            removeExerciseHandler = {}
         )
     }
 }
