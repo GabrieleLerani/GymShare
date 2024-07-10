@@ -158,8 +158,7 @@ fun NavGraph(
                 // set screen as the node state
                 PlanScreen(navController = navController,
                     planViewModel = planViewModel,
-                    workoutViewModel = workoutViewModel,
-                    selectHandler = workoutViewModel::onManageWorkoutEvent
+                    selectPlanHandler = planViewModel::onCreatePlanEvent
                 )
             }
             composable(
@@ -333,8 +332,6 @@ fun NavGraph(
                 navController = navController,
                 workoutViewModel = workoutViewModel,
                 paddingValues = paddingValues,
-                selectHandler = planViewModel::onCreatePlanEvent,
-                planViewModel = planViewModel,
                 exerciseViewModel = exerciseViewModel
             )
         }

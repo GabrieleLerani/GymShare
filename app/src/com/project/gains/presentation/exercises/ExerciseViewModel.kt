@@ -9,12 +9,11 @@ import com.project.gains.data.Workout
 import com.project.gains.data.generateSampleExercises
 import com.project.gains.presentation.events.PreviousPageEvent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-class ExerciseViewModel @Inject constructor() : ViewModel(){
-
-
-
+@HiltViewModel
+class ExerciseViewModel @Inject constructor() : ViewModel() {
     private val _isToAdd = MutableLiveData<Boolean>()
     val isToAdd: MutableLiveData<Boolean> = _isToAdd
 
@@ -24,14 +23,10 @@ class ExerciseViewModel @Inject constructor() : ViewModel(){
     private var _favouriteExercises = MutableLiveData<MutableList<Exercise>>()
     val favouriteExercises : MutableLiveData<MutableList<Exercise>> = _favouriteExercises
 
-
-
-
     init {
-        favouriteExercises.value= mutableListOf()
-        _selectedExercise.value= generateSampleExercises().get(0)
+        favouriteExercises.value = mutableListOf()
+        _selectedExercise.value = generateSampleExercises()[0]
     }
-
 
     fun onExerciseEvent(event: ExerciseEvent){
         when (event) {
@@ -44,24 +39,19 @@ class ExerciseViewModel @Inject constructor() : ViewModel(){
             }
 
             ExerciseEvent.AddExercise -> {
-
-                System.out.println(favouriteExercises)
-
                 selectedExercise.value?.let {
-                    if (!_favouriteExercises.value?.contains(it)!!){
+                    if (!_favouriteExercises.value?.contains(it)!!) {
                         _favouriteExercises.value?.add(it) }
                 }
 
             }
             ExerciseEvent.DeleteExercise -> {
                 selectedExercise.value?.let {
-                    if (_favouriteExercises.value?.contains(it)==true){
-                        _favouriteExercises.value?.remove(it) }
+                    if (_favouriteExercises.value?.contains(it) == true) {
+                        _favouriteExercises.value?.remove(it)
+                    }
                 }
-
-
             }
         }
     }
-
 }

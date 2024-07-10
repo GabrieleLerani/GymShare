@@ -415,7 +415,6 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
     }
 }
 
-
 @Composable
 fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
     Box(

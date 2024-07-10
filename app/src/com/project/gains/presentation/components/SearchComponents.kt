@@ -4,7 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,9 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -114,6 +120,7 @@ fun SearchAppBar(
 
 
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ResearchFilter(
     categories: List<Categories>,
@@ -125,14 +132,20 @@ fun ResearchFilter(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        categories.forEach { category ->
-            val isSelected = selectedCategory == category
-            FilterChip(
-                category = category,
-                isSelected = isSelected,
-                onCategorySelected = onCategorySelected
-            )
-            Spacer(modifier = Modifier.height(4.dp))
+        FlowRow (
+            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
+            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.Top),
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            categories.forEach { category ->
+                val isSelected = selectedCategory == category
+                FilterChip(
+                    category = category,
+                    isSelected = isSelected,
+                    onCategorySelected = onCategorySelected
+                )
+            }
         }
     }
 }
@@ -143,30 +156,22 @@ fun FilterChip(
     isSelected: Boolean,
     onCategorySelected: (Categories) -> Unit
 ) {
-
-            androidx.compose.material3.Text(
-                text = category.toString(),
-                style = androidx.compose.material3.MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold
-                ), // Make it bigger and bold
-                color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.primary else MaterialTheme.colors.onSurface,
-                modifier = Modifier
-                    .clickable { onCategorySelected(category) }
-                    .background(
-                        androidx.compose.material3.MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                        RoundedCornerShape(16.dp)
-                    )
-                    .border(
-                        border = BorderStroke(
-                            width = 3.dp,
-                            color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.primary else androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
-                        ), shape = RoundedCornerShape(16.dp)
-                    )
-                    .fillMaxWidth()
-                    .padding(16.dp) // Add padding for better spacing
-                    .padding(16.dp) // Inner padding for the text itself
+    androidx.compose.material3.Text(
+        text = category.toString(),
+        style = androidx.compose.material3.MaterialTheme.typography.headlineSmall.copy(),
+        color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.error else MaterialTheme.colors.primary,
+        modifier = Modifier
+            .clickable { onCategorySelected(category) }
+            .background(
+                color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.errorContainer.copy(
+                    alpha = 0.1f
+                ) else MaterialTheme.colors.primary.copy(alpha = 0.1f),
+                RoundedCornerShape(30.dp)
             )
-        }
+            .padding(10.dp) // Add padding for better spacing
+            .padding(3.dp) // Inner padding for the text itself
+    )
+}
 
 
 @Preview(showBackground = true)

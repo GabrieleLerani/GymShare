@@ -1,6 +1,9 @@
 package com.project.gains.presentation.plan
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,9 +21,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,8 +59,7 @@ import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.settings.ShareContentViewModel
-import com.project.gains.presentation.workout.WorkoutViewModel
+import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 import com.project.gains.theme.GainsAppTheme
@@ -60,8 +68,7 @@ import com.project.gains.theme.GainsAppTheme
 fun PlanScreen(
     navController: NavController,
     planViewModel: PlanViewModel,
-    selectHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,
-    workoutViewModel: WorkoutViewModel
+    selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit
 ) {
     // Sample list of workouts
     val selectedPlan by planViewModel.selectedPlan.observeAsState()
@@ -70,9 +77,8 @@ fun PlanScreen(
     val selectedPeriod  by planViewModel.selectedPeriod.observeAsState()
     val selectedTraining  by planViewModel.selectedTrainingType.observeAsState()
 
-    var showPopup = remember { mutableStateOf(false) }
-
-    val workouts by workoutViewModel.workouts.observeAsState()
+    val plans by planViewModel.plans.observeAsState()
+    var expanded by remember { mutableStateOf(false) }
 
     GainsAppTheme {
         Box(
@@ -85,6 +91,96 @@ fun PlanScreen(
                 verticalArrangement = Arrangement.Center
 
             ) {
+                item {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    RoundedCornerShape(16.dp)
+                                )
+                                .border(
+                                    border = BorderStroke(
+                                        width = 3.dp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    ), shape = RoundedCornerShape(16.dp)
+                                )
+
+                                .padding(16.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "Your current plan: ${selectedPlan?.name.toString()}",
+                                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.weight(1f)
+                                    // Take up the remaining space
+                                )
+                                IconButton(
+                                    onClick = { expanded = !expanded }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = "Dropdown Icon"
+                                    )
+                                }
+                            }
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .fillMaxWidth(0.7f)
+                                .background(
+                                    shape = RoundedCornerShape(16.dp),
+                                    color = MaterialTheme.colorScheme.surface
+                                )
+                                .padding(10.dp) // Padding to match the Text above
+                        ) {
+                            plans?.forEach { plan ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            plan.name,
+                                            style = MaterialTheme.typography.bodySmall.copy(
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    },
+                                    onClick = {
+                                        selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
+                                        expanded = false
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                            shape = RoundedCornerShape(16.dp)
+                                        )
+                                        .border(
+                                            border = BorderStroke(
+                                                width = 3.dp,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            ), shape = RoundedCornerShape(16.dp)
+                                        )
+                                        .padding(16.dp) // Inner padding for the item
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                            }
+                        }
+                    }
+                }
 
                 item {
                     Column(
@@ -210,12 +306,9 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
 fun PlanScreenPreview() {
     val navController = rememberNavController()
     val planViewModel: PlanViewModel = hiltViewModel()
-    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
-    val workoutViewModel: WorkoutViewModel = hiltViewModel()
     PlanScreen(
         navController = navController,
         planViewModel = planViewModel,
-       selectHandler = {},
-        workoutViewModel = workoutViewModel
+        selectPlanHandler = {}
     )
 }
