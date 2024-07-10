@@ -16,8 +16,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
@@ -41,9 +39,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
-import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -210,6 +206,7 @@ fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Co
     }
 }
 
+// TODO check
 @Composable
 fun SearchTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
 

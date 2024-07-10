@@ -3,6 +3,7 @@ package com.project.gains.presentation.plan
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -16,11 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -354,7 +355,8 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                 .background(Color.White)
         ){
             Button(
-                modifier = Modifier.fillMaxWidth(0.8f)
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
                     .align(Alignment.Center)
                     .height(60.dp),
                 onClick = {
@@ -387,44 +389,58 @@ fun OptionCheckbox(
 ) {
     val isChecked = remember { mutableStateOf(false) }
 
-    Card(
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = if (isChecked.value) {
+            MaterialTheme.colorScheme.onTertiary
+        } else {
+            MaterialTheme.colorScheme.primaryContainer
+        },
+        border = BorderStroke(
+            width = 0.5.dp,
+            color = if (isChecked.value) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.outline
+            }),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(8.dp)
-            ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = {  })
+            .padding(bottom = 10.dp)
+
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(start = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = option.name,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
             )
-            Checkbox(
-                checked = isChecked.value,
-                onCheckedChange = {
-                    isChecked.value = it
-                    onOptionSelected(it)
-                },
-                colors = CheckboxDefaults.colors(
-                    checkmarkColor = MaterialTheme.colorScheme.onPrimary,
-                    uncheckedColor = MaterialTheme.colorScheme.primary,
-                    checkedColor = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier.padding(end = 8.dp)
-            )
+
+            Box(Modifier.padding(8.dp)) {
+                Checkbox(
+                    checked = isChecked.value,
+                    onCheckedChange = {
+                        isChecked.value = it
+                        onOptionSelected(it)
+                    },
+                    colors = CheckboxDefaults.colors(
+                        checkmarkColor = MaterialTheme.colorScheme.onPrimary,
+                        uncheckedColor = MaterialTheme.colorScheme.primary,
+                        checkedColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+            }
+
         }
     }
+
 }
 
 
