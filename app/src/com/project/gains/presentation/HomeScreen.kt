@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -29,14 +29,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.presentation.components.GeneralCard
 import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.workout.WorkoutViewModel
@@ -53,7 +54,6 @@ fun HomeScreen(
 
     val openPopup = remember { mutableStateOf(false) }
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
-    val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
 
     val workouts by workoutViewModel.workouts.observeAsState()
 
@@ -76,103 +76,21 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Top
 
             ) {
-                item {
-                    Text(
-                        text = "Your daily workout",
-                        style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                        color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp) // Add padding for better spacing
-                            .background(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                RoundedCornerShape(16.dp)
-                            )
-                            .border(
-                                border = BorderStroke(
-                                    width = 3.dp,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                ), shape = RoundedCornerShape(16.dp)
-                            )
-                            .padding(16.dp) // Inner padding for the text itself
-                    )
-                }
 
                 val weekday = currentWeekday()
 
                 workouts?.forEach { workout ->
-                    if (workout.workoutDay.ordinal == weekday) {
+                    if (workout.workoutDay.ordinal + 1 == weekday) {
                         item {
-                            GeneralCard(imageResId = R.drawable.pexels1, title = workout.name) {
-                                navController.navigate(Route.WorkoutScreen.route)
-                            }
+                            HorizontalScrollScreen(navController, "daily workout", workout.exercises)
                         }
                     }
                 }
 
                 item {
-                    HorizontalScrollScreen(navController, favouriteExercises!!.toList())
-                }
-
-                item {
-                    if (favouriteWorkouts?.isEmpty() == true) {
-
-                        Text(
-                            text = "No favorites workouts yet ",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .border(
-                                    border = BorderStroke(
-                                        width = 3.dp,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    ), shape = RoundedCornerShape(16.dp)
-                                )
-
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    } else {
-                        Text(
-                            text = "Your favorites workouts",
-                            style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
-                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp) // Add padding for better spacing
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .border(
-                                    border = BorderStroke(
-                                        width = 3.dp,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    ), shape = RoundedCornerShape(16.dp)
-                                )
-
-                                .padding(16.dp) // Inner padding for the text itself
-                        )
-                    }
-                }
-
-                favouriteWorkouts?.forEach { workout ->
-                    item {
-                        GeneralCard(imageResId = R.drawable.pexels1, title = workout.name) {
-                            navController.navigate(Route.WorkoutScreen.route)
-                        }
-
-                    }
-
+                    HorizontalScrollScreen(navController, "favourite exercises", favouriteExercises!!.toList())
                 }
             }
-
-
         }
     }
 }
@@ -203,12 +121,12 @@ fun CustomBackHandler(
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun HorizontalScrollScreen(navController: NavController, items: List<Exercise>) {
+fun HorizontalScrollScreen(navController: NavController, title: String, items: List<Exercise>) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .height(150.dp)
+            .height(180.dp)
     ) {
         // BowWithConstraints will provide the maxWidth used below
         BoxWithConstraints(
@@ -221,7 +139,7 @@ fun HorizontalScrollScreen(navController: NavController, items: List<Exercise>) 
             ) {
                 if (items.isEmpty()) {
                     Text(
-                        text = "No favorites exercises yet ",
+                        text = "No $title",
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
                         color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
                         modifier = Modifier
@@ -230,7 +148,7 @@ fun HorizontalScrollScreen(navController: NavController, items: List<Exercise>) 
                     )
                 } else {
                     Text(
-                        text = "Your favorites exercises",
+                        text = "Your $title",
                         style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold), // Make it bigger and bold
                         color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
                         modifier = Modifier
@@ -239,12 +157,13 @@ fun HorizontalScrollScreen(navController: NavController, items: List<Exercise>) 
                     )
 
                     LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         state = rememberLazyListState()
                     ) {
                         itemsIndexed(items) {  _, item ->
                             item.gifResId?.let {
-                                GeneralCard(imageResId = it, title = item.name) {
+                                Card(imageResId = it, title = item.name) {
                                     navController.navigate(Route.ExerciseDetailsScreen.route)
                                 }
                             }
@@ -253,5 +172,35 @@ fun HorizontalScrollScreen(navController: NavController, items: List<Exercise>) 
                 }
             }
         }
+    }
+}
+
+@Composable
+fun Card(imageResId: Int, title: String, onItemClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 8.dp)
+            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
+            .clickable {
+                onItemClick()
+            }
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 5.dp, end = 5.dp, top = 5.dp, bottom = 20.dp)
+                .clip(RoundedCornerShape(16.dp)) // Clip to the rounded corners
+        )
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+        )
     }
 }
