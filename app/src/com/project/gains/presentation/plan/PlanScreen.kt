@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -262,7 +263,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
         )
 
         workouts.forEachIndexed { index,workout ->
-            androidx.compose.material.Card(
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
@@ -286,7 +287,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "workout day ${index}",
+                            text = "workout day $index",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )

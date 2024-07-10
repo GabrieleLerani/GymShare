@@ -16,6 +16,9 @@ import com.project.gains.domain.usecase.auth.AuthenticationUseCases
 import com.project.gains.util.Constants.LOGIN_SUCCESS
 import com.project.gains.util.Constants.SIGN_UP_SUCCESS
 import com.project.gains.util.Constants.USER_AUTH
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 /* Class responsible for handling authentication related events. It relies on the appEntryUseCases dependency
@@ -48,7 +51,12 @@ class AuthenticationViewModel  @Inject constructor(
             is SignInEvent.SignIn -> {
                 _isError.value = false
                 _isLoading.value = true
-                goSignIn(event.email, event.password)
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(1000)
+                    goSignIn(event.email, event.password)
+                }
+
             }
 
         }
@@ -59,7 +67,12 @@ class AuthenticationViewModel  @Inject constructor(
             is SignUpEvent.SignUp -> {
                 _isError.value = false
                 _isLoading.value = true
-                goSignUp(event.name, event.email, event.password, event.confirmPass)
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(1000)
+                    goSignUp(event.name, event.email, event.password, event.confirmPass)
+                }
+
             }
 
         }
@@ -101,19 +114,6 @@ class AuthenticationViewModel  @Inject constructor(
 
     }
 
-
-
-    fun onUpdateBio(bool : Boolean) {
-        if (bool) {
-            _isLoading.value=false
-            _isError.value = false
-            _navigateToAnotherScreen.value = true
-        }
-        else{
-            _isLoading.value=false
-            _isError.value = true
-        }
-    }
 
 
 

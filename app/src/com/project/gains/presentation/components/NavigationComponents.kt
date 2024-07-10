@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -47,7 +48,9 @@ fun BottomNavigationBar(navController: NavController) {
     BottomNavigation(
         backgroundColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.height(64.dp) // Adjust the height of the BottomNavigation
+        modifier = Modifier.height(64.dp),
+        elevation = 10.dp
+
     ) {
         val currentRoute = currentRoute(navController)
         bottomNavItems.forEach { item ->
@@ -145,15 +148,7 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
-                    shadow = Shadow(
-                        color = Color.Black,
-                        offset = Offset(2f, 2f),
-                        blurRadius = 4f
-                    )
-                ),
+                style = MaterialTheme.typography.displayMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .weight(1f)
@@ -164,6 +159,9 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
         }
     }
 }
+
+
+
 @Composable
 fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit,button2: @Composable () -> Unit) {
     TopAppBar(
@@ -406,6 +404,17 @@ fun DynamicTopBar(
             }
         }
 
+        Route.AddManualWorkoutScreen.route -> {
+            TopBar(
+                message = "",
+                button= {}
+            ) {
+                BackButton {
+                    navController.navigate(Route.NewPlanScreen.route)
+                }
+            }
+        }
+
 
         Route.LastNewPlanScreen.route -> {
             TopBar(
@@ -461,18 +470,20 @@ fun DynamicBottomBar(navController: NavController) {
             WorkoutBottomBar(navController)
         }
 
+        // Empty because new plan has no bottom bar
         Route.NewPlanScreen.route,
         Route.AddManualWorkoutScreen.route,
         Route.AddGeneratedPlanScreen.route,
         Route.LastNewPlanScreen.route,
         Route.WorkoutModeScreen.route,
+        Route.SearchScreen.route,
         Route.ShareScreen.route,
         Route.ExerciseDetailsScreen.route,
         Route.ProgressDetailsScreen.route,
         Route.SignInScreen.route,
         Route.SignUpScreen.route,
         Route.OnBoardingScreen.route -> {
-            // Empty because new plan has no bottom bar
+
         }
 
         else -> {

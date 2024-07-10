@@ -1,19 +1,24 @@
 package com.project.gains.presentation.authentication.screens
 
+import android.util.Log
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -49,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -62,9 +68,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.presentation.CustomBackHandler
 import com.project.gains.presentation.Dimension.ButtonCornerShape
@@ -93,7 +102,6 @@ fun SignInScreen(
     ) {
     }
 
-
     GainsAppTheme {
         DefaultSignInContent(
             signInHandler,
@@ -118,16 +126,19 @@ fun DefaultSignInContent(
     // fields of interest
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val context = LocalContext.current
+
     var passwordVisible by remember { mutableStateOf(false) }
 
     // observed state
     val data by viewModel.data.observeAsState()
-    var authenticationResult by remember { mutableStateOf("") }
     val openErrorPopup = remember { mutableStateOf(false) }
 
     // focus
     val focusManager = LocalFocusManager.current
+
+    // Validation state
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -145,7 +156,10 @@ fun DefaultSignInContent(
         )
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                if (email.isNotEmpty()) emailError = false
+            },
             label = {
                 Text(
                     text = "Email",
@@ -158,21 +172,22 @@ fun DefaultSignInContent(
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
-
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                focusedBorderColor = if (emailError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (emailError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
-
         )
 
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                if (password.isNotEmpty()) passwordError = false
+            },
             label = {
                 Text(
                     text = "Password",
@@ -190,9 +205,10 @@ fun DefaultSignInContent(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image = if (passwordVisible)
-                    Icons.Default.VisibilityOff
-                else
                     Icons.Default.Visibility
+                else
+                    Icons.Default.VisibilityOff
+
 
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
@@ -205,14 +221,22 @@ fun DefaultSignInContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary
+                focusedBorderColor = if (passwordError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (passwordError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
         Button(
             onClick = {
                 focusManager.clearFocus()
-                signInHandler(SignInEvent.SignIn(email, password))
+                val emailEmpty = email.isEmpty()
+                val passwordEmpty = password.isEmpty()
+
+                emailError = emailEmpty
+                passwordError = passwordEmpty
+
+                if (!emailEmpty && !passwordEmpty) {
+                    signInHandler(SignInEvent.SignIn(email, password))
+                }
             },
             shape = RoundedCornerShape(size = ButtonCornerShape),
             modifier = Modifier
@@ -226,7 +250,6 @@ fun DefaultSignInContent(
                 text = "Sign In",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
             )
-
         }
         Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
             SocialMediaIcon(icon = R.drawable.google, onClick = { navController.navigate(Route.HomeScreen.route) }, isSelected = false)
@@ -257,74 +280,65 @@ fun DefaultSignInContent(
                     }
             },
             modifier = Modifier.padding(top = 5.dp)
-
         )
 
-            // Observe changes in data
-
-
-            if (data?.isNotEmpty() == true ) {
-
-                when (data){
-                    LOGIN_FAILED -> {
-                       openErrorPopup.value=true
-                    }
-
-                }
-
-                // Change page if all ok
-                if (viewModel.navigateToAnotherScreen.value == true) {
-                    navController.navigate(Route.HomeScreen.route)
-                    viewModel.onNavigationComplete()
-                }
-
-            }
-
-
-            if (isLoading == true) {
-                val progress = remember { Animatable(0f) }
-                LaunchedEffect(Unit) {
-
-                    progress.animateTo(
-                        targetValue = 1f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = 1000),
-                            repeatMode = RepeatMode.Reverse
-                        )
-                    )
-
-                }
-
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom
-                ) {
-                    CircularProgressIndicator(
-                        progress = { progress.value },
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                    if (isError == true) {
-                        Text(
-                            text = "Check your internet connection and retry later",
-                            color = MaterialTheme.colorScheme.onError,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
+        // Observe changes in data
+        if (data?.isNotEmpty() == true) {
+            when (data) {
+                LOGIN_FAILED -> {
+                    openErrorPopup.value = true
                 }
             }
-        if (openErrorPopup.value == true) {
+
+            // Change page if all ok
+            if (viewModel.navigateToAnotherScreen.value == true) {
+                navController.navigate(Route.HomeScreen.route)
+                viewModel.onNavigationComplete()
+            }
+        }
+
+        if (isLoading == true) {
+            val progress = remember { Animatable(0f) }
+            LaunchedEffect(Unit) {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 1000),
+                        repeatMode = RepeatMode.Reverse
+                    )
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .padding(top = 20.dp).height(60.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                CircularProgressIndicator(
+                    progress = { progress.value },
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+                if (isError == true) {
+                    Text(
+                        text = "Check your internet connection and retry later",
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        }
+        if (openErrorPopup.value) {
             FeedbackAlertDialog(
-                title = "",
-                onDismissRequest = {  },
+                title = "Something went wrong!",
+                onDismissRequest = { },
                 onConfirm = {
 
                 },
                 openErrorPopup
             )
         }
-
-        }
     }
+}
+
 

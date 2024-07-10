@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,6 +56,7 @@ import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
+import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +71,6 @@ fun AddManualWorkout(
 ) {
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
     var workoutDay by remember { mutableStateOf(Weekdays.MONDAY) }
-    var expanded by remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
 
     val selectedExercises by manualWorkoutViewModel.selectedExercises.observeAsState()
@@ -81,10 +82,8 @@ fun AddManualWorkout(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 40.dp)
             .background(
                 MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(20.dp)
             )
     ) {
         LazyColumn(
@@ -94,32 +93,16 @@ fun AddManualWorkout(
         ) {
 
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 290.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(onClick = {
-                        navController.navigate(Route.NewPlanScreen.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close Icon"
-                        )
-                    }
-                }
-            }
-
-            item {
                 Text(
-                    text = "Create Your Workout!",
-                    style = MaterialTheme.typography.headlineMedium
+                    text = "Create your workout!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(top = 10.dp)
                 )
             }
             item {
                 Text(
-                    text = "Manually add each exercise to your workout day, press the button + to search for an exercise and then click save button to submit",
+                    modifier = Modifier.padding(top = 10.dp),
+                    text = "Manually add each exercise to your workout day",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -145,8 +128,8 @@ fun AddManualWorkout(
 
                         modifier = Modifier.fillMaxWidth(),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.onPrimary, // Set the contour color when focused
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onPrimary // Set the contour color when not focused
+                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary// Set the contour color when not focused
                         )
                     )
                 }
@@ -260,6 +243,7 @@ fun AddManualWorkout(
             }
             item { Spacer(modifier = Modifier.height(10.dp)) }
 
+            /*
             item {
                 Button(
                     onClick = {
@@ -284,7 +268,8 @@ fun AddManualWorkout(
                         text = "SAVE WORKOUT",
                     )
                 }
-            }
+            }*/
+
             item {
                 if (showDialog.value) {
                     FeedbackAlertDialog(
@@ -298,6 +283,39 @@ fun AddManualWorkout(
 
                     )
                 }
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxHeight(0.125f)
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .background(Color.White)
+        ) {
+            Button(
+                onClick = {
+                    showDialog.value=true
+                    val exercisesList: MutableList<Exercise> = selectedExercises?.toMutableList() ?: mutableListOf()
+                    // after the assignment, delete all exercises so it is ready for a new use
+                    selectedExercises?.forEach {
+                        deleteExerciseHandler(ManageExercises.DeleteExercise(it))
+                    }
+                    addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
+                    createWorkoutHandler(ManageWorkoutEvent.CreateWorkout(
+                        Workout(id = 0, name = workoutTitle.text, workoutDay = workoutDay, exercises = exercisesList)
+                    ))
+
+                },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .align(Alignment.Center)
+                    .height(60.dp),
+                enabled = selectedExercises != null
+            ) {
+                Text(
+                    text = "SAVE WORKOUT",
+                )
             }
         }
     }

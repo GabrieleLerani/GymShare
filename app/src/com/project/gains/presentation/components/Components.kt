@@ -46,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +54,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.R
 import com.project.gains.data.Exercise
 
@@ -340,16 +342,21 @@ fun FeedbackAlertDialog(
         AlertDialog(
             onDismissRequest = onDismissRequest,
             title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                )  {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
+
+                Box(modifier = Modifier.padding(20.dp)){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    )  {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
                 }
+
+
             },
             text = {
             },
@@ -383,6 +390,18 @@ fun FeedbackAlertDialog(
             shape = RoundedCornerShape(20.dp),
         )
 }
+
+@Preview
+@Composable
+fun prev(){
+    FeedbackAlertDialog(
+        title = "Something went wrong",
+        onDismissRequest = { /*TODO*/ },
+        onConfirm = { /*TODO*/ },
+        show = mutableStateOf(true)
+    )
+}
+
 @Composable
 fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
     Row(

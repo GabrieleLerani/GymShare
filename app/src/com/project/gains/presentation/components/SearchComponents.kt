@@ -41,9 +41,9 @@ import com.project.gains.data.Categories
 
 @Composable
 fun SearchAppBar(
-    text: String,
+    value: String,
     placeholder: String,
-    onTextChange: (String) -> Unit,
+    onValueChange: (String) -> Unit,
     onCloseClicked: () -> Unit,
     onSearchClicked: (String) -> Unit,
     // set enabled to false if you want to have onClick function triggered when the user clicks on the search bar
@@ -70,9 +70,9 @@ fun SearchAppBar(
             },
         interactionSource = interactionSource,
         enabled = enabled,
-        value = text,
+        value = value,
         onValueChange = {
-            onTextChange(it)
+            onValueChange(it)
         },
         placeholder = {
             Text(
@@ -100,8 +100,8 @@ fun SearchAppBar(
         trailingIcon = {
             IconButton(
                 onClick = {
-                    if (text.isNotEmpty()) {
-                        onTextChange("")
+                    if (value.isNotEmpty()) {
+                        onValueChange("")
                     } else {
                         onCloseClicked()
                     }
@@ -118,7 +118,7 @@ fun SearchAppBar(
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
-                onSearchClicked(text)
+                onSearchClicked(value)
             }
         ),
         colors = TextFieldDefaults.textFieldColors(
@@ -208,9 +208,9 @@ fun ResearchFilterPreview() {
 @Preview
 fun SearchAppBarPreview() {
     SearchAppBar(
-        text = "",
+        value = "",
         placeholder = "Some random text",
-        onTextChange = {},
+        onValueChange = {},
         onCloseClicked = {},
         onSearchClicked = {},
         onClick = {},

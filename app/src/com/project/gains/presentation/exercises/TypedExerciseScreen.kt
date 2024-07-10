@@ -8,13 +8,14 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -28,13 +29,14 @@ import androidx.navigation.compose.rememberNavController
 
 import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.AddExerciseItem
+import com.project.gains.presentation.components.SearchAppBar
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.WorkoutViewModel
 import com.project.gains.theme.GainsAppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+//@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TypedExerciseScreen(
     navController: NavController,
@@ -69,15 +71,15 @@ fun TypedExerciseScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 item {
+
+
                     // Remember if the search query is empty
                     TextField(
                         colors = TextFieldDefaults.textFieldColors(
-                            containerColor = Color.DarkGray,
-                            cursorColor = MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                            unfocusedIndicatorColor = MaterialTheme.colorScheme.surface,
-                            focusedLabelColor = MaterialTheme.colorScheme.surface,
-                            unfocusedLabelColor = MaterialTheme.colorScheme.surface
+                            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
                         ),
                         value = searchQuery.value,
                         onValueChange = { query ->
@@ -93,8 +95,15 @@ fun TypedExerciseScreen(
                         },
                         label = {
                             if (isSearchQueryEmpty.value) {
-                                Text("Search Exercise", color = MaterialTheme.colorScheme.surface)
+                                Text("Search Exercise", color = MaterialTheme.colors.primary)
                             }
+                        },
+                        placeholder = {
+                            Text(
+                                modifier = Modifier
+                                    .alpha(ContentAlpha.medium),
+                                text = "Search exercises",
+                            )
                         },
                         leadingIcon = {
                             IconButton(
@@ -108,7 +117,7 @@ fun TypedExerciseScreen(
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = "Search Icon",
-                                        tint = MaterialTheme.colorScheme.onSurface
+                                        tint = MaterialTheme.colors.onSurface
                                     )
                                 }
                             )

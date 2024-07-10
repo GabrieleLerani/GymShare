@@ -30,7 +30,7 @@ fun SearchScreen(
     assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit,
     navController: NavController
 ) {
-    val placeholder = "Look for posts on other social media"
+
     val categories = searchViewModel.categories
 
     var text by remember { mutableStateOf("") }
@@ -48,9 +48,9 @@ fun SearchScreen(
             ) {
                 item {
                     SearchAppBar(
-                        text = text,
-                        placeholder = placeholder,
-                        onTextChange = {
+                        value = text,
+                        placeholder = "Look for posts and user",
+                        onValueChange = {
                             text = it
                         },
                         // TODO fill onCloseClicked

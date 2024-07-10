@@ -63,9 +63,9 @@ fun FeedScreen(
             ) {
                 item {
                     SearchAppBar(
-                        text = "",
+                        value = "",
                         placeholder = "Search here...",
-                        onTextChange = {},
+                        onValueChange = {},
                         onCloseClicked = {},
                         onSearchClicked = {},
                         onClick = {
@@ -86,7 +86,7 @@ fun FeedScreen(
 
 @Composable
 fun FeedPost(gymPost: GymPost) {
-    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
 
     Column(
         modifier = Modifier
@@ -186,7 +186,7 @@ fun FeedPost(gymPost: GymPost) {
             }
         }
     }
-    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
 }
 
 @Preview(showBackground = true)

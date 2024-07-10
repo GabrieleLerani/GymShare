@@ -82,7 +82,27 @@ fun NavGraph(
             startDestination = startDestination
         ) {
             composable(
-                route = Route.SignUpScreen.route
+                route = Route.SignUpScreen.route,
+                enterTransition = {
+                    /*fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) +*/ slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
             ) {
                 // set screen as the node state
                 SignUpScreen(signInHandler = authenticationViewModel::onSignUpEvent, viewModel = authenticationViewModel, navController = navController)
@@ -141,7 +161,27 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.SearchScreen.route
+                route = Route.SearchScreen.route,
+                enterTransition = {
+                    /*fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) +*/ slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
             ) {
                 val searchViewModel : SearchViewModel = hiltViewModel()
                 // set screen as the node state
@@ -164,11 +204,11 @@ fun NavGraph(
             composable(
                 route = Route.NewPlanScreen.route,
                 enterTransition = {
-                    fadeIn(
+                    /*fadeIn(
                         animationSpec = tween(
                             300, easing = LinearEasing
                         )
-                    ) + slideIntoContainer(
+                    ) +*/ slideIntoContainer(
                         animationSpec = tween(300, easing = EaseIn),
                         towards = AnimatedContentTransitionScope.SlideDirection.Start
                     )
@@ -192,11 +232,11 @@ fun NavGraph(
             composable(
                 route = Route.LastNewPlanScreen.route,
                 enterTransition = {
-                    fadeIn(
+                    /*fadeIn(
                         animationSpec = tween(
                             300, easing = LinearEasing
                         )
-                    ) + slideIntoContainer(
+                    ) +*/ slideIntoContainer(
                         animationSpec = tween(300, easing = EaseIn),
                         towards = AnimatedContentTransitionScope.SlideDirection.Start
                     )
@@ -245,7 +285,27 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.AddManualWorkoutScreen.route
+                route = Route.AddManualWorkoutScreen.route,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
             ) {
                 // set screen as the node state
                 AddManualWorkout(navController = navController,
@@ -320,7 +380,27 @@ fun NavGraph(
             )
         }
         composable(
-            route = Route.SignInScreen.route
+            route = Route.SignInScreen.route,
+            enterTransition = {
+                /*fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) +*/ slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }
         ) {
             SignInScreen(signInHandler = authenticationViewModel::onSignInEvent, viewModel = authenticationViewModel,
                 navController = navController)
