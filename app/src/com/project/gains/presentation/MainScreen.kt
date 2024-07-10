@@ -18,12 +18,9 @@ import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun MainScreen(
-    startDestination: String, searchViewModel: SearchViewModel,
+    startDestination: String
 ) {
     val navController = rememberNavController()
-
-    val searchWidgetState by searchViewModel.searchWidgetState
-    val searchTextState by searchViewModel.searchTextState
 
 
     GainsAppTheme {

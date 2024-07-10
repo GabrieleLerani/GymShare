@@ -49,7 +49,10 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import com.project.gains.R
 import com.project.gains.data.Exercise
 
@@ -408,6 +411,50 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+
+@Composable
+fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp, horizontal = 8.dp)
+            .height(150.dp)
+            .background(Color.Gray, RoundedCornerShape(16.dp))
+            .clickable {
+                onItemClick()
+            }
+    ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = title,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp)) // Clip to the rounded corners
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color.Black),
+                        startY = 300f
+                    ),
+                    RoundedCornerShape(16.dp)
+                )
+        )
+        Text(
+            text = title,
+            color = MaterialTheme.colorScheme.onPrimary,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(16.dp)
         )
     }
 }

@@ -9,4 +9,9 @@ object Dimension {
     val IndicatorSize = 14.dp
     val PageIndicatorPadding = 8.dp
     val ButtonCornerShape = 18.dp
+
+    // Sliders dimensions
+    val dotWidth = 30.dp
+    val dotHeight = 3.dp
+    val spacing = 8.dp
 }

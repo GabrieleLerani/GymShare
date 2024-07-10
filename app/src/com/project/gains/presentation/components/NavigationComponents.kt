@@ -398,6 +398,18 @@ fun DynamicTopBar(
             }
         }
 
+        Route.AddGeneratedPlanScreen.route -> {
+            TopBar(
+                message = "",
+                button= {}
+            ) {
+                BackButton {
+                    navController.popBackStack()
+                }
+            }
+        }
+
+
         Route.ProgressDetailsScreen.route -> {
             TopBar(
                 message = "Progress Details",
@@ -441,7 +453,16 @@ fun DynamicBottomBar(navController: NavController) {
             WorkoutBottomBar(navController)
         }
 
-        Route.NewPlanScreen.route, Route.AddManualWorkoutScreen.route, Route.AddGeneratedPlanScreen.route, Route.WorkoutModeScreen.route,Route.ShareScreen.route,Route.ExerciseDetailsScreen.route,Route.ProgressDetailsScreen.route,Route.SignInScreen.route,Route.SignUpScreen.route,Route.OnBoardingScreen.route -> {
+        Route.NewPlanScreen.route,
+        Route.AddManualWorkoutScreen.route,
+        Route.AddGeneratedPlanScreen.route,
+        Route.WorkoutModeScreen.route,
+        Route.ShareScreen.route,
+        Route.ExerciseDetailsScreen.route,
+        Route.ProgressDetailsScreen.route,
+        Route.SignInScreen.route,
+        Route.SignUpScreen.route,
+        Route.OnBoardingScreen.route -> {
             // Empty because new plan has no bottom bar
         }
 

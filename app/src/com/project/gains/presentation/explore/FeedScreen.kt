@@ -75,6 +75,7 @@ fun FeedScreen(
                     )
                 }
 
+
                 gymPosts?.forEach{gymPost ->
                     item { FeedPost(gymPost) }
                 }

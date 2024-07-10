@@ -1,15 +1,17 @@
 package com.project.gains.presentation.plan
 
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
 import com.project.gains.R
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 
+@Immutable
 data class PlanPages(
     val title: String,
-    val pages:MutableList<PlanPage>
+    val pages: List<PlanPage>
 )
 
 data class PlanPage(
@@ -23,8 +25,8 @@ data class PlanPage(
 
 val pages = listOf(
     PlanPages(
-        "Select what you think is your level",
-        mutableListOf<PlanPage>(
+        "Select your level",
+        listOf(
             PlanPage(title = Level.BEGINNER.toString(),
                 image = R.drawable.pexels3,
                 level = Level.BEGINNER),
@@ -38,7 +40,7 @@ val pages = listOf(
     ),
     PlanPages(
         "Select the training type",
-        mutableListOf<PlanPage>(
+        mutableListOf(
             PlanPage( title = TrainingType.STRENGTH.toString(),
                 image = R.drawable.pexels4,
                 trainingType = TrainingType.STRENGTH),
@@ -51,8 +53,8 @@ val pages = listOf(
         )
     ),
     PlanPages(
-        "Select the training plan period",
-        mutableListOf<PlanPage>(
+        "Select the plan period",
+        mutableListOf(
             PlanPage( title = PeriodMetricType.WEEK.toString(),
                 image = R.drawable.pexels1,
                 periodMetricType = PeriodMetricType.WEEK),
@@ -65,8 +67,8 @@ val pages = listOf(
         )
     ),
     PlanPages(
-            "Select the number of workouts per week",
-    mutableListOf<PlanPage>(
+            "Select workouts per week",
+    mutableListOf(
         PlanPage( title = Frequency.TWO.toString(),
             image = R.drawable.pexels1,
             frequency = Frequency.TWO),

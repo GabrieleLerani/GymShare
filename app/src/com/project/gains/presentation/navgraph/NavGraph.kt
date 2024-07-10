@@ -187,8 +187,7 @@ fun NavGraph(
             {
                 // set screen as the node state
                 NewPlanScreen(
-                    navController = navController,
-                    paddingValues = paddingValues
+                    navController = navController
                 )
             }
             composable(
@@ -198,7 +197,27 @@ fun NavGraph(
                 LastNewPlanScreen(navController = navController,planViewModel::onCreatePlanEvent)
             }
             composable(
-                route = Route.AddGeneratedPlanScreen.route
+                route = Route.AddGeneratedPlanScreen.route,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
             ) {
                 // set screen as the node state
                 AddGeneratedPlan(navController = navController,

@@ -23,9 +23,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<MainViewModel>()
-    private val searchViewModel by viewModels<SearchViewModel>()
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +39,6 @@ class MainActivity : ComponentActivity() {
                     val startDestination = viewModel.startDestination
                     MainScreen(
                         startDestination = startDestination,
-                        searchViewModel = searchViewModel,
-
                     )
                 }
             }
