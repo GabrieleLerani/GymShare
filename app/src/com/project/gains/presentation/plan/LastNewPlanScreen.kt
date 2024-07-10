@@ -7,19 +7,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,9 +28,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.Option
 import com.project.gains.data.TrainingMetricType
@@ -63,48 +66,25 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 40.dp)
             .background(
                 MaterialTheme.colorScheme.surface,
-                RoundedCornerShape(20.dp)
             )
     ) {
         LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(40.dp)
+                .fillMaxSize()
+                .padding(top = 10.dp, start = 30.dp, end = 30.dp)
         ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 290.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(onClick = {
-                        navController.navigate(Route.NewPlanScreen.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close Icon"
-                        )
-                    }
-                }
-            }
 
             item {
                 Text(
-                    text = "Create New Plan",
+                    text = "Additional preferences",
                     style = MaterialTheme.typography.headlineMedium
+
                 )
             }
-            item {
-                Text(
-                    text = "Set the following options and press the generate plan button to create a personalized workout plan based on your needs.",
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            item { Spacer(modifier = Modifier.height(10.dp)) }
 
             item {
                 Spacer(
@@ -343,46 +323,17 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(
-                        onClick = {
-                            navController.navigate(Route.NewPlanScreen.route)
-                        },
-                        modifier = Modifier.weight(1f)  // Added weight modifier
-
-                    ) {
-                        Text(
-                            text = "Back",
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Button(
-                        modifier = Modifier.weight(1f),  // Added weight modifier
-                                onClick = {
-                            createPlanHandler(
-                                ManagePlanEvent.CreatePlan(
-                                    selectedMetrics,
-                                    selectedExerciseTypes,
-                                    selectedMusic.value,
-                                    selectedBackup.value
-                                )
-                            )
-                                    showDialog.value=true
-                        },
-                    ) {
-                        Text(
-                            text = "Generate",
-                        )
-                    }
                 }
 
             }
             item {
                 if (showDialog.value) {
                     FeedbackAlertDialog(
-                        title =  "You have successfully generated your plan!",
-                        onDismissRequest = { showDialog.value = false
+                        title = "You have successfully generated your plan!",
+                        onDismissRequest = {
+                            showDialog.value = false
                             navController.navigate(Route.PlanScreen.route)
-                                           },
+                        },
                         onConfirm = {
                             showDialog.value = false
                             navController.navigate(Route.PlanScreen.route)
@@ -393,5 +344,96 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                 }
             }
         }
+
+
+        Box(
+            modifier = Modifier
+                .fillMaxHeight(0.125f)
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .background(Color.White)
+        ){
+            Button(
+                modifier = Modifier.fillMaxWidth(0.8f)
+                    .align(Alignment.Center)
+                    .height(60.dp),
+                onClick = {
+                    createPlanHandler(
+                        ManagePlanEvent.CreatePlan(
+                            selectedMetrics,
+                            selectedExerciseTypes,
+                            selectedMusic.value,
+                            selectedBackup.value
+                        )
+                    )
+                    showDialog.value=true
+                },
+            ) {
+                Text(
+                    text = "Generate",
+                )
+            }
+        }
+
+
+    }
+
+}
+
+@Composable
+fun OptionCheckbox(
+    option: Option,
+    onOptionSelected: (Boolean) -> Unit
+) {
+    val isChecked = remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(8.dp)
+            ),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = option.name,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
+            )
+            Checkbox(
+                checked = isChecked.value,
+                onCheckedChange = {
+                    isChecked.value = it
+                    onOptionSelected(it)
+                },
+                colors = CheckboxDefaults.colors(
+                    checkmarkColor = MaterialTheme.colorScheme.onPrimary,
+                    uncheckedColor = MaterialTheme.colorScheme.primary,
+                    checkedColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier.padding(end = 8.dp)
+            )
+        }
     }
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun LastNewPlanScreenPreview() {
+    val navController = rememberNavController()
+    LastNewPlanScreen(navController = navController, createPlanHandler = {})
+}
+
+
+

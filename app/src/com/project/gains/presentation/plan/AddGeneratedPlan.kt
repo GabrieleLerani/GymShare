@@ -97,53 +97,6 @@ fun AddGeneratedPlan(
 
 
 
-@Composable
-fun OptionCheckbox(
-    option: Option,
-    onOptionSelected: (Boolean) -> Unit
-) {
-    val isChecked = remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(8.dp)
-            ),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = option.name,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            Checkbox(
-                checked = isChecked.value,
-                onCheckedChange = {
-                    isChecked.value = it
-                    onOptionSelected(it)
-                },
-                colors = CheckboxDefaults.colors(
-                    checkmarkColor = MaterialTheme.colorScheme.onPrimary,
-                    uncheckedColor = MaterialTheme.colorScheme.primary,
-                    checkedColor = MaterialTheme.colorScheme.primary
-                ),
-                modifier = Modifier.padding(end = 8.dp)
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewAddGeneratedPlan() {

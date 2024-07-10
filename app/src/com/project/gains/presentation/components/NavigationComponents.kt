@@ -404,11 +404,22 @@ fun DynamicTopBar(
                 button= {}
             ) {
                 BackButton {
-                    navController.popBackStack()
+                    navController.navigate(Route.NewPlanScreen.route)
                 }
             }
         }
 
+
+        Route.LastNewPlanScreen.route -> {
+            TopBar(
+                message = "",
+                button= {}
+            ) {
+                BackButton {
+                    navController.navigate(Route.AddGeneratedPlanScreen.route)
+                }
+            }
+        }
 
         Route.ProgressDetailsScreen.route -> {
             TopBar(
@@ -456,6 +467,7 @@ fun DynamicBottomBar(navController: NavController) {
         Route.NewPlanScreen.route,
         Route.AddManualWorkoutScreen.route,
         Route.AddGeneratedPlanScreen.route,
+        Route.LastNewPlanScreen.route,
         Route.WorkoutModeScreen.route,
         Route.ShareScreen.route,
         Route.ExerciseDetailsScreen.route,
