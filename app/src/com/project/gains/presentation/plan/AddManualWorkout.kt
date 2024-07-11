@@ -3,7 +3,9 @@ package com.project.gains.presentation.plan
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +25,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,6 +63,7 @@ import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
+import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 
@@ -81,6 +87,8 @@ fun AddManualWorkout(
     val removedExercises = remember {
         mutableStateOf(listOf<Exercise>())
     }
+    var selectedDay by remember { mutableStateOf(Weekdays.MONDAY) }
+    var expanded by remember { mutableStateOf(false) }
     GainsAppTheme {
         Box(
             modifier = Modifier
@@ -124,6 +132,96 @@ fun AddManualWorkout(
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
+
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .background(
+                                MaterialTheme.colorScheme.onTertiary,
+                                RoundedCornerShape(16.dp)
+                            )
+                            .border(
+                                border = BorderStroke(
+                                    width = 3.dp,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                ), shape = RoundedCornerShape(16.dp)
+                            )
+                            .padding(8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Workout Day: ${selectedDay?.name.toString()}",
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.weight(1f)
+                                // Take up the remaining space
+                            )
+                            IconButton(
+                                onClick = { expanded = !expanded }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowDropDown,
+                                    contentDescription = "Dropdown Icon"
+                                )
+                            }
+                        }
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .background(
+                                shape = RoundedCornerShape(16.dp),
+                                color = MaterialTheme.colorScheme.surface
+                            )
+                            .padding(10.dp) // Padding to match the Text above
+                    ) {
+                        Weekdays.entries?.forEach { day ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        day.name,
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                },
+                                onClick = {
+                                    // TODO add to something)
+                                    expanded = false
+                                    selectedDay=day
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .border(
+                                        border = BorderStroke(
+                                            width = 3.dp,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        ), shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .padding(16.dp) // Inner padding for the item
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                        }
+                    }
+                }
+
 
                 LazyColumn(
                     modifier = Modifier
