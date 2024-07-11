@@ -290,7 +290,6 @@ fun FeedbackAlertDialogOptions(
                 Text(
                     text = message,
                     style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onSurface
                 )
             },
             buttons = {
@@ -310,7 +309,7 @@ fun FeedbackAlertDialogOptions(
                             onClick = { popupVisible.value = false },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Cancel", color = Color.Red)
+                            Text("Cancel", color = MaterialTheme.colorScheme.error)
                         }
                         Box(
                             modifier = Modifier
@@ -324,7 +323,7 @@ fun FeedbackAlertDialogOptions(
                                       },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Confirm", color = MaterialTheme.colorScheme.secondary)
+                            Text("Confirm", color = MaterialTheme.colorScheme.tertiary)
                         }
                     }
                 }

@@ -98,8 +98,7 @@ fun DefaultSignUpContent(
     var passwordVisible by remember { mutableStateOf(false) }
     val openPopup = remember { mutableStateOf(false) }
     val openErrorPopup = remember { mutableStateOf(false) }
-
-
+    val errorMessage = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -207,8 +206,12 @@ fun DefaultSignUpContent(
         Button(
             onClick = {
                 focusManager.clearFocus()
-                openPopup.value=true
-
+                if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                    errorMessage.value = "All fields are required."
+                } else {
+                    errorMessage.value = ""
+                    openPopup.value = true
+                }
             },
             shape = RoundedCornerShape(size = 20.dp),
             modifier = Modifier
@@ -248,6 +251,14 @@ fun DefaultSignUpContent(
             }
         )
 
+        if (isError == true) {
+            Text(
+                text = "Check your internet connection and retry later",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
         if (isLoading == true) {
             val progress = remember { Animatable(0f) }
             LaunchedEffect(Unit) {
@@ -272,27 +283,24 @@ fun DefaultSignUpContent(
                     progress = { progress.value },
                     color = MaterialTheme.colorScheme.onPrimary,
                 )
-                if (isError == true) {
-                    openErrorPopup.value=true
-                }
             }
         }
+
+        if (errorMessage.value.isNotEmpty()) {
+            Text(
+                text = errorMessage.value,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
+
         if (openPopup.value == true) {
             FeedbackAlertDialogOptions(
                 message = "Are you sure your credentials are correct?",
                 popupVisible = openPopup
             ) { signInHandler(SignUpEvent.SignUp(name, email, password, password)) }
         }
-        if (openErrorPopup.value == true) {
-            FeedbackAlertDialog(
-                title = "",
-                onDismissRequest = {  },
-                onConfirm = {
 
-                },
-                openErrorPopup
-            )
-        }
         // Observe changes in data
         if (data?.isNotEmpty() == true) {
             // Display data
@@ -309,6 +317,3 @@ fun DefaultSignUpContent(
         }
     }
 }
-
-
-

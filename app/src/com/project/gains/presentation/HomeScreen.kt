@@ -80,7 +80,7 @@ fun HomeScreen(
                 val weekday = currentWeekday()
 
                 workouts?.forEach { workout ->
-                    if (workout.workoutDay.ordinal + 1 == weekday) {
+                    if (workout.workoutDay.ordinal == weekday) {
                         item {
                             HorizontalScrollScreen(navController, "daily workout", workout.exercises)
                         }
