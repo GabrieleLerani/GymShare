@@ -50,66 +50,62 @@ fun SettingsScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 25.dp),
             ) {
                 item {
+
                     SettingItem(
-                        icon = Icons.Default.Person, // Replace with your desired icon
+                        icon = Icons.Default.Person,
                         title = "Account Preferences",
                         onClick = {navController.navigate(Route.AccountScreen.route) }
                     )
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.height(20.dp))
+
+                    //Spacer(modifier = Modifier.height(25.dp))
 
                 }
                 item {
                     SettingItem(
-                        icon = Icons.AutoMirrored.Filled.Send, // Replace with your desired icon
+                        icon = Icons.AutoMirrored.Filled.Send,
                         title = "Sharing Preferences",
                         onClick = { navController.navigate(Route.LinkedSocialSettingScreen.route) }
                     )
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.height(20.dp))
+                    //Spacer(modifier = Modifier.height(25.dp))
 
                 }
                 item {
                     SettingItem(
-                        icon = Icons.Default.Group, // Replace with your desired icon
+                        icon = Icons.Default.Group,
                         title = "Tutorial",
                         onClick = { /* Handle click */ }
                     )
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.height(20.dp))
+                    //Spacer(modifier = Modifier.height(25.dp))
 
                 }
                 item {
                     SettingItem(
-                        icon = Icons.Default.Support, // Replace with your desired icon
+                        icon = Icons.Default.Support,
                         title = "Write to support",
                         onClick = {  }
                     )
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.height(20.dp))
+                    //Spacer(modifier = Modifier.height(25.dp))
 
                 }
                 item {
                     SettingItem(
-                        icon = Icons.Default.Share, // Replace with your desired icon
+                        icon = Icons.Default.Share,
                         title = "Tell a friend",
                         onClick = { /* Handle click */ }
                     )
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.height(20.dp))
+                    //Spacer(modifier = Modifier.height(25.dp))
 
                 }
                 item {
                     SettingItem(
-                        icon = Icons.Default.Star, // Replace with your desired icon
+                        icon = Icons.Default.Star,
                         title = "Rate the app",
                         onClick = { /* Handle click */ }
                     )
-                    Divider(color = Color.Gray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-                    Spacer(modifier = Modifier.height(20.dp))
+
 
                 }
             }

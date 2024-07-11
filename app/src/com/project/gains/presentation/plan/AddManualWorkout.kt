@@ -3,6 +3,10 @@ package com.project.gains.presentation.plan
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +36,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +65,7 @@ import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,6 +87,8 @@ fun AddManualWorkout(
     val removedExercises = remember {
         mutableStateOf(listOf<Exercise>())
     }
+
+
     GainsAppTheme {
         Box(
             modifier = Modifier
@@ -255,9 +263,7 @@ fun FooterButton(onClickSaveWorkout: () -> Unit, onClickAddExercise: () -> Unit,
 
         Spacer(modifier = Modifier.width(15.dp))
 
-        AddExerciseButton {
-            onClickAddExercise()
-        }
+        AddExerciseButton (onClick = onClickAddExercise)
 
     }
 }
@@ -277,6 +283,45 @@ fun AddExerciseButton(onClick: () -> Unit) {
             tint = Color.White
         )
     }
+    /*
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val transition = updateTransition(targetState = isExpanded, label = "")
+
+    val size by transition.animateDp(label = "size") { expanded ->
+        if (expanded) 500.dp else 60.dp
+    }
+
+    val cornerRadius by transition.animateDp(label = "cornerRadius") { expanded ->
+        if (expanded) 50.dp else 30.dp
+    }
+
+    val backgroundColor by transition.animateColor(label = "backgroundColor") { expanded ->
+        if (expanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary
+    }
+
+    AnimatedVisibility(visible = !isExpanded) {
+        IconButton(
+            onClick = { isExpanded = true },
+            modifier = Modifier
+                .size(size)
+                .clip(RoundedCornerShape(cornerRadius))
+                .background(backgroundColor)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Exercise",
+                tint = Color.White
+            )
+        }
+    }
+
+    if (isExpanded) {
+        LaunchedEffect(Unit) {
+            delay(500) // Adjust the delay according to your transition duration
+            onClick() // This should navigate to the new screen
+        }
+    }*/
 }
 
 @Composable

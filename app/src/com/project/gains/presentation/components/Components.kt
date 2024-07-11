@@ -31,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -410,12 +411,16 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .height(60.dp)
+            .padding(vertical = 12.dp)
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically)
+        {
             androidx.compose.material.Icon(
                 imageVector = icon,
                 contentDescription = title,
@@ -430,7 +435,7 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             )
         }
         androidx.compose.material.Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface
         )

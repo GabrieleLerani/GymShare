@@ -25,6 +25,10 @@ import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.screens.SignInScreen
 import com.project.gains.presentation.authentication.screens.SignUpScreen
 import com.project.gains.presentation.components.SearchViewModel
+import com.project.gains.presentation.components.slideInToLeft
+import com.project.gains.presentation.components.slideInToRight
+import com.project.gains.presentation.components.slideOutToLeft
+import com.project.gains.presentation.components.slideOutToRight
 import com.project.gains.presentation.exercises.ExerciseViewModel
 
 import com.project.gains.presentation.onboarding.OnBoardingScreen
@@ -68,7 +72,6 @@ fun NavGraph(
     val feedViewModel : FeedViewModel = hiltViewModel()
 
 
-
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -83,32 +86,21 @@ fun NavGraph(
         ) {
             composable(
                 route = Route.SignUpScreen.route,
-                enterTransition = {
-                    /*fadeIn(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) +*/ slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                }
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                /*
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight*/
             ) {
                 // set screen as the node state
                 SignUpScreen(signInHandler = authenticationViewModel::onSignUpEvent, viewModel = authenticationViewModel, navController = navController)
             }
             composable(
-                route = Route.AccountScreen.route
+                route = Route.AccountScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 val viewModel : SettingsViewModel = hiltViewModel()
@@ -120,13 +112,18 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.SettingsScreen.route
+                route = Route.SettingsScreen.route,
+                popEnterTransition = ::slideInToRight,
             ) {
                 // set screen as the node state
                 SettingsScreen(navController = navController)
             }
             composable(
-                route = Route.LinkedSocialSettingScreen.route
+                route = Route.LinkedSocialSettingScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 LinkedSocialSettingScreen(
@@ -162,26 +159,8 @@ fun NavGraph(
             }
             composable(
                 route = Route.SearchScreen.route,
-                enterTransition = {
-                    /*fadeIn(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) +*/ slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                }
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft
             ) {
                 val searchViewModel : SearchViewModel = hiltViewModel()
                 // set screen as the node state
@@ -203,26 +182,10 @@ fun NavGraph(
             }
             composable(
                 route = Route.NewPlanScreen.route,
-                enterTransition = {
-                    /*fadeIn(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) +*/ slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                })
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight)
             {
                 // set screen as the node state
                 NewPlanScreen(
@@ -231,52 +194,20 @@ fun NavGraph(
             }
             composable(
                 route = Route.LastNewPlanScreen.route,
-                enterTransition = {
-                    /*fadeIn(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) +*/ slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                }
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 LastNewPlanScreen(navController = navController,planViewModel::onCreatePlanEvent)
             }
             composable(
                 route = Route.AddGeneratedPlanScreen.route,
-                enterTransition = {
-                    fadeIn(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                }
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 AddGeneratedPlan(navController = navController,
@@ -286,26 +217,10 @@ fun NavGraph(
             }
             composable(
                 route = Route.AddManualWorkoutScreen.route,
-                enterTransition = {
-                    fadeIn(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                }
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 AddManualWorkout(navController = navController,
@@ -334,7 +249,11 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.ExerciseDetailsScreen.route
+                route = Route.ExerciseDetailsScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 ExerciseDetailsScreen(
@@ -345,7 +264,11 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.WorkoutModeScreen.route
+                route = Route.WorkoutModeScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 WorkoutModeScreen(
@@ -354,26 +277,10 @@ fun NavGraph(
             }
             composable(
                 route = Route.TypedExerciseScreen.route,
-                enterTransition = {
-                    fadeIn(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideIntoContainer(
-                        animationSpec = tween(300, easing = EaseIn),
-                        towards = AnimatedContentTransitionScope.SlideDirection.Start
-                    )
-                },
-                exitTransition = {
-                    fadeOut(
-                        animationSpec = tween(
-                            300, easing = LinearEasing
-                        )
-                    ) + slideOutOfContainer(
-                        animationSpec = tween(300, easing = EaseOut),
-                        towards = AnimatedContentTransitionScope.SlideDirection.End
-                    )
-                }
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 TypedExerciseScreen(
@@ -400,32 +307,15 @@ fun NavGraph(
         }
         composable(
             route = Route.SignInScreen.route,
-            enterTransition = {
-                /*fadeIn(
-                    animationSpec = tween(
-                        300, easing = LinearEasing
-                    )
-                ) +*/ slideIntoContainer(
-                    animationSpec = tween(300, easing = EaseIn),
-                    towards = AnimatedContentTransitionScope.SlideDirection.Start
-                )
-            },
-            exitTransition = {
-                fadeOut(
-                    animationSpec = tween(
-                        300, easing = LinearEasing
-                    )
-                ) + slideOutOfContainer(
-                    animationSpec = tween(300, easing = EaseOut),
-                    towards = AnimatedContentTransitionScope.SlideDirection.End
-                )
-            }
+            enterTransition = ::slideInToRight,
+            exitTransition = ::slideOutToLeft,
         ) {
             SignInScreen(signInHandler = authenticationViewModel::onSignInEvent, viewModel = authenticationViewModel,
                 navController = navController)
         }
         composable(
-            route = Route.HomeScreen.route
+            route = Route.HomeScreen.route,
+            popExitTransition = ::slideOutToRight
         ) {
             HomeScreen(
                 navController = navController,

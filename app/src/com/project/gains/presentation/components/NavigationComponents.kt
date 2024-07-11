@@ -183,15 +183,7 @@ fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Co
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 30.sp,
-                    shadow = Shadow(
-                        color = Color.Black,
-                        offset = Offset(2f, 2f),
-                        blurRadius = 4f
-                    )
-                ),
+                style = MaterialTheme.typography.displayMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .weight(1f)
@@ -259,7 +251,9 @@ fun DynamicTopBar(
                 button= {
                     LogoUser(
                         modifier = Modifier.size(60.dp), R.drawable.pexels5
-                    ) { navController.navigate(Route.AccountScreen.route) }
+                    ) {
+                        navController.navigate(Route.AccountScreen.route)
+                    }
                 },
 
             ) {}
@@ -383,7 +377,8 @@ fun DynamicTopBar(
                 button = {}
             ) {
                 IconButton(onClick = {
-                    navController.navigate(Route.HomeScreen.route)
+                    navController.popBackStack()
+
                 }) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -399,7 +394,7 @@ fun DynamicTopBar(
                 button= {}
             ) {
                 BackButton {
-                    navController.navigate(Route.NewPlanScreen.route)
+                    navController.popBackStack()
                 }
             }
         }
@@ -410,7 +405,8 @@ fun DynamicTopBar(
                 button= {}
             ) {
                 BackButton {
-                    navController.navigate(Route.NewPlanScreen.route)
+                    navController.popBackStack()
+
                 }
             }
         }
@@ -422,7 +418,7 @@ fun DynamicTopBar(
                 button= {}
             ) {
                 BackButton {
-                    navController.navigate(Route.AddGeneratedPlanScreen.route)
+                    navController.popBackStack()
                 }
             }
         }
@@ -481,6 +477,8 @@ fun DynamicBottomBar(navController: NavController) {
         Route.ExerciseDetailsScreen.route,
         Route.TypedExerciseScreen.route,
         Route.ProgressDetailsScreen.route,
+        Route.AccountScreen.route,
+        Route.LinkedSocialSettingScreen.route,
         Route.SignInScreen.route,
         Route.SignUpScreen.route,
         Route.OnBoardingScreen.route -> {

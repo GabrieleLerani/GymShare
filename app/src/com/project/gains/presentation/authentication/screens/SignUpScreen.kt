@@ -185,9 +185,10 @@ fun DefaultSignUpContent(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 val image = if (passwordVisible)
-                    Icons.Default.VisibilityOff
-                else
                     Icons.Default.Visibility
+                else
+                    Icons.Default.VisibilityOff
+
 
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
@@ -221,32 +222,6 @@ fun DefaultSignUpContent(
         ) {
             Text("Sign Up")
         }
-        val text = AnnotatedString.Builder().apply {
-            pushStringAnnotation(
-                tag = "LINK",
-                annotation = "destination_page"
-            )
-            withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.tertiary,
-                    textDecoration = TextDecoration.Underline
-                )
-            ) {
-                append("You already have an account? Click here to signIn")
-            }
-            pop()
-        }.toAnnotatedString()
-
-        ClickableText(
-            text = text,
-            onClick = { offset ->
-                text.getStringAnnotations("LINK", offset, offset)
-                    .firstOrNull()?.let {
-                        navController.navigate(Route.SignInScreen.route)
-                        viewModel.onNavigationComplete()
-                    }
-            }
-        )
 
         if (isLoading == true) {
             val progress = remember { Animatable(0f) }
