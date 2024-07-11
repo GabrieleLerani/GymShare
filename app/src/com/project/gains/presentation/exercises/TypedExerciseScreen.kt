@@ -66,7 +66,6 @@ fun TypedExerciseScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize(),
-
                 //.padding(paddingValues)
         ) {
             LazyColumn(
