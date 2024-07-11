@@ -1,6 +1,7 @@
 package com.project.gains.presentation
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -43,8 +44,11 @@ import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.Workout
 import com.project.gains.presentation.exercises.ExerciseViewModel
+import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.WorkoutViewModel
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.currentWeekday
 
@@ -53,14 +57,16 @@ fun HomeScreen(
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
     paddingValues: PaddingValues,
-    exerciseViewModel: ExerciseViewModel
+    exerciseViewModel: ExerciseViewModel,
+    selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit
 ) {
 
     val openPopup = remember { mutableStateOf(false) }
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
-
     val workouts by workoutViewModel.workouts.observeAsState()
+
+
 
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -84,20 +90,17 @@ fun HomeScreen(
 
                 val weekday = currentWeekday()
 
-                workouts?.forEach { workout ->
-                    if (workout.workoutDay.ordinal == weekday) {
-                        item {
-                            HorizontalScrollScreen(navController, "daily workout", workout.exercises)
-                        }
-                    }
+
+                item {
+                    HorizontalScrollScreen(navController, "daily workouts", items2 = workouts!!.toList(), selectExerciseHandler = selectExerciseHandler, selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
-                    HorizontalScrollScreen(navController, "favourite exercises", items = favouriteExercises!!.toList())
+                    HorizontalScrollScreen(navController, "favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler, selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
-                    HorizontalScrollScreen(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList())
+                    HorizontalScrollScreen(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList(),selectExerciseHandler = selectExerciseHandler, selectWorkoutHandler = selectWorkoutHandler)
                 }
 
             }
@@ -131,7 +134,7 @@ fun CustomBackHandler(
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun HorizontalScrollScreen(navController: NavController, title: String, items: List<Exercise> = listOf(), items2:List<Workout> = listOf()) {
+fun HorizontalScrollScreen(navController: NavController, title: String, items: List<Exercise> = listOf(), items2:List<Workout> = listOf(),selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -197,7 +200,8 @@ fun HorizontalScrollScreen(navController: NavController, title: String, items: L
                         if (items.isEmpty() && items2.isNotEmpty()){
                             itemsIndexed(items2) {  _, item ->
                                     Card(imageResId = R.drawable.logo, title = item.name) {
-                                        navController.navigate(Route.ExerciseDetailsScreen.route)
+                                        selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
+                                        navController.navigate(Route.WorkoutScreen.route)
                                     }
 
                             }
@@ -205,6 +209,7 @@ fun HorizontalScrollScreen(navController: NavController, title: String, items: L
                             itemsIndexed(items) {  _, item ->
                                 item.gifResId?.let {
                                     Card(imageResId = it, title = item.name) {
+                                        selectExerciseHandler(ExerciseEvent.SelectExercise(item))
                                         navController.navigate(Route.ExerciseDetailsScreen.route)
                                     }
                                 }
