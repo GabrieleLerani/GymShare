@@ -66,8 +66,7 @@ fun HomeScreen(
     val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
     val workouts by workoutViewModel.workouts.observeAsState()
 
-
-
+Log.d("HERE",workouts.toString())
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
             ?: return,
@@ -75,6 +74,8 @@ fun HomeScreen(
     ) {
         openPopup.value = true
     }
+
+
 
     GainsAppTheme {
         Box(
@@ -88,19 +89,17 @@ fun HomeScreen(
 
             ) {
 
-                val weekday = currentWeekday()
-
 
                 item {
-                    HorizontalScrollScreen(navController, "daily workouts", items2 = workouts!!.toList(), selectExerciseHandler = selectExerciseHandler, selectWorkoutHandler = selectWorkoutHandler)
+                    HorizontalScrollScreenWorkout(navController, "daily workouts", items2 = workouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
-                    HorizontalScrollScreen(navController, "favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler, selectWorkoutHandler = selectWorkoutHandler)
+                    HorizontalScrollScreenExercise(navController, "favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler,)
                 }
 
                 item {
-                    HorizontalScrollScreen(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList(),selectExerciseHandler = selectExerciseHandler, selectWorkoutHandler = selectWorkoutHandler)
+                    HorizontalScrollScreenWorkout(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList(), selectWorkoutHandler = selectWorkoutHandler)
                 }
 
             }
@@ -134,7 +133,7 @@ fun CustomBackHandler(
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun HorizontalScrollScreen(navController: NavController, title: String, items: List<Exercise> = listOf(), items2:List<Workout> = listOf(),selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit) {
+fun HorizontalScrollScreenExercise(navController: NavController, title: String, items: List<Exercise> = listOf(),selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,8 +149,9 @@ fun HorizontalScrollScreen(navController: NavController, title: String, items: L
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                if (items.isEmpty() && items2.isEmpty()) {
-                    Text(
+                if (items.isEmpty()) {
+
+                        Text(
                         text = "No $title",
                         style = MaterialTheme.typography.labelLarge, // Make it bigger and bold
                         color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
@@ -168,11 +168,76 @@ fun HorizontalScrollScreen(navController: NavController, title: String, items: L
                                     color = MaterialTheme.colorScheme.onSurface
                                 ), shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(16.dp) // Additional padding inside the background and border
-                    )
+                            .padding(16.dp)) // Additional padding inside the background and border
+
                 } else {
+
+
+
+
+                        Text(
+                            text = "Your $title",
+                            style = MaterialTheme.typography.labelLarge, // Make it bigger and bold
+                            color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp) // Add padding here for space between text and border
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .border(
+                                    border = BorderStroke(
+                                        width = 3.dp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    ), shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(16.dp) // Additional padding inside the background and border
+                        )
+
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            state = rememberLazyListState()
+                        ) {
+                            itemsIndexed(items) { _, item ->
+                                item.gifResId?.let {
+                                    Card(imageResId = it, title = item.name) {
+                                        selectExerciseHandler(ExerciseEvent.SelectExercise(item))
+                                        navController.navigate(Route.ExerciseDetailsScreen.route)
+                                    }
+                                }
+                            }
+                        }
+                }
+            }
+        }
+    }
+}
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun HorizontalScrollScreenWorkout(navController: NavController, title: String, items2:List<Workout> = listOf(),selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit) {
+    var bool = (items2?.find { workout ->
+        currentWeekday() == workout.workoutDay.ordinal + 1
+    } != null)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .height(180.dp)
+    ) {
+        // BowWithConstraints will provide the maxWidth used below
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
                     Text(
-                        text = "Your $title",
+                        text = if (bool) "Your $title" else "No $title",
                         style = MaterialTheme.typography.labelLarge, // Make it bigger and bold
                         color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
                         modifier = Modifier
@@ -188,30 +253,24 @@ fun HorizontalScrollScreen(navController: NavController, title: String, items: L
                                     color = MaterialTheme.colorScheme.onSurface
                                 ), shape = RoundedCornerShape(16.dp)
                             )
-                            .padding(16.dp) // Additional padding inside the background and border
-                    )
+                            .padding(16.dp)
+                    ) // Additional padding inside the background and border
 
-
+                if (items2.isNotEmpty()) {
                     LazyRow(
                         modifier = Modifier
                             .fillMaxWidth(),
                         state = rememberLazyListState()
                     ) {
-                        if (items.isEmpty() && items2.isNotEmpty()){
-                            itemsIndexed(items2) {  _, item ->
-                                    Card(imageResId = R.drawable.logo, title = item.name) {
-                                        selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
-                                        navController.navigate(Route.WorkoutScreen.route)
-                                    }
-
-                            }
-                        }else if (items2.isEmpty() && items.isNotEmpty()){
-                            itemsIndexed(items) {  _, item ->
-                                item.gifResId?.let {
-                                    Card(imageResId = it, title = item.name) {
-                                        selectExerciseHandler(ExerciseEvent.SelectExercise(item))
-                                        navController.navigate(Route.ExerciseDetailsScreen.route)
-                                    }
+                        itemsIndexed(items2) { _, item ->
+                            if (currentWeekday() == item.workoutDay.ordinal + 1 ) {
+                                Card(imageResId = R.drawable.logo, title = item.name) {
+                                    selectWorkoutHandler(
+                                        ManageWorkoutEvent.SelectWorkout(
+                                            item
+                                        )
+                                    )
+                                    navController.navigate(Route.WorkoutScreen.route)
                                 }
                             }
                         }

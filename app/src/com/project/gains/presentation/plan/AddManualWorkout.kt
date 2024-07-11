@@ -81,7 +81,6 @@ fun AddManualWorkout(
     createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit
 ) {
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
-    var workoutDay by remember { mutableStateOf(Weekdays.MONDAY) }
     val showDialog = remember { mutableStateOf(false) }
 
     val selectedExercises by manualWorkoutViewModel.selectedExercises.observeAsState()
@@ -201,7 +200,6 @@ fun AddManualWorkout(
                                     )
                                 },
                                 onClick = {
-                                    // TODO add to something)
                                     expanded = false
                                     selectedDay=day
                                 },
@@ -296,14 +294,16 @@ fun AddManualWorkout(
                 FooterButton(
                     onClickSaveWorkout = {
                         showDialog.value=true
+
                         val exercisesList: MutableList<Exercise> = selectedExercises?.toMutableList() ?: mutableListOf()
+                        addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
+                        // TODO values in handler are null why and login and signup messages and onboarding and no exercise more than once and lazy column in addworkoiut screen
+                        createWorkoutHandler(ManageWorkoutEvent.CreateWorkout(Workout(id = 0, name = workoutTitleStored?.text ?: "workout 4", workoutDay = selectedDay, exercises = exercisesList)
+                        ))
                         // after the assignment, delete all exercises so it is ready for a new use
                         selectedExercises?.forEach {
                             deleteExerciseHandler(ManageExercises.DeleteExercise(it))
-                        }
-                        addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
-                        createWorkoutHandler(ManageWorkoutEvent.CreateWorkout(Workout(id = 0, name = workoutTitle.text, workoutDay = workoutDay, exercises = exercisesList)
-                        )) },
+                        } },
                     onClickAddExercise = {
                         selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
                         navController.navigate(Route.TypedExerciseScreen.route) },

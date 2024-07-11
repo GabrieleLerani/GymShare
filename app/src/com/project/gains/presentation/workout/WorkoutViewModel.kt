@@ -1,5 +1,6 @@
 package com.project.gains.presentation.workout
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.R
@@ -28,8 +29,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private val _selectedWorkout = MutableLiveData<Workout>()
     val selectedWorkout: MutableLiveData<Workout> = _selectedWorkout
 
-    private val _createdWorkouts = MutableLiveData<MutableList<Workout>>()
-    val createdWorkouts: MutableLiveData<MutableList<Workout>> = _createdWorkouts
 
 
     private val _currentSong = MutableLiveData<Song>()
@@ -48,9 +47,8 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private var songIndex = 0
 
     init {
-        _createdWorkouts.value = mutableListOf()
         _favouriteWorkouts.value= mutableListOf()
-        _workouts.value = generateSampleWorkouts()
+        _workouts.value = mutableListOf()
         _exercises.value = generateSampleExercises()
         _currentSong.value=Song("","","") // Dummy init
         _songs.value= generateRandomSongs(5)
