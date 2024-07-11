@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -57,11 +58,11 @@ fun SearchAppBar(
     val focusRequester = FocusRequester()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    TextField(
+    OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(15.dp)
+            .padding(10.dp)
             .focusRequester(focusRequester)
             .onFocusChanged {
                 if (isFocused) {
@@ -121,11 +122,10 @@ fun SearchAppBar(
                 onSearchClicked(value)
             }
         ),
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.onTertiary,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer,
+            focusedBorderColor =  androidx.compose.material3.MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
         ),
         shape = RoundedCornerShape(16.dp)
     )

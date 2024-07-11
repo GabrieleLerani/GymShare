@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -42,6 +43,7 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun TypedExerciseScreen(
     navController: NavController,
+    paddingValues: PaddingValues,
     addExerciseHandler: (ManageExercises.AddExercise) -> Unit,
     removeExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
     selectExerciseHandler:(ExerciseEvent.SelectExercise)->Unit,
@@ -56,152 +58,85 @@ fun TypedExerciseScreen(
     val searchedExercises = remember { mutableStateOf(listOf<Exercise>()) }
     val isSearchQueryEmpty = remember { mutableStateOf(searchQuery.value.isBlank()) }
     val localKeyboardController = LocalSoftwareKeyboardController.current
-    val notification = remember {
+    remember {
         mutableStateOf(false)
     }
 
     GainsAppTheme {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
 
+                //.padding(paddingValues)
         ) {
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.Top
+                    .padding(start = 10.dp, end = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+
             ) {
-                item {
-                    SearchAppBar(
-                        value = searchQuery.value,
-                        placeholder = "Search exercise to add to your workout",
-                        onValueChange = {
-                            query ->
-                                searchQuery.value = query
-                                isSearchQueryEmpty.value = query.isBlank()
-                                searchedExercises.value = if (query.isNotBlank()) {
-                                    allExercises?.filter {
-                                        it.name.contains(query, ignoreCase = true)
-                                    } ?: listOf()
-                                } else {
-                                    listOf()
+                SearchAppBar(
+                    value = searchQuery.value,
+                    placeholder = "Search exercises",
+                    onValueChange = { query ->
+                        searchQuery.value = query
+                        isSearchQueryEmpty.value = query.isBlank()
+                        searchedExercises.value = if (query.isNotBlank()) {
+                            allExercises?.filter {
+                                it.name.contains(query, ignoreCase = true)
+                            } ?: listOf()
+                        } else {
+                            listOf()
+                        }
+                    },
+                    onCloseClicked = {
+                        searchQuery.value = ""
+                        isSearchQueryEmpty.value = true
+                        searchedExercises.value = listOf()
+                    },
+                    onSearchClicked = { query ->
+                        searchedExercises.value = allExercises?.filter {
+                            it.name.contains(query, ignoreCase = true)
+                        } ?: listOf()
+                        localKeyboardController?.hide()
+                    },
+                    onClick = { /* Handle click if necessary */ },
+                    enabled = true
+                )
+
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(start = 10.dp, end = 10.dp, top = 10.dp),
+                    verticalArrangement = Arrangement.Top
+                ) {
+
+                    items(searchedExercises.value) { exercise ->
+                        AddExerciseItem(
+                            exercise = exercise,
+                            onItemClick = { exerciseToAdd ->
+                                searchedExercises.value = searchedExercises.value.toMutableList().apply {
+                                    add(exerciseToAdd)
                                 }
-
-                        },
-                        // TODO fill onCloseClicked
-                        onCloseClicked = {},
-                        onSearchClicked = {
-
-                        },
-                        // this is empty because it is used for a different purpose
-                        onClick = {},
-                        enabled = true
-                    )
+                                selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
+                                navController.navigate(Route.ExerciseDetailsScreen.route)
+                            },
+                            onItemClick2 = {
+                                addExerciseHandler(ManageExercises.AddExercise(exercise))
+                                navController.navigate(Route.AddManualWorkoutScreen.route)
+                            },
+                            isSelected = true,
+                            isToAdd = isToAdd ?: false,
+                            modifier = Modifier
+                        )
+                    }
                 }
-             /*   item {
-                    // Remember if the search query is empty
-                    TextField(
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        value = searchQuery.value,
-                        onValueChange = { query ->
-                            searchQuery.value = query
-                            isSearchQueryEmpty.value = query.isBlank()
-                            searchedExercises.value = if (query.isNotBlank()) {
-                                allExercises?.filter {
-                                    it.name.contains(query, ignoreCase = true)
-                                } ?: listOf()
-                            } else {
-                                listOf()
-                            }
-                        },
-                        label = {
-                            if (isSearchQueryEmpty.value) {
-                                Text("Search Exercise")
-                            }
-                        },
-                        placeholder = {
-                            Text(
-                                modifier = Modifier
-                                    .alpha(ContentAlpha.medium),
-                                text = "Search exercises",
-                            )
-                        },
-                        leadingIcon = {
-                            IconButton(
-                                onClick = {
-                                    searchedExercises.value = allExercises?.filter {
-                                        it.name.contains(searchQuery.value, ignoreCase = true)
-                                    } ?: listOf()
-                                    localKeyboardController?.hide()
-                                },
-                                content = {
-                                    Icon(
-                                        imageVector = Icons.Default.Search,
-                                        contentDescription = "Search Icon",
-                                    )
-                                }
-                            )
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    if (isSearchQueryEmpty.value) {
-                                        searchQuery.value=""
-                                    } else {
-                                        onCloseClicked()
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close Icon",
-                                )
-                            }
-                        },
-                        keyboardActions = KeyboardActions(
-                            onSearch = {
-                                searchedExercises.value = allExercises?.filter {
-                                    it.name.contains(searchQuery.value, ignoreCase = true)
-                                } ?: listOf()
-                                localKeyboardController?.hide()
-                            }
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Search
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                    )
-                }*/
 
-                items(searchedExercises.value) { exercise ->
-                    AddExerciseItem(
-                        exercise = exercise,
-                        onItemClick = { exerciseToAdd ->
-                            searchedExercises.value = searchedExercises.value.toMutableList().apply {
-                                add(exerciseToAdd)
-                            }
-                            selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
-                            navController.navigate(Route.ExerciseDetailsScreen.route)
-                        },
-                        onItemClick2 = {
-                            addExerciseHandler(ManageExercises.AddExercise(exercise))
-                            navController.navigate(Route.AddManualWorkoutScreen.route)
-                        },
-                        isSelected = true,
-                        isToAdd = isToAdd ?: false,
-                        modifier = Modifier
-                    )
-                }
             }
+
+
         }
     }
 }
@@ -217,6 +152,7 @@ fun DefaultPreview() {
     GainsAppTheme {
         TypedExerciseScreen(
             navController = rememberNavController(),
+            paddingValues = PaddingValues(0.dp),
             selectExerciseHandler = {},
             workoutViewModel = workoutViewModel,
             exerciseViewModel = exerciseViewModel,

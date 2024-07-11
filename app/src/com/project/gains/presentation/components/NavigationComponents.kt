@@ -479,6 +479,7 @@ fun DynamicBottomBar(navController: NavController) {
         Route.SearchScreen.route,
         Route.ShareScreen.route,
         Route.ExerciseDetailsScreen.route,
+        Route.TypedExerciseScreen.route,
         Route.ProgressDetailsScreen.route,
         Route.SignInScreen.route,
         Route.SignUpScreen.route,

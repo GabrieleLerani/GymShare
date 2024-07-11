@@ -30,7 +30,7 @@ fun MainScreen(
                     DynamicBottomBar(navController = navController)
               },
         ) {
-                paddingValues ->
+            paddingValues ->
             NavGraph(
                 startDestination = startDestination,
                 navController = navController,
