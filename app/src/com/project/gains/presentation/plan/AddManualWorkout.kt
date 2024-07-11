@@ -134,7 +134,7 @@ fun AddManualWorkout(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-
+                // TODO test it
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,

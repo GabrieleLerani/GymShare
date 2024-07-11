@@ -114,7 +114,8 @@ fun TypedExerciseScreen(
                             },
                             onItemClick2 = {
                                 addExerciseHandler(ManageExercises.AddExercise(exercise))
-                                navController.navigate(Route.AddManualWorkoutScreen.route)
+                                //navController.navigate(Route.AddManualWorkoutScreen.route)
+                                navController.popBackStack()
                             },
                             isSelected = true,
                             isToAdd = isToAdd ?: false,

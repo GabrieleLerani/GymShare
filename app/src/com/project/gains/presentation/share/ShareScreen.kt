@@ -71,22 +71,6 @@ fun ShareScreen(
                 .fillMaxWidth()
                 .padding(40.dp)
         ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 290.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(
-                        onClick = {
-                            navController.popBackStack()
-                        }
-                    ) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Close Icon")
-                    }
-                }
-            }
 
             item {
                 Text(

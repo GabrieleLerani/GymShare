@@ -15,8 +15,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,23 +33,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-
 import com.project.gains.R
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FavoriteTopBar
-import com.project.gains.presentation.components.FeedbackAlertDialog
-
 import com.project.gains.presentation.components.InstructionCard
-import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.plan.events.ManageExercises
-import com.project.gains.presentation.settings.ShareContentViewModel
-import com.project.gains.presentation.settings.events.ManageDialogEvent
-
-import com.project.gains.theme.GainsAppTheme
 
 
 @Composable

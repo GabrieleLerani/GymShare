@@ -405,6 +405,7 @@ fun DynamicTopBar(
                 button= {}
             ) {
                 BackButton {
+                    navController.currentBackStackEntry
                     navController.popBackStack()
 
                 }
@@ -444,6 +445,23 @@ fun DynamicTopBar(
             ) {
                 BackButton {
                     navController.popBackStack()
+                }
+            }
+        }
+
+        Route.ShareScreen.route -> {
+            TopBar(
+                message = "",
+                button= {}
+            ) {
+                IconButton(onClick = {
+                    navController.popBackStack()
+
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Icon"
+                    )
                 }
             }
         }

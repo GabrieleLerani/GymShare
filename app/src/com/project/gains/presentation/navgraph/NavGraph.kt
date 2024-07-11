@@ -88,9 +88,7 @@ fun NavGraph(
                 route = Route.SignUpScreen.route,
                 enterTransition = ::slideInToLeft,
                 exitTransition = ::slideOutToLeft,
-                /*
-                popEnterTransition = ::slideInToRight,
-                popExitTransition = ::slideOutToRight*/
+
             ) {
                 // set screen as the node state
                 SignUpScreen(signInHandler = authenticationViewModel::onSignUpEvent, viewModel = authenticationViewModel, navController = navController)
@@ -134,7 +132,11 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.WorkoutScreen.route
+                route = Route.WorkoutScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 WorkoutScreen(
@@ -149,7 +151,9 @@ fun NavGraph(
             }
 
             composable(
-                route = Route.FeedScreen.route
+                route = Route.FeedScreen.route,
+                popEnterTransition = ::slideInToRight,
+
             ) {
                 // set screen as the node state
                 FeedScreen(
@@ -160,7 +164,9 @@ fun NavGraph(
             composable(
                 route = Route.SearchScreen.route,
                 enterTransition = ::slideInToLeft,
-                exitTransition = ::slideOutToLeft
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 val searchViewModel : SearchViewModel = hiltViewModel()
                 // set screen as the node state
@@ -172,7 +178,8 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.PlanScreen.route
+                route = Route.PlanScreen.route,
+                popEnterTransition = ::slideInToRight,
             ) {
                 // set screen as the node state
                 PlanScreen(navController = navController,
@@ -232,7 +239,11 @@ fun NavGraph(
                     createWorkoutHandler = workoutViewModel::onManageWorkoutEvent)
             }
             composable(
-                route = Route.ShareScreen.route
+                route = Route.ShareScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 ShareScreen(
                     navController =navController ,
@@ -240,7 +251,11 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.ProgressDetailsScreen.route
+                route = Route.ProgressDetailsScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
                 ProgressDetailsScreen(
@@ -315,7 +330,9 @@ fun NavGraph(
         }
         composable(
             route = Route.HomeScreen.route,
-            popExitTransition = ::slideOutToRight
+            popEnterTransition = ::slideInToRight,
+            //popExitTransition = ::slideOutToRight
+
         ) {
             HomeScreen(
                 navController = navController,
