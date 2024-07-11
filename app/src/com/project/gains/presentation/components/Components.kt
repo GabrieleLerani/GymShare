@@ -399,8 +399,8 @@ fun FeedbackAlertDialog(
 fun prev(){
     FeedbackAlertDialog(
         title = "Something went wrong",
-        onDismissRequest = { /*TODO*/ },
-        onConfirm = { /*TODO*/ },
+        onDismissRequest = {  },
+        onConfirm = {  },
         show = mutableStateOf(true)
     )
 }
