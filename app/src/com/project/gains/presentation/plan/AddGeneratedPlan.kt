@@ -45,10 +45,8 @@ import com.project.gains.presentation.plan.events.ManagePlanEvent
 @Composable
 fun AddGeneratedPlan(
     navController: NavController,
-    planOptionsHandler: (ManagePlanEvent.SetPlanOptions) -> Unit,
-    createPlanHandler: (ManagePlanEvent.CreatePlan) -> Unit
+    planOptionsHandler: (ManagePlanEvent.SetPlanOptions) -> Unit
 ) {
-
 
     val pagerState = rememberPagerState(initialPage = 0) { pages.size }
     val distance = with(LocalDensity.current) { (dotWidth + spacing).toPx() }
@@ -91,8 +89,6 @@ fun AddGeneratedPlan(
             }
         }
     }
-
-
 }
 
 
@@ -103,7 +99,6 @@ fun PreviewAddGeneratedPlan() {
     val navController = rememberNavController()
     AddGeneratedPlan(
         navController = navController,
-        planOptionsHandler = { /* Handle plan options */ },
-        createPlanHandler = { /* Handle plan creation */ }
+        planOptionsHandler = { /* Handle plan options */ }
     )
 }

@@ -5,7 +5,6 @@ import androidx.compose.runtime.Immutable
 import com.project.gains.R
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
-import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 
 @Immutable
@@ -19,7 +18,6 @@ data class PlanPage(
     @DrawableRes val image: Int,
     val level: Level = Level.BEGINNER,
     val trainingType: TrainingType = TrainingType.STRENGTH,
-    val periodMetricType: PeriodMetricType = PeriodMetricType.WEEK,
     val frequency: Frequency=Frequency.THREE
 )
 
@@ -50,20 +48,6 @@ val pages = listOf(
             PlanPage( title = TrainingType.CROSSFIT.toString(),
                 image = R.drawable.pexels2,
                 trainingType = TrainingType.CROSSFIT)
-        )
-    ),
-    PlanPages(
-        "Select the plan period",
-        mutableListOf(
-            PlanPage( title = PeriodMetricType.WEEK.toString(),
-                image = R.drawable.pexels1,
-                periodMetricType = PeriodMetricType.WEEK),
-            PlanPage( title = PeriodMetricType.MONTH.toString(),
-                image = R.drawable.pexels2,
-                periodMetricType = PeriodMetricType.MONTH),
-            PlanPage( title = PeriodMetricType.YEAR.toString(),
-                image = R.drawable.pexels3,
-                periodMetricType = PeriodMetricType.YEAR)
         )
     ),
     PlanPages(

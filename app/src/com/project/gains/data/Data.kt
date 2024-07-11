@@ -65,7 +65,6 @@ data class Exercise(
 data class Plan(
     val id: Int,
     val name: String,
-    val period: PeriodMetricType,
     val workouts: MutableList<Workout>
 )
 
@@ -323,13 +322,11 @@ fun generateSamplePlans(): MutableList<Plan> {
         Plan(
             id = 1,
             name = "Plan 1",
-            period = PeriodMetricType.WEEK,
             workouts = generateSampleWorkouts()
         ),
         Plan(
             id = 2,
             name = "Plan 2",
-            period = PeriodMetricType.MONTH,
             workouts = generateSampleWorkouts()
         )
         // Add more sample plans as needed

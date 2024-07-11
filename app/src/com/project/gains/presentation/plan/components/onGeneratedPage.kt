@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
-import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.PlanPages
@@ -51,13 +50,10 @@ fun OnGeneratedPage(
 ) {
 
     val selectedLevel = remember { mutableStateOf(Level.BEGINNER) }
-    val selectedPeriod = remember { mutableStateOf(PeriodMetricType.WEEK) }
     val selectedTraining = remember { mutableStateOf(TrainingType.STRENGTH) }
     val selectedFrequency = remember { mutableStateOf(Frequency.THREE) }
 
-    val rememberPage = remember {
-        page
-    }
+    val rememberPage = remember { page }
 
     val listState = rememberLazyListState()
 
@@ -104,18 +100,12 @@ fun OnGeneratedPage(
                         }
                         2 -> {
                             selectedFrequency.value = content.frequency
-                            pagerState.animateScrollToPage(
-                                page = pagerState.currentPage + 1
-                            )
-                        }
-                        3 -> {
-                            selectedPeriod.value = content.periodMetricType
                             planOptionsHandler(ManagePlanEvent.SetPlanOptions(
                                 selectedLevel = selectedLevel.value,
-                                selectedPeriod = selectedPeriod.value,
                                 selectedTrainingType = selectedTraining.value,
-                                selectedFrequency=selectedFrequency.value
+                                selectedFrequency = selectedFrequency.value
                             ))
+
                             navController.navigate(Route.LastNewPlanScreen.route)
                         }
                     }

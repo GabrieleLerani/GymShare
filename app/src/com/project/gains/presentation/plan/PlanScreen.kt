@@ -55,7 +55,6 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
-import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 
@@ -75,7 +74,6 @@ fun PlanScreen(
     val selectedPlan by planViewModel.selectedPlan.observeAsState()
     val selectedFrequency by planViewModel.selectedFrequency.observeAsState()
     val selectedLevel by planViewModel.selectedLvl.observeAsState()
-    val selectedPeriod  by planViewModel.selectedPeriod.observeAsState()
     val selectedTraining  by planViewModel.selectedTrainingType.observeAsState()
 
     val plans by planViewModel.plans.observeAsState()
@@ -190,7 +188,7 @@ fun PlanScreen(
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        WorkoutHeader(selectedLevel, selectedPeriod, selectedTraining,selectedFrequency)
+                        WorkoutHeader(selectedLevel, selectedTraining,selectedFrequency)
                         Spacer(modifier = Modifier.height(16.dp))
                         WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
                             navController.navigate(Route.WorkoutScreen.route)
@@ -205,7 +203,7 @@ fun PlanScreen(
 }
 
 @Composable
-fun WorkoutHeader(selectedLevel: Level?, selectedPeriod: PeriodMetricType?, selectedTraining: TrainingType?,selectedFrequency:Frequency?) {
+fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?,selectedFrequency:Frequency?) {
 
     Column(
         modifier = Modifier
@@ -233,10 +231,6 @@ fun WorkoutHeader(selectedLevel: Level?, selectedPeriod: PeriodMetricType?, sele
             fontSize = 16.sp,
 
             )
-        Text(
-            text = "For period • $selectedPeriod",
-            fontSize = 14.sp,
-        )
         Text(
             text = "Workouts done: 0",
             fontSize = 14.sp,

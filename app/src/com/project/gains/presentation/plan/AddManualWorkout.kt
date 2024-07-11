@@ -303,7 +303,8 @@ fun AddManualWorkout(
                         // after the assignment, delete all exercises so it is ready for a new use
                         selectedExercises?.forEach {
                             deleteExerciseHandler(ManageExercises.DeleteExercise(it))
-                        } },
+                        }
+                    },
                     onClickAddExercise = {
                         selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
                         navController.navigate(Route.TypedExerciseScreen.route) },
