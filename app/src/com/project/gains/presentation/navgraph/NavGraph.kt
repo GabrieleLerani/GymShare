@@ -309,6 +309,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 AddManualWorkout(navController = navController,
+                    paddingValues = paddingValues,
                     manualWorkoutViewModel = manualWorkoutViewModel,
                     addNameHandler =  manualWorkoutViewModel::onManageExercisesEvent,
                     deleteExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
@@ -352,11 +353,32 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.TypedExerciseScreen.route
+                route = Route.TypedExerciseScreen.route,
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
             ) {
                 // set screen as the node state
                 TypedExerciseScreen(
                     navController = navController,
+                    paddingValues = paddingValues,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     workoutViewModel = workoutViewModel,
                     exerciseViewModel = exerciseViewModel,
@@ -365,9 +387,6 @@ fun NavGraph(
                 )
             }
 
-
-
-            // more nodes...
         }
         // a node of the graph
         composable(

@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -42,6 +43,7 @@ import com.project.gains.theme.GainsAppTheme
 @Composable
 fun TypedExerciseScreen(
     navController: NavController,
+    paddingValues: PaddingValues,
     addExerciseHandler: (ManageExercises.AddExercise) -> Unit,
     removeExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
     selectExerciseHandler:(ExerciseEvent.SelectExercise)->Unit,
@@ -56,21 +58,23 @@ fun TypedExerciseScreen(
     val searchedExercises = remember { mutableStateOf(listOf<Exercise>()) }
     val isSearchQueryEmpty = remember { mutableStateOf(searchQuery.value.isBlank()) }
     val localKeyboardController = LocalSoftwareKeyboardController.current
-    val notification = remember {
+    remember {
         mutableStateOf(false)
     }
 
     GainsAppTheme {
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
 
+                //.padding(paddingValues)
         ) {
-            LazyColumn(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(10.dp),
-                verticalArrangement = Arrangement.Top
+                    .padding(start = 10.dp, end = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+
             ) {
                 item {
                     SearchAppBar(
@@ -181,29 +185,33 @@ fun TypedExerciseScreen(
                     )
                 }*/
 
-                items(searchedExercises.value) { exercise ->
-                    AddExerciseItem(
-                        exercise = exercise,
-                        onItemClick = { exerciseToAdd ->
-                            searchedExercises.value = searchedExercises.value.toMutableList().apply {
-                                add(exerciseToAdd)
-                            }
-                            selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
-                            navController.navigate(Route.ExerciseDetailsScreen.route)
-                        },
-                        onItemClick2 = {
-                            addExerciseHandler(ManageExercises.AddExercise(exercise))
-                            navController.navigate(Route.AddManualWorkoutScreen.route)
-                        },
-                        isSelected = true,
-                        isToAdd = isToAdd ?: false,
-                        modifier = Modifier
-                    )
+                    items(searchedExercises.value) { exercise ->
+                        AddExerciseItem(
+                            exercise = exercise,
+                            onItemClick = { exerciseToAdd ->
+                                searchedExercises.value = searchedExercises.value.toMutableList().apply {
+                                    add(exerciseToAdd)
+                                }
+                                selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
+                                navController.navigate(Route.ExerciseDetailsScreen.route)
+                            },
+                            onItemClick2 = {
+                                addExerciseHandler(ManageExercises.AddExercise(exercise))
+                                navController.navigate(Route.AddManualWorkoutScreen.route)
+                            },
+                            isSelected = true,
+                            isToAdd = isToAdd ?: false,
+                            modifier = Modifier
+                        )
+                    }
                 }
+
             }
+
+
         }
     }
-}
+
 
 
 
@@ -216,6 +224,7 @@ fun DefaultPreview() {
     GainsAppTheme {
         TypedExerciseScreen(
             navController = rememberNavController(),
+            paddingValues = PaddingValues(0.dp),
             selectExerciseHandler = {},
             workoutViewModel = workoutViewModel,
             exerciseViewModel = exerciseViewModel,
