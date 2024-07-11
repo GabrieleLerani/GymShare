@@ -66,52 +66,41 @@ fun TypedExerciseScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize(),
-
                 //.padding(paddingValues)
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 10.dp, end = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                SearchAppBar(
-                    value = searchQuery.value,
-                    placeholder = "Search exercises",
-                    onValueChange = { query ->
-                        searchQuery.value = query
-                        isSearchQueryEmpty.value = query.isBlank()
-                        searchedExercises.value = if (query.isNotBlank()) {
-                            allExercises?.filter {
-                                it.name.contains(query, ignoreCase = true)
-                            } ?: listOf()
-                        } else {
-                            listOf()
-                        }
-                    },
-                    onCloseClicked = {
-                        searchQuery.value = ""
-                        isSearchQueryEmpty.value = true
-                        searchedExercises.value = listOf()
-                    },
-                    onSearchClicked = { query ->
-                        searchedExercises.value = allExercises?.filter {
-                            it.name.contains(query, ignoreCase = true)
-                        } ?: listOf()
-                        localKeyboardController?.hide()
-                    },
-                    onClick = { /* Handle click if necessary */ },
-                    enabled = true
-                )
+                item {
+                    SearchAppBar(
+                        value = searchQuery.value,
+                        placeholder = "Add exercises to your workout",
+                        onValueChange = {
+                            query ->
+                                searchQuery.value = query
+                                isSearchQueryEmpty.value = query.isBlank()
+                                searchedExercises.value = if (query.isNotBlank()) {
+                                    allExercises?.filter {
+                                        it.name.contains(query, ignoreCase = true)
+                                    } ?: listOf()
+                                } else {
+                                    listOf()
+                                }
 
+                        },
+                        onCloseClicked = {},
+                        onSearchClicked = {
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 10.dp, end = 10.dp, top = 10.dp),
-                    verticalArrangement = Arrangement.Top
-                ) {
+                        },
+                        // this is empty because it is used for a different purpose
+                        onClick = {},
+                        enabled = true
+                    )
+                }
 
                     items(searchedExercises.value) { exercise ->
                         AddExerciseItem(
@@ -139,7 +128,7 @@ fun TypedExerciseScreen(
 
         }
     }
-}
+
 
 
 

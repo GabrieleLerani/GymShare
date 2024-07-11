@@ -48,7 +48,7 @@ class SettingsManagerImpl @Inject constructor(
 
                     try {
                         CoroutineScope(Dispatchers.IO).launch {
-                            val oldName= localUserManager.readFirestoreDocumentId() // TODO for old users would fail
+                            val oldName= localUserManager.readFirestoreDocumentId()
                             // save user profile application state
                             val userProfileBundle =
                                 UserProfileBundle(displayName = name, email = email)
@@ -78,7 +78,7 @@ class SettingsManagerImpl @Inject constructor(
             }?.addOnCompleteListener { combinedTask ->
                 if (combinedTask.isSuccessful) {
                     CoroutineScope(Dispatchers.IO).launch {
-                            val oldName= localUserManager.readFirestoreDocumentId() // TODO for old users would fail
+                            val oldName= localUserManager.readFirestoreDocumentId()
                             // save user profile application state
                             val userProfileBundle =
                                 UserProfileBundle(displayName = name, email = email)

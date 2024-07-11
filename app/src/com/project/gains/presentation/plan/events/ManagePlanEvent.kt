@@ -7,6 +7,7 @@ import com.project.gains.data.PeriodMetricType
 import com.project.gains.data.Plan
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
+import com.project.gains.data.Workout
 
 sealed class ManagePlanEvent {
     data class CreatePlan(
@@ -25,6 +26,7 @@ sealed class ManagePlanEvent {
         ) : ManagePlanEvent()
 
     data class SelectPlan(val plan : Plan) : ManagePlanEvent()
+
 
     data class DeletePlan(val plan: Plan) : ManagePlanEvent()
 

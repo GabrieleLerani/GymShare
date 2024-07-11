@@ -321,7 +321,9 @@ fun NavGraph(
                 navController = navController,
                 workoutViewModel = workoutViewModel,
                 paddingValues = paddingValues,
-                exerciseViewModel = exerciseViewModel
+                exerciseViewModel = exerciseViewModel,
+                selectWorkoutHandler = workoutViewModel::onManageWorkoutEvent,
+                selectExerciseHandler = exerciseViewModel::onExerciseEvent
             )
         }
     }

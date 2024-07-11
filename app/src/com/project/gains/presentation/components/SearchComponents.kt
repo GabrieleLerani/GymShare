@@ -104,6 +104,7 @@ fun SearchAppBar(
                     if (value.isNotEmpty()) {
                         onValueChange("")
                     } else {
+                        keyboardController?.hide() // Hide keyboard when searching
                         onCloseClicked()
                     }
                 }
@@ -122,10 +123,11 @@ fun SearchAppBar(
                 onSearchClicked(value)
             }
         ),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.primaryContainer,
-            focusedBorderColor =  androidx.compose.material3.MaterialTheme.colorScheme.primary,
-            unfocusedBorderColor = androidx.compose.material3.MaterialTheme.colorScheme.primary,
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.onTertiary,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(16.dp)
     )

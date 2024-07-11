@@ -14,6 +14,7 @@ import com.project.gains.data.generateSampleExercises
 
 import com.project.gains.data.generateSampleWorkouts
 import com.project.gains.presentation.events.MusicEvent
+import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -26,6 +27,10 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
 
     private val _selectedWorkout = MutableLiveData<Workout>()
     val selectedWorkout: MutableLiveData<Workout> = _selectedWorkout
+
+    private val _createdWorkouts = MutableLiveData<MutableList<Workout>>()
+    val createdWorkouts: MutableLiveData<MutableList<Workout>> = _createdWorkouts
+
 
     private val _currentSong = MutableLiveData<Song>()
     val currentSong: MutableLiveData<Song> = _currentSong
@@ -43,7 +48,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private var songIndex = 0
 
     init {
-
+        _createdWorkouts.value = mutableListOf()
         _favouriteWorkouts.value= mutableListOf()
         _workouts.value = generateSampleWorkouts()
         _exercises.value = generateSampleExercises()
@@ -74,7 +79,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
         when (event) {
             is ManageWorkoutEvent.CreateWorkout -> {
                 _workouts.value?.add(event.workout)
-                _selectedWorkout.value = event.workout
             }
 
             is ManageWorkoutEvent.DeleteWorkout -> {
@@ -104,6 +108,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                     }
 
             }
+
         }
     }
 }

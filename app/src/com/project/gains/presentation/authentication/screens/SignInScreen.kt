@@ -131,7 +131,6 @@ fun DefaultSignInContent(
 
     // observed state
     val data by viewModel.data.observeAsState()
-    val openErrorPopup = remember { mutableStateOf(false) }
 
     // focus
     val focusManager = LocalFocusManager.current
@@ -286,7 +285,7 @@ fun DefaultSignInContent(
         if (data?.isNotEmpty() == true) {
             when (data) {
                 LOGIN_FAILED -> {
-                    openErrorPopup.value = true
+
                 }
             }
 
@@ -295,6 +294,14 @@ fun DefaultSignInContent(
                 navController.navigate(Route.HomeScreen.route)
                 viewModel.onNavigationComplete()
             }
+        }
+
+        if (isError == true || passwordError || emailError) {
+            Text(
+                text = "Check your internet connection and retry later",
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(16.dp)
+            )
         }
 
         if (isLoading == true) {
@@ -319,24 +326,8 @@ fun DefaultSignInContent(
                     progress = { progress.value },
                     color = MaterialTheme.colorScheme.tertiary,
                 )
-                if (isError == true) {
-                    Text(
-                        text = "Check your internet connection and retry later",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-        if (openErrorPopup.value) {
-            FeedbackAlertDialog(
-                title = "Something went wrong!",
-                onDismissRequest = { },
-                onConfirm = {
 
-                },
-                openErrorPopup
-            )
+            }
         }
     }
 }
