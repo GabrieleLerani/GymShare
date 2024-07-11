@@ -53,8 +53,7 @@ fun SearchScreen(
                         onValueChange = {
                             text = it
                         },
-                        // TODO fill onCloseClicked
-                        onCloseClicked = {},
+                        onCloseClicked = {navController.popBackStack()},
                         onSearchClicked = {
                             searchGymPostHandler(SearchEvent.SearchGymPostEvent(text = text, selectedCategory = selectedCategory))
                             navController.navigate(Route.FeedScreen.route)

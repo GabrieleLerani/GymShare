@@ -89,7 +89,9 @@ fun SearchAppBar(
             IconButton(
                 modifier = Modifier
                     .alpha(ContentAlpha.medium),
-                onClick = {}
+                onClick = {
+                    // TODO onSearchClicked(value)
+                }
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -103,6 +105,7 @@ fun SearchAppBar(
                     if (value.isNotEmpty()) {
                         onValueChange("")
                     } else {
+                        keyboardController?.hide() // Hide keyboard when searching
                         onCloseClicked()
                     }
                 }
@@ -125,7 +128,7 @@ fun SearchAppBar(
             backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.onTertiary,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent
+            disabledIndicatorColor = Color.Transparent,
         ),
         shape = RoundedCornerShape(16.dp)
     )

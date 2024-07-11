@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
@@ -127,9 +128,12 @@ fun AddManualWorkout(
                         textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
 
                         modifier = Modifier.fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primary// Set the contour color when not focused
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                            focusedContainerColor = MaterialTheme.colorScheme.onTertiary,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary
+
                         )
                     )
                 }
@@ -225,7 +229,7 @@ fun AddManualWorkout(
 
                     Row(
                         horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         TextButton(onClick = {
                             selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))

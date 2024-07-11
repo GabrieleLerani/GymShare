@@ -328,16 +328,6 @@ fun DefaultSignInContent(
                 }
             }
         }
-        if (openErrorPopup.value) {
-            FeedbackAlertDialog(
-                title = "Something went wrong!",
-                onDismissRequest = { },
-                onConfirm = {
-
-                },
-                openErrorPopup
-            )
-        }
     }
 }
 

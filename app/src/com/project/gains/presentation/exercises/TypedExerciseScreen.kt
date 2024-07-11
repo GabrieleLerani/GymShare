@@ -75,7 +75,7 @@ fun TypedExerciseScreen(
                 item {
                     SearchAppBar(
                         value = searchQuery.value,
-                        placeholder = "Search exercise to add to your workout",
+                        placeholder = "Add exercises to your workout",
                         onValueChange = {
                             query ->
                                 searchQuery.value = query
@@ -89,7 +89,6 @@ fun TypedExerciseScreen(
                                 }
 
                         },
-                        // TODO fill onCloseClicked
                         onCloseClicked = {},
                         onSearchClicked = {
 
