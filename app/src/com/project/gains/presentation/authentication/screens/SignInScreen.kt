@@ -1,15 +1,12 @@
 package com.project.gains.presentation.authentication.screens
 
-import android.util.Log
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -42,6 +38,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -55,12 +52,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -68,20 +62,15 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.presentation.CustomBackHandler
 import com.project.gains.presentation.Dimension.ButtonCornerShape
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignInEvent
-import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.SharingMediaIcon
 import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
@@ -136,8 +125,9 @@ fun DefaultSignInContent(
     val focusManager = LocalFocusManager.current
 
     // Validation state
-    var emailError by remember { mutableStateOf(false) }
-    var passwordError by remember { mutableStateOf(false) }
+    var emailEmpty by remember { mutableStateOf(false) }
+    var passwordEmpty by remember { mutableStateOf(false) }
+    var loginFailed by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -146,6 +136,56 @@ fun DefaultSignInContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (emailEmpty) {
+            Card(
+                backgroundColor = Color.Red,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Empty email. Please insert one.",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        } else if (passwordEmpty) {
+            Card(
+                backgroundColor = Color.Red,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Empty password. Please insert one.",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        } else if (loginFailed) {
+            Card(
+                backgroundColor = Color.Red,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Login failed. Please try again.",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        }
+
         Text(
             text = "Login",
             style = MaterialTheme.typography.displayMedium,
@@ -153,11 +193,12 @@ fun DefaultSignInContent(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 35.dp)
         )
+
         OutlinedTextField(
             value = email,
             onValueChange = {
                 email = it
-                if (email.isNotEmpty()) emailError = false
+                if (email.isNotEmpty()) emailEmpty = false
             },
             label = {
                 Text(
@@ -176,8 +217,8 @@ fun DefaultSignInContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (emailError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (emailError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                focusedBorderColor = if (emailEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (emailEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
 
@@ -185,7 +226,7 @@ fun DefaultSignInContent(
             value = password,
             onValueChange = {
                 password = it
-                if (password.isNotEmpty()) passwordError = false
+                if (password.isNotEmpty()) passwordEmpty = false
             },
             label = {
                 Text(
@@ -220,18 +261,17 @@ fun DefaultSignInContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (passwordError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (passwordError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                focusedBorderColor = if (passwordEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (passwordEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
         Button(
             onClick = {
                 focusManager.clearFocus()
-                val emailEmpty = email.isEmpty()
-                val passwordEmpty = password.isEmpty()
+                emailEmpty = email.isEmpty()
+                passwordEmpty = password.isEmpty()
 
-                emailError = emailEmpty
-                passwordError = passwordEmpty
+                loginFailed = false
 
                 if (!emailEmpty && !passwordEmpty) {
                     signInHandler(SignInEvent.SignIn(email, password))
@@ -285,7 +325,10 @@ fun DefaultSignInContent(
         if (data?.isNotEmpty() == true) {
             when (data) {
                 LOGIN_FAILED -> {
-
+                    loginFailed = true
+                }
+                else -> {
+                    loginFailed = false
                 }
             }
 
@@ -294,14 +337,6 @@ fun DefaultSignInContent(
                 navController.navigate(Route.HomeScreen.route)
                 viewModel.onNavigationComplete()
             }
-        }
-
-        if (isError == true || passwordError || emailError) {
-            Text(
-                text = "Check your internet connection and retry later",
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(16.dp)
-            )
         }
 
         if (isLoading == true) {

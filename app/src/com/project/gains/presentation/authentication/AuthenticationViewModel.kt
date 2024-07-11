@@ -56,9 +56,7 @@ class AuthenticationViewModel  @Inject constructor(
                     delay(1000)
                     goSignIn(event.email, event.password)
                 }
-
             }
-
         }
     }
 
@@ -72,21 +70,14 @@ class AuthenticationViewModel  @Inject constructor(
                     delay(1000)
                     goSignUp(event.name, event.email, event.password, event.confirmPass)
                 }
-
             }
-
         }
     }
-
-
-
-
 
     private fun goSignIn(email: String, password: String) {
         viewModelScope.launch {
             authenticationUseCases.signIn(email, password)
         }
-
     }
 
     private fun goSignUp(name: String, email: String, password: String, confirmPass: String) {
@@ -98,31 +89,21 @@ class AuthenticationViewModel  @Inject constructor(
     override fun onUpdate(data: Location) {
     }
 
-
     override fun onUpdate(data: String) {
         // Update UI state with received data
         _data.value = data
         if (_data.value == SIGN_UP_SUCCESS || _data.value == LOGIN_SUCCESS) {
-            _isLoading.value=false
+            _isLoading.value = false
             _isError.value = false
             _navigateToAnotherScreen.value = true
-        }
-        else{
-            _isLoading.value=false
+        } else {
+            _isLoading.value = false
             _isError.value = true
         }
-
     }
-
-
-
 
     fun onNavigationComplete() {
         _navigateToAnotherScreen.value = false
-        _data.value=""
+        _data.value = ""
     }
-
-
-
-
 }
