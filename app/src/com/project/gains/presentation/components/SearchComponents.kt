@@ -122,7 +122,7 @@ fun SearchAppBar(
             }
         ),
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
+            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.onTertiary,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent

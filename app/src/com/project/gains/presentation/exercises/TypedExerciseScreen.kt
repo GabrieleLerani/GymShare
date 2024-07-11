@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.*
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,6 +32,7 @@ import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.SearchAppBar
 import com.project.gains.presentation.exercises.events.ExerciseEvent
+import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.WorkoutViewModel
@@ -71,8 +73,33 @@ fun TypedExerciseScreen(
                 verticalArrangement = Arrangement.Top
             ) {
                 item {
+                    SearchAppBar(
+                        value = searchQuery.value,
+                        placeholder = "Search exercise to add to your workout",
+                        onValueChange = {
+                            query ->
+                                searchQuery.value = query
+                                isSearchQueryEmpty.value = query.isBlank()
+                                searchedExercises.value = if (query.isNotBlank()) {
+                                    allExercises?.filter {
+                                        it.name.contains(query, ignoreCase = true)
+                                    } ?: listOf()
+                                } else {
+                                    listOf()
+                                }
 
+                        },
+                        // TODO fill onCloseClicked
+                        onCloseClicked = {},
+                        onSearchClicked = {
 
+                        },
+                        // this is empty because it is used for a different purpose
+                        onClick = {},
+                        enabled = true
+                    )
+                }
+             /*   item {
                     // Remember if the search query is empty
                     TextField(
                         colors = TextFieldDefaults.textFieldColors(
@@ -95,7 +122,7 @@ fun TypedExerciseScreen(
                         },
                         label = {
                             if (isSearchQueryEmpty.value) {
-                                Text("Search Exercise", color = MaterialTheme.colors.primary)
+                                Text("Search Exercise")
                             }
                         },
                         placeholder = {
@@ -117,10 +144,25 @@ fun TypedExerciseScreen(
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = "Search Icon",
-                                        tint = MaterialTheme.colors.onSurface
                                     )
                                 }
                             )
+                        },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    if (isSearchQueryEmpty.value) {
+                                        searchQuery.value=""
+                                    } else {
+                                        onCloseClicked()
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Close Icon",
+                                )
+                            }
                         },
                         keyboardActions = KeyboardActions(
                             onSearch = {
@@ -138,7 +180,7 @@ fun TypedExerciseScreen(
                             .padding(vertical = 16.dp)
                             .clip(RoundedCornerShape(20.dp))
                     )
-                }
+                }*/
 
                 items(searchedExercises.value) { exercise ->
                     AddExerciseItem(

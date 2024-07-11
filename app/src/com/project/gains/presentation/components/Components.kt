@@ -1,5 +1,6 @@
 package com.project.gains.presentation.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +35,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -228,6 +230,7 @@ fun InstructionCard(text: String) {
         modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(),
+        backgroundColor = MaterialTheme.colorScheme.onTertiary,
         elevation = 4.dp,
         shape = RoundedCornerShape(10.dp)
     ) {
@@ -247,10 +250,10 @@ fun WarningCard(message: String) {
         modifier = Modifier
             .fillMaxWidth()
             .background(
-                MaterialTheme.colorScheme.errorContainer,
+                MaterialTheme.colorScheme.secondaryContainer,
                 RoundedCornerShape(16.dp)
             ),
-        backgroundColor = MaterialTheme.colorScheme.errorContainer
+        backgroundColor = MaterialTheme.colorScheme.secondaryContainer
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -351,7 +354,6 @@ fun FeedbackAlertDialog(
                         Text(
                             text = title,
                             style = MaterialTheme.typography.headlineLarge,
-                            color = MaterialTheme.colorScheme.error,
                         )
                     }
                 }
@@ -391,6 +393,7 @@ fun FeedbackAlertDialog(
         )
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview
 @Composable
 fun prev(){
