@@ -69,7 +69,7 @@ fun TypedExerciseScreen(
 
                 //.padding(paddingValues)
         ) {
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 10.dp, end = 10.dp),
@@ -102,88 +102,6 @@ fun TypedExerciseScreen(
                         enabled = true
                     )
                 }
-             /*   item {
-                    // Remember if the search query is empty
-                    TextField(
-                        colors = TextFieldDefaults.textFieldColors(
-                            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent
-                        ),
-                        value = searchQuery.value,
-                        onValueChange = { query ->
-                            searchQuery.value = query
-                            isSearchQueryEmpty.value = query.isBlank()
-                            searchedExercises.value = if (query.isNotBlank()) {
-                                allExercises?.filter {
-                                    it.name.contains(query, ignoreCase = true)
-                                } ?: listOf()
-                            } else {
-                                listOf()
-                            }
-                        },
-                        label = {
-                            if (isSearchQueryEmpty.value) {
-                                Text("Search Exercise")
-                            }
-                        },
-                        placeholder = {
-                            Text(
-                                modifier = Modifier
-                                    .alpha(ContentAlpha.medium),
-                                text = "Search exercises",
-                            )
-                        },
-                        leadingIcon = {
-                            IconButton(
-                                onClick = {
-                                    searchedExercises.value = allExercises?.filter {
-                                        it.name.contains(searchQuery.value, ignoreCase = true)
-                                    } ?: listOf()
-                                    localKeyboardController?.hide()
-                                },
-                                content = {
-                                    Icon(
-                                        imageVector = Icons.Default.Search,
-                                        contentDescription = "Search Icon",
-                                    )
-                                }
-                            )
-                        },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    if (isSearchQueryEmpty.value) {
-                                        searchQuery.value=""
-                                    } else {
-                                        onCloseClicked()
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Close,
-                                    contentDescription = "Close Icon",
-                                )
-                            }
-                        },
-                        keyboardActions = KeyboardActions(
-                            onSearch = {
-                                searchedExercises.value = allExercises?.filter {
-                                    it.name.contains(searchQuery.value, ignoreCase = true)
-                                } ?: listOf()
-                                localKeyboardController?.hide()
-                            }
-                        ),
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Search
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                    )
-                }*/
 
                     items(searchedExercises.value) { exercise ->
                         AddExerciseItem(
