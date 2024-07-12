@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.project.gains.R
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.navgraph.Route
@@ -92,24 +93,6 @@ fun OTPScreen(
                     style = MaterialTheme.typography.labelMedium,
                 )
 
-                if (showError) {
-                    Card(
-                        backgroundColor = MaterialTheme.colorScheme.error,
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = "The OTP does not match, please check again",
-                            color = MaterialTheme.colorScheme.surface,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(16.dp)
-                        )
-                    }
-                }
-
                 Spacer(modifier = Modifier.height(50.dp))
 
                 OutlinedTextField(
@@ -138,7 +121,17 @@ fun OTPScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                if (showError) {
+                    Text(
+                        text = "The OTP does not match, please check again.",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 15.sp,
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                    )
+                } else {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
                 Text(
                     text = "Wrong email? Change it",

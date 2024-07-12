@@ -5,6 +5,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 
 import androidx.compose.foundation.layout.Arrangement
@@ -53,9 +54,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -133,6 +136,34 @@ fun DefaultSignInContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        if (errorMessage.value.isNotEmpty()) {
+            Card(
+                backgroundColor = Color.hsl(0f, 1f, 0.85f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Row {
+                    Image(
+                        painter = painterResource(id = R.drawable.red_alert_icon),
+                        contentDescription = "Wrong credentials",
+                        modifier = Modifier
+                            .weight(1f, true)
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 15.dp)
+                    )
+                    Text(
+                        text = "Login failed. Please check your credentials and try again.",
+                        color = MaterialTheme.colorScheme.error,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .weight(9f, true)
+                    )
+                }
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -159,41 +190,6 @@ fun DefaultSignInContent(
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
-
-                    if (inputInserted && (email.isEmpty() || password.isEmpty())) {
-                        Card(
-                            backgroundColor = MaterialTheme.colorScheme.error,
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        ) {
-                            Text(
-                                text = "Empty " +  if(password.isEmpty()){ "Password" }else{ "" }+ if (email.isEmpty()){ " And Email" }else{ "" }+ ". Please insert one.",
-                                color = MaterialTheme.colorScheme.surface,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                            )
-                        }
-                    }
-                    if (errorMessage.value.isNotEmpty()) {
-                        Card(
-                            backgroundColor = MaterialTheme.colorScheme.error,
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                        ) {
-                            Text(
-                                text = "Login failed. Please check your credentials and try again. The error is: ${errorMessage.value}",
-                                color = MaterialTheme.colorScheme.surface,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier
-                                    .padding(16.dp)
-                            )
-                        }
-                    }
 
                     OutlinedTextField(
                         value = email,
@@ -222,7 +218,17 @@ fun DefaultSignInContent(
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    if (inputInserted && (email.isEmpty())) {
+                        Text(
+                            text = "Empty email. Please insert one.",
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 15.sp,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
 
                     OutlinedTextField(
                         value = password,
@@ -266,7 +272,17 @@ fun DefaultSignInContent(
                         )
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    if (inputInserted && (password.isEmpty())) {
+                        Text(
+                            text = "Empty password. Please insert one.",
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 15.sp,
+                            modifier = Modifier
+                                .align(Alignment.Start)
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
 
                     Text(
                         text = "Forgot Password?",

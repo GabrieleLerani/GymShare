@@ -16,37 +16,19 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.R
+import com.project.gains.presentation.authentication.events.OTPEvent
 import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.navgraph.Route
 
 @Composable
-fun ChangePasswordScreen(onChangePassword: () -> Unit) {
+fun ChangePasswordScreen(onChangePassword: (String) -> Unit) {
     var newPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var showError by remember { mutableStateOf(false) }
-    val showDialog = remember { mutableStateOf(false) }
+    var showPopup =  remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
-
-
-
-        if (showDialog.value) {
-            FeedbackAlertDialog(
-                title = "You have successfully updated your password!",
-                onDismissRequest = {
-                    showDialog.value = false
-                },
-                onConfirm = {
-                    showDialog.value = false
-                   onChangePassword()
-                },
-                show = showDialog
-            )
-        }
-
 
     Column(
         modifier = Modifier
@@ -83,24 +65,6 @@ fun ChangePasswordScreen(onChangePassword: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                if (showError) {
-                    androidx.compose.material.Card(
-                        backgroundColor = MaterialTheme.colorScheme.error,
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = "The password must match, please check again",
-                            color = MaterialTheme.colorScheme.surface,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(16.dp)
-                        )
-                    }
-                }
-
                 androidx.compose.material.OutlinedTextField(
                     value = newPassword,
                     onValueChange = { newPassword = it },
@@ -129,44 +93,9 @@ fun ChangePasswordScreen(onChangePassword: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                androidx.compose.material.OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = { confirmPassword = it },
-                    label = {
-                        Text(
-                            "Confirm New Password",
-                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                    ),
-
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 10.dp),
-                    shape = RoundedCornerShape(size = 20.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-
-
-
-                Spacer(modifier = Modifier.height(16.dp))
-
                 Button(
                     onClick = {
-                        if (newPassword == confirmPassword) {
-                            showError = false
-                            showDialog.value=true
-                        } else {
-                            showError = true
-                        }
+                        showPopup.value = true
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -175,12 +104,21 @@ fun ChangePasswordScreen(onChangePassword: () -> Unit) {
             }
         }
     }
+
+    if (showPopup.value) {
+        FeedbackAlertDialog(
+            title = "Your password has been changed!",
+            onDismissRequest = { onChangePassword(newPassword) },
+            onConfirm = { onChangePassword(newPassword) },
+            show = showPopup
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewChangePasswordScreen() {
-    ChangePasswordScreen { /*newPassword, confirmPassword ->
-        // Handle change password logic*/
+    ChangePasswordScreen { newPassword ->
+        // Handle change password logic
     }
 }

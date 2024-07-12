@@ -117,7 +117,8 @@ class SettingsManagerImpl @Inject constructor(
     }
 
     override fun setUpdateListener(ref: UpdateListener) {
-        updateListener=ref    }
+        updateListener = ref
+    }
 
 }
 
