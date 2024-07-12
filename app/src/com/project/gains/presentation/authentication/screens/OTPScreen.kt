@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
@@ -18,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.presentation.authentication.AuthenticationViewModel
@@ -51,6 +54,24 @@ fun OTPScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (showError) {
+            Card(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "The OTP does not match, please check again",
+                    color = MaterialTheme.colorScheme.surface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        }
+
         OutlinedTextField(
             value = otp,
             onValueChange = { otp = it },
@@ -77,23 +98,7 @@ fun OTPScreen(
             )
         )
 
-        if (showError) {
-            Text(
-                text = "Incorrect OTP. Please try again.",
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Wrong email? Change it",
-            color = Color.Blue,
-            modifier = Modifier
-                .clickable { onBackClicked() }
-                .align(Alignment.End)
-        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -110,6 +115,16 @@ fun OTPScreen(
         ) {
             Text("Verify")
         }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+
+        Text(
+            text = "Wrong email? Change it",
+            style = TextStyle(textDecoration = TextDecoration.Underline ),
+            color = Color.Blue,
+            modifier = Modifier.clickable {onBackClicked() }
+        )
 
     }
 }

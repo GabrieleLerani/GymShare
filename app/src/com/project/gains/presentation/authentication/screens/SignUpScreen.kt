@@ -108,40 +108,7 @@ fun DefaultSignUpContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        if (inputInserted &&(name.isEmpty() || email.isEmpty() || password.isEmpty())) {
-            Card(
-                backgroundColor = MaterialTheme.colorScheme.error,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "Empty " +  if (name.isEmpty()){ "Name" }else{ ""} + if(password.isEmpty()){ " And Password" }else{ "" }+ if (email.isEmpty()){ ", Email" }else{ "" }+ ". Please insert one.",
-                    color = MaterialTheme.colorScheme.surface,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-        }
-        if (errorMessage.value.isNotEmpty()) {
-            Card(
-                backgroundColor = MaterialTheme.colorScheme.error,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "SignUp failed. Please check your credentials and try again. The error is: ${errorMessage.value}",
-                    color = MaterialTheme.colorScheme.surface,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-        }
+
 
         Column(
             modifier = Modifier
@@ -169,6 +136,40 @@ fun DefaultSignUpContent(
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
+                    if (inputInserted &&(name.isEmpty() || email.isEmpty() || password.isEmpty())) {
+                        Card(
+                            backgroundColor = MaterialTheme.colorScheme.error,
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = "Empty " +  if (name.isEmpty()){ "Name" }else{ ""} + if(password.isEmpty()){ " And Password" }else{ "" }+ if (email.isEmpty()){ ", Email" }else{ "" }+ ". Please insert one.",
+                                color = MaterialTheme.colorScheme.surface,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
+                    if (errorMessage.value.isNotEmpty()) {
+                        Card(
+                            backgroundColor = MaterialTheme.colorScheme.error,
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = "SignUp failed. Please check your credentials and try again. The error is: ${errorMessage.value}",
+                                color = MaterialTheme.colorScheme.surface,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                            )
+                        }
+                    }
 
                     OutlinedTextField(
                         value = name,

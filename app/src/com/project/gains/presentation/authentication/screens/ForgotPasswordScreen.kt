@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Button
@@ -34,6 +35,8 @@ import androidx.compose.ui.unit.dp
 fun ForgotPasswordScreen(onSendClicked: (String) -> Unit) {
     var email by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
+    var inputInserted by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -49,6 +52,23 @@ fun ForgotPasswordScreen(onSendClicked: (String) -> Unit) {
         )
 
         Spacer(modifier = Modifier.height(8.dp))
+        if (email.isEmpty() &&  inputInserted) {
+            Card(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Empty " +  if (email.isEmpty()){ "Email" }else{ "" }+ ". Please insert one.",
+                    color = MaterialTheme.colorScheme.surface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        }
 
         OutlinedTextField(
             value = email,
@@ -79,7 +99,7 @@ fun ForgotPasswordScreen(onSendClicked: (String) -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = { if(email.isNotEmpty()) onSendClicked(email) },
+            onClick = { if(email.isNotEmpty()) onSendClicked(email) else inputInserted=true },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Send")
