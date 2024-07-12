@@ -62,12 +62,19 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                 _currentSong.value= _songs.value?.get(songIndex)
             }
             is MusicEvent.Forward -> {
-                songIndex+=1
+                if (songIndex < _songs.value?.size!! - 1) {
+                    songIndex++
+                } else {
+                    songIndex=0
+                }
                 _currentSong.value= _songs.value?.get(songIndex)
             }
             is MusicEvent.Rewind -> {
-                songIndex-=1
-
+                if (songIndex > 0) {
+                    songIndex--
+                } else {
+                    songIndex=_songs.value?.size!! - 1
+                }
                 _currentSong.value= _songs.value?.get(songIndex)
             }
         }
