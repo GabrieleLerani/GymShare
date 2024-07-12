@@ -112,6 +112,7 @@ fun DefaultSignInContent(
     val isLoading by viewModel.isLoading.observeAsState()
     val isError by viewModel.isError.observeAsState()
 
+
     // fields of interest
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -138,7 +139,7 @@ fun DefaultSignInContent(
     ) {
         if (emailEmpty) {
             Card(
-                backgroundColor = Color.Red,
+                backgroundColor = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -146,15 +147,16 @@ fun DefaultSignInContent(
             ) {
                 Text(
                     text = "Empty email. Please insert one.",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(16.dp)
                 )
             }
-        } else if (passwordEmpty) {
+        }
+        if (passwordEmpty) {
             Card(
-                backgroundColor = Color.Red,
+                backgroundColor = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -162,23 +164,24 @@ fun DefaultSignInContent(
             ) {
                 Text(
                     text = "Empty password. Please insert one.",
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(16.dp)
                 )
             }
-        } else if (loginFailed) {
+        }
+        if (loginFailed) {
             Card(
-                backgroundColor = Color.Red,
+                backgroundColor = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Login failed. Please try again.",
-                    color = Color.White,
+                    text = "Login failed. Please Check your credentials and try again.",
+                    color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(16.dp)

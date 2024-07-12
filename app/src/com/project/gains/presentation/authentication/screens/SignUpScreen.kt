@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -97,8 +98,12 @@ fun DefaultSignUpContent(
     val focusManager = LocalFocusManager.current
     var passwordVisible by remember { mutableStateOf(false) }
     val openPopup = remember { mutableStateOf(false) }
-    val openErrorPopup = remember { mutableStateOf(false) }
+
     val errorMessage = remember { mutableStateOf("") }
+    var nameEmpty by remember { mutableStateOf(false) }
+    var emailEmpty by remember { mutableStateOf(false) }
+    var passwordEmpty by remember { mutableStateOf(false) }
+    var loginFailed by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -107,6 +112,76 @@ fun DefaultSignUpContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        if (nameEmpty) {
+            Card(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Name email. Please insert one.",
+                    color = MaterialTheme.colorScheme.surface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        }
+        if (emailEmpty) {
+            Card(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Empty email. Please insert one.",
+                    color = MaterialTheme.colorScheme.surface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        }
+        if (passwordEmpty) {
+            Card(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Empty password. Please insert one.",
+                    color = MaterialTheme.colorScheme.surface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        }
+        if (loginFailed) {
+            Card(
+                backgroundColor = MaterialTheme.colorScheme.error,
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "Login failed. Please Check your credentials and try again. The error is ${errorMessage.value}",
+                    color = MaterialTheme.colorScheme.surface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(16.dp)
+                )
+            }
+        }
+
         Text(
             text = "Sign up",
             style = MaterialTheme.typography.displayMedium,
@@ -262,11 +337,7 @@ fun DefaultSignUpContent(
         }
 
         if (errorMessage.value.isNotEmpty()) {
-            Text(
-                text = errorMessage.value,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(16.dp)
-            )
+            loginFailed=true
         }
 
         if (openPopup.value == true) {
@@ -278,11 +349,13 @@ fun DefaultSignUpContent(
 
         // Observe changes in data
         if (data?.isNotEmpty() == true) {
-            // Display data
-            Text(
-                text = data!!.toString(),
-                color = if (data.equals(SIGN_UP_SUCCESS)) Color.Green else MaterialTheme.colorScheme.onError
-            )
+
+            if (data.equals(SIGN_UP_SUCCESS)){
+                loginFailed=false
+            }else{
+                loginFailed=true
+            }
+
             // Change page if all ok
             if (viewModel.navigateToAnotherScreen.value==true) {
                 navController.navigate(Route.HomeScreen.route)
