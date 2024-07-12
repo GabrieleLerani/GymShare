@@ -28,10 +28,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +45,8 @@ import androidx.navigation.NavController
 import com.project.gains.R
 import com.project.gains.data.Exercise
 import com.project.gains.data.Workout
+import com.project.gains.data.getRandomMessage
+import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -51,6 +55,7 @@ import com.project.gains.presentation.workout.WorkoutViewModel
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.currentWeekday
+import kotlinx.coroutines.delay
 
 @Composable
 fun HomeScreen(
@@ -65,8 +70,9 @@ fun HomeScreen(
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
     val workouts by workoutViewModel.workouts.observeAsState()
+    // notifications
 
-Log.d("HERE",workouts.toString())
+
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
             ?: return,
@@ -90,6 +96,7 @@ Log.d("HERE",workouts.toString())
             ) {
 
 
+
                 item {
                     HorizontalScrollScreenWorkout(navController, "daily workouts", items2 = workouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
                 }
@@ -102,7 +109,16 @@ Log.d("HERE",workouts.toString())
                     HorizontalScrollScreenWorkout(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList(), selectWorkoutHandler = selectWorkoutHandler)
                 }
 
+
+                item {
+                    // Notification card
+
+
+
+                }
+
             }
+
         }
     }
 }

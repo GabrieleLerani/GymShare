@@ -122,6 +122,20 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
 
 // init data and functions
 
+fun getRandomMessage(): String {
+    val messages = listOf(
+        "You have a new workout!",
+        "Don't forget to stay hydrated!",
+        "Time for a break, stretch your legs!",
+        "New exercises have been added!",
+        "Track your progress regularly!",
+        "Push harder today!",
+        "Great job! Keep it up!",
+        "Remember to cool down after workouts."
+    )
+    return messages.random()
+}
+
 fun generateSampleExercises(): MutableList<Exercise> {
     return mutableListOf(
         Exercise(

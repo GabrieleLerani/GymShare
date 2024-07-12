@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -191,39 +192,34 @@ fun NotificationCard(
     message: String,
     onClose: () -> Unit
 ) {
-    androidx.compose.material.Card(
+    androidx.compose.material3.Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(
-                androidx.compose.material.MaterialTheme.colors.secondary,
-                RoundedCornerShape(16.dp)
-            ),
-        elevation = 4.dp,
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(16.dp),
-        backgroundColor = androidx.compose.material.MaterialTheme.colors.secondary
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onTertiary)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            androidx.compose.material.Text(
+            Text(
                 text = message,
-                style = androidx.compose.material.MaterialTheme.typography.body2,
-                color = Color.Black,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f)
             )
-            androidx.compose.material.IconButton(onClick = onClose) {
-                androidx.compose.material.Icon(
+            IconButton(onClick = onClose) {
+                Icon(
                     Icons.Default.Close,
                     contentDescription = "Close Icon",
-                    tint = Color.Black
                 )
             }
         }
     }
 }
+
 
 @Composable
 fun InstructionCard(text: String) {

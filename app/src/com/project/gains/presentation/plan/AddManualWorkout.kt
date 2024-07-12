@@ -257,7 +257,7 @@ fun AddManualWorkout(
                 item {
                     if (showDialog.value) {
                         FeedbackAlertDialog(
-                            title = "You have successfully added your workout!",
+                            title = "You have successfully added your workout! You will find it in the home section in the day previously selected",
                             onDismissRequest = {
                                 showDialog.value = false
                                 navController.navigate(Route.HomeScreen.route)

@@ -24,7 +24,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -40,7 +43,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
+import com.project.gains.data.getRandomMessage
 import com.project.gains.presentation.navgraph.Route
+import kotlinx.coroutines.delay
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -196,21 +201,7 @@ fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Co
     }
 }
 
-// TODO check
-@Composable
-fun SearchTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
 
-    TopAppBar(
-        backgroundColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        elevation = 0.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-    ) {
-
-    }
-}
 
 
 
@@ -225,10 +216,23 @@ fun DynamicTopBar(
     navController: NavController,
 ) {
     val currentRoute = currentRoute(navController = navController)
+    val showNotification = remember { mutableStateOf(false) }
+    val notificationMessage = remember { mutableStateOf("") }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(5000) // Change interval as needed
+            notificationMessage.value = getRandomMessage()
+            showNotification.value = true
+            delay(3000) // Notification display duration
+            showNotification.value = false
+        }
+    }
 
     when (currentRoute) {
 
         Route.HomeScreen.route -> {
+
             TopBar(
                 message = "Home",
                 button = {
@@ -470,6 +474,13 @@ fun DynamicTopBar(
         Route.ExerciseDetailsScreen.route -> {
 
         }
+
+    }
+    if (showNotification.value) {
+        NotificationCard(
+            message = notificationMessage.value,
+            onClose = {showNotification.value=false}
+        )
 
     }
 }
