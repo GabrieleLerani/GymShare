@@ -20,13 +20,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -46,9 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -91,39 +90,34 @@ fun PlanScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Top
 
             ) {
                 item {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top,
-                        modifier = Modifier.padding(16.dp)
+                        //modifier = Modifier.padding(16.dp)
                     ) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 16.dp)
+                                .padding(16.dp)
                                 .background(
                                     MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .border(
-                                    border = BorderStroke(
-                                        width = 3.dp,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    ), shape = RoundedCornerShape(16.dp)
-                                )
+                                    RoundedCornerShape(5.dp)
+                                ),
 
-                                .padding(16.dp)
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
                             ) {
                                 Text(
-                                    text = "Your current plan: ${selectedPlan?.name.toString()}",
-                                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                                    text = selectedPlan?.name.toString(),
+                                    style = MaterialTheme.typography.headlineSmall,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.weight(1f)
                                     // Take up the remaining space
@@ -145,7 +139,7 @@ fun PlanScreen(
                             modifier = Modifier
                                 .fillMaxWidth(0.7f)
                                 .background(
-                                    shape = RoundedCornerShape(16.dp),
+                                    //shape = RoundedCornerShape(16.dp),
                                     color = MaterialTheme.colorScheme.surface
                                 )
                                 .padding(10.dp) // Padding to match the Text above
@@ -155,10 +149,6 @@ fun PlanScreen(
                                     text = {
                                         Text(
                                             plan.name,
-                                            style = MaterialTheme.typography.bodySmall.copy(
-                                                fontWeight = FontWeight.Bold
-                                            ),
-                                            color = MaterialTheme.colorScheme.onSurface
                                         )
                                     },
                                     onClick = {
@@ -167,19 +157,9 @@ fun PlanScreen(
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(
-                                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                            shape = RoundedCornerShape(16.dp)
-                                        )
-                                        .border(
-                                            border = BorderStroke(
-                                                width = 3.dp,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            ), shape = RoundedCornerShape(16.dp)
-                                        )
-                                        .padding(16.dp) // Inner padding for the item
+
                                 )
-                                Spacer(modifier = Modifier.height(2.dp))
+
                             }
                         }
                     }
@@ -189,11 +169,11 @@ fun PlanScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(10.dp),
+                            .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        WorkoutHeader(selectedLevel, selectedTraining,selectedFrequency)
-                        Spacer(modifier = Modifier.height(16.dp))
+                        WorkoutHeader(selectedLevel, selectedTraining, selectedFrequency)
+                        Spacer(modifier = Modifier.height(30.dp))
                         WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
                             navController.navigate(Route.WorkoutScreen.route)
                         }
@@ -204,100 +184,70 @@ fun PlanScreen(
 
 
     }
+
+
+
+
 }
 
 @Composable
-fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, selectedFrequency: Frequency?) {
+fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, selectedFrequency:Frequency?) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .background(Color.LightGray.copy(alpha = 0.8f), RoundedCornerShape(8.dp))
-            .padding(16.dp)
+            .fillMaxWidth(),
+        //.padding(16.dp),
+        horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = "Workout Information",
-            fontSize = 22.sp,
+            text = "Workout settings",
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(),
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Table rows
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            elevation = 4.dp
         ) {
-            Text(
-                text = "Training Type:",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = selectedTraining?.toString()?.toLowerCase()?.capitalize() ?: "N/A",
-                fontSize = 14.sp,
-                modifier = Modifier.weight(1f)
-            )
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+
+                AlignedTextItem(label = "Level", value = selectedLevel.toString())
+                Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
+                AlignedTextItem(label = "Type", value = selectedTraining.toString())
+                Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
+                AlignedTextItem(label = "Frequency", value = "$selectedFrequency PER WEEK")
+            }
         }
+    }
 
-        Spacer(modifier = Modifier.height(4.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Level:",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = selectedLevel?.toString()?.toLowerCase()?.capitalize() ?: "N/A",
-                fontSize = 14.sp,
-                modifier = Modifier.weight(1f)
-            )
-        }
+}
 
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Workouts Done:",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = "0",
-                fontSize = 14.sp,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(4.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Weekly Frequency:",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = selectedFrequency?.toString()?.toLowerCase()?.capitalize() ?: "N/A",
-                fontSize = 14.sp,
-                modifier = Modifier.weight(1f)
-            )
-        }
+@Composable
+fun AlignedTextItem(label: String, value: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.Gray,
+            modifier = Modifier.padding(end = 16.dp)
+        )
+        Text(
+            text = value,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier.padding(start = 16.dp)
+        )
     }
 }
 
@@ -322,7 +272,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                     .padding(bottom = 8.dp)
                     .clickable {
                         selectHandler(ManageWorkoutEvent.SelectWorkout(workout))
-                         },
+                    },
                 elevation = 4.dp
             ) {
                 Row(

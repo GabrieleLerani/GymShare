@@ -72,7 +72,7 @@ fun BottomNavigationBar(navController: NavController) {
                             modifier = Modifier.size(iconSize), // Adjust the size of the icon
                             tint = iconColor
                         )
-                        //Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
+
                     }
                 },
                 label = {
@@ -217,15 +217,6 @@ fun DynamicTopBar(
     val showNotification = remember { mutableStateOf(false) }
     val notificationMessage = remember { mutableStateOf("") }
 
-    /*LaunchedEffect(Unit) {
-        while (true) {
-            delay(30000) // Change interval as needed
-            notificationMessage.value = getRandomMessage()
-            showNotification.value = true
-            delay(5000) // Notification display duration
-            showNotification.value = false
-        }
-    }*/
 
     when (currentRoute) {
 

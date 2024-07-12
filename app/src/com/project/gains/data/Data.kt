@@ -335,14 +335,20 @@ fun generateSamplePlans(): MutableList<Plan> {
     return mutableListOf(
         Plan(
             id = 1,
-            name = "Plan 1",
+            name = "My strength plan",
             workouts = generateSampleWorkouts()
         ),
         Plan(
             id = 2,
-            name = "Plan 2",
+            name = "My Aerobic routine",
+            workouts = generateSampleWorkouts()
+        ),
+        Plan(
+            id = 3,
+            name = "Cardio plan",
             workouts = generateSampleWorkouts()
         )
+
         // Add more sample plans as needed
     )
 }

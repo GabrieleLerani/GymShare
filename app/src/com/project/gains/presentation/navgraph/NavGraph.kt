@@ -258,8 +258,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 ProgressDetailsScreen(
-                    navController = navController,
-                    shareContentViewModel = shareContentViewModel
+                    navController = navController
                 )
             }
             composable(

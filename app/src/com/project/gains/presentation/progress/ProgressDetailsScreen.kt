@@ -29,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,7 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.PeriodMetricType
@@ -58,7 +56,6 @@ import com.project.gains.data.PlotType
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
-import com.project.gains.presentation.settings.ShareContentViewModel
 
 
 import com.project.gains.theme.GainsAppTheme
@@ -70,9 +67,8 @@ import kotlin.random.Random
 @Composable
 fun ProgressDetailsScreen(
     navController: NavController,
-    shareContentViewModel: ShareContentViewModel
+
 ) {
-    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
 
     var selectedMetric by remember { mutableStateOf(TrainingMetricType.BPM) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
@@ -94,6 +90,10 @@ fun ProgressDetailsScreen(
                     .fillMaxSize()
                     .padding(start = 20.dp, end = 20.dp),
             ) {
+                item {
+                    SummaryCard(workouts = 57, calories = 10779, minutes = 539)
+                }
+                
                 item {
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -656,10 +656,8 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String) {
 @Preview(showBackground = true)
 @Composable
 fun ProgressDetailsScreenPreview() {
-    val navController = rememberNavController()
-    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
+    
     ProgressDetailsScreen(
-        navController = navController,
-        shareContentViewModel = shareContentViewModel
+        navController = rememberNavController()
     )
 }
