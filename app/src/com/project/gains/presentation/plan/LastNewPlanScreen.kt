@@ -86,6 +86,23 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
             item { Spacer(modifier = Modifier.height(10.dp)) }
 
             item {
+                if (showDialog.value) {
+                    FeedbackAlertDialog(
+                        title = "You have successfully generated your plan!",
+                        onDismissRequest = {
+                            showDialog.value = false
+                            navController.navigate(Route.PlanScreen.route)
+                        },
+                        onConfirm = {
+                            showDialog.value = false
+                            navController.navigate(Route.PlanScreen.route)
+                        },
+                        show = showDialog
+                    )
+                }
+            }
+
+            item {
                 Text(
                     text = "Choose if you want to have music while training",
                     style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
@@ -306,23 +323,6 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {}
-            }
-
-            item {
-                if (showDialog.value) {
-                    FeedbackAlertDialog(
-                        title = "You have successfully generated your plan!",
-                        onDismissRequest = {
-                            showDialog.value = false
-                            navController.navigate(Route.PlanScreen.route)
-                        },
-                        onConfirm = {
-                            showDialog.value = false
-                            navController.navigate(Route.PlanScreen.route)
-                        },
-                        show = showDialog
-                    )
-                }
             }
 
             item { Spacer(modifier = Modifier.height(10.dp)) }
