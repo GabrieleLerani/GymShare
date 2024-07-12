@@ -3,7 +3,7 @@ package com.project.gains.data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -116,7 +116,7 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: 
     data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Default.AddCircleOutline, "Add")
     data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Default.Event, "Plan")
     data object Settings : BottomNavItem(Route.SettingsScreen.route, Icons.Default.Settings, "Settings")
-    data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Explore, "Explore")
+    data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Groups, "Explore")
 }
 
 
