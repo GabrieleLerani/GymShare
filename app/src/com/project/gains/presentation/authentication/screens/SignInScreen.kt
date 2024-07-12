@@ -41,6 +41,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -71,6 +72,7 @@ import com.project.gains.presentation.Dimension.ButtonCornerShape
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignInEvent
+import com.project.gains.presentation.components.GoogleLoginButton
 import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
@@ -131,8 +133,6 @@ fun DefaultSignInContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -274,8 +274,10 @@ fun DefaultSignInContent(
                         style = TextStyle(textDecoration = TextDecoration.Underline ),
                         modifier = Modifier
                             .align(Alignment.End)
-                            .clickable { navController.navigate(Route.ForgotPasswordScreen.route)
-                                viewModel.onNavigationComplete()}
+                            .clickable {
+                                navController.navigate(Route.ForgotPasswordScreen.route)
+                                viewModel.onNavigationComplete()
+                            }
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -293,9 +295,33 @@ fun DefaultSignInContent(
                     ) {
                         Text("Login")
                     }
-                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
-                        SocialMediaIcon(icon = R.drawable.google, onClick = { navController.navigate(Route.HomeScreen.route) }, isSelected = false)
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        Divider(
+                            color = Color.Gray,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "OR",
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            color = Color.Gray
+                        )
+                        Divider(
+                            color = Color.Gray,
+                            modifier = Modifier.weight(1f)
+                        )
                     }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    GoogleLoginButton(icon = R.drawable.google, onClick = { navController.navigate(Route.HomeScreen.route) })
                 }
             }
 
@@ -339,7 +365,8 @@ fun DefaultSignInContent(
 
             Column(
                 modifier = Modifier
-                    .padding(top = 20.dp).height(60.dp),
+                    .padding(top = 20.dp)
+                    .height(60.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom
             ) {

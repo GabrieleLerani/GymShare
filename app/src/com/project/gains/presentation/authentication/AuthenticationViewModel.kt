@@ -13,6 +13,7 @@ import com.project.gains.presentation.authentication.events.SignUpEvent
 
 import com.project.gains.data.manager.UpdateListener
 import com.project.gains.domain.usecase.auth.AuthenticationUseCases
+import com.project.gains.presentation.authentication.events.OTPEvent
 import com.project.gains.util.Constants.LOGIN_SUCCESS
 import com.project.gains.util.Constants.SIGN_UP_SUCCESS
 import com.project.gains.util.Constants.USER_AUTH
@@ -20,6 +21,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import javax.inject.Inject
+import kotlin.random.Random
 
 /* Class responsible for handling authentication related events. It relies on the appEntryUseCases dependency
 * to perform operations related to saving the app entry. Notice that the latter class is injected using hilt
@@ -41,8 +43,8 @@ class AuthenticationViewModel  @Inject constructor(
     private val _navigateToAnotherScreen = MutableLiveData<Boolean>()
     val navigateToAnotherScreen: LiveData<Boolean> = _navigateToAnotherScreen
 
-    private val _otp = MutableLiveData<String>()
-    val otp: MutableLiveData<String> = _otp
+    private val _otp = MutableLiveData<Int>()
+    val otp: MutableLiveData<Int> = _otp
 
     init {
         // Set ViewModel as the listener for updates
@@ -79,6 +81,14 @@ class AuthenticationViewModel  @Inject constructor(
     private fun goSignIn(email: String, password: String) {
         viewModelScope.launch {
             authenticationUseCases.signIn(email, password)
+        }
+    }
+
+    fun onOTPEvent(event: OTPEvent) {
+        when(event) {
+            is OTPEvent.GenerateOTP -> {
+                _otp.value = Random.nextInt(0, 1000)
+            }
         }
     }
 

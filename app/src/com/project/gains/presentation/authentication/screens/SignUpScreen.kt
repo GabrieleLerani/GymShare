@@ -268,6 +268,8 @@ fun DefaultSignUpContent(
                         )
                     )
 
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     Button(
                         onClick = {
                             focusManager.clearFocus()
