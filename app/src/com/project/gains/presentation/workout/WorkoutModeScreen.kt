@@ -107,7 +107,7 @@ fun WorkoutModeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.onSurface)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         LazyColumn(
             modifier = Modifier
@@ -122,11 +122,12 @@ fun WorkoutModeScreen(
                     currentSong = currentSong ?: Song("", "", "")
                 )
             }
+            
             item {
                 // Exercise Image (Animated GIF)
                 Box(
                     modifier = Modifier
-                        .height(360.dp)
+                        .height(380.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
                 ) {
@@ -165,24 +166,21 @@ fun WorkoutModeScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             "${setsDone + 1}/$totalSets",
-                            color = Color.White,
                             fontSize = 40.sp,
                             fontWeight = FontWeight.Bold
                         )
-                        Text("Sets Done", color = Color.Gray, fontSize = 20.sp)
+                        Text("Sets Done", fontSize = 20.sp)
                     }
 
                     // Timer
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             if (!rest.value) formattedTime else restTime,
-                            color = Color.White,
                             fontSize = 40.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             if (!rest.value) "Time Left" else "Rest Left",
-                            color = Color.Gray,
                             fontSize = 20.sp
                         )
                     }
@@ -304,7 +302,7 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
                 defaultElevation = 8.dp
             ),
             shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(Color.Black)
+            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.onTertiary)
         ) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -326,27 +324,24 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
                     Text(
                         text = "Song: ${currentSong.title}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = "Artist: ${currentSong.singer}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
                     )
                     Spacer(modifier = Modifier.width(10.dp))
 
                     Text(
                         text = "Album: ${currentSong.album}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
 
                 androidx.compose.material.LinearProgressIndicator(
                     progress = currentTime / songTotalTime,
-                    color = MaterialTheme.colorScheme.surface,
+                    color = MaterialTheme.colorScheme.onSurface,
                     backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -364,12 +359,10 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
                     Text(
                         text = formatTime(currentTime),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
                     )
                     Text(
                         text = formatTime(songTotalTime),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.surface
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
@@ -387,7 +380,6 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
                         Icon(
                             imageVector = Icons.Default.FastRewind,
                             contentDescription = "Rewind",
-                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.size(40.dp)
                         )
                     }
@@ -400,7 +392,6 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
                         Icon(
                             imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
                             contentDescription = if (play.value) "Stop" else "Play",
-                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.size(40.dp)
                         )
                     }
@@ -413,7 +404,6 @@ fun MusicPopup(popup: Boolean, musicHandler: (MusicEvent) -> Unit, currentSong: 
                         Icon(
                             imageVector = Icons.Default.FastForward,
                             contentDescription = "Forward",
-                            tint = MaterialTheme.colorScheme.surface,
                             modifier = Modifier.size(40.dp)
                         )
                     }
