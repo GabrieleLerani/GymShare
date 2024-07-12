@@ -230,7 +230,6 @@ fun DynamicTopBar(
     when (currentRoute) {
 
         Route.HomeScreen.route -> {
-
             TopBar(
                 message = "Home",
                 button = {
@@ -247,6 +246,7 @@ fun DynamicTopBar(
 
             ) {}
         }
+
         Route.SettingsScreen.route -> {
             TopBar(
                 message = " General Settings",
@@ -275,6 +275,7 @@ fun DynamicTopBar(
                 }
             }
         }
+
         Route.AccountScreen.route -> {
             TopBar(
                 message = "Account Settings",
@@ -286,8 +287,10 @@ fun DynamicTopBar(
                 }
             }
         }
+
         Route.WorkoutScreen.route -> {
         }
+
         Route.WorkoutModeScreen.route -> {
             TopBar(
                 message = "Workout Mode",
@@ -458,7 +461,6 @@ fun DynamicTopBar(
             ) {
                 IconButton(onClick = {
                     navController.popBackStack()
-
                 }) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -470,7 +472,38 @@ fun DynamicTopBar(
 
 
         Route.ExerciseDetailsScreen.route -> {
+        }
 
+        Route.ForgotPasswordScreen.route -> {
+            TopBar(
+                message = "",
+                button= {}
+            ) {
+                IconButton(onClick = {
+                    navController.navigate(Route.SignInScreen.route)
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Icon"
+                    )
+                }
+            }
+        }
+
+        Route.OTPScreen.route -> {
+            TopBar(
+                message = "",
+                button= {}
+            ) {
+                IconButton(onClick = {
+                    navController.navigate(Route.SignInScreen.route)
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Icon"
+                    )
+                }
+            }
         }
 
     }
@@ -494,21 +527,23 @@ fun DynamicBottomBar(navController: NavController) {
         }
 
         // Empty because new plan has no bottom bar
-        Route.NewPlanScreen.route,
-        Route.AddManualWorkoutScreen.route,
-        Route.AddGeneratedPlanScreen.route,
-        Route.LastNewPlanScreen.route,
-        Route.WorkoutModeScreen.route,
-        Route.SearchScreen.route,
-        Route.ShareScreen.route,
-        Route.ExerciseDetailsScreen.route,
-        Route.TypedExerciseScreen.route,
-        Route.ProgressDetailsScreen.route,
-        Route.AccountScreen.route,
-        Route.LinkedSocialSettingScreen.route,
-        Route.SignInScreen.route,
-        Route.SignUpScreen.route,
+        Route.NewPlanScreen.route -> {}
+        Route.AddManualWorkoutScreen.route -> {}
+        Route.AddGeneratedPlanScreen.route -> {}
+        Route.LastNewPlanScreen.route -> {}
+        Route.WorkoutModeScreen.route -> {}
+        Route.SearchScreen.route -> {}
+        Route.ShareScreen.route -> {}
+        Route.ExerciseDetailsScreen.route -> {}
+        Route.TypedExerciseScreen.route -> {}
+        Route.ProgressDetailsScreen.route -> {}
+        Route.AccountScreen.route -> {}
+        Route.LinkedSocialSettingScreen.route -> {}
+        Route.SignInScreen.route -> {}
+        Route.SignUpScreen.route -> {}
         Route.OnBoardingScreen.route -> {}
+        Route.ForgotPasswordScreen.route -> {}
+        Route.OTPScreen.route -> {}
 
         else -> {
             BottomNavigationBar(navController = navController)
