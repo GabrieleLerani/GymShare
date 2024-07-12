@@ -50,7 +50,7 @@ fun NewPlanScreen(
                         .padding(30.dp),
                 ) {
                     Text(
-                        text = "Create a new Workout/Plan",
+                        text = "New Plan or Workout",
                         style = MaterialTheme.typography.headlineLarge,
                     )
 

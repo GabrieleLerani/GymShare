@@ -70,7 +70,6 @@ fun HomeScreen(
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
     val workouts by workoutViewModel.workouts.observeAsState()
-    // notifications
 
 
     CustomBackHandler(
@@ -86,7 +85,6 @@ fun HomeScreen(
     GainsAppTheme {
         Box(
             modifier = Modifier
-                .padding(paddingValues)
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -106,7 +104,7 @@ fun HomeScreen(
                 }
 
                 item {
-                    HorizontalScrollScreenWorkout(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList(), selectWorkoutHandler = selectWorkoutHandler)
+                    HorizontalScrollScreenWorkoutFavourites(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList(), selectWorkoutHandler = selectWorkoutHandler)
                 }
 
 
@@ -289,6 +287,68 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                                     navController.navigate(Route.WorkoutScreen.route)
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
+@Composable
+fun HorizontalScrollScreenWorkoutFavourites(navController: NavController, title: String, items2:List<Workout> = listOf(),selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit) {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .height(180.dp)
+    ) {
+        // BowWithConstraints will provide the maxWidth used below
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Text(
+                    text = if (items2.isNotEmpty()) "Your $title" else "No $title",
+                    style = MaterialTheme.typography.labelLarge, // Make it bigger and bold
+                    color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp) // Add padding here for space between text and border
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(16.dp)
+                        )
+                        .border(
+                            border = BorderStroke(
+                                width = 3.dp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            ), shape = RoundedCornerShape(16.dp)
+                        )
+                        .padding(16.dp)
+                ) // Additional padding inside the background and border
+
+                if (items2.isNotEmpty()) {
+                    LazyRow(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        state = rememberLazyListState()
+                    ) {
+                        itemsIndexed(items2) { _, item ->
+                                Card(imageResId = R.drawable.logo, title = item.name) {
+                                    selectWorkoutHandler(
+                                        ManageWorkoutEvent.SelectWorkout(
+                                            item
+                                        )
+                                    )
+                                    navController.navigate(Route.WorkoutScreen.route)
+                                }
                         }
                     }
                 }
