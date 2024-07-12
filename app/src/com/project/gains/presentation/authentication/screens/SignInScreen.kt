@@ -108,7 +108,6 @@ fun DefaultSignInContent(
 ) {
     // mutable state
     val isLoading by viewModel.isLoading.observeAsState()
-    val isError by viewModel.isError.observeAsState()
 
     // fields of interest
     var email by remember { mutableStateOf("") }
@@ -123,9 +122,11 @@ fun DefaultSignInContent(
     val focusManager = LocalFocusManager.current
 
     // Validation state
-    var emailEmpty by remember { mutableStateOf(false) }
-    var passwordEmpty by remember { mutableStateOf(false) }
-    var loginFailed by remember { mutableStateOf(false) }
+
+    val errorMessage = remember { mutableStateOf("") }
+    var inputInserted by remember { mutableStateOf(false) }
+
+
 
     Column(
         modifier = Modifier
@@ -134,7 +135,7 @@ fun DefaultSignInContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (emailEmpty) {
+        if (inputInserted && (email.isEmpty() || password.isEmpty())) {
             Card(
                 backgroundColor = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(16.dp),
@@ -143,7 +144,7 @@ fun DefaultSignInContent(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Empty email. Please insert one.",
+                    text = "Empty " +  if(password.isEmpty()){ "Password" }else{ "" }+ if (email.isEmpty()){ " And Email" }else{ "" }+ ". Please insert one.",
                     color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -151,7 +152,7 @@ fun DefaultSignInContent(
                 )
             }
         }
-        if (passwordEmpty) {
+        if (errorMessage.value.isNotEmpty()) {
             Card(
                 backgroundColor = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(16.dp),
@@ -160,24 +161,7 @@ fun DefaultSignInContent(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Empty password. Please insert one.",
-                    color = MaterialTheme.colorScheme.surface,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-        }
-        if (loginFailed) {
-            Card(
-                backgroundColor = MaterialTheme.colorScheme.error,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "Login failed. Please check your credentials and try again.",
+                    text = "Login failed. Please check your credentials and try again. The error is: ${errorMessage.value}",
                     color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -198,7 +182,6 @@ fun DefaultSignInContent(
             value = email,
             onValueChange = {
                 email = it
-                if (email.isNotEmpty()) emailEmpty = false
             },
             label = {
                 Text(
@@ -217,8 +200,8 @@ fun DefaultSignInContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (emailEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (emailEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                focusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
 
@@ -226,7 +209,6 @@ fun DefaultSignInContent(
             value = password,
             onValueChange = {
                 password = it
-                if (password.isNotEmpty()) passwordEmpty = false
             },
             label = {
                 Text(
@@ -260,19 +242,16 @@ fun DefaultSignInContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (passwordEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (passwordEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                focusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
         Button(
             onClick = {
                 focusManager.clearFocus()
-                emailEmpty = email.isEmpty()
-                passwordEmpty = password.isEmpty()
-
-                loginFailed = false
-
-                if (!emailEmpty && !passwordEmpty) {
+                if (email.isEmpty() || password.isEmpty()) {
+                    inputInserted=true
+                }else{
                     signInHandler(SignInEvent.SignIn(email, password))
                 }
             },
@@ -324,10 +303,9 @@ fun DefaultSignInContent(
         if (data?.isNotEmpty() == true) {
             when (data) {
                 LOGIN_FAILED -> {
-                    loginFailed = true
+                    errorMessage.value = data.toString()
                 }
                 else -> {
-                    loginFailed = false
                 }
             }
 

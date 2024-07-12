@@ -93,10 +93,8 @@ fun DefaultSignUpContent(
     val openPopup = remember { mutableStateOf(false) }
 
     val errorMessage = remember { mutableStateOf("") }
-    var nameEmpty by remember { mutableStateOf(false) }
-    var emailEmpty by remember { mutableStateOf(false) }
-    var passwordEmpty by remember { mutableStateOf(false) }
-    var loginFailed by remember { mutableStateOf(false) }
+    var inputInserted by remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -106,7 +104,7 @@ fun DefaultSignUpContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        if (nameEmpty) {
+        if (inputInserted &&(name.isEmpty() || email.isEmpty() || password.isEmpty())) {
             Card(
                 backgroundColor = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(16.dp),
@@ -115,7 +113,7 @@ fun DefaultSignUpContent(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Name email. Please insert one.",
+                    text = "Empty " +  if (name.isEmpty()){ "Name" }else{ ""} + if(password.isEmpty()){ " And Password" }else{ "" }+ if (email.isEmpty()){ ", Email" }else{ "" }+ ". Please insert one.",
                     color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -123,7 +121,7 @@ fun DefaultSignUpContent(
                 )
             }
         }
-        if (emailEmpty) {
+        if (errorMessage.value.isNotEmpty()) {
             Card(
                 backgroundColor = MaterialTheme.colorScheme.error,
                 shape = RoundedCornerShape(16.dp),
@@ -132,41 +130,7 @@ fun DefaultSignUpContent(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Empty email. Please insert one.",
-                    color = MaterialTheme.colorScheme.surface,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-        }
-        if (passwordEmpty) {
-            Card(
-                backgroundColor = MaterialTheme.colorScheme.error,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "Empty password. Please insert one.",
-                    color = MaterialTheme.colorScheme.surface,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
-        }
-        if (loginFailed) {
-            Card(
-                backgroundColor = MaterialTheme.colorScheme.error,
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = "Login failed. Please check your credentials and try again. The error is ${errorMessage.value}",
+                    text = "SignUp failed. Please check your credentials and try again. The error is: ${errorMessage.value}",
                     color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -203,8 +167,8 @@ fun DefaultSignUpContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = 20.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                focusedBorderColor = if (name.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (name.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
         OutlinedTextField(
@@ -228,8 +192,8 @@ fun DefaultSignUpContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = 20.dp),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                focusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
         OutlinedTextField(
@@ -268,15 +232,15 @@ fun DefaultSignUpContent(
                 .padding(bottom = 10.dp),
             shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary
+                focusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
         )
         Button(
             onClick = {
                 focusManager.clearFocus()
                 if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    errorMessage.value = "All fields are required."
+                    inputInserted=true
                 } else {
                     errorMessage.value = ""
                     openPopup.value = true
@@ -321,10 +285,6 @@ fun DefaultSignUpContent(
             modifier = Modifier.padding(top = 5.dp)
         )
 
-        if (isError == true) {
-            errorMessage.value="Check your internet connection and retry"
-        }
-
         if (isLoading == true) {
             val progress = remember { Animatable(0f) }
             LaunchedEffect(Unit) {
@@ -352,10 +312,6 @@ fun DefaultSignUpContent(
             }
         }
 
-        if (errorMessage.value.isNotEmpty()) {
-            loginFailed=true
-        }
-
         if (openPopup.value == true) {
             FeedbackAlertDialogOptions(
                 message = "Are you sure your credentials are correct?",
@@ -367,9 +323,8 @@ fun DefaultSignUpContent(
         if (data?.isNotEmpty() == true) {
 
             if (data.equals(SIGN_UP_SUCCESS)){
-                loginFailed=false
             }else{
-                loginFailed=true
+                errorMessage.value = data.toString()
             }
 
             // Change page if all ok
