@@ -8,8 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigationItem
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -30,13 +33,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -221,10 +219,10 @@ fun DynamicTopBar(
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(5000) // Change interval as needed
+            delay(30000) // Change interval as needed
             notificationMessage.value = getRandomMessage()
             showNotification.value = true
-            delay(3000) // Notification display duration
+            delay(5000) // Notification display duration
             showNotification.value = false
         }
     }
@@ -510,17 +508,13 @@ fun DynamicBottomBar(navController: NavController) {
         Route.LinkedSocialSettingScreen.route,
         Route.SignInScreen.route,
         Route.SignUpScreen.route,
-        Route.OnBoardingScreen.route -> {
-
-        }
+        Route.OnBoardingScreen.route -> {}
 
         else -> {
             BottomNavigationBar(navController = navController)
         }
     }
 }
-
-
 
 @Composable
 fun BackButton(onClick: () -> Unit) {

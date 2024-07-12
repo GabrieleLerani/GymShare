@@ -1,13 +1,5 @@
 package com.project.gains.presentation.authentication.screens
 
-
-//noinspection UsingMaterialAndMaterial3Libraries
-
-//noinspection UsingMaterialAndMaterial3Libraries
-
-//noinspection UsingMaterialAndMaterial3Libraries
-
-
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
@@ -21,12 +13,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Card
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Text
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -44,11 +40,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -62,7 +56,6 @@ import androidx.navigation.NavController
 import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignUpEvent
-import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.FeedbackAlertDialogOptions
 import com.project.gains.presentation.navgraph.Route
 
@@ -173,7 +166,7 @@ fun DefaultSignUpContent(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Login failed. Please Check your credentials and try again. The error is ${errorMessage.value}",
+                    text = "Login failed. Please check your credentials and try again. The error is ${errorMessage.value}",
                     color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier

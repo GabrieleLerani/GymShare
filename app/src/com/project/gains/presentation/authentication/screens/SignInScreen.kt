@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
 
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +53,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -77,7 +78,6 @@ import com.project.gains.theme.GainsAppTheme
 
 import com.project.gains.util.Constants.LOGIN_FAILED
 
-
 @Composable
 fun SignInScreen(
     signInHandler: (SignInEvent.SignIn) -> Unit,
@@ -98,9 +98,7 @@ fun SignInScreen(
             navController
         )
     }
-
 }
-
 
 @Composable
 fun DefaultSignInContent(
@@ -111,7 +109,6 @@ fun DefaultSignInContent(
     // mutable state
     val isLoading by viewModel.isLoading.observeAsState()
     val isError by viewModel.isError.observeAsState()
-
 
     // fields of interest
     var email by remember { mutableStateOf("") }
@@ -180,7 +177,7 @@ fun DefaultSignInContent(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = "Login failed. Please Check your credentials and try again.",
+                    text = "Login failed. Please check your credentials and try again.",
                     color = MaterialTheme.colorScheme.surface,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -251,7 +248,6 @@ fun DefaultSignInContent(
                     Icons.Default.Visibility
                 else
                     Icons.Default.VisibilityOff
-
 
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
@@ -364,7 +360,6 @@ fun DefaultSignInContent(
                     progress = { progress.value },
                     color = MaterialTheme.colorScheme.tertiary,
                 )
-
             }
         }
     }
