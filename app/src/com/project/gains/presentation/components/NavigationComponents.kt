@@ -21,16 +21,23 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -48,54 +55,54 @@ import kotlinx.coroutines.delay
 @Composable
 fun BottomNavigationBar(navController: NavController) {
 
-    BottomNavigation(
-        backgroundColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.height(64.dp),
-        elevation = 10.dp
+    var selectedItemIndex by rememberSaveable {
+        mutableIntStateOf(0)
+    }
 
-    ) {
+    NavigationBar {
         val currentRoute = currentRoute(navController)
-        bottomNavItems.forEach { item ->
+        bottomNavItems.forEachIndexed { index, item ->
             val isSelected = currentRoute == item.route
             val iconColor = if (isSelected) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.onSurface
             val iconSize = 32.dp
             val textColor = if (isSelected) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.onSurface
 
-            BottomNavigationItem(
-                icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Spacer(modifier = Modifier.height(6.dp)) // Add spacing between icon and text
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.title,
-                            modifier = Modifier.size(iconSize), // Adjust the size of the icon
-                            tint = iconColor
-                        )
-
-                    }
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        fontSize = 12.sp, // Set the desired text size here
-                        maxLines = 1, // Limit to one line to prevent overflow
-                        color = textColor
-                    )
-                },
+            NavigationBarItem(
                 selected = isSelected,
+                alwaysShowLabel = true,
                 onClick = {
+                    selectedItemIndex = index
                     navController.navigate(item.route) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
                     }
+                    launchSingleTop = true
+                    restoreState = true
+                } },
+                label = {
+                        Text(text = item.title)
                 },
-                alwaysShowLabel = true // This will hide labels when not selected
+                icon = { BadgedBox(
+                    badge = {
+                        if(item.badgeCount != null) {
+                            Badge {
+                                Text(text = item.badgeCount.toString())
+                            }
+                        } else if(item.hasNews) {
+                            Badge()
+                        }
+                    })
+                    {
+                        Icon(
+                            imageVector = if (index == selectedItemIndex) {
+                                item.selectedIcon
+                            } else item.unselectedIcon,
+                            contentDescription = item.title
+                        )
+                    }
+                }
             )
         }
     }

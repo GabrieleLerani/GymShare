@@ -6,6 +6,11 @@ import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AddCircleOutline
+import androidx.compose.material.icons.outlined.Event
+import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.project.gains.R
 import com.project.gains.presentation.navgraph.Route
@@ -111,12 +116,19 @@ data class Option(
     var isChecked: Boolean = false
 )
 
-sealed class BottomNavItem(val route: String, val icon: ImageVector, val title: String) {
-    data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Default.Home, "Home")
-    data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Default.AddCircleOutline, "Add")
-    data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Default.Event, "Plan")
-    data object Settings : BottomNavItem(Route.SettingsScreen.route, Icons.Default.Settings, "Settings")
-    data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Default.Groups, "Explore")
+sealed class BottomNavItem(
+    val route: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
+    val title: String,
+    val hasNews: Boolean,
+    val badgeCount: Int? = null,
+    ) {
+    data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Filled.Home, Icons.Outlined.Home, "Home", false)
+    data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Filled.AddCircleOutline, Icons.Outlined.AddCircleOutline,"Add", false)
+    data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Filled.Event, Icons.Outlined.Event,"Plan" , false)
+    data object Settings : BottomNavItem(Route.SettingsScreen.route, Icons.Filled.Settings, Icons.Outlined.Settings,"Settings", false)
+    data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Filled.Groups, Icons.Outlined.Groups, "Explore", false ,8)
 }
 
 
