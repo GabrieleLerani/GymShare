@@ -47,6 +47,7 @@ import com.project.gains.data.Exercise
 import com.project.gains.data.Workout
 import com.project.gains.data.getRandomMessage
 import com.project.gains.presentation.components.NotificationCard
+import com.project.gains.presentation.components.SearchAppBar
 import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -92,6 +93,20 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Top
 
             ) {
+
+                item {
+                    SearchAppBar(
+                        value = "",
+                        placeholder = "Search exercises here...",
+                        onValueChange = {},
+                        onCloseClicked = {},
+                        onSearchClicked = {},
+                        onClick = {
+                            navController.navigate(Route.TypedExerciseScreen.route)
+                        },
+                        enabled = false
+                    )
+                }
 
 
 
