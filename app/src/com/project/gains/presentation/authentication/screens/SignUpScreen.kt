@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -84,7 +85,6 @@ fun DefaultSignUpContent(
 ) {
     // mutable state
     val isLoading by viewModel.isLoading.observeAsState()
-    val isError by viewModel.isError.observeAsState()
 
     // fields of interest
     var name by remember { mutableStateOf("") }
@@ -273,13 +273,12 @@ fun DefaultSignUpContent(
                             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
                                 inputInserted=true
                             } else {
-                                errorMessage.value = ""
                                 openPopup.value = true
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Login")
+                        Text("SignUp")
                     }
                 }
             }
@@ -289,7 +288,10 @@ fun DefaultSignUpContent(
             Text(
                 text = "Already have an account? Login",
                 color = Color.Blue,
-                modifier = Modifier.clickable { navController.navigate(Route.SignInScreen.route) }
+                style = TextStyle(textDecoration = TextDecoration.Underline ),
+                modifier = Modifier.clickable {
+                    navController.navigate(Route.SignInScreen.route)
+                    viewModel.onNavigationComplete()}
             )
         }
 

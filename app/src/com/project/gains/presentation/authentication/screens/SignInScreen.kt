@@ -10,6 +10,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,19 +55,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.project.gains.R
 import com.project.gains.presentation.CustomBackHandler
 import com.project.gains.presentation.Dimension.ButtonCornerShape
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignInEvent
+import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
@@ -263,10 +268,12 @@ fun DefaultSignInContent(
 
                     Text(
                         text = "Forgot Password?",
-                        color = Color.Blue,
+                        color = MaterialTheme.colorScheme.tertiary,
+                        style = TextStyle(textDecoration = TextDecoration.Underline ),
                         modifier = Modifier
                             .align(Alignment.End)
-                            .clickable { navController.navigate(Route.ForgotPasswordScreen.route) }
+                            .clickable { navController.navigate(Route.ForgotPasswordScreen.route)
+                                viewModel.onNavigationComplete()}
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -284,6 +291,9 @@ fun DefaultSignInContent(
                     ) {
                         Text("Login")
                     }
+                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
+                        SocialMediaIcon(icon = R.drawable.google, onClick = { navController.navigate(Route.HomeScreen.route) }, isSelected = false)
+                    }
                 }
             }
 
@@ -291,8 +301,10 @@ fun DefaultSignInContent(
 
             Text(
                 text = "Don't have an account? Sign up",
+                style = TextStyle(textDecoration = TextDecoration.Underline ),
                 color = Color.Blue,
-                modifier = Modifier.clickable { navController.navigate(Route.SignUpScreen.route) }
+                modifier = Modifier.clickable { navController.navigate(Route.SignUpScreen.route)
+                    viewModel.onNavigationComplete()}
             )
         }
 
