@@ -79,6 +79,8 @@ fun AddManualWorkout(
     addNameHandler: (ManageExercises.SelectWorkoutStored) -> Unit,
     selectExerciseHandler: (ExerciseEvent.SelectIsToAdd) -> Unit,
     deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
+    deleteAllExerciseHandler: (ManageExercises.DeleteAllExercise) -> Unit,
+
     createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit
 ) {
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
@@ -268,6 +270,7 @@ fun AddManualWorkout(
                             }
                         }
                     }
+
                 }
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
@@ -276,7 +279,6 @@ fun AddManualWorkout(
                     FooterButton(
                         onClickSaveWorkout = {
                             showDialog.value = true
-
                             val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
                             addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
                             createWorkoutHandler(
@@ -290,9 +292,8 @@ fun AddManualWorkout(
                                 )
                             )
                             // after the assignment, delete all exercises so it is ready for a new use
-                            selectedExercises.forEach {
-                                deleteExerciseHandler(ManageExercises.DeleteExercise(it))
-                            }
+                            deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
+
                         },
                         onClickAddExercise = {
                             selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
@@ -401,6 +402,7 @@ fun ScreenPrev(){
         addNameHandler = {},
         selectExerciseHandler = {},
         deleteExerciseHandler = {},
-        createWorkoutHandler = {}
+        createWorkoutHandler = {},
+        deleteAllExerciseHandler = {}
     )
 }

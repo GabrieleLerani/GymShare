@@ -31,6 +31,10 @@ class ManualWorkoutViewModel @Inject constructor() : ViewModel() {
             is ManageExercises.SelectWorkoutStored -> {
                 _workoutTitle.value=event.name
             }
+
+            is ManageExercises.DeleteAllExercise -> {
+                _selectedExercises.value= mutableListOf()
+            }
         }
     }
 }

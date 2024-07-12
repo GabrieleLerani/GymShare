@@ -229,6 +229,7 @@ fun NavGraph(
                     manualWorkoutViewModel = manualWorkoutViewModel,
                     addNameHandler =  manualWorkoutViewModel::onManageExercisesEvent,
                     deleteExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
+                    deleteAllExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     createWorkoutHandler = workoutViewModel::onManageWorkoutEvent)
             }
