@@ -37,23 +37,28 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.project.gains.data.Workout
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.SharingMediaIcon
 import com.project.gains.presentation.components.SocialMediaIcon
+import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.settings.ShareContentViewModel
+import com.project.gains.presentation.workout.WorkoutViewModel
 
 
 @Composable
 fun ShareScreen(
     navController: NavController,
-    shareContentViewModel: ShareContentViewModel
+    shareContentViewModel: ShareContentViewModel,
+    workoutViewModel: WorkoutViewModel,
+    shareHandler: (SearchEvent.GymPostWorkoutEvent)->Unit
 ) {
     var clickedApp by remember { mutableIntStateOf(1) }
     var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
     val showDialog = remember { mutableStateOf(false) }
     val showErrorDialog = remember { mutableStateOf(false) }
-
+    val workout by workoutViewModel.selectedWorkout.observeAsState()
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
     val apps by shareContentViewModel.linkedApps.observeAsState()
 
@@ -166,6 +171,9 @@ fun ShareScreen(
                 } else if (apps?.isEmpty() == false) {
                     Button(
                         onClick = {
+                            workout?.let { SearchEvent.GymPostWorkoutEvent(it) }
+                                ?.let { shareHandler(it) }
+
                             showDialog.value = true
                         },
                         modifier = Modifier

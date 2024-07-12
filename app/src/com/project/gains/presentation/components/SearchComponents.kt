@@ -177,13 +177,13 @@ fun FilterChip(
     androidx.compose.material3.Text(
         text = category.toString(),
         style = androidx.compose.material3.MaterialTheme.typography.headlineSmall.copy(),
-        color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.error else MaterialTheme.colors.primary,
+        color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.primary else androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
         modifier = Modifier
             .clickable { onCategorySelected(category) }
             .background(
                 color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.errorContainer.copy(
                     alpha = 0.1f
-                ) else MaterialTheme.colors.primary.copy(alpha = 0.1f),
+                ) else androidx.compose.material3.MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                 RoundedCornerShape(30.dp)
             )
             .padding(10.dp) // Add padding for better spacing

@@ -244,7 +244,9 @@ fun NavGraph(
             ) {
                 ShareScreen(
                     navController =navController ,
-                    shareContentViewModel = shareContentViewModel
+                    shareContentViewModel = shareContentViewModel,
+                    shareHandler = feedViewModel::onSearchEvent,
+                    workoutViewModel = workoutViewModel
                 )
             }
             composable(

@@ -2,6 +2,7 @@ package com.project.gains.presentation.explore
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.project.gains.R
 import com.project.gains.data.Categories
 import com.project.gains.data.GymPost
 import com.project.gains.data.generateRandomGymPost
@@ -22,7 +23,7 @@ class FeedViewModel @Inject constructor() : ViewModel() {
         when(event) {
             is SearchEvent.SearchGymPostEvent -> {
 
-                val temporalPosts = generateRandomGymPost(50).toMutableList()
+                val temporalPosts = _posts.value ?: mutableListOf()
                 val results: MutableList<GymPost> = mutableListOf()
 
                 when (event.selectedCategory) {
@@ -73,6 +74,21 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                 }
 
                 _posts.value = results.toMutableList()
+            }
+
+            is SearchEvent.GymPostWorkoutEvent -> {
+                val workoutName: String = event.workout.name // Assuming event.workout.name is the workout name
+
+                val desc: String = buildString {
+                    appendLine("Workout: $workoutName")
+                    event.workout.exercises.forEachIndexed { index, exercise ->
+                        appendLine("${index + 1}. ${exercise.name}")
+                    }
+                }
+
+// TODO
+                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = "user 2", social = "Instagram", randomSocialId = R.drawable.instagram_icon, caption = desc, time = "10:13", likes = "123", comment = "234")
+                _posts.value?.add(post)
             }
         }
     }
