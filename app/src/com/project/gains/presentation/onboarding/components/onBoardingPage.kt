@@ -2,12 +2,15 @@ package com.project.gains.presentation.onboarding.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -17,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +28,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -51,12 +57,13 @@ import kotlinx.coroutines.launch
 fun OnBoardingPage(
     onClickHandler:()->Unit,
     pagerState: PagerState,
-    modifier: Modifier = Modifier,
     page: Page,
 ) {
     val rememberPage = remember { page }
 
     val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
+
 
     LazyColumn(
         modifier = Modifier
@@ -71,37 +78,37 @@ fun OnBoardingPage(
             ) {
                 Text(
                     text = rememberPage.title,
-                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier
+                        .padding(16.dp),
+                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
                 )
-
                 Spacer(modifier = Modifier.padding(30.dp))
             }
 
         }
         item {
-            Column(modifier = modifier) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 8.dp)
+                    .height(400.dp)
+                    .background(Color.Gray, RoundedCornerShape(16.dp))
+            ) {
                 Image(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.60f),
-                    painter = painterResource(id = page.image),
+                        .fillMaxSize(),
+                    painter = painterResource(id = rememberPage.image),
                     contentDescription = null,
                     contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.height(MediumPadding1))
+                }
                 Text(
-                    text = page.title,
-                    modifier = Modifier.padding(horizontal = MediumPadding2),
-                    style = MaterialTheme.typography.displaySmall.copy(fontWeight = FontWeight.Bold),
-                )
-                Text(
-                    text = page.description,
-                    modifier = Modifier.padding(horizontal = MediumPadding2),
+                    text = rememberPage.description,
                     style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
                 )
 
             }
-        }
 
         item {
             if (pagerState.currentPage==2) {
@@ -113,9 +120,6 @@ fun OnBoardingPage(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
-
-                    val scope = rememberCoroutineScope()
 
                     OnBoardingButton(
                         text = "Start Gym Share!",
