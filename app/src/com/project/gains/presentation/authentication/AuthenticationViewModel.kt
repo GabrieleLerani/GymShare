@@ -41,6 +41,8 @@ class AuthenticationViewModel  @Inject constructor(
     private val _navigateToAnotherScreen = MutableLiveData<Boolean>()
     val navigateToAnotherScreen: LiveData<Boolean> = _navigateToAnotherScreen
 
+    private val _otp = MutableLiveData<String>()
+    val otp: MutableLiveData<String> = _otp
 
     init {
         // Set ViewModel as the listener for updates

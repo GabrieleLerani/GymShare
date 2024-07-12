@@ -4,10 +4,13 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -40,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -139,151 +143,155 @@ fun DefaultSignUpContent(
             }
         }
 
-        Text(
-            text = "Sign up",
-            style = MaterialTheme.typography.displayMedium,
-            fontSize = 45.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 35.dp)
-        )
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = {
-                Text(
-                    "Name",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            ),
-
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (name.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (name.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-            )
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = {
-                Text(
-                    "Email",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            ),
-
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-            )
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = {
-                Text(
-                    text = "Password",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                )
-            },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
-            ),
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                val image = if (passwordVisible)
-                    Icons.Default.Visibility
-                else
-                    Icons.Default.VisibilityOff
-
-
-                val description = if (passwordVisible) "Hide password" else "Show password"
-
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(imageVector = image, contentDescription = description)
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-            )
-        )
-        Button(
-            onClick = {
-                focusManager.clearFocus()
-                if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    inputInserted=true
-                } else {
-                    errorMessage.value = ""
-                    openPopup.value = true
-                }
-            },
-            shape = RoundedCornerShape(size = 20.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary, // Orange
-                contentColor = MaterialTheme.colorScheme.onPrimary // Text color
-            )
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("Sign Up")
-        }
-        val text = AnnotatedString.Builder().apply {
-            pushStringAnnotation(
-                tag = "LINK",
-                annotation = "destination_page"
-            )
-            withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.tertiary,
-                    textDecoration = TextDecoration.Underline
-                )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                elevation = 20.dp
             ) {
-                append("You don't have an account? Click here to go to Login ")
-            }
-            pop()
-        }.toAnnotatedString()
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Sign up",
+                        style = MaterialTheme.typography.displayMedium,
+                        fontSize = 45.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 35.dp)
+                    )
 
-        ClickableText(
-            text = text,
-            onClick = { offset ->
-                text.getStringAnnotations("LINK", offset, offset)
-                    .firstOrNull()?.let {
-                        navController.navigate(Route.SignInScreen.route)
-                        viewModel.onNavigationComplete()
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = {
+                            Text(
+                                "Name",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                        ),
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp),
+                        shape = RoundedCornerShape(size = 20.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = if (name.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = if (name.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = {
+                            Text(
+                                "Email",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                        ),
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp),
+                        shape = RoundedCornerShape(size = 20.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = if (email.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = {
+                            Text(
+                                text = "Password",
+                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        ),
+                        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            val image = if (passwordVisible)
+                                Icons.Default.Visibility
+                            else
+                                Icons.Default.VisibilityOff
+
+
+                            val description = if (passwordVisible) "Hide password" else "Show password"
+
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Icon(imageVector = image, contentDescription = description)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp),
+                        shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = if (password.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                        )
+                    )
+
+                    Button(
+                        onClick = {
+                            focusManager.clearFocus()
+                            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                                inputInserted=true
+                            } else {
+                                errorMessage.value = ""
+                                openPopup.value = true
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Login")
                     }
-            },
-            modifier = Modifier.padding(top = 5.dp)
-        )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Already have an account? Login",
+                color = Color.Blue,
+                modifier = Modifier.clickable { navController.navigate(Route.SignInScreen.route) }
+            )
+        }
 
         if (isLoading == true) {
             val progress = remember { Animatable(0f) }
