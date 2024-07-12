@@ -147,7 +147,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation("com.google.firebase:firebase-auth:22.3.1")
 
-
+    implementation ("androidx.work:work-runtime:2.9.0")
     
     // Test
     testImplementation("junit:junit:4.13.2")

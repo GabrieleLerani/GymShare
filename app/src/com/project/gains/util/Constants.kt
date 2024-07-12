@@ -19,4 +19,11 @@ object Constants {
     const val APP_ENTRY = "appEntry"
     const val FIRESTORE_ID = "firestore"
     const val LINKED_APPS = "linkedApps"
+
+
+    const val NOTIFICATION_CHANNEL_ID = "reminder"
+    const val NOTIFICATION_NAME = "reminder channel"
+    const val NOTIFICATION_DESCRIPTION = "A notification channel for reminders"
+
+    const val WORK_NAME = "NotificationWork"
 }

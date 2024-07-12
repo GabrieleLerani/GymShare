@@ -41,6 +41,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
+
+    fun isAuth() : Boolean{
+        return authenticationUseCases.authCheck()
+    }
+
     override fun onCleared() {
         super.onCleared()
         release()
