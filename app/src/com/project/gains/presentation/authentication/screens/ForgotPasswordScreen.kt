@@ -109,28 +109,6 @@ fun ForgotPasswordScreen(
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                if (email.isEmpty() && inputInserted) {
-                    Card(
-                        backgroundColor = MaterialTheme.colorScheme.error,
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = "Empty " + if (email.isEmpty()) {
-                                "Email"
-                            } else {
-                                ""
-                            } + ". Please insert one.",
-                            color = MaterialTheme.colorScheme.surface,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(16.dp)
-                        )
-                    }
-                }
-
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -157,7 +135,17 @@ fun ForgotPasswordScreen(
                     )
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                if (email.isEmpty() && inputInserted) {
+                    Text(
+                        text = "Empty email. Please insert one.",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 15.sp,
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                    )
+                } else {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
                 Button(
                     onClick = {

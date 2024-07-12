@@ -544,6 +544,7 @@ fun DynamicBottomBar(navController: NavController) {
         Route.OnBoardingScreen.route -> {}
         Route.ForgotPasswordScreen.route -> {}
         Route.OTPScreen.route -> {}
+        Route.ChangePasswordScreen.route -> {}
 
         else -> {
             BottomNavigationBar(navController = navController)
