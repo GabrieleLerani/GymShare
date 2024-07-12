@@ -122,7 +122,7 @@ sealed class BottomNavItem(
     val unselectedIcon: ImageVector,
     val title: String,
     val hasNews: Boolean,
-    val badgeCount: Int? = null,
+    var badgeCount: Int? = null,
     ) {
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Filled.Home, Icons.Outlined.Home, "Home", false)
     data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Filled.AddCircleOutline, Icons.Outlined.AddCircleOutline,"Add", false)

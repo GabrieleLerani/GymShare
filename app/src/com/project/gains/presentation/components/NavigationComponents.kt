@@ -1,18 +1,14 @@
 package com.project.gains.presentation.components
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.BottomNavigation
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.BottomNavigationItem
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -31,7 +27,6 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,14 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
-import com.project.gains.data.getRandomMessage
 import com.project.gains.presentation.navgraph.Route
-import kotlinx.coroutines.delay
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -63,14 +55,15 @@ fun BottomNavigationBar(navController: NavController) {
         val currentRoute = currentRoute(navController)
         bottomNavItems.forEachIndexed { index, item ->
             val isSelected = currentRoute == item.route
-            val iconColor = if (isSelected) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.onSurface
-            val iconSize = 32.dp
-            val textColor = if (isSelected) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.onSurface
 
             NavigationBarItem(
                 selected = isSelected,
                 alwaysShowLabel = true,
                 onClick = {
+                    if(item.badgeCount != null) {
+                        item.badgeCount = null
+                    }
+
                     selectedItemIndex = index
                     navController.navigate(item.route) {
                     launchSingleTop = true
