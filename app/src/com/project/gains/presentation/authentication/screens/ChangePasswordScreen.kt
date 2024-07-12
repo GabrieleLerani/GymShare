@@ -16,19 +16,37 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.R
-import com.project.gains.presentation.authentication.events.OTPEvent
+import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.navgraph.Route
 
 @Composable
-fun ChangePasswordScreen(onChangePassword: (String, String) -> Unit) {
+fun ChangePasswordScreen(onChangePassword: () -> Unit) {
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
 
     val focusManager = LocalFocusManager.current
+
+
+
+        if (showDialog.value) {
+            FeedbackAlertDialog(
+                title = "You have successfully updated your password!",
+                onDismissRequest = {
+                    showDialog.value = false
+                },
+                onConfirm = {
+                    showDialog.value = false
+                   onChangePassword()
+                },
+                show = showDialog
+            )
+        }
+
 
     Column(
         modifier = Modifier
@@ -145,7 +163,7 @@ fun ChangePasswordScreen(onChangePassword: (String, String) -> Unit) {
                     onClick = {
                         if (newPassword == confirmPassword) {
                             showError = false
-                            onChangePassword(newPassword, confirmPassword)
+                            showDialog.value=true
                         } else {
                             showError = true
                         }
@@ -162,7 +180,7 @@ fun ChangePasswordScreen(onChangePassword: (String, String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewChangePasswordScreen() {
-    ChangePasswordScreen { newPassword, confirmPassword ->
-        // Handle change password logic
+    ChangePasswordScreen { /*newPassword, confirmPassword ->
+        // Handle change password logic*/
     }
 }

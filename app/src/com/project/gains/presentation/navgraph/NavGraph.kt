@@ -337,14 +337,14 @@ fun NavGraph(
         ) {
             OTPScreen(
                 authenticationViewModel = authenticationViewModel,
-                onVerifyClicked = { navController.navigate(Route.SignInScreen.route) },
+                onVerifyClicked = { navController.navigate(Route.ChangePasswordScreen.route) },
                 onBackClicked = { navController.navigate(Route.ForgotPasswordScreen.route) }
             )
         }
         composable(
             route = Route.ChangePasswordScreen.route
         ) {
-            //ChangePasswordScreen(onChangePassword = { System.out.println(Route.ForgotPasswordScreen.route+Route.ForgotPasswordScreen.route)})
+            ChangePasswordScreen {navController.navigate(Route.HomeScreen.route) }
         }
         composable(
             route = Route.HomeScreen.route,
