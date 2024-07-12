@@ -81,6 +81,7 @@ fun AccountScreen(
     var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Email") }
     var newPassword by remember { mutableStateOf("New Password") }
     val showDialog = remember { mutableStateOf(false) }
+    val showExitDialog = remember { mutableStateOf(false) }
     val showDialogComplete = remember { mutableStateOf(false) }
 
     GainsAppTheme {
@@ -145,7 +146,7 @@ fun AccountScreen(
 
                     // Logout Button
                     Button(
-                        onClick = { signOutHandler(SignOutEvent.SignOut) },
+                        onClick = { showExitDialog.value = true },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 32.dp),
@@ -153,6 +154,7 @@ fun AccountScreen(
                     ) {
                         Text(text = "Logout")
                     }
+
 
                     // Observe changes in data
                     if (data?.isNotEmpty() == true) {
@@ -173,6 +175,14 @@ fun AccountScreen(
                     }
                 }
             }
+
+            if (showExitDialog.value) {
+                LogoutDialog(
+                    onLogout = {signOutHandler(SignOutEvent.SignOut)},
+                    onDismiss = { showDialog.value = false }
+                )
+            }
+
 
             if (showDialog.value) {
                 EditProfileDialog(
@@ -207,6 +217,31 @@ fun AccountScreen(
         }
     }
 }
+
+@Composable
+fun LogoutDialog(onLogout: () -> Unit,onDismiss: () -> Unit){
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Logout", style = MaterialTheme.typography.headlineMedium)
+        },
+        text = {
+            Text(text = "Are you sure?", style = MaterialTheme.typography.bodyMedium)
+        },
+        confirmButton = {
+            TextButton(onClick = onLogout) {
+                Text("Logout", color = MaterialTheme.colorScheme.error)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")// color = MaterialTheme.colorScheme.secondary)
+            }
+
+        }
+    )
+}
+
 
 @Composable
 fun EditProfileDialog(

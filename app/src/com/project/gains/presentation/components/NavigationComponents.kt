@@ -217,7 +217,7 @@ fun DynamicTopBar(
     val showNotification = remember { mutableStateOf(false) }
     val notificationMessage = remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
+    /*LaunchedEffect(Unit) {
         while (true) {
             delay(30000) // Change interval as needed
             notificationMessage.value = getRandomMessage()
@@ -225,7 +225,7 @@ fun DynamicTopBar(
             delay(5000) // Notification display duration
             showNotification.value = false
         }
-    }
+    }*/
 
     when (currentRoute) {
 
