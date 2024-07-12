@@ -65,6 +65,24 @@ fun ChangePasswordScreen(onChangePassword: (String, String) -> Unit) {
 
                 Spacer(modifier = Modifier.height(50.dp))
 
+                if (showError) {
+                    androidx.compose.material.Card(
+                        backgroundColor = MaterialTheme.colorScheme.error,
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = "The password must match, please check again",
+                            color = MaterialTheme.colorScheme.surface,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .padding(16.dp)
+                        )
+                    }
+                }
+
                 androidx.compose.material.OutlinedTextField(
                     value = newPassword,
                     onValueChange = { newPassword = it },
@@ -119,13 +137,7 @@ fun ChangePasswordScreen(onChangePassword: (String, String) -> Unit) {
                     )
                 )
 
-                if (showError) {
-                    Text(
-                        text = "Passwords do not match. Please try again.",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
-                }
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
