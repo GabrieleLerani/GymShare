@@ -24,7 +24,9 @@ import androidx.compose.material.Card
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -44,7 +46,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -185,7 +189,7 @@ fun PlanScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp),
+                            .padding(10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         WorkoutHeader(selectedLevel, selectedTraining,selectedFrequency)
@@ -203,42 +207,97 @@ fun PlanScreen(
 }
 
 @Composable
-fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?,selectedFrequency:Frequency?) {
-
+fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, selectedFrequency: Frequency?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(16.dp)
+            .background(Color.LightGray.copy(alpha = 0.8f), RoundedCornerShape(8.dp))
+            .padding(16.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.pexels1),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clip(RoundedCornerShape(16.dp)),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "GENERAL • $selectedTraining • TRAINING",
-            fontSize = 20.sp,
+            text = "Workout Information",
+            fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 8.dp)
         )
-        Text(
-            text = "For gym • $selectedLevel",
-            fontSize = 16.sp,
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Table rows
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Training Type:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
             )
-        Text(
-            text = "Workouts done: 0",
-            fontSize = 14.sp,
-        )
-        Text(
-            text = "Workouts week frequency • $selectedFrequency",
-            fontSize = 14.sp,
-        )
+            Text(
+                text = selectedTraining?.toString()?.toLowerCase()?.capitalize() ?: "N/A",
+                fontSize = 14.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Level:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = selectedLevel?.toString()?.toLowerCase()?.capitalize() ?: "N/A",
+                fontSize = 14.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Workouts Done:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "0",
+                fontSize = 14.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Weekly Frequency:",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = selectedFrequency?.toString()?.toLowerCase()?.capitalize() ?: "N/A",
+                fontSize = 14.sp,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
@@ -273,9 +332,9 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = if (index == 0) Icons.Default.Circle else Icons.Default.Lock,
+                        imageVector = if (index == 0) Icons.Default.FitnessCenter else Icons.Default.Lock,
                         contentDescription = null,
-                        tint = if (index == 0) Color.Red else Color.Gray,
+                        tint = if (index == 0) MaterialTheme.colorScheme.primary else Color.Gray,
                         modifier = Modifier.size(40.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
