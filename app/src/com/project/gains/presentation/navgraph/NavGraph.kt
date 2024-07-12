@@ -15,6 +15,7 @@ import com.project.gains.presentation.exercises.ExerciseDetailsScreen
 import com.project.gains.presentation.HomeScreen
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
+import com.project.gains.presentation.authentication.screens.ChangePasswordScreen
 import com.project.gains.presentation.authentication.screens.ForgotPasswordScreen
 import com.project.gains.presentation.authentication.screens.OTPScreen
 import com.project.gains.presentation.authentication.screens.SignInScreen
@@ -327,7 +328,8 @@ fun NavGraph(
             route = Route.ForgotPasswordScreen.route
         ) {
             ForgotPasswordScreen (
-                onSendClicked = { navController.navigate(Route.OTPScreen.route) }
+                onSendClicked = { navController.navigate(Route.OTPScreen.route) },
+                generateOTPHandler = authenticationViewModel::onOTPEvent
             )
         }
         composable(
@@ -338,6 +340,11 @@ fun NavGraph(
                 onVerifyClicked = { navController.navigate(Route.SignInScreen.route) },
                 onBackClicked = { navController.navigate(Route.ForgotPasswordScreen.route) }
             )
+        }
+        composable(
+            route = Route.ChangePasswordScreen.route
+        ) {
+            ChangePasswordScreen()
         }
         composable(
             route = Route.HomeScreen.route,

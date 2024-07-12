@@ -1,6 +1,7 @@
 package com.project.gains.presentation.components
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +23,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Divider
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -114,6 +117,43 @@ fun AddExerciseItem(
                 }
 
             }
+        }
+    }
+}
+
+@Composable
+fun GoogleLoginButton(onClick: () -> Unit, icon: Int) {
+    Button(
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(16.dp),
+        shape = MaterialTheme.shapes.medium,
+        elevation = ButtonDefaults.elevation(4.dp),
+        border = BorderStroke(width = 1.dp, color = Color.Black)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Image(
+                painter = painterResource(id = icon),
+                contentDescription = "Google Logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(24.dp)
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Text(
+                text = "Sign in with Google",
+                color = Color.Black,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

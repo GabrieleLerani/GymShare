@@ -54,10 +54,10 @@ class SettingsViewModel  @Inject constructor(
             _userProfile.value = settingsUseCases.fetch.invoke()
         }
     }
-    fun onUpdateEvent(event: UpdateEvent){
+    fun onUpdateEvent(event: UpdateEvent) {
         when (event) {
-            is UpdateEvent.Update-> {
-                goUpdate(event.name,event.email, event.password)
+            is UpdateEvent.Update -> {
+                goUpdate(event.name, event.email, event.password)
             }
         }
     }

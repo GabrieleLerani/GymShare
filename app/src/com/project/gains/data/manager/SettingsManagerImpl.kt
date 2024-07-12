@@ -30,7 +30,7 @@ class SettingsManagerImpl @Inject constructor(
             .setDisplayName(name)
             .build()
 
-        if (password != "New Password"){
+        if (password != "New Password") {
             user?.updateEmail(email)?.continueWithTask { emailUpdateTask ->
                 if (emailUpdateTask.isSuccessful) {
                     return@continueWithTask user.updatePassword(password)
