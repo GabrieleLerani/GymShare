@@ -102,7 +102,7 @@ fun HomeScreen(
                         onCloseClicked = {},
                         onSearchClicked = {},
                         onClick = {
-                            navController.navigate(Route.TypedExerciseScreen.route)
+                            navController.navigate(Route.HomeSearchScreen.route)
                         },
                         enabled = false
                     )

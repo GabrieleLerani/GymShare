@@ -6,6 +6,7 @@ sealed class Route(
     data object OnBoardingScreen : Route(route = "onBoardingScreen")
 
     data object HomeScreen : Route(route = "homeScreen")
+    data object HomeSearchScreen : Route(route = "homeSearchScreen")
 
     data object SignInScreen : Route(route = "signInScreen")
     data object SignUpScreen : Route(route = "signUpScreen")

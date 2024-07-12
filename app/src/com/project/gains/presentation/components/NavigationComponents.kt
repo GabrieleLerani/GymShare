@@ -317,10 +317,21 @@ fun DynamicTopBar(
             }
         }
 
+        Route.HomeSearchScreen.route -> {
+            TopBar(
+                message = "Look for exercises",
+                button = {}
+            ) {
+                BackButton {
+                    navController.popBackStack()
+                }
+            }
+        }
+
         Route.FeedScreen.route -> {
             TopBar(
                 message = " Explore Feed",
-                button= {
+                button = {
                     LogoUser(
                         modifier = Modifier.size(60.dp), R.drawable.pexels5
                     ) { navController.navigate(Route.AccountScreen.route) }
@@ -333,7 +344,7 @@ fun DynamicTopBar(
         Route.SearchScreen.route -> {
             TopBar(
                 message = " Search on GymFeed",
-                button= {},
+                button = {},
             ) {
                 BackButton {
                     navController.popBackStack()
@@ -416,7 +427,6 @@ fun DynamicTopBar(
                 }
             }
         }
-
 
         Route.LastNewPlanScreen.route -> {
             TopBar(
@@ -545,6 +555,7 @@ fun DynamicBottomBar(navController: NavController) {
         Route.ForgotPasswordScreen.route -> {}
         Route.OTPScreen.route -> {}
         Route.ChangePasswordScreen.route -> {}
+        Route.HomeSearchScreen.route -> {}
 
         else -> {
             BottomNavigationBar(navController = navController)
