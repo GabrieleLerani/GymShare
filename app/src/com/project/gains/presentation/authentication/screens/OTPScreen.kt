@@ -153,7 +153,7 @@ fun OTPScreen(
 
                 Button(
                     onClick = {
-                        if (otp.toInt() == correctOTP) {
+                        if (otp.toIntOrNull() == correctOTP) {
                             showError = false
                             onVerifyClicked()
                         } else {

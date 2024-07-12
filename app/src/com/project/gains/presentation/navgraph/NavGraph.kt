@@ -344,7 +344,7 @@ fun NavGraph(
         composable(
             route = Route.ChangePasswordScreen.route
         ) {
-            ChangePasswordScreen()
+            //ChangePasswordScreen(onChangePassword = { System.out.println(Route.ForgotPasswordScreen.route+Route.ForgotPasswordScreen.route)})
         }
         composable(
             route = Route.HomeScreen.route,
