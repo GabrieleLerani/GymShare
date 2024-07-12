@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.project.gains.presentation.exercises.ExerciseDetailsScreen
 import com.project.gains.presentation.HomeScreen
+import com.project.gains.presentation.HomeSearchScreen
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.screens.ChangePasswordScreen
@@ -296,12 +297,10 @@ fun NavGraph(
                 // set screen as the node state
                 TypedExerciseScreen(
                     navController = navController,
-                    paddingValues = paddingValues,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     workoutViewModel = workoutViewModel,
                     exerciseViewModel = exerciseViewModel,
-                    addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
-                    removeExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent
+                    addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent
                 )
             }
 
@@ -358,6 +357,20 @@ fun NavGraph(
                 paddingValues = paddingValues,
                 exerciseViewModel = exerciseViewModel,
                 selectWorkoutHandler = workoutViewModel::onManageWorkoutEvent,
+                selectExerciseHandler = exerciseViewModel::onExerciseEvent
+            )
+        }
+        composable(
+            route = Route.HomeSearchScreen.route,
+            enterTransition = ::slideInToLeft,
+            exitTransition = ::slideOutToLeft,
+            popEnterTransition = ::slideInToRight,
+            popExitTransition = ::slideOutToRight
+        ) {
+            // set screen as the node state
+            HomeSearchScreen(
+                navController = navController,
+                workoutViewModel = workoutViewModel,
                 selectExerciseHandler = exerciseViewModel::onExerciseEvent
             )
         }

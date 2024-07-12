@@ -2,12 +2,8 @@ package com.project.gains.presentation.exercises
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.data.ExerciseType
-import com.project.gains.data.Workout
 import com.project.gains.data.generateSampleExercises
-import com.project.gains.presentation.events.PreviousPageEvent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
