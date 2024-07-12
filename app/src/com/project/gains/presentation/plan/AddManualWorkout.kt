@@ -105,6 +105,23 @@ fun AddManualWorkout(
                     .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+                item {
+                    if (showDialog.value) {
+                        FeedbackAlertDialog(
+                            title = "You have successfully added your workout! You will find it in the home section in the day previously selected",
+                            onDismissRequest = {
+                                showDialog.value = false
+                                navController.navigate(Route.HomeScreen.route)
+                            },
+                            onConfirm = {
+                                showDialog.value = false
+                                navController.navigate(Route.HomeScreen.route)
+                            },
+                            show = showDialog
+                        )
+                    }
+                }
                 item {
                     Header()
 
@@ -254,22 +271,6 @@ fun AddManualWorkout(
                 }
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
-                item {
-                    if (showDialog.value) {
-                        FeedbackAlertDialog(
-                            title = "You have successfully added your workout! You will find it in the home section in the day previously selected",
-                            onDismissRequest = {
-                                showDialog.value = false
-                                navController.navigate(Route.HomeScreen.route)
-                            },
-                            onConfirm = {
-                                showDialog.value = false
-                                navController.navigate(Route.HomeScreen.route)
-                            },
-                            show = showDialog
-                        )
-                    }
-                }
 
                 item {
                     FooterButton(
@@ -362,7 +363,7 @@ fun AddExerciseButton(onClick: () -> Unit) {
         Icon(
             imageVector = Icons.Default.Add,
             contentDescription = "Add Exercise",
-            tint = Color.White
+            tint = MaterialTheme.colorScheme.surface
         )
     }
 }
@@ -373,12 +374,12 @@ fun DeleteExerciseButton(onClick: () -> Unit) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(50.dp)
-            .background(color = Color.Red, shape = CircleShape)
+            .background(color =MaterialTheme.colorScheme.error, shape = CircleShape)
             .clickable(onClick = onClick)
     ) {
         Text(
             text = "-",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
