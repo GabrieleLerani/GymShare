@@ -300,13 +300,36 @@ fun DefaultSignUpContent(
         ) {
             Text("Sign Up")
         }
+        val text = AnnotatedString.Builder().apply {
+            pushStringAnnotation(
+                tag = "LINK",
+                annotation = "destination_page"
+            )
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    textDecoration = TextDecoration.Underline
+                )
+            ) {
+                append("You don't have an account? Click here to go to Login ")
+            }
+            pop()
+        }.toAnnotatedString()
+
+        ClickableText(
+            text = text,
+            onClick = { offset ->
+                text.getStringAnnotations("LINK", offset, offset)
+                    .firstOrNull()?.let {
+                        navController.navigate(Route.SignInScreen.route)
+                        viewModel.onNavigationComplete()
+                    }
+            },
+            modifier = Modifier.padding(top = 5.dp)
+        )
 
         if (isError == true) {
-            Text(
-                text = "Check your internet connection and retry later",
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(16.dp)
-            )
+            errorMessage.value="Check your internet connection and retry"
         }
 
         if (isLoading == true) {
@@ -331,7 +354,7 @@ fun DefaultSignUpContent(
 
                 CircularProgressIndicator(
                     progress = { progress.value },
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
         }
