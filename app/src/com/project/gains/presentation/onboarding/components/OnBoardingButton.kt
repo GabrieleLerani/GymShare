@@ -35,20 +35,3 @@ fun OnBoardingButton(
     }
 }
 
-
-@Composable
-fun OnBoardingTextButton(
-    text: String,
-    onClick: () -> Unit
-){
-    TextButton(onClick = onClick, colors =  ButtonDefaults.buttonColors(
-        containerColor = MaterialTheme.colorScheme.primary, // Orange
-        contentColor = MaterialTheme.colorScheme.onPrimary // Text color
-    )) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-
-        )
-    }
-}

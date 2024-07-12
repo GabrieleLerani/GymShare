@@ -1,6 +1,8 @@
 package com.project.gains.presentation.onboarding
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,14 +20,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import com.project.gains.presentation.Dimension
+import com.project.gains.presentation.components.SlidingComponent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.onboarding.components.OnBoardingButton
 import com.project.gains.presentation.onboarding.components.OnBoardingPage
-import com.project.gains.presentation.onboarding.components.OnBoardingTextButton
 import com.project.gains.presentation.onboarding.components.PagerIndicator
 import com.project.gains.theme.GainsAppTheme
 
@@ -36,87 +40,50 @@ import com.project.gains.theme.GainsAppTheme
 fun OnBoardingScreen(
     event: (OnBoardingEvent) -> Unit, navController: NavController
 ) {
+    val distance = with(LocalDensity.current) { (Dimension.dotWidth + Dimension.spacing).toPx() }
+    val pagerState =
+        rememberPagerState(initialPage = 0) { com.project.gains.presentation.plan.pages.size }
+
     GainsAppTheme {
-        Column(modifier = Modifier.fillMaxSize()) {
-            val pagerState = rememberPagerState(initialPage = 0) {
-                pages.size
-            }
-            val buttonsState = remember {
-                derivedStateOf {
-                    when (pagerState.currentPage) {
-                        0 -> listOf("", "Next")
-                        1 -> listOf("Back", "Next")
-                        2 -> listOf("Back", "Next")
-                        3 -> listOf("Back", "Get Started")
-                        else -> listOf("", "")
-                    }
-                }
-            }
 
-            HorizontalPager(state = pagerState) { index ->
-                OnBoardingPage(page = pages[index])
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-            Row(
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                )
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimension.MediumPadding2)
-                    .navigationBarsPadding(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
+                    .padding(top = 10.dp)
             ) {
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    val scope = rememberCoroutineScope()
-                    //Hide the button when the first element of the list is empty
-                    if (buttonsState.value[0].isNotEmpty()) {
-                        OnBoardingTextButton(
-                            text = buttonsState.value[0],
-                            onClick = {
-                                scope.launch {
-                                    pagerState.animateScrollToPage(
-                                        page = pagerState.currentPage - 1
-                                    )
-                                }
 
-                            }
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(width = 4.dp))
-
-                    OnBoardingButton(
-                        text = buttonsState.value[1],
-                        onClick = {
-                            scope.launch {
-                                if (pagerState.currentPage == 3){
-                                    // save a value in datastore preferences
-                                    // we launch an event that will be captured by the view model
-                                    event(OnBoardingEvent.SaveAppEntry)
-                                    // navigate to the main screen
-
-                                    navController.navigate(Route.SignInScreen.route)
-
-
-                                }else{
-                                    pagerState.animateScrollToPage(
-                                        page = pagerState.currentPage + 1
-                                    )
-                                }
-                            }
-                        }
-                    )
-                }
-                PagerIndicator(
-                    pageSize = com.project.gains.presentation.plan.pages.size,
-                    selectedPage = pagerState.currentPage,
-                    selectedColor = MaterialTheme.colorScheme.inversePrimary,
+                SlidingComponent(
+                    spacing = Dimension.spacing,
+                    dotWidth = Dimension.dotWidth,
+                    dotHeight = Dimension.dotHeight,
+                    inactiveColor = Color.Gray,
+                    activeColor = MaterialTheme.colorScheme.inversePrimary,
+                    pagerState = pagerState,
+                    distance = distance
                 )
 
+                Spacer(modifier = Modifier.padding(top = 10.dp))
 
+                HorizontalPager(state = pagerState) { index ->
+                    OnBoardingPage(page = pages[index], pagerState = pagerState, modifier = Modifier, onClickHandler = {
+                        event(OnBoardingEvent.SaveAppEntry)
+                        // navigate to the main screen
+                        navController.navigate(Route.SignInScreen.route)
+                    })
                 }
-            Spacer(modifier = Modifier.weight(0.5f))
 
+
+            }
         }
     }
-    }
+}

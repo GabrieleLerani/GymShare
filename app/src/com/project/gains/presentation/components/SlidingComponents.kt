@@ -2,6 +2,7 @@ package com.project.gains.presentation.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +27,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 fun Modifier.slidingLineTransition(pagerState: PagerState, distance: Float) =
@@ -42,7 +45,7 @@ fun SlidingComponent(
     inactiveColor: Color,
     activeColor: Color,
     pagerState: PagerState,
-    distance: Float
+    distance: Float,
 ) {
 
     val count = pagerState.pageCount
@@ -62,7 +65,9 @@ fun SlidingComponent(
                 horizontalArrangement = Arrangement.spacedBy(spacing),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                repeat(count) {
+                val scope = rememberCoroutineScope()
+
+                repeat(count) {int ->
                     Box(
                         modifier = Modifier
                             .size(width = dotWidth, height = dotHeight)
@@ -70,6 +75,14 @@ fun SlidingComponent(
                                 color = inactiveColor,
                                 shape = RoundedCornerShape(5.dp)
                             )
+                            .clickable {
+                                scope.launch {
+                                        pagerState.animateScrollToPage(
+                                            page = int
+                                        )
+
+                                }
+                            }
                     )
                 }
             }

@@ -13,8 +13,8 @@ data class Page(
 val pages = listOf(
     Page(
         title = "Welcome to our Gym Workout Planning App!",
-        description = "Reach the best version of yourself.",
-        image = R.drawable.pexels1
+        description = "Reach the best version of yourself with our app, we are born to share",
+        image = R.drawable.pexels8
     ),
     Page(
         title = "Plan Your workouts!",

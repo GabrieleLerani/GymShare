@@ -95,8 +95,7 @@ fun AddManualWorkout(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
-            Column(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
@@ -104,194 +103,178 @@ fun AddManualWorkout(
 
             ) {
 
-                Header()
+                item {
+                    Header()
 
-                (if(workoutTitle.text=="") workoutTitleStored else workoutTitle)?.let {
-                    OutlinedTextField(
-                        value = it,
-                        onValueChange = { newValue ->
-                            workoutTitle = newValue
-                            addNameHandler(ManageExercises.SelectWorkoutStored(newValue))
-                        },
-                        label = {
-                            Text(
-                                if (workoutTitle.text=="") "Enter workout name..." else "",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                        },
-                        shape = RoundedCornerShape(size = 20.dp),
-                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
 
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primary// Set the contour color when not focused
-                        )
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // TODO test it
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Top,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .background(
-                                MaterialTheme.colorScheme.onTertiary,
-                                RoundedCornerShape(16.dp)
-                            )
-                            .border(
-                                border = BorderStroke(
-                                    width = 3.dp,
-                                    color = MaterialTheme.colorScheme.onSurface
-                                ), shape = RoundedCornerShape(16.dp)
-                            )
-                            .padding(8.dp)
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Workout Day: ${selectedDay?.name.toString()}",
-                                style = MaterialTheme.typography.labelLarge,
-                                modifier = Modifier.weight(1f)
-                                // Take up the remaining space
-                            )
-                            IconButton(
-                                onClick = { expanded = !expanded }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowDropDown,
-                                    contentDescription = "Dropdown Icon"
+                    (if (workoutTitle.text == "") workoutTitleStored else workoutTitle)?.let {
+                        OutlinedTextField(
+                            value = it,
+                            onValueChange = { newValue ->
+                                workoutTitle = newValue
+                                addNameHandler(ManageExercises.SelectWorkoutStored(newValue))
+                            },
+                            label = {
+                                Text(
+                                    if (workoutTitle.text == "") "Enter workout name..." else "",
+                                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                    color = MaterialTheme.colorScheme.onSurface,
                                 )
+                            },
+                            shape = RoundedCornerShape(size = 20.dp),
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
+
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                                unfocusedBorderColor = MaterialTheme.colorScheme.primary// Set the contour color when not focused
+                            )
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // TODO test it
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.onTertiary,
+                                    RoundedCornerShape(16.dp)
+                                )
+                                .border(
+                                    border = BorderStroke(
+                                        width = 3.dp,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    ), shape = RoundedCornerShape(16.dp)
+                                )
+                                .padding(8.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "Workout Day: ${selectedDay?.name.toString()}",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    modifier = Modifier.weight(1f)
+                                    // Take up the remaining space
+                                )
+                                IconButton(
+                                    onClick = { expanded = !expanded }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = "Dropdown Icon"
+                                    )
+                                }
+                            }
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier
+                                .fillMaxWidth(0.7f)
+                                .background(
+                                    shape = RoundedCornerShape(16.dp),
+                                    color = MaterialTheme.colorScheme.surface
+                                )
+                                .padding(10.dp) // Padding to match the Text above
+                        ) {
+                            Weekdays.entries?.forEach { day ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            day.name,
+                                            style = MaterialTheme.typography.bodySmall.copy(
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    },
+                                    onClick = {
+                                        expanded = false
+                                        selectedDay = day
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                            shape = RoundedCornerShape(16.dp)
+                                        )
+                                        .border(
+                                            border = BorderStroke(
+                                                width = 3.dp,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            ), shape = RoundedCornerShape(16.dp)
+                                        )
+                                        .padding(16.dp) // Inner padding for the item
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
                             }
                         }
                     }
-
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        modifier = Modifier
-                            .fillMaxWidth(0.7f)
-                            .background(
-                                shape = RoundedCornerShape(16.dp),
-                                color = MaterialTheme.colorScheme.surface
-                            )
-                            .padding(10.dp) // Padding to match the Text above
-                    ) {
-                        Weekdays.entries?.forEach { day ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        day.name,
-                                        style = MaterialTheme.typography.bodySmall.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                },
-                                onClick = {
-                                    expanded = false
-                                    selectedDay=day
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .border(
-                                        border = BorderStroke(
-                                            width = 3.dp,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        ), shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .padding(16.dp) // Inner padding for the item
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
-                        }
-                    }
                 }
 
+                item {
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                    //.padding(40.dp)
-                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        selectedExercises?.forEach { exercise: Exercise ->
+                            if (!removedExercises.value.contains(exercise)) {
+                                Row(
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    AddExerciseItem(
+                                        modifier = Modifier.weight(1f),
+                                        exercise = exercise,
+                                        onItemClick = {},
+                                        onItemClick2 = {},
+                                        isSelected = true,
+                                        isToAdd = false
+                                    )
+                                    Spacer(modifier = Modifier.width(5.dp))
 
-                    item {
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            selectedExercises?.forEach { exercise: Exercise ->
-                                if (!removedExercises.value.contains(exercise)) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.Start,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        AddExerciseItem(
-                                            modifier = Modifier.weight(1f),
-                                            exercise = exercise,
-                                            onItemClick = {},
-                                            onItemClick2 = {},
-                                            isSelected = true,
-                                            isToAdd = false
-                                        )
-                                        Spacer(modifier = Modifier.width(5.dp))
-
-                                        DeleteExerciseButton {
-                                            removedExercises.value = listOf(exercise)
-                                            deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
-                                        }
+                                    DeleteExerciseButton {
+                                        removedExercises.value = listOf(exercise)
+                                        deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
                                     }
                                 }
                             }
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(10.dp)) }
+                }
+                item { Spacer(modifier = Modifier.height(10.dp)) }
 
 
-                    item {
-                        if (showDialog.value) {
-                            FeedbackAlertDialog(
-                                title =  "You have successfully added your workout!",
-                                onDismissRequest = { showDialog.value = false
-                                    navController.navigate(Route.HomeScreen.route)                        },
-                                onConfirm = {
-                                    showDialog.value = false
-                                    navController.navigate(Route.HomeScreen.route)                        },
-                                show = showDialog
+                item {
+                    if (showDialog.value) {
+                        FeedbackAlertDialog(
+                            title =  "You have successfully added your workout!",
+                            onDismissRequest = { showDialog.value = false
+                                navController.navigate(Route.HomeScreen.route)                        },
+                            onConfirm = {
+                                showDialog.value = false
+                                navController.navigate(Route.HomeScreen.route)                        },
+                            show = showDialog
 
-                            )
-                        }
+                        )
                     }
                 }
 
-            }
-
-
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight(0.125f)
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(Color.White)
-            ) {
-
-                FooterButton(
+                item {    FooterButton(
                     onClickSaveWorkout = {
                         showDialog.value=true
 
@@ -308,12 +291,11 @@ fun AddManualWorkout(
                     onClickAddExercise = {
                         selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
                         navController.navigate(Route.TypedExerciseScreen.route) },
-                    enabled = selectedExercises!!.isNotEmpty())
-
-            }
+                    enabled = selectedExercises!!.isNotEmpty()) }
+                }
         }
     }
-    
+
 
 }
 
