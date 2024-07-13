@@ -163,11 +163,21 @@ fun SocialMediaRow(
         SocialMediaIcon(icon = icon, onClick = {  }, isSelected = isLinked)
         Spacer(modifier = Modifier.width(50.dp))
         if (isLinked || clickedApps.value.contains(icon)) {
-            androidx.compose.material.Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Linked Icon",
-                modifier = Modifier.padding(20.dp)
-            )
+            IconButton(
+                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
+                onClick =
+                { },
+                modifier = Modifier.size(60.dp),
+            ) {
+                androidx.compose.material.Icon(
+                    imageVector = Icons.Default.Check,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    contentDescription = "Linked Icon",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .padding(10.dp)
+                )
+            }
         } else if (!clickedApps.value.contains(icon)){
             IconButton(
                 colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),

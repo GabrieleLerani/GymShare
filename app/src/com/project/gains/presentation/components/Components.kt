@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -232,7 +233,7 @@ fun SocialMediaIcon(icon: Int, onClick: () -> Unit, isSelected: Boolean) {
             modifier = Modifier
                 .size(50.dp)
                 .background(
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface,
                     shape = CircleShape
                 )
                 .clip(CircleShape)
@@ -256,7 +257,7 @@ fun SharingMediaIcon(icon: ImageVector, onClick: () -> Unit, isSelected: Boolean
             modifier = Modifier
                 .size(50.dp)
                 .background(
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else if (isSystemInDarkTheme()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.surface,
                     shape = CircleShape
                 )
                 .clip(CircleShape)
