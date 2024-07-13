@@ -122,7 +122,7 @@ fun AddExerciseItem(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "Add Exercise",
-                                //tint = MaterialTheme.colorScheme.surface
+
                             )
                         }
                     }
@@ -130,7 +130,7 @@ fun AddExerciseItem(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                             contentDescription = "Forward",
-                            //tint = MaterialTheme.colorScheme.surface
+
                         )
                     }
                 }
