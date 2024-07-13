@@ -83,6 +83,16 @@ fun HomeScreen(
 
     }
 
+    if (showDialog.value && getPreviousDestination(navController = navController) == Route.SignInScreen.route){
+        completionMessage.value="Welcome Back to GymShare!"
+        showDialog.value=false
+    }
+
+    if (showDialog.value && getPreviousDestination(navController = navController) == Route.SignUpScreen.route){
+        completionMessage.value="Welcome to GymShare!, enjoy our workout app!"
+        showDialog.value=false
+    }
+
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
             ?: return,
