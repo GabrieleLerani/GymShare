@@ -70,7 +70,11 @@ fun WorkoutScreen(
     val selectedWorkout by workoutViewModel.selectedWorkout.observeAsState()
 
     val favorite = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
 
+    if (showDialog.value) {
+        showDialog.value=false
+    }
 
 
     GainsAppTheme {
@@ -116,10 +120,14 @@ fun WorkoutScreen(
                             if (favorite.value){
                                 removeFavouriteWorkoutHandler(ManageWorkoutEvent.DeleteWorkoutFavourite)
                                 favorite.value=false
+                                completionMessage.value="Workout removed from favorites!"
+                                showDialog.value=true
                             }
                             else{
                                 addFavouriteWorkoutHandler(ManageWorkoutEvent.AddWorkoutFavourite)
                                 favorite.value=true
+                                completionMessage.value="Workout added to favorites!"
+                                showDialog.value=true
                             }
                         }) {
                         Icon(

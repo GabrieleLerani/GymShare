@@ -1,5 +1,6 @@
 package com.project.gains.presentation.exercises
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -55,7 +56,11 @@ fun ExerciseDetailsScreen(
     val selectExercise by exerciseViewModel.selectedExercise.observeAsState()
     val favoriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favorite = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(false) }
 
+    if (showDialog.value) {
+        showDialog.value=false
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         // Second Box (main content)
         LazyColumn(
@@ -144,10 +149,14 @@ fun ExerciseDetailsScreen(
                         if (favorite.value){
                             removeFavouriteExerciseHandler(ExerciseEvent.DeleteExercise)
                             favorite.value=false
+                            completionMessage.value="Exercise removed from favorites!"
+                            showDialog.value=true
                         }
                         else{
                             addFavouriteExerciseHandler(ExerciseEvent.AddExercise)
                             favorite.value=true
+                            completionMessage.value="Exercise added to favorites!"
+                            showDialog.value=true
                         }
                     }) {
                     Icon(
@@ -192,6 +201,7 @@ fun ExerciseDetailsScreen(
 
 
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun ExerciseDetailsScreenPreview() {
