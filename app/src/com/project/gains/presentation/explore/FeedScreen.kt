@@ -20,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -112,10 +114,12 @@ fun FeedPost(gymPost: GymPost) {
                     text = gymPost.username,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = gymPost.time,
                     fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Spacer(modifier = Modifier.width(150.dp))
@@ -139,7 +143,7 @@ fun FeedPost(gymPost: GymPost) {
                 .fillMaxWidth()
                 .height(200.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -147,7 +151,8 @@ fun FeedPost(gymPost: GymPost) {
         Text(
             text = gymPost.caption,
             fontSize = 16.sp,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         // Separator
@@ -165,12 +170,14 @@ fun FeedPost(gymPost: GymPost) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Like Icon",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = gymPost.likes,
                     fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -179,12 +186,14 @@ fun FeedPost(gymPost: GymPost) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Comment,
                     contentDescription = "Comment Icon",
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = gymPost.comment,
                     fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

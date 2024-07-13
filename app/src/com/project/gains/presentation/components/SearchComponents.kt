@@ -1,6 +1,8 @@
 package com.project.gains.presentation.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
@@ -15,11 +17,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Chip
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SelectableChipColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.project.gains.data.Categories
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAppBar(
     value: String,
@@ -80,21 +92,23 @@ fun SearchAppBar(
                 modifier = Modifier
                     .alpha(ContentAlpha.medium),
                 text = placeholder,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         textStyle = TextStyle(
-            fontSize = MaterialTheme.typography.subtitle1.fontSize
+            fontSize = MaterialTheme.typography.titleSmall.fontSize
         ),
         singleLine = true,
         leadingIcon = {
             IconButton(
                 modifier = Modifier
                     .alpha(ContentAlpha.medium),
-                onClick = {}
+                onClick = {},
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search Icon",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         },
@@ -112,6 +126,7 @@ fun SearchAppBar(
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Close Icon",
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         },
@@ -124,7 +139,7 @@ fun SearchAppBar(
             }
         ),
         colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = androidx.compose.material3.MaterialTheme.colorScheme.onTertiary,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
@@ -138,6 +153,7 @@ fun SearchAppBar(
     }
 }
 
+@ExperimentalMaterialApi
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ResearchFilter(
@@ -146,7 +162,7 @@ fun ResearchFilter(
     onCategorySelected: (Categories) -> Unit
 ) {
     Column(Modifier.padding(15.dp)) {
-        Text(text = "Filter by Categories", style = MaterialTheme.typography.h6)
+        Text(text = "Filter by Categories", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -168,30 +184,31 @@ fun ResearchFilter(
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
 fun FilterChip(
     category: Categories,
     isSelected: Boolean,
     onCategorySelected: (Categories) -> Unit
 ) {
-    androidx.compose.material3.Text(
-        text = category.toString(),
-        style = androidx.compose.material3.MaterialTheme.typography.headlineSmall.copy(),
-        color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.primary else androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier
-            .clickable { onCategorySelected(category) }
-            .background(
-                color = if (isSelected) androidx.compose.material3.MaterialTheme.colorScheme.errorContainer.copy(
-                    alpha = 0.1f
-                ) else androidx.compose.material3.MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                RoundedCornerShape(30.dp)
+    androidx.compose.material3.FilterChip(
+        onClick = { onCategorySelected(category) },
+        label = {
+            Text(
+                text = category.toString(),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier
+                    .padding(10.dp),
             )
-            .padding(10.dp) // Add padding for better spacing
-            .padding(3.dp) // Inner padding for the text itself
+        },
+        selected = isSelected,
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
+        shape = RoundedCornerShape(16.dp)
     )
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview(showBackground = true)
 @Composable
 fun ResearchFilterPreview() {

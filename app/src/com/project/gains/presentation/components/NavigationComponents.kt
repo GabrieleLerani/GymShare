@@ -203,17 +203,19 @@ fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Co
             button2()
             button()
                   },
+        /*
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface,
             titleContentColor = MaterialTheme.colorScheme.onSurface,
         ),
-        /*
+
         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
         contentColor = MaterialTheme.colorScheme.tertiary,
         elevation = 0.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)*/
+            .height(64.dp)
+        */
     )
 
     /*
