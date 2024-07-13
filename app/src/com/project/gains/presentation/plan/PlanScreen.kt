@@ -45,13 +45,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,6 +66,7 @@ import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 import com.project.gains.theme.GainsAppTheme
+import com.project.gains.util.toLowerCaseString
 import java.util.Locale
 
 @Composable
@@ -156,7 +152,6 @@ fun PlanScreen(
                             modifier = Modifier
                                 .fillMaxWidth(0.7f)
                                 .background(
-                                    //shape = RoundedCornerShape(16.dp),
                                     color = MaterialTheme.colorScheme.surface
                                 )
                                 .padding(10.dp) // Padding to match the Text above
@@ -232,15 +227,11 @@ fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, select
                     .padding(16.dp)
             ) {
 
-                val frequency = selectedFrequency.toString().lowercase(Locale.ROOT)
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+                val frequency = toLowerCaseString(selectedFrequency.toString())
 
-                AlignedTextItem(label = "Level", value = selectedLevel.toString()
-                                .lowercase(Locale.ROOT)
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() })
+                AlignedTextItem(label = "Level", value = toLowerCaseString(selectedLevel.toString()))
                 Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
-                AlignedTextItem(label = "Type", value = selectedTraining.toString().lowercase(Locale.ROOT)
-                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() })
+                AlignedTextItem(label = "Type", value = toLowerCaseString(selectedTraining.toString()))
                 Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
                 AlignedTextItem(label = "Frequency", value = "$frequency per week")
             }
@@ -318,7 +309,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = workout.workoutDay.toString(),
+                            text = toLowerCaseString(workout.workoutDay.toString()),
                             fontSize = 14.sp,
                         )
                     }

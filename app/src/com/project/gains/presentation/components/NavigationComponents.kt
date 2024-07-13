@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -26,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -130,17 +134,33 @@ fun WorkoutBottomBar(navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
 
-    TopAppBar(
-        backgroundColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface,
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = message,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+
+            )
+        },
+        navigationIcon = {button1()},
+        actions = {button()},
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.secondary,
+        ),
+        /*
+        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.tertiary,
         elevation = 0.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp)
-    ) {
+            .height(64.dp)*/
+    )/* {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -159,13 +179,44 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
             button()
 
         }
-    }
+
+    }*/
 }
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit,button2: @Composable () -> Unit) {
+
+    TopAppBar(
+        title = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+            )
+        },
+        navigationIcon = {button1()},
+        actions = {
+            button2()
+            button()
+                  },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            titleContentColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        /*
+        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.tertiary,
+        elevation = 0.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(64.dp)*/
+    )
+
+    /*
     TopAppBar(
         backgroundColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface,
@@ -195,7 +246,7 @@ fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Co
             button()
 
         }
-    }
+    }*/
 }
 
 

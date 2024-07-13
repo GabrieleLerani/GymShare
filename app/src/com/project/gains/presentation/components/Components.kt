@@ -485,7 +485,7 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
