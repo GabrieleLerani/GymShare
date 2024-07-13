@@ -1,6 +1,7 @@
 package com.project.gains.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -48,7 +49,7 @@ fun MainScreen(
               },
             snackbarHost = {    SnackbarHost(hostState = snackBarHostState) { data ->
                 Snackbar(
-                    modifier = Modifier.background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp)),
+                    modifier = Modifier.padding(start= 16.dp,end=16.dp,bottom=80.dp).background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)),
                     action = {
                         IconButton(onClick = { messageState.value="" }) {
                             Icon(
