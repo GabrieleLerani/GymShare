@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
@@ -602,6 +603,14 @@ fun DynamicBottomBar(navController: NavController) {
         }
     }
 }
+
+@Composable
+fun getPreviousDestination(navController: NavController): String? {
+    val previousBackStackEntry = navController.previousBackStackEntry
+
+    return previousBackStackEntry?.destination?.route
+}
+
 
 @Composable
 fun BackButton(onClick: () -> Unit) {

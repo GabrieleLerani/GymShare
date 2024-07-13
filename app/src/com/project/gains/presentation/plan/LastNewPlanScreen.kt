@@ -25,9 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,9 +47,15 @@ import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
-fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePlanEvent.CreatePlan) -> Unit) {
+fun LastNewPlanScreen(
+    navController: NavController,
+    createPlanHandler: (ManagePlanEvent.CreatePlan) -> Unit,
+    completionMessage: MutableState<String>
+) {
     val selectedExerciseTypes = remember { mutableStateListOf<ExerciseType>() }
     val selectedMetrics = remember { mutableStateListOf<TrainingMetricType>() }
     val selectedMusic = remember { mutableStateOf(false) }
@@ -87,23 +95,15 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
 
             item { Spacer(modifier = Modifier.height(10.dp)) }
 
-            item {
+
+
+
                 if (showDialog.value) {
-                    FeedbackAlertDialog(
-                        title = "Plan Created!",
-                        onDismissRequest = {
-                            showDialog.value = false
-                            navController.navigate(Route.PlanScreen.route)
-                        },
-                        onConfirm = {
-                            showDialog.value = false
-                            navController.navigate(Route.PlanScreen.route)
-                        },
-                        text = "You will find it in the plan screen",
-                        icon = Icons.Default.Info
-                    )
+                    completionMessage.value="Workout added. You will find it in the home"
+                    showDialog.value=false
                 }
-            }
+
+
 
             item {
                 Text(
@@ -354,7 +354,8 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                             selectedBackup.value
                         )
                     )
-                    showDialog.value = true
+                    navController.navigate(Route.PlanScreen.route)
+
                 },
             ) {
                 Text(text = "Generate")
@@ -424,7 +425,11 @@ fun OptionCheckbox(
 @Composable
 fun LastNewPlanScreenPreview() {
     val navController = rememberNavController()
-    LastNewPlanScreen(navController = navController, createPlanHandler = {})
+    LastNewPlanScreen(
+        navController = navController,
+        createPlanHandler = {},
+        completionMessage = mutableStateOf("")
+    )
 }
 
 

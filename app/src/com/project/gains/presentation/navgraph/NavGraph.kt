@@ -5,6 +5,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -57,7 +58,8 @@ import com.project.gains.presentation.workout.WorkoutViewModel
 fun NavGraph(
     startDestination: String,
     navController: NavHostController,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    completionMessage: MutableState<String>
 ) {
 
     val authenticationViewModel : AuthenticationViewModel = init()
@@ -103,7 +105,8 @@ fun NavGraph(
                     settingsHandler = viewModel::onUpdateEvent,
                     signOutHandler =viewModel::onSignOutEvent ,
                     viewModel = viewModel,
-                    navController = navController
+                    navController = navController,
+                    completionMessage=completionMessage
                 )
             }
             composable(
@@ -125,7 +128,8 @@ fun NavGraph(
                     navController = navController,
                     linkHandler = shareContentViewModel::onLinkAppEvent,
                     saveLinkHandler = shareContentViewModel::onSaveSharingPreferencesEvent,
-                    shareContentViewModel = shareContentViewModel
+                    shareContentViewModel = shareContentViewModel,
+                    completionMessage=completionMessage
                 )
             }
             composable(
@@ -143,7 +147,8 @@ fun NavGraph(
                     workoutViewModel = workoutViewModel,
                     shareContentViewModel = shareContentViewModel,
                     addFavouriteWorkoutHandler = workoutViewModel::onManageWorkoutEvent,
-                    removeFavouriteWorkoutHandler = workoutViewModel::onManageWorkoutEvent
+                    removeFavouriteWorkoutHandler = workoutViewModel::onManageWorkoutEvent,
+                    completionMessage=completionMessage
                 )
             }
 
@@ -181,7 +186,8 @@ fun NavGraph(
                 // set screen as the node state
                 PlanScreen(navController = navController,
                     planViewModel = planViewModel,
-                    selectPlanHandler = planViewModel::onCreatePlanEvent
+                    selectPlanHandler = planViewModel::onCreatePlanEvent,
+                    completionMessage=completionMessage
                 )
             }
             composable(
@@ -204,7 +210,7 @@ fun NavGraph(
                 popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
-                LastNewPlanScreen(navController = navController,planViewModel::onCreatePlanEvent)
+                LastNewPlanScreen(navController = navController,planViewModel::onCreatePlanEvent,completionMessage=completionMessage)
             }
             composable(
                 route = Route.AddGeneratedPlanScreen.route,
@@ -233,7 +239,7 @@ fun NavGraph(
                     deleteExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
                     deleteAllExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
-                    createWorkoutHandler = workoutViewModel::onManageWorkoutEvent)
+                    createWorkoutHandler = workoutViewModel::onManageWorkoutEvent,completionMessage=completionMessage)
             }
             composable(
                 route = Route.ShareScreen.route,
@@ -246,7 +252,7 @@ fun NavGraph(
                     navController =navController ,
                     shareContentViewModel = shareContentViewModel,
                     shareHandler = feedViewModel::onSearchEvent,
-                    workoutViewModel = workoutViewModel
+                    workoutViewModel = workoutViewModel,completionMessage=completionMessage
                 )
             }
             composable(
@@ -273,7 +279,7 @@ fun NavGraph(
                     navController=navController,
                     addFavouriteExerciseHandler = exerciseViewModel::onExerciseEvent,
                     exerciseViewModel = exerciseViewModel,
-                    removeFavouriteExerciseHandler = exerciseViewModel::onExerciseEvent
+                    removeFavouriteExerciseHandler = exerciseViewModel::onExerciseEvent,completionMessage=completionMessage
                 )
             }
             composable(
@@ -285,7 +291,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 WorkoutModeScreen(
-                    navController, workoutViewModel::onMusicEvent, workoutViewModel = workoutViewModel
+                    navController, workoutViewModel::onMusicEvent, workoutViewModel = workoutViewModel,completionMessage=completionMessage
                 )
             }
             composable(
@@ -344,7 +350,7 @@ fun NavGraph(
         composable(
             route = Route.ChangePasswordScreen.route
         ) {
-            ChangePasswordScreen {navController.navigate(Route.HomeScreen.route) }
+            ChangePasswordScreen( onChangePassword =  {navController.navigate(Route.HomeScreen.route) },completionMessage=completionMessage)
         }
         composable(
             route = Route.HomeScreen.route,
@@ -358,7 +364,8 @@ fun NavGraph(
                 paddingValues = paddingValues,
                 exerciseViewModel = exerciseViewModel,
                 selectWorkoutHandler = workoutViewModel::onManageWorkoutEvent,
-                selectExerciseHandler = exerciseViewModel::onExerciseEvent
+                selectExerciseHandler = exerciseViewModel::onExerciseEvent,
+                completionMessage=completionMessage
             )
         }
         composable(

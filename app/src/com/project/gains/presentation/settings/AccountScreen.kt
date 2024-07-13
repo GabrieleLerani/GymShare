@@ -32,6 +32,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -66,7 +67,8 @@ fun AccountScreen(
     settingsHandler: (UpdateEvent.Update) -> Unit,
     signOutHandler: (SignOutEvent.SignOut) -> Unit,
     viewModel: SettingsViewModel,
-    navController: NavController
+    navController: NavController,
+    completionMessage: MutableState<String>
 ) {
     val userProfile by viewModel.userProfile.collectAsState()
     val data by viewModel.data.observeAsState()
@@ -196,19 +198,9 @@ fun AccountScreen(
                     onDismiss = { showDialog.value = false }
                 )
             }
-
             if (showDialogComplete.value) {
-
-                FeedbackAlertDialog(
-                    title = "Profile Updated!",
-                    onDismissRequest = {
-                    },
-                    onConfirm = {
-                        showDialogComplete.value=false
-                    },
-                    text = "You have successfully changed your credentials",
-                    icon = Icons.Default.Info
-                )
+                completionMessage.value="Profile Updated!"
+                showDialogComplete.value=false
             }
         }
     }
@@ -319,7 +311,13 @@ fun EditProfileDialog(
 fun PreviewAccount(){
     val viewModel:SettingsViewModel = hiltViewModel()
     GainsAppTheme {
-        AccountScreen(settingsHandler = {}, signOutHandler = {}, viewModel =viewModel , navController = rememberNavController())
+        AccountScreen(
+            settingsHandler = {},
+            signOutHandler = {},
+            viewModel =viewModel,
+            navController = rememberNavController(),
+            completionMessage = mutableStateOf("")
+        )
     }
 }
 

@@ -84,6 +84,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
         when (event) {
             is ManageWorkoutEvent.CreateWorkout -> {
                 _workouts.value?.add(event.workout)
+                _selectedWorkout.value=event.workout
             }
 
             is ManageWorkoutEvent.DeleteWorkout -> {

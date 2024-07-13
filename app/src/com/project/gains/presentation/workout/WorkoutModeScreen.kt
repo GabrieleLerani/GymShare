@@ -1,6 +1,5 @@
 package com.project.gains.presentation.workout
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,6 +15,7 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -47,7 +47,8 @@ import kotlinx.coroutines.delay
 fun WorkoutModeScreen(
     navController: NavController,
     musicHandler: (MusicEvent) -> Unit,
-    workoutViewModel: WorkoutViewModel
+    workoutViewModel: WorkoutViewModel,
+    completionMessage: MutableState<String>
 ) {
     val currentSong by workoutViewModel.currentSong.observeAsState()
     val workout by workoutViewModel.selectedWorkout.observeAsState()
@@ -425,6 +426,11 @@ private fun formatTime(time: Float): String {
 fun WorkoutModePreview() {
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
     GainsAppTheme {
-        WorkoutModeScreen(rememberNavController(), musicHandler = {}, workoutViewModel)
+        WorkoutModeScreen(
+            rememberNavController(),
+            musicHandler = {},
+            workoutViewModel,
+            mutableStateOf("")
+        )
     }
 }

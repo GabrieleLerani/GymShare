@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +49,7 @@ import com.project.gains.data.Workout
 import com.project.gains.data.getRandomMessage
 import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.SearchAppBar
+import com.project.gains.presentation.components.getPreviousDestination
 import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -64,14 +66,22 @@ fun HomeScreen(
     workoutViewModel: WorkoutViewModel,
     paddingValues: PaddingValues,
     exerciseViewModel: ExerciseViewModel,
-    selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit
+    selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit,completionMessage:MutableState<String>
 ) {
 
     val openPopup = remember { mutableStateOf(false) }
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
     val workouts by workoutViewModel.workouts.observeAsState()
+    val showDialog = remember { mutableStateOf(true) }
 
+
+
+    if (showDialog.value && getPreviousDestination(navController = navController) == Route.AddManualWorkoutScreen.route){
+        completionMessage.value="You have successfully created your workout!"
+        showDialog.value=false
+
+    }
 
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
