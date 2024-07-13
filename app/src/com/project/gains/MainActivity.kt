@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val startDestination = viewModel.startDestination
                     MainScreen(
+                        mainViewModel = viewModel,
                         startDestination = startDestination,
                     )
                 }

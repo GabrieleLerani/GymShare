@@ -85,9 +85,24 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                         appendLine("${index + 1}. ${exercise.name}")
                     }
                 }
+                var social:String="Instagram"
+                if (event.social==R.drawable.instagram_icon){
+                    social="Instagram"
+                }
+                else if (event.social==R.drawable.x_logo_icon){
+                    social="X"
 
-// TODO
-                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = "user 2", social = "Instagram", randomSocialId = R.drawable.instagram_icon, caption = desc, time = "10:13", likes = "123", comment = "234")
+                }
+                else if (event.social==R.drawable.facebook_icon){
+                    social="Facebook"
+
+                }
+                else if (event.social==R.drawable.tiktok_logo_icon){
+                    social="TikTok"
+
+                }
+                val user =event.username
+                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = event.username, social = social, randomSocialId = R.drawable.instagram_icon, caption = desc, time = "10:13", likes = "123", comment = "234")
                 _posts.value?.add(post)
             }
         }

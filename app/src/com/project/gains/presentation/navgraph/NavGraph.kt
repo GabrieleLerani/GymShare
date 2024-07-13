@@ -15,6 +15,7 @@ import androidx.navigation.compose.navigation
 import com.project.gains.presentation.exercises.ExerciseDetailsScreen
 import com.project.gains.presentation.HomeScreen
 import com.project.gains.presentation.HomeSearchScreen
+import com.project.gains.presentation.MainViewModel
 
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.screens.ChangePasswordScreen
@@ -59,7 +60,8 @@ fun NavGraph(
     startDestination: String,
     navController: NavHostController,
     paddingValues: PaddingValues,
-    completionMessage: MutableState<String>
+    completionMessage: MutableState<String>,
+    mainViewModel: MainViewModel
 ) {
 
     val authenticationViewModel : AuthenticationViewModel = init()
@@ -252,7 +254,8 @@ fun NavGraph(
                     navController =navController ,
                     shareContentViewModel = shareContentViewModel,
                     shareHandler = feedViewModel::onSearchEvent,
-                    workoutViewModel = workoutViewModel,completionMessage=completionMessage
+                    workoutViewModel = workoutViewModel,completionMessage=completionMessage,
+                    mainViewModel = mainViewModel
                 )
             }
             composable(

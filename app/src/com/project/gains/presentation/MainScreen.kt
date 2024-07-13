@@ -33,7 +33,8 @@ import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun MainScreen(
-    startDestination: String
+    startDestination: String,
+    mainViewModel: MainViewModel
 ) {
     val navController = rememberNavController()
     val snackBarHostState = remember { SnackbarHostState() }
@@ -71,7 +72,7 @@ fun MainScreen(
                 startDestination = startDestination,
                 navController = navController,
                 paddingValues = paddingValues,
-               completionMessage= messageState)
+               completionMessage= messageState,mainViewModel)
             if (messageState.value.isNotEmpty()) {
                 LaunchedEffect(key1 = messageState.value) {
                     val result = snackBarHostState.showSnackbar(

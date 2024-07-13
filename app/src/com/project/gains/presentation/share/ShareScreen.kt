@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.SharingMediaIcon
 import com.project.gains.presentation.components.SocialMediaIcon
@@ -51,6 +52,7 @@ fun ShareScreen(
     shareContentViewModel: ShareContentViewModel,
     workoutViewModel: WorkoutViewModel,
     shareHandler: (SearchEvent.GymPostWorkoutEvent) -> Unit,
+    mainViewModel: MainViewModel,
     completionMessage: MutableState<String>
 ) {
     var clickedApp by remember { mutableIntStateOf(1) }
@@ -60,6 +62,7 @@ fun ShareScreen(
     val workout by workoutViewModel.selectedWorkout.observeAsState()
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
     val apps by shareContentViewModel.linkedApps.observeAsState()
+    val username by mainViewModel.userProfile.observeAsState()
 
     Box(
         modifier = Modifier
@@ -170,7 +173,7 @@ fun ShareScreen(
                 } else if (apps?.isEmpty() == false) {
                     Button(
                         onClick = {
-                            workout?.let { SearchEvent.GymPostWorkoutEvent(it) }
+                            workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp,username?.displayName ?: "user 2") }
                                 ?.let { shareHandler(it) }
 
                             showDialog.value = true
