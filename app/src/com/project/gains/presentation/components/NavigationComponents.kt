@@ -151,11 +151,9 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.displayMedium,
+                style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
             )
             button()
 
