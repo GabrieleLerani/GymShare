@@ -179,7 +179,7 @@ fun AccountScreen(
             if (showExitDialog.value) {
                 LogoutDialog(
                     onLogout = {signOutHandler(SignOutEvent.SignOut)},
-                    onDismiss = { showDialog.value = false }
+                    onDismiss = { showExitDialog.value = false }
                 )
             }
 

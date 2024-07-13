@@ -47,7 +47,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,6 +68,7 @@ import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 import com.project.gains.theme.GainsAppTheme
+import java.util.Locale
 
 @Composable
 fun PlanScreen(
@@ -215,11 +218,17 @@ fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, select
                     .padding(16.dp)
             ) {
 
-                AlignedTextItem(label = "Level", value = selectedLevel.toString())
+                val frequency = selectedFrequency.toString().lowercase(Locale.ROOT)
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+
+                AlignedTextItem(label = "Level", value = selectedLevel.toString()
+                                .lowercase(Locale.ROOT)
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() })
                 Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
-                AlignedTextItem(label = "Type", value = selectedTraining.toString())
+                AlignedTextItem(label = "Type", value = selectedTraining.toString().lowercase(Locale.ROOT)
+                    .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() })
                 Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
-                AlignedTextItem(label = "Frequency", value = "$selectedFrequency PER WEEK")
+                AlignedTextItem(label = "Frequency", value = "$frequency per week")
             }
         }
     }
