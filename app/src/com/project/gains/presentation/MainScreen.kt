@@ -1,18 +1,32 @@
 package com.project.gains.presentation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 
 
 import com.project.gains.presentation.components.DynamicBottomBar
 import com.project.gains.presentation.components.DynamicTopBar
-import com.project.gains.presentation.components.SearchViewModel
-import com.project.gains.presentation.exercises.ExerciseViewModel
 
 import com.project.gains.presentation.navgraph.NavGraph
-import com.project.gains.presentation.workout.WorkoutViewModel
 import com.project.gains.theme.GainsAppTheme
 
 
@@ -21,6 +35,9 @@ fun MainScreen(
     startDestination: String
 ) {
     val navController = rememberNavController()
+    val snackBarHostState = remember { SnackbarHostState() }
+    val messageState = remember { mutableStateOf("") } // Shared state for the message
+
 
 
     GainsAppTheme {
@@ -29,12 +46,45 @@ fun MainScreen(
             bottomBar = {
                     DynamicBottomBar(navController = navController)
               },
+            snackbarHost = {    SnackbarHost(hostState = snackBarHostState) { data ->
+                Snackbar(
+                    modifier = Modifier.background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp)),
+                    action = {
+                        IconButton(onClick = { messageState.value="" }) {
+                            Icon(
+                                imageVector = Icons.Default.Close, // Adjusted here
+                                contentDescription = "Close Icon",
+                            )
+                        }
+                    },
+                    content = {
+                        Text(text = messageState.value)
+                    }
+                )
+            }},
+
+
         ) {
             paddingValues ->
             NavGraph(
                 startDestination = startDestination,
                 navController = navController,
-                paddingValues = paddingValues)
+                paddingValues = paddingValues,
+               completionMessage= messageState)
+            if (messageState.value.isNotEmpty()) {
+                LaunchedEffect(key1 = messageState.value) {
+                    val result = snackBarHostState.showSnackbar(
+                        message = messageState.value,
+                        duration = SnackbarDuration.Indefinite
+                    )
+                    when (result) {
+                        SnackbarResult.ActionPerformed, SnackbarResult.Dismissed -> {
+                            messageState.value = ""
+                        }
+                    }
+                }
+            }
+
         }
     }
 

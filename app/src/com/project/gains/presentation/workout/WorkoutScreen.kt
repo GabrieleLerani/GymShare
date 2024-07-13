@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,7 @@ import com.project.gains.presentation.components.FavoriteTopBar
 
 
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.getPreviousDestination
 
 
 import com.project.gains.presentation.exercises.events.ExerciseEvent
@@ -56,19 +58,19 @@ fun WorkoutScreen(
     exerciseHandler: (ExerciseEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
     shareContentViewModel: ShareContentViewModel,
-    addFavouriteWorkoutHandler:(ManageWorkoutEvent.AddWorkoutFavourite)->Unit,
-    removeFavouriteWorkoutHandler:(ManageWorkoutEvent.DeleteWorkoutFavourite)->Unit
+    addFavouriteWorkoutHandler: (ManageWorkoutEvent.AddWorkoutFavourite) -> Unit,
+    removeFavouriteWorkoutHandler: (ManageWorkoutEvent.DeleteWorkoutFavourite) -> Unit,
+    completionMessage: MutableState<String>
 
 
 ) {
-    val showDialogShared by shareContentViewModel.showDialogShared.observeAsState()
     val favoriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
 
     // Sample list of exercises
     val selectedWorkout by workoutViewModel.selectedWorkout.observeAsState()
 
-    val showPopup2 = remember { mutableStateOf(false) }
     val favorite = remember { mutableStateOf(false) }
+
 
 
     GainsAppTheme {
@@ -80,7 +82,7 @@ fun WorkoutScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top=50.dp)
+                    .padding(top = 50.dp)
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -155,19 +157,7 @@ fun WorkoutScreen(
                 },
             )
 
-            if (showDialogShared==true) {
 
-                FeedbackAlertDialog(
-                    title = "Content Shared!",
-                    onDismissRequest = {
-                    },
-                    onConfirm = {
-                        shareHandler(ManageDialogEvent.SelectShowDialogShared(false))
-                    },
-                    text = "You have successfully Shared your content",
-                    icon = Icons.Default.Info
-                )
-            }
         }
 
 

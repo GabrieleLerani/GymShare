@@ -21,6 +21,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -49,7 +50,8 @@ fun ShareScreen(
     navController: NavController,
     shareContentViewModel: ShareContentViewModel,
     workoutViewModel: WorkoutViewModel,
-    shareHandler: (SearchEvent.GymPostWorkoutEvent)->Unit
+    shareHandler: (SearchEvent.GymPostWorkoutEvent) -> Unit,
+    completionMessage: MutableState<String>
 ) {
     var clickedApp by remember { mutableIntStateOf(1) }
     var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
@@ -214,20 +216,11 @@ fun ShareScreen(
                 }
             }
             item {
+
+
                 if (showDialog.value) {
-                    FeedbackAlertDialog(
-                        title = "Content Shared!",
-                        onDismissRequest = {
-                            showDialog.value = false
-                            navController.navigate(Route.HomeScreen.route)
-                        },
-                        onConfirm = {
-                            showDialog.value = false
-                            navController.navigate(Route.HomeScreen.route)
-                        },
-                        text = "You have successfully shared your content",
-                        icon = Icons.Default.Info
-                    )
+                    completionMessage.value="Content Shared!"
+                    showDialog.value=false
                 }
                 if (showErrorDialog.value) {
                     FeedbackAlertDialog(

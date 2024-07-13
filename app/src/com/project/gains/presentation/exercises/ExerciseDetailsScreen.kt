@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -44,10 +45,11 @@ import com.project.gains.presentation.navgraph.Route
 
 @Composable
 fun ExerciseDetailsScreen(
-    navController:NavController,
+    navController: NavController,
     exerciseViewModel: ExerciseViewModel,
-    addFavouriteExerciseHandler:(ExerciseEvent.AddExercise)->Unit,
-    removeFavouriteExerciseHandler:(ExerciseEvent.DeleteExercise)->Unit
+    addFavouriteExerciseHandler: (ExerciseEvent.AddExercise) -> Unit,
+    removeFavouriteExerciseHandler: (ExerciseEvent.DeleteExercise) -> Unit,
+    completionMessage: MutableState<String>
 
 ) {
     val selectExercise by exerciseViewModel.selectedExercise.observeAsState()
@@ -196,10 +198,11 @@ fun ExerciseDetailsScreenPreview() {
     val navController= rememberNavController()
     val exerciseViewModel: ExerciseViewModel = hiltViewModel()
     ExerciseDetailsScreen(
+        navController = navController,
         exerciseViewModel = exerciseViewModel,
         addFavouriteExerciseHandler = {},
-        navController = navController,
-        removeFavouriteExerciseHandler = {}
+        removeFavouriteExerciseHandler = {},
+        completionMessage = mutableStateOf("")
 
     )
 }

@@ -38,15 +38,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -66,6 +69,9 @@ import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,7 +84,8 @@ fun AddManualWorkout(
     deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
     deleteAllExerciseHandler: (ManageExercises.DeleteAllExercise) -> Unit,
 
-    createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit
+    createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit,
+    completionMessage: MutableState<String>
 ) {
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
     val showDialog = remember { mutableStateOf(false) }
@@ -105,23 +112,6 @@ fun AddManualWorkout(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                item {
-                    if (showDialog.value) {
-                        FeedbackAlertDialog(
-                            title = "Workout created!",
-                            onDismissRequest = {
-                                showDialog.value = false
-                                navController.navigate(Route.HomeScreen.route)
-                            },
-                            onConfirm = {
-                                showDialog.value = false
-                                navController.navigate(Route.HomeScreen.route)
-                            },
-                            text =  "You will find it in the home",
-                            icon = Icons.Default.Info
-                        )
-                    }
-                }
                 item {
                     Header()
 
@@ -273,10 +263,11 @@ fun AddManualWorkout(
                 item { Spacer(modifier = Modifier.height(10.dp)) }
 
 
+
                 item {
+
                     FooterButton(
                         onClickSaveWorkout = {
-                            showDialog.value = true
                             val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
                             addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
                             createWorkoutHandler(
@@ -291,6 +282,11 @@ fun AddManualWorkout(
                             )
                             // after the assignment, delete all exercises so it is ready for a new use
                             deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
+
+
+                            navController.navigate(Route.HomeScreen.route)
+
+
 
                         },
                         onClickAddExercise = {
@@ -373,7 +369,7 @@ fun DeleteExerciseButton(onClick: () -> Unit) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(50.dp)
-            .background(color =MaterialTheme.colorScheme.error, shape = CircleShape)
+            .background(color = MaterialTheme.colorScheme.error, shape = CircleShape)
             .clickable(onClick = onClick)
     ) {
         Text(
@@ -400,7 +396,8 @@ fun ScreenPrev(){
         addNameHandler = {},
         selectExerciseHandler = {},
         deleteExerciseHandler = {},
+        deleteAllExerciseHandler = {},
         createWorkoutHandler = {},
-        deleteAllExerciseHandler = {}
+        completionMessage = mutableStateOf("")
     )
 }

@@ -1,13 +1,12 @@
 package com.project.gains.presentation.authentication.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,10 +20,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.R
-import com.project.gains.presentation.components.FeedbackAlertDialog
 
 @Composable
-fun ChangePasswordScreen(onChangePassword: (String) -> Unit) {
+fun ChangePasswordScreen(
+    onChangePassword: (String) -> Unit,
+    completionMessage: MutableState<String>
+) {
     var newPassword by remember { mutableStateOf("") }
     var showPopup =  remember { mutableStateOf(false) }
 
@@ -96,6 +97,7 @@ fun ChangePasswordScreen(onChangePassword: (String) -> Unit) {
                 Button(
                     onClick = {
                         showPopup.value = true
+                        onChangePassword(newPassword)
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -106,23 +108,17 @@ fun ChangePasswordScreen(onChangePassword: (String) -> Unit) {
     }
 
     if (showPopup.value) {
-        FeedbackAlertDialog(
-            title = "Update Completed!",
-            onDismissRequest = { showPopup.value=false
-                onChangePassword(newPassword) },
-            onConfirm = {
-                showPopup.value=false
-                onChangePassword(newPassword) },
-            text = "Your password has been correctly changed",
-            icon = Icons.Default.Info
-        )
+        completionMessage.value="Your password has been correctly changed"
+        showPopup.value=false
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun PreviewChangePasswordScreen() {
-    ChangePasswordScreen { newPassword ->
+    val snackBarHostState = remember { SnackbarHostState() }
+    ChangePasswordScreen({ newPassword ->
         // Handle change password logic
-    }
+    }, completionMessage= mutableStateOf(""))
 }

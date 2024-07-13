@@ -19,13 +19,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -42,7 +45,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 
-import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.SocialMediaIcon
 
 import com.project.gains.presentation.events.LinkAppEvent
@@ -58,7 +60,8 @@ fun LinkedSocialSettingScreen(
     navController: NavController,
     linkHandler: (LinkAppEvent) -> Unit,
     saveLinkHandler: (ManageDataStoreEvent) -> Unit,
-    shareContentViewModel: ShareContentViewModel
+    shareContentViewModel: ShareContentViewModel,
+    completionMessage: MutableState<String>
 ) {
     val linkedApps by shareContentViewModel.linkedApps.observeAsState()
     val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
@@ -134,20 +137,12 @@ fun LinkedSocialSettingScreen(
                             )
                         }
                     } }
-                item {
-                    if (showDialog.value) {
-                        FeedbackAlertDialog(
-                            title =  "Sharing Apps Updated!",
-                            onDismissRequest = { showDialog.value = false },
-                            onConfirm = {
-                                showDialog.value = false
-                            },
-                            text = "You have successfully updated your preferences",
-                            icon = Icons.Default.Info
 
-                        )
+                    if (showDialog.value) {
+                        completionMessage.value="Sharing Apps Updated!"
+                        showDialog.value=false
                     }
-                }
+
             }
 
         }
@@ -195,15 +190,19 @@ fun SocialMediaRow(
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun SettingScreenPreview() {
     val navController = rememberNavController()
     val shareContentViewModel : ShareContentViewModel = hiltViewModel()
+    val snackBarHostState = remember { SnackbarHostState() }
+
     LinkedSocialSettingScreen(
         navController = navController,
-        saveLinkHandler = {  },
         linkHandler = {},
-        shareContentViewModel = shareContentViewModel
+        saveLinkHandler = {  },
+        shareContentViewModel = shareContentViewModel,
+        completionMessage = mutableStateOf("")
     )
 }

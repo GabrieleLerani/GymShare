@@ -1,5 +1,6 @@
 package com.project.gains.presentation.plan
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +64,7 @@ import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
+import com.project.gains.presentation.components.getPreviousDestination
 
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
@@ -74,7 +77,9 @@ import java.util.Locale
 fun PlanScreen(
     navController: NavController,
     planViewModel: PlanViewModel,
-    selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit
+    selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit,
+    completionMessage: MutableState<String>
+
 ) {
     // Sample list of workouts
     val selectedPlan by planViewModel.selectedPlan.observeAsState()
@@ -84,6 +89,15 @@ fun PlanScreen(
 
     val plans by planViewModel.plans.observeAsState()
     var expanded by remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(true) }
+
+
+
+    if (showDialog.value && getPreviousDestination(navController = navController) == Route.LastNewPlanScreen.route){
+        completionMessage.value="You have successfully created your plan!"
+        showDialog.value=false
+
+    }
 
     GainsAppTheme {
         Box(
@@ -314,6 +328,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun PlanScreenPreview() {
@@ -322,6 +337,7 @@ fun PlanScreenPreview() {
     PlanScreen(
         navController = navController,
         planViewModel = planViewModel,
-        selectPlanHandler = {}
+        selectPlanHandler = {},
+        completionMessage = mutableStateOf("")
     )
 }
