@@ -76,7 +76,7 @@ fun MainScreen(
                 LaunchedEffect(key1 = messageState.value) {
                     val result = snackBarHostState.showSnackbar(
                         message = messageState.value,
-                        duration = SnackbarDuration.Indefinite
+                        duration = SnackbarDuration.Short
                     )
                     when (result) {
                         SnackbarResult.ActionPerformed, SnackbarResult.Dismissed -> {

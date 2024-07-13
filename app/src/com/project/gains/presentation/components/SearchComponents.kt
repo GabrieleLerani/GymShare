@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,8 +24,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SelectableChipColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -177,7 +180,8 @@ fun ResearchFilter(
                 FilterChip(
                     category = category,
                     isSelected = isSelected,
-                    onCategorySelected = onCategorySelected
+                    onCategorySelected = onCategorySelected,
+
                 )
             }
         }
@@ -202,8 +206,18 @@ fun FilterChip(
             )
         },
         selected = isSelected,
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
-        shape = RoundedCornerShape(16.dp)
+
+        leadingIcon = if (isSelected) {
+            {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = "Done icon",
+                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                )
+            }
+        } else {
+            null
+        }
     )
 }
 
