@@ -27,6 +27,7 @@ import com.project.gains.theme.GainsAppTheme
 fun SearchScreen(
     searchViewModel: SearchViewModel,
     searchGymPostHandler: (SearchEvent.SearchGymPostEvent) -> Unit,
+    resetGymPostHandler: (SearchEvent.ResetPostEvent) -> Unit,
     assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit,
     navController: NavController
 ) {
@@ -53,7 +54,9 @@ fun SearchScreen(
                         onValueChange = {
                             text = it
                         },
-                        onCloseClicked = {navController.popBackStack()},
+                        onCloseClicked = {
+                            resetGymPostHandler(SearchEvent.ResetPostEvent)
+                            navController.popBackStack()},
                         onSearchClicked = {
                             searchGymPostHandler(SearchEvent.SearchGymPostEvent(text = text, selectedCategory = selectedCategory))
                             navController.navigate(Route.FeedScreen.route)
@@ -86,6 +89,7 @@ fun SearchScreenPreview() {
         searchViewModel = searchViewModel,
         searchGymPostHandler = {},
         assignCategoryHandler = {},
-        navController = navController
+        navController = navController,
+        resetGymPostHandler = {}
     )
 }

@@ -70,8 +70,19 @@ fun TypedExerciseScreen(
                             }
 
                         },
-                        onCloseClicked = {},
+                        onCloseClicked = {     searchedExercises.value =  listOf<Exercise>()
+                        },
                         onSearchClicked = {
+                                query ->
+                            searchQuery.value = query
+                            isSearchQueryEmpty.value = query.isBlank()
+                            searchedExercises.value = if (query.isNotBlank()) {
+                                allExercises?.filter {
+                                    it.name.contains(query, ignoreCase = true)
+                                } ?: listOf()
+                            } else {
+                                listOf()
+                            }
 
                         },
                         // this is empty because it is used for a different purpose

@@ -162,7 +162,8 @@ fun NavGraph(
                 // set screen as the node state
                 FeedScreen(
                     navController = navController,
-                    feedViewModel =feedViewModel
+                    feedViewModel =feedViewModel,
+                    resetGymPostHandler = feedViewModel::onSearchEvent
                 )
             }
             composable(
@@ -178,7 +179,8 @@ fun NavGraph(
                     searchViewModel = searchViewModel,
                     searchGymPostHandler = feedViewModel::onSearchEvent,
                     assignCategoryHandler = searchViewModel::onCategoriesEvent,
-                    navController = navController
+                    navController = navController,
+                    resetGymPostHandler = feedViewModel::onSearchEvent
                 )
             }
             composable(

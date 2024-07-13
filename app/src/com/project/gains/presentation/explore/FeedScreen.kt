@@ -39,14 +39,16 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.GymPost
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.SearchAppBar
+import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
 @Composable
 fun FeedScreen(
     navController: NavController,
-    feedViewModel: FeedViewModel
-) {
+    feedViewModel: FeedViewModel,
+    resetGymPostHandler: (SearchEvent.ResetPostEvent) -> Unit,
+    ) {
     val gymPosts by feedViewModel.posts.observeAsState()
 
     // Assuming you have a function to fetch gym posts from an API or elsewhere
@@ -66,7 +68,8 @@ fun FeedScreen(
                         value = "",
                         placeholder = "Search here...",
                         onValueChange = {},
-                        onCloseClicked = {},
+                        onCloseClicked = {    resetGymPostHandler(SearchEvent.ResetPostEvent)
+                        },
                         onSearchClicked = {},
                         onClick = {
                             navController.navigate(Route.SearchScreen.route)
@@ -196,6 +199,7 @@ fun FeedScreenPreview() {
     val feedViewModel: FeedViewModel = hiltViewModel()
     FeedScreen(
         navController = navController,
-        feedViewModel = feedViewModel
+        feedViewModel = feedViewModel,
+        resetGymPostHandler = {}
     )
 }

@@ -105,6 +105,10 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                 val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = event.username, social = social, randomSocialId = R.drawable.instagram_icon, caption = desc, time = "10:13", likes = "123", comment = "234")
                 _posts.value?.add(post)
             }
+
+            is SearchEvent.ResetPostEvent -> {
+                _posts.value = generateRandomGymPost(10).toMutableList()
+            }
         }
     }
 }
