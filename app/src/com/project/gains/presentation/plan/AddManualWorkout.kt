@@ -83,6 +83,7 @@ import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.toFormattedString
+import com.project.gains.util.toLowerCaseString
 import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -158,8 +159,7 @@ fun AddManualWorkout(
                         onExpandedChange = { expanded = !expanded }) {
 
                         OutlinedTextField(
-                            value = selectedDay.name.lowercase(Locale.ROOT)
-                                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                            value = toLowerCaseString(selectedDay.name),
                             label = {Text("Select workout day")},
                             onValueChange = {},
                             trailingIcon = {

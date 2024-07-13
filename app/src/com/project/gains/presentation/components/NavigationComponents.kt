@@ -341,7 +341,6 @@ fun DynamicTopBar(
                     Icon(
                         Icons.Filled.Close,
                         contentDescription = "Close Icon",
-                        modifier = Modifier.size(50.dp)
                     )
                 }
             }
@@ -556,7 +555,6 @@ fun DynamicTopBar(
                 }
             }
         }
-
     }
     if (showNotification.value) {
         NotificationCard(

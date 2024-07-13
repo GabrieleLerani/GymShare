@@ -1,10 +1,11 @@
 package com.project.gains.presentation.progress
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+
+
 import android.graphics.Paint
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,16 +18,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
-
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,7 +43,6 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -56,14 +54,14 @@ import com.project.gains.data.PlotType
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
-
-
 import com.project.gains.theme.GainsAppTheme
+import com.project.gains.util.toLowerCaseString
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressDetailsScreen(
     navController: NavController,
@@ -108,89 +106,58 @@ fun ProgressDetailsScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Top
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                        RoundedCornerShape(16.dp)
-                                    )
-                                    .border(
-                                        border = BorderStroke(
-                                            width = 3.dp,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        ), shape = RoundedCornerShape(16.dp)
-                                    )
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Spacer(modifier = Modifier.weight(0.3f))
 
-                                    androidx.compose.material3.Text(
-                                        text = selectedPeriod.toString(),
-                                        style = MaterialTheme.typography.bodySmall.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.weight(1f)  // Use weight to make the text flexible
-                                    )
-                                    androidx.compose.material3.IconButton(
-                                        onClick = { expandedPeriod = !expandedPeriod }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.ArrowDropDown,
-                                            contentDescription = "Dropdown Icon"
+                            ExposedDropdownMenuBox(
+                                expanded = expandedPeriod,
+                                onExpandedChange = { expandedPeriod = !expandedPeriod }) {
+
+                                OutlinedTextField(
+                                    value = toLowerCaseString(selectedPeriod.toString()),
+                                    textStyle = MaterialTheme.typography.bodyMedium,
+                                    label = {Text("Period")},
+                                    singleLine = true,
+                                    onValueChange = {},
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = expandedPeriod
                                         )
+
+                                    },
+                                    readOnly = true,
+                                    modifier = Modifier
+                                        .menuAnchor(),
+                                        //.fillMaxWidth(),
+                                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                                    )
+
+                                )
+
+
+                                ExposedDropdownMenu(
+                                    expanded = expandedPeriod,
+                                    onDismissRequest = { expandedPeriod = false})
+                                {
+                                    PeriodMetricType.entries.forEach { period ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = toLowerCaseString(period.toString()).take(15) + if (toLowerCaseString(period.toString()).length > 15) "..." else "",
+                                                )
+                                            },
+                                            onClick = {
+                                                selectedPeriod = period
+                                                expandedPeriod = false
+                                            },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
                                     }
                                 }
-                            }
 
-                            DropdownMenu(
-                                expanded = expandedPeriod,
-                                onDismissRequest = { expandedPeriod = false },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        shape = RoundedCornerShape(16.dp),
-                                        color = MaterialTheme.colorScheme.surface
-                                    )
-                                    .padding(10.dp)
-                            ) {
-                                PeriodMetricType.entries.forEach { period ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            androidx.compose.material3.Text(
-                                                text = period.toString().take(15) + if (period.toString().length > 15) "..." else "",
-                                                style = MaterialTheme.typography.bodySmall.copy(
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 12.sp
-                                                ),
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                            )
-                                        },
-                                        onClick = {
-                                            selectedPeriod = period
-                                            expandedPeriod = false
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(
-                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                                shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .border(
-                                                border = BorderStroke(
-                                                    width = 3.dp,
-                                                    color = MaterialTheme.colorScheme.onSurface
-                                                ), shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .padding(8.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                }
                             }
                         }
 
@@ -201,90 +168,60 @@ fun ProgressDetailsScreen(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.Top,
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                        RoundedCornerShape(16.dp)
-                                    )
-                                    .border(
-                                        border = BorderStroke(
-                                            width = 3.dp,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        ), shape = RoundedCornerShape(16.dp)
-                                    )
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Spacer(modifier = Modifier.weight(0.3f))
 
-                                    androidx.compose.material3.Text(
-                                        text = selectedMetric.toString(),
-                                        style = MaterialTheme.typography.bodySmall.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.weight(5f)  // Use weight to make the text flexible
-                                    )
-                                    androidx.compose.material3.IconButton(
-                                        onClick = { expandedMetric = !expandedMetric }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.ArrowDropDown,
-                                            contentDescription = "Dropdown Icon"
+                            ExposedDropdownMenuBox(
+                                expanded = expandedMetric,
+                                onExpandedChange = { expandedMetric = !expandedMetric }) {
+
+                                OutlinedTextField(
+                                    value = toLowerCaseString(selectedMetric.toString()),
+                                    textStyle = MaterialTheme.typography.bodyMedium,
+                                    label = {Text("Metric")},
+                                    singleLine = true,
+                                    onValueChange = {},
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = expandedMetric
                                         )
+
+                                    },
+                                    readOnly = true,
+                                    modifier = Modifier
+                                        .menuAnchor(),
+                                    //.fillMaxWidth(),
+                                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                                    )
+
+                                )
+
+                                ExposedDropdownMenu(
+                                    expanded = expandedMetric,
+                                    onDismissRequest = { expandedMetric = false})
+                                {
+                                    TrainingMetricType.entries.forEach { metric ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = toLowerCaseString(metric.toString()).take(15) + if (toLowerCaseString(metric.toString()).length > 15) "..." else "",
+                                                )
+                                            },
+                                            onClick = {
+                                                selectedMetric = metric
+                                                expandedMetric = false
+                                            },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
                                     }
                                 }
+
                             }
 
-                            DropdownMenu(
-                                expanded = expandedMetric,
-                                onDismissRequest = { expandedMetric = false },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        shape = RoundedCornerShape(16.dp),
-                                        color = MaterialTheme.colorScheme.surface
-                                    )
-                                    .padding(10.dp)
-                            ) {
-                                TrainingMetricType.entries.forEach { metric ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            androidx.compose.material3.Text(
-                                                text = metric.toString().take(15) + if (metric.toString().length > 15) "..." else "",
-                                                style = MaterialTheme.typography.bodySmall.copy(
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 12.sp
-                                                ),
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                            )
-                                        },
-                                        onClick = {
-                                            selectedMetric = metric
-                                            expandedMetric = false
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(
-                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                                shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .border(
-                                                border = BorderStroke(
-                                                    width = 3.dp,
-                                                    color = MaterialTheme.colorScheme.onSurface
-                                                ), shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .padding(8.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                }
-                            }
+
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
@@ -294,86 +231,55 @@ fun ProgressDetailsScreen(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.Top,
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                        RoundedCornerShape(16.dp)
-                                    )
-                                    .border(
-                                        border = BorderStroke(
-                                            width = 3.dp,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        ), shape = RoundedCornerShape(16.dp)
-                                    )
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Spacer(modifier = Modifier.weight(0.3f))
-                                    androidx.compose.material3.Text(
-                                        text = selectedPlot.toString(),
-                                        style = MaterialTheme.typography.bodySmall.copy(
-                                            fontWeight = FontWeight.Bold
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.weight(1f)  // Use weight to make the text flexible
-                                    )
-                                    androidx.compose.material3.IconButton(
-                                        onClick = { expandedPlot = !expandedPlot }
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.ArrowDropDown,
-                                            contentDescription = "Dropdown Icon"
-                                        )
-                                    }
-                                }
-                            }
 
-                            DropdownMenu(
+                            ExposedDropdownMenuBox(
                                 expanded = expandedPlot,
-                                onDismissRequest = { expandedPlot = false },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        shape = RoundedCornerShape(16.dp),
-                                        color = MaterialTheme.colorScheme.surface
+                                onExpandedChange = { expandedPlot = !expandedPlot }) {
+
+                                OutlinedTextField(
+                                    value = toLowerCaseString(selectedPlot.toString()),
+                                    textStyle = MaterialTheme.typography.bodyMedium,
+                                    label = {Text("Plot")},
+                                    singleLine = true,
+                                    onValueChange = {},
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(
+                                            expanded = expandedPlot
+                                        )
+
+                                    },
+                                    readOnly = true,
+                                    modifier = Modifier
+                                        .menuAnchor(),
+                                    //.fillMaxWidth(),
+                                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
                                     )
-                            ) {
-                                PlotType.entries.forEach { plot ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            androidx.compose.material3.Text(
-                                                text = plot.toString().take(15) + if (plot.toString().length > 15) "..." else "",
-                                                style = MaterialTheme.typography.bodySmall.copy(
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 12.sp
-                                                ),
-                                                color = MaterialTheme.colorScheme.onSurface,
-                                            )
-                                        },
-                                        onClick = {
-                                            selectedPlot = plot
-                                            expandedPlot = false
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .background(
-                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                                shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .border(
-                                                border = BorderStroke(
-                                                    width = 3.dp,
-                                                    color = MaterialTheme.colorScheme.onSurface
-                                                ), shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .padding(8.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(2.dp))
+
+                                )
+
+                                ExposedDropdownMenu(
+                                    expanded = expandedPlot,
+                                    onDismissRequest = { expandedPlot = false})
+                                {
+                                    PlotType.entries.forEach { plot ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = toLowerCaseString(plot.toString()).take(15) + if (toLowerCaseString(plot.toString()).length > 15) "..." else "",
+                                                )
+                                            },
+                                            onClick = {
+                                                selectedPlot = plot
+                                                expandedPlot = false
+                                            },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+
+                                        )
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                    }
                                 }
                             }
                         }
