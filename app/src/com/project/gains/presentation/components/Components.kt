@@ -300,64 +300,6 @@ fun WarningCard(message: String) {
     }
 }
 
-@Composable
-fun FeedbackAlertDialogOptions(
-    message: String,
-    popupVisible: MutableState<Boolean>,
-    onClick: () -> Unit,
-) {
-    if (popupVisible.value) {
-        /*AlertDialog(
-            onDismissRequest = { popupVisible.value=false },
-            title = {
-            },
-            text = {
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.headlineMedium,
-                )
-            },
-            buttons = {
-                Column {
-                    Divider(
-                        color = Color.Gray,
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(5.dp)
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextButton(
-                            onClick = { popupVisible.value = false },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Cancel", color = MaterialTheme.colorScheme.error)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(50.dp)
-                                .background(Color.Gray)
-                        )
-                        TextButton(
-                            onClick = { popupVisible.value = false
-                                onClick()
-                                      },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Confirm", color = MaterialTheme.colorScheme.tertiary)
-                        }
-                    }
-                }
-            },
-            shape = RoundedCornerShape(16.dp),
-            modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
-        )*/
-    }
-}
 
 
 

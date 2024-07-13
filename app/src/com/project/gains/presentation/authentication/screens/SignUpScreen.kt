@@ -32,6 +32,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -65,7 +66,7 @@ import com.project.gains.R
 import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignUpEvent
-import com.project.gains.presentation.components.FeedbackAlertDialogOptions
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
@@ -350,11 +351,15 @@ fun DefaultSignUpContent(
             }
         }
 
-        if (openPopup.value == true) {
-            FeedbackAlertDialogOptions(
-                message = "Are you sure your credentials are correct?",
-                popupVisible = openPopup
-            ) { signInHandler(SignUpEvent.SignUp(name, email, password, password)) }
+        if (openPopup.value) {
+            FeedbackAlertDialog(
+                title = "Double Check!",
+                text = "Are you sure your credentials are correct?",
+                onDismissRequest = {openPopup.value=false},
+                icon = Icons.Default.Warning,
+                onConfirm = {
+                openPopup.value=false
+                signInHandler(SignUpEvent.SignUp(name, email, password, password)) })
         }
 
         // Observe changes in data
