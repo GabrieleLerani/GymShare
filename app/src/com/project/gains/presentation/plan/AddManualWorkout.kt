@@ -19,17 +19,26 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,8 +57,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,6 +78,8 @@ import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
+import com.project.gains.util.toFormattedString
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,12 +147,9 @@ fun AddManualWorkout(
                         },
                         label = {
                             Text(
-                                if (workoutTitle.text.isEmpty()) "Enter workout name..." else "",
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = MaterialTheme.colorScheme.onSurface,
+                                if (workoutTitle.text.isEmpty()) "Enter workout name" else "",
                             )
                         },
-                        shape = RoundedCornerShape(size = 20.dp),
                         textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
                         modifier = Modifier
                             .fillMaxWidth()
@@ -150,68 +161,41 @@ fun AddManualWorkout(
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
+                    
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded }) {
 
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Box(
+                        OutlinedTextField(
+                            value = selectedDay.name.lowercase(Locale.ROOT)
+                                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() },
+                            label = {Text("Select workout day")},
+                            onValueChange = {},
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(
+                                    expanded = expanded
+                                )
+
+                            },
+                            readOnly = true,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.onTertiary,
-                                    RoundedCornerShape(16.dp)
-                                )
-                                .border(
-                                    border = BorderStroke(
-                                        width = 3.dp,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    ), shape = RoundedCornerShape(16.dp)
-                                )
-                                .padding(8.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = "Workout Day: ${selectedDay.name}",
-                                    style = MaterialTheme.typography.labelLarge,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                IconButton(
-                                    onClick = { expanded = !expanded }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = "Dropdown Icon"
-                                    )
-                                }
-                            }
-                        }
+                                .menuAnchor().fillMaxWidth(),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                            )
 
-                        DropdownMenu(
+                        )
+
+                        ExposedDropdownMenu(
                             expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .background(
-                                    shape = RoundedCornerShape(16.dp),
-                                    color = MaterialTheme.colorScheme.surface
-                                )
-                                .padding(10.dp)
+                            onDismissRequest = { expanded = false }
                         ) {
                             Weekdays.entries.forEach { day ->
                                 DropdownMenuItem(
                                     text = {
                                         Text(
-                                            day.name,
-                                            style = MaterialTheme.typography.bodySmall.copy(
-                                                fontWeight = FontWeight.Bold
-                                            ),
-                                            color = MaterialTheme.colorScheme.onSurface
+                                             day.toFormattedString(),
                                         )
                                     },
                                     onClick = {
@@ -220,22 +204,14 @@ fun AddManualWorkout(
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(
-                                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                            shape = RoundedCornerShape(16.dp)
-                                        )
-                                        .border(
-                                            border = BorderStroke(
-                                                width = 3.dp,
-                                                color = MaterialTheme.colorScheme.onSurface
-                                            ), shape = RoundedCornerShape(16.dp)
-                                        )
-                                        .padding(16.dp)
+
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                             }
                         }
+
                     }
+                    
                 }
 
                 item {
@@ -373,7 +349,7 @@ fun DeleteExerciseButton(onClick: () -> Unit) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(50.dp)
-            .background(color =MaterialTheme.colorScheme.error, shape = CircleShape)
+            .background(color = MaterialTheme.colorScheme.error, shape = CircleShape)
             .clickable(onClick = onClick)
     ) {
         Text(
