@@ -6,27 +6,25 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -40,12 +38,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.gains.R
@@ -111,6 +107,7 @@ fun HomeScreen(
             ) {
 
                 item {
+                    Spacer(modifier = Modifier.height(16.dp))
                     SearchAppBar(
                         value = "",
                         placeholder = "Search exercises here...",
@@ -125,21 +122,24 @@ fun HomeScreen(
                 }
 
                 item {
-                    HorizontalScrollScreenWorkout(navController, "daily workouts", items2 = workouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
+                    HorizontalScrollScreenWorkout(navController, "Your daily workouts", items2 = workouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
-                    HorizontalScrollScreenExercise(navController, "favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler,)
+                    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
                 }
 
                 item {
-                    HorizontalScrollScreenWorkoutFavourites(navController, "favourite workouts", items2 = favouriteWorkouts!!.toList(), selectWorkoutHandler = selectWorkoutHandler)
+                    HorizontalScrollScreenExercise(navController, "Your favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler,)
                 }
 
                 item {
-                    // Notification card
+                    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
                 }
 
+                item {
+                    HorizontalScrollScreenWorkoutFavourites(navController, "Your favourite workouts", items2 = favouriteWorkouts!!.toList(), selectWorkoutHandler = selectWorkoutHandler)
+                }
             }
         }
     }
@@ -176,7 +176,7 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .height(350.dp)
+            .height(300.dp)
     ) {
         // BowWithConstraints will provide the maxWidth used below
         BoxWithConstraints(
@@ -187,20 +187,7 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-
-                Text(
-                    text = "Your $title",
-                    style = MaterialTheme.typography.labelLarge, // Make it bigger and bold
-                    color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp) // Add padding here for space between text and border
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                )
+                TextItem(title = title)
 
                 LazyRow(
                     modifier = Modifier
@@ -239,6 +226,9 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                             )
                         }
                     }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }
@@ -252,7 +242,7 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .height(350.dp)
+            .height(300.dp)
     ) {
         // BowWithConstraints will provide the maxWidth used below
         BoxWithConstraints(
@@ -263,19 +253,7 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Text(
-                    text = "Your $title",
-                    style = MaterialTheme.typography.labelLarge, // Make it bigger and bold
-                    color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp) // Add padding here for space between text and border
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                )
+                TextItem(title = title)
 
                 LazyRow(
                     modifier = Modifier
@@ -324,6 +302,9 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                                 )
                             }
                         }
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
                 }
             }
@@ -338,7 +319,7 @@ fun HorizontalScrollScreenWorkoutFavourites(navController: NavController, title:
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .height(350.dp)
+            .height(300.dp)
     ) {
         // BowWithConstraints will provide the maxWidth used below
         BoxWithConstraints(
@@ -349,19 +330,7 @@ fun HorizontalScrollScreenWorkoutFavourites(navController: NavController, title:
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                Text(
-                    text = "Your $title",
-                    style = MaterialTheme.typography.labelLarge, // Make it bigger and bold
-                    color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp) // Add padding here for space between text and border
-                        .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                ) // Additional padding inside the background and border
+                TextItem(title = title)
 
                 LazyRow(
                     modifier = Modifier
@@ -399,6 +368,9 @@ fun HorizontalScrollScreenWorkoutFavourites(navController: NavController, title:
                                 buttonText = "More details"
                             )
                         }
+                        item {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
                 }
             }
@@ -407,17 +379,29 @@ fun HorizontalScrollScreenWorkoutFavourites(navController: NavController, title:
 }
 
 @Composable
+fun TextItem(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.headlineMedium, // Make it bigger and bold
+        color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(20.dp)
+    )
+}
+
+@Composable
 fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, buttonEnabled: Boolean, buttonText: String) {
     val configuration = LocalConfiguration.current
     val screenWith = configuration.screenWidthDp.dp
 
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(8.dp),
+        elevation = CardDefaults.cardElevation(16.dp),
         modifier = Modifier
             .padding(start = 16.dp, top = 16.dp)
             .width(width = screenWith - 64.dp)
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
@@ -429,15 +413,15 @@ fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, button
                 painter = painterResource(id = imageResId),
                 contentDescription = null,
                 modifier = Modifier
-                    .height(140.dp)
+                    .height(100.dp)
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(8.dp)
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             if (buttonEnabled) {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -446,7 +430,9 @@ fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, button
                     modifier = Modifier
                         .padding(bottom = 16.dp),
                 ) {
-                    Text(buttonText)
+                    Text(
+                        text = buttonText
+                    )
                 }
             }
         }
