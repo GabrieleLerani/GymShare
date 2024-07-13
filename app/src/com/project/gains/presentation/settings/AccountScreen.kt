@@ -6,10 +6,8 @@ package com.project.gains.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,9 +27,10 @@ import androidx.compose.material.TextButton
 import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,10 +51,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
-import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.NotificationCard
-import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.presentation.settings.events.SignOutEvent
@@ -205,13 +200,14 @@ fun AccountScreen(
             if (showDialogComplete.value) {
 
                 FeedbackAlertDialog(
-                    title = "You have successfully Updated your profile!",
+                    title = "Profile Updated!",
                     onDismissRequest = {
                     },
                     onConfirm = {
                         showDialogComplete.value=false
                     },
-                    show = showDialogComplete
+                    text = "You have successfully changed your credentials",
+                    icon = Icons.Default.Info
                 )
             }
         }

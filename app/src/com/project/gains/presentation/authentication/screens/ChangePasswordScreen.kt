@@ -6,6 +6,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,11 +18,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.R
-import com.project.gains.presentation.authentication.events.OTPEvent
 import com.project.gains.presentation.components.FeedbackAlertDialog
 
 @Composable
@@ -107,10 +107,14 @@ fun ChangePasswordScreen(onChangePassword: (String) -> Unit) {
 
     if (showPopup.value) {
         FeedbackAlertDialog(
-            title = "Your password has been changed!",
-            onDismissRequest = { onChangePassword(newPassword) },
-            onConfirm = { onChangePassword(newPassword) },
-            show = showPopup
+            title = "Update Completed!",
+            onDismissRequest = { showPopup.value=false
+                onChangePassword(newPassword) },
+            onConfirm = {
+                showPopup.value=false
+                onChangePassword(newPassword) },
+            text = "Your password has been correctly changed",
+            icon = Icons.Default.Info
         )
     }
 }

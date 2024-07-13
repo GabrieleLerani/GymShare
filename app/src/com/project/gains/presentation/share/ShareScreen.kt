@@ -14,15 +14,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -37,7 +35,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.gains.data.Workout
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.SharingMediaIcon
 import com.project.gains.presentation.components.SocialMediaIcon
@@ -219,7 +216,7 @@ fun ShareScreen(
             item {
                 if (showDialog.value) {
                     FeedbackAlertDialog(
-                        title = "You have successfully shared your content!",
+                        title = "Content Shared!",
                         onDismissRequest = {
                             showDialog.value = false
                             navController.navigate(Route.HomeScreen.route)
@@ -228,19 +225,21 @@ fun ShareScreen(
                             showDialog.value = false
                             navController.navigate(Route.HomeScreen.route)
                         },
-                        show = showDialog
+                        text = "You have successfully shared your content",
+                        icon = Icons.Default.Info
                     )
                 }
                 if (showErrorDialog.value) {
                     FeedbackAlertDialog(
-                        title = "An error has occurred, check your connection and retry later!",
+                        title = "Error occured",
                         onDismissRequest = {
                             showErrorDialog.value = false
                         },
                         onConfirm = {
                             showErrorDialog.value = false
                         },
-                        show = showErrorDialog
+                        text = "An error has occurred, check your connection and retry later",
+                        icon = Icons.Default.Error
                     )
                 }
             }

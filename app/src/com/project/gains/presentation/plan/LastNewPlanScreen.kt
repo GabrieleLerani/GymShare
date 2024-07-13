@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -88,7 +90,7 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
             item {
                 if (showDialog.value) {
                     FeedbackAlertDialog(
-                        title = "You have successfully generated your plan!",
+                        title = "Plan Created!",
                         onDismissRequest = {
                             showDialog.value = false
                             navController.navigate(Route.PlanScreen.route)
@@ -97,7 +99,8 @@ fun LastNewPlanScreen(navController: NavController, createPlanHandler: (ManagePl
                             showDialog.value = false
                             navController.navigate(Route.PlanScreen.route)
                         },
-                        show = showDialog
+                        text = "You will find it in the plan screen",
+                        icon = Icons.Default.Info
                     )
                 }
             }

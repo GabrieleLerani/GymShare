@@ -1,6 +1,5 @@
 package com.project.gains.presentation.components
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,30 +17,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Divider
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.automirrored.filled.ArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.MutableState
@@ -53,15 +46,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.project.gains.R
 import com.project.gains.data.Exercise
 
@@ -313,7 +301,7 @@ fun FeedbackAlertDialogOptions(
     onClick: () -> Unit,
 ) {
     if (popupVisible.value) {
-        AlertDialog(
+        /*AlertDialog(
             onDismissRequest = { popupVisible.value=false },
             title = {
             },
@@ -361,79 +349,56 @@ fun FeedbackAlertDialogOptions(
             },
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.padding(horizontal = 16.dp) // Optional padding to reduce width
-        )
+        )*/
     }
 }
 
+
+
+
 @Composable
 fun FeedbackAlertDialog(
-    title: String,
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
-    show: MutableState<Boolean>
+    title: String,
+    text: String,
+    icon: ImageVector,
 ) {
-        AlertDialog(
-            onDismissRequest = onDismissRequest,
-            title = {
-
-                Box(modifier = Modifier.padding(20.dp)){
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    )  {
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.headlineMedium,
-                        )
-                    }
+    AlertDialog(
+        icon = {
+            Icon(icon, contentDescription = "Example Icon")
+        },
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = text)
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirm()
                 }
-
-
-            },
-            text = {
-            },
-            confirmButton = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(
-                        onClick = { show.value=false
-                            onConfirm()
-                                  },
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .size(60.dp),
-                        colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.secondary)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Confirm Icon",
-                            modifier = Modifier
-                                .size(80.dp)
-                                .padding(10.dp),
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismissRequest()
                 }
-            },
-            dismissButton = {
-            },
-            shape = RoundedCornerShape(20.dp),
-        )
-}
-
-@SuppressLint("UnrememberedMutableState")
-@Preview
-@Composable
-fun prev(){
-    FeedbackAlertDialog(
-        title = "Something went wrong",
-        onDismissRequest = {  },
-        onConfirm = {  },
-        show = mutableStateOf(true)
+            ) {
+                Text("Dismiss")
+            }
+        }
     )
 }
+
+
 
 @Composable
 fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {

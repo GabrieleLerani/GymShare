@@ -19,12 +19,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -42,18 +42,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 
-import com.project.gains.presentation.components.BackButton
-
 import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.LogoUser
-import com.project.gains.presentation.components.NotificationCard
 import com.project.gains.presentation.components.SocialMediaIcon
 
-import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.LinkAppEvent
 import com.project.gains.presentation.events.ManageDataStoreEvent
-import com.project.gains.presentation.navgraph.Route
-
 
 
 import com.project.gains.theme.GainsAppTheme
@@ -144,12 +137,13 @@ fun LinkedSocialSettingScreen(
                 item {
                     if (showDialog.value) {
                         FeedbackAlertDialog(
-                            title =  "You have successfully updated your preferences!",
+                            title =  "Sharing Apps Updated!",
                             onDismissRequest = { showDialog.value = false },
                             onConfirm = {
                                 showDialog.value = false
                             },
-                            show = showDialog
+                            text = "You have successfully updated your preferences",
+                            icon = Icons.Default.Info
 
                         )
                     }

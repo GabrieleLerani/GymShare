@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -47,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -65,10 +64,8 @@ import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
-import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +108,7 @@ fun AddManualWorkout(
                 item {
                     if (showDialog.value) {
                         FeedbackAlertDialog(
-                            title = "You have successfully added your workout! You will find it in the home section in the day previously selected",
+                            title = "Workout created!",
                             onDismissRequest = {
                                 showDialog.value = false
                                 navController.navigate(Route.HomeScreen.route)
@@ -120,7 +117,8 @@ fun AddManualWorkout(
                                 showDialog.value = false
                                 navController.navigate(Route.HomeScreen.route)
                             },
-                            show = showDialog
+                            text =  "You will find it in the home",
+                            icon = Icons.Default.Info
                         )
                     }
                 }

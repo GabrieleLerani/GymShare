@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -157,13 +158,14 @@ fun WorkoutScreen(
             if (showDialogShared==true) {
 
                 FeedbackAlertDialog(
-                    title = "You have successfully Shared your content!",
+                    title = "Content Shared!",
                     onDismissRequest = {
                     },
                     onConfirm = {
                         shareHandler(ManageDialogEvent.SelectShowDialogShared(false))
                     },
-                    show = showPopup2
+                    text = "You have successfully Shared your content",
+                    icon = Icons.Default.Info
                 )
             }
         }
