@@ -1,17 +1,14 @@
 package com.project.gains.presentation.plan
 
+//noinspection UsingMaterialAndMaterial3Libraries
+
 import android.annotation.SuppressLint
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,23 +16,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Circle
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -51,24 +46,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.R
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 import com.project.gains.presentation.components.getPreviousDestination
-
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
-
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.toLowerCaseString
-import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanScreen(
     navController: NavController,
@@ -106,76 +97,6 @@ fun PlanScreen(
                 verticalArrangement = Arrangement.Top
 
             ) {
-                item {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top,
-                        //modifier = Modifier.padding(16.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(5.dp)
-                                ),
-
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    text = selectedPlan?.name.toString(),
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.weight(1f)
-                                    // Take up the remaining space
-                                )
-                                IconButton(
-                                    onClick = { expanded = !expanded }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = "Dropdown Icon"
-                                    )
-                                }
-                            }
-                        }
-
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .background(
-                                    color = MaterialTheme.colorScheme.surface
-                                )
-                                .padding(10.dp) // Padding to match the Text above
-                        ) {
-                            plans?.forEach { plan ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            plan.name,
-                                        )
-                                    },
-                                    onClick = {
-                                        selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
-                                        expanded = false
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-
-                                )
-
-                            }
-                        }
-                    }
-                }
 
                 item {
                     Column(
@@ -184,6 +105,61 @@ fun PlanScreen(
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded },
+                        ) {
+
+                            OutlinedTextField(
+                                value = selectedPlan?.name.toString(),
+                                textStyle = MaterialTheme.typography.titleLarge,
+                                label = {Text("Your plans")},
+                                singleLine = true,
+                                onValueChange = {},
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(
+                                        expanded = expanded
+                                    )
+
+                                },
+                                readOnly = true,
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .fillMaxWidth(),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                                )
+
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false})
+                            {
+                                plans?.forEach { plan ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                plan.name,
+                                            )
+                                        },
+                                        onClick = {
+                                            selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
+                                            expanded = false
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+
+                                    )
+                                }
+                            }
+
+                        }
+
+                        Spacer(modifier = Modifier.padding(10.dp))
+
                         WorkoutHeader(selectedLevel, selectedTraining, selectedFrequency)
                         Spacer(modifier = Modifier.height(30.dp))
                         WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
@@ -212,15 +188,14 @@ fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, select
     ) {
         Text(
             text = "Workout settings",
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         Card(
             modifier = Modifier
                 .fillMaxWidth(),
-
-            elevation = 4.dp
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
         ) {
             Column(
                 modifier = Modifier
@@ -230,9 +205,17 @@ fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, select
                 val frequency = toLowerCaseString(selectedFrequency.toString())
 
                 AlignedTextItem(label = "Level", value = toLowerCaseString(selectedLevel.toString()))
-                Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    thickness = 0.5.dp,
+                    color = Color.LightGray
+                )
                 AlignedTextItem(label = "Type", value = toLowerCaseString(selectedTraining.toString()))
-                Divider(color = Color.LightGray, thickness = 0.5.dp, modifier = Modifier.padding(vertical = 8.dp))
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    thickness = 0.5.dp,
+                    color = Color.LightGray
+                )
                 AlignedTextItem(label = "Frequency", value = "$frequency per week")
             }
         }
@@ -250,16 +233,13 @@ fun AlignedTextItem(label: String, value: String) {
     ) {
         Text(
             text = label,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color.Gray,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(end = 16.dp)
         )
         Text(
             text = value,
-            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(start = 16.dp)
         )
     }
@@ -274,7 +254,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
     ) {
         Text(
             text = "Workout days",
-            fontSize = 18.sp,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
@@ -287,7 +267,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                     .clickable {
                         selectHandler(ManageWorkoutEvent.SelectWorkout(workout))
                     },
-                elevation = 4.dp
+
             ) {
                 Row(
                     modifier = Modifier

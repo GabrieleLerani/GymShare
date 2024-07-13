@@ -47,6 +47,8 @@ import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarResult
@@ -91,11 +93,63 @@ fun AddExerciseItem(
     isToAdd: Boolean,
     modifier: Modifier
 ) {
+
+    ListItem(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        leadingContent = {
+            Image(
+                painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
+                contentDescription = exercise.name,
+                modifier = Modifier.size(64.dp),
+                contentScale = ContentScale.Crop
+            )
+        },
+        headlineContent = {
+            Text(
+                text = exercise.name,
+                style = MaterialTheme.typography.titleMedium
+
+            )
+        },
+        trailingContent = {
+            if (isSelected) {
+                Row {
+                    if (isToAdd) {
+                        IconButton(onClick = { onItemClick2() }) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add Exercise",
+                                //tint = MaterialTheme.colorScheme.surface
+                            )
+                        }
+                    }
+                    IconButton(onClick = { onItemClick(exercise) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                            contentDescription = "Forward",
+                            //tint = MaterialTheme.colorScheme.surface
+                        )
+                    }
+                }
+            }
+        },
+
+        colors = ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+
+        tonalElevation = 1.dp,
+        shadowElevation = 1.dp
+    )
+
+    /*
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -130,6 +184,7 @@ fun AddExerciseItem(
             }
         }
     }
+    */
 }
 
 @Composable

@@ -1,10 +1,12 @@
 package com.project.gains.presentation.exercises
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -12,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,8 +52,8 @@ fun TypedExerciseScreen(
         ) {
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 10.dp, end = 10.dp),
+                    .fillMaxSize(),
+                    //.padding(start = 10.dp, end = 10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
@@ -104,13 +107,15 @@ fun TypedExerciseScreen(
                         },
                         onItemClick2 = {
                             addExerciseHandler(ManageExercises.AddExercise(exercise))
-                            //navController.navigate(Route.AddManualWorkoutScreen.route)
                             navController.popBackStack()
                         },
                         isSelected = true,
                         isToAdd = isToAdd ?: false,
                         modifier = Modifier
                     )
+
+                    //Spacer(modifier = Modifier.padding(8.dp))
+
                 }
             }
         }

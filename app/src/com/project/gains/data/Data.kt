@@ -30,7 +30,7 @@ enum class ExerciseType {
 }
 
 enum class TrainingMetricType {
-    BPM, WEIGHTS, FRQNCY, KCAL
+    BPM, WEIGHTS, FREQUENCY, KCAL
 }
 enum class PeriodMetricType {
     WEEK, MONTH, YEAR
@@ -462,7 +462,7 @@ fun generateRandomSongs(count: Int): MutableList<Song> {
 }
 
 fun generateRandomTrainingData(months: Int): List<TrainingData> {
-    val metrics = listOf(TrainingMetricType.BPM, TrainingMetricType.WEIGHTS, TrainingMetricType.FRQNCY, TrainingMetricType.KCAL)
+    val metrics = listOf(TrainingMetricType.BPM, TrainingMetricType.WEIGHTS, TrainingMetricType.FREQUENCY, TrainingMetricType.KCAL)
     return List(months) {
         TrainingData(
             type = metrics.random(),

@@ -29,19 +29,13 @@ fun SummaryCard(
             .padding(16.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
     ) {
         Column(
             modifier = Modifier
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Summary",
-                style = MaterialTheme.typography.headlineLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
 
             Row(
                 modifier = Modifier
@@ -65,26 +59,25 @@ fun SummaryItem(
 ) {
     Column(
         modifier = Modifier
-            .padding(8.dp)
-            .width(IntrinsicSize.Max),
+            .padding(8.dp),
+            //.width(IntrinsicSize.Max),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             painter = painterResource(id = iconId),
             contentDescription = null,
-            tint = Color.Black,
             modifier = Modifier.size(32.dp)
         )
         Text(
             text = value.toString(),
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
+            style = MaterialTheme.typography.headlineMedium
+
         )
         Text(
             text = label,
             fontSize = 14.sp,
-            color = Color.Gray
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }
