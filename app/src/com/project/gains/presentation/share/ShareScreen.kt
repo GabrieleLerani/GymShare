@@ -81,14 +81,14 @@ fun ShareScreen(
 
             item {
                 Text(
-                    text = "Share Your Content!",
+                    text = "Share your content!",
                     style = MaterialTheme.typography.headlineMedium
                 )
             }
 
             item {
                 Text(
-                    text = "Share Your Content with your friends showing your progress, your workouts and your plans",
+                    text = "Share your content with your friends showing your progress, your workouts and your plans",
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -137,7 +137,7 @@ fun ShareScreen(
                             .fillMaxWidth()
                             .height(55.dp),
                     ) {
-                        Text(text = "LINK APPS")
+                        Text(text = "Link apps")
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     val text = AnnotatedString.Builder().apply {
@@ -182,7 +182,7 @@ fun ShareScreen(
                             .fillMaxWidth()
                             .height(55.dp),
                     ) {
-                        Text(text = "SHARE CONTENT")
+                        Text(text = "Share content")
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     val text = AnnotatedString.Builder().apply {

@@ -49,7 +49,9 @@ fun MainScreen(
               },
             snackbarHost = {    SnackbarHost(hostState = snackBarHostState) { data ->
                 Snackbar(
-                    modifier = Modifier.padding(start= 16.dp,end=16.dp,bottom=80.dp).background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)),
+                    modifier = Modifier
+                        .padding(start= 16.dp,end=16.dp,bottom=80.dp)
+                        .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)),
                     action = {
                         IconButton(onClick = { messageState.value="" }) {
                             Icon(

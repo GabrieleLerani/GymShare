@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -294,11 +295,6 @@ fun DynamicTopBar(
             TopBar(
                 message = " General Settings",
                 button= {
-                    LogoUser(
-                        modifier = Modifier.size(60.dp), R.drawable.pexels5
-                    ) {
-                        navController.navigate(Route.AccountScreen.route)
-                    }
                 },
 
             ) {}

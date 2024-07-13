@@ -4,11 +4,15 @@ package com.project.gains.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,23 +21,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material3.Button
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.TextButton
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material3.Text
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Mode
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -48,7 +42,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -58,7 +51,6 @@ import com.project.gains.R
 import com.project.gains.presentation.components.EditProfileDialog
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
-
 import com.project.gains.presentation.settings.events.SignOutEvent
 import com.project.gains.presentation.settings.events.UpdateEvent
 import com.project.gains.theme.GainsAppTheme
@@ -77,7 +69,7 @@ fun AccountScreen(
     val userProfile by viewModel.userProfile.collectAsState()
     val data by viewModel.data.observeAsState()
     val flag = remember { mutableStateOf(false) }
-    val notification = remember { mutableStateOf(false) }
+    remember { mutableStateOf(false) }
     var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
     var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Email") }
     var newPassword by remember { mutableStateOf("New Password") }
@@ -151,9 +143,9 @@ fun AccountScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 32.dp),
-                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.errorContainer)
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.tertiary)
                     ) {
-                        Text(text = "Logout")
+                        Text(text = "Logout", color = MaterialTheme.colorScheme.onTertiary)
                     }
 
 
@@ -183,8 +175,8 @@ fun AccountScreen(
                     onConfirm = {
                         showExitDialog.value=false
                         signOutHandler(SignOutEvent.SignOut)},
-                    title = "Logout Double Check!",
-                    text = "Are you sure to Logout?",
+                    title = "Logout check",
+                    text = "Are you sure to logout?",
                     icon = Icons.Default.Warning
                 )
             }
