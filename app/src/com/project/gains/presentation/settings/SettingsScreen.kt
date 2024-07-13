@@ -45,7 +45,7 @@ fun SettingsScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 25.dp),
+                    .padding(start = 16.dp, end = 16.dp, ),
             ) {
                 item {
 
