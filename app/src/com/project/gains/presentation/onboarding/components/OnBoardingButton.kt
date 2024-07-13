@@ -22,14 +22,9 @@ fun OnBoardingButton(
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(size = 16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary, // Orange
-            contentColor = MaterialTheme.colorScheme.onPrimary // Text color
-        )
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
 
         )
     }
