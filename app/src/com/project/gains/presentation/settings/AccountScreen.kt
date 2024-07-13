@@ -4,6 +4,7 @@ package com.project.gains.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Mode
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -52,6 +55,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
+import com.project.gains.presentation.components.EditProfileDialog
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 
@@ -174,9 +178,14 @@ fun AccountScreen(
             }
 
             if (showExitDialog.value) {
-                LogoutDialog(
-                    onLogout = {signOutHandler(SignOutEvent.SignOut)},
-                    onDismiss = { showExitDialog.value = false }
+                FeedbackAlertDialog(
+                    onDismissRequest = { showExitDialog.value=false },
+                    onConfirm = {
+                        showExitDialog.value=false
+                        signOutHandler(SignOutEvent.SignOut)},
+                    title = "Logout Double Check!",
+                    text = "Are you sure to Logout?",
+                    icon = Icons.Default.Warning
                 )
             }
 
@@ -195,7 +204,8 @@ fun AccountScreen(
                         flag.value=true
                         showDialogComplete.value = true
                     },
-                    onDismiss = { showDialog.value = false }
+                    onDismiss = { showDialog.value = false },
+                    icon = Icons.Default.Mode
                 )
             }
             if (showDialogComplete.value) {
@@ -206,106 +216,15 @@ fun AccountScreen(
     }
 }
 
-@Composable
-fun LogoutDialog(onLogout: () -> Unit,onDismiss: () -> Unit){
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = "Logout", style = MaterialTheme.typography.headlineMedium)
-        },
-        text = {
-            Text(text = "Are you sure?", style = MaterialTheme.typography.bodyMedium)
-        },
-        confirmButton = {
-            TextButton(onClick = onLogout) {
-                Text("Logout", color = MaterialTheme.colorScheme.error)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")// color = MaterialTheme.colorScheme.secondary)
-            }
-
-        }
-    )
-}
-
-
-@Composable
-fun EditProfileDialog(
-    newName: String,
-    newEmail: String,
-    newPassword: String,
-    onNameChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onSave: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = "Edit Profile", style = MaterialTheme.typography.headlineMedium)
-        },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = newName,
-                    onValueChange = onNameChange,
-                    label = { Text("New Name") },
-                    shape = RoundedCornerShape(size = 20.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = newEmail,
-                    onValueChange = onEmailChange,
-                    label = { Text("New Email") },
-                    shape = RoundedCornerShape(size = 20.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                OutlinedTextField(
-                    value = newPassword,
-                    onValueChange = onPasswordChange,
-                    label = { Text("New Password") },
-                    visualTransformation = PasswordVisualTransformation(),
-                    shape = RoundedCornerShape(size = 20.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
-                    )
-                )
-            }
-        },
-        confirmButton = {
-
-            TextButton(onClick = onSave) {
-                Text("Save", color = MaterialTheme.colorScheme.secondary)
-            }
-        },
-        dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text("Cancel", color = MaterialTheme.colorScheme.error)
-                }
-
-        }
-    )
-}
 
 
 
 
 
+
+
+
+@SuppressLint("UnrememberedMutableState")
 @Composable
 @Preview
 fun PreviewAccount(){
