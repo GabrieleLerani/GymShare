@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -394,29 +395,27 @@ fun VideoAlertDialog(res: Int, onDismiss: () -> Unit) {
         Uri.parse("android.resource://" + context.packageName + "/" + res)
     }
 
-    Dialog(onDismissRequest = onDismiss) {
+        VideoPlayer(uri = uri, modifier = Modifier.fillMaxHeight())
 
-        VideoPlayer(uri = uri)
         IconButton(
             onClick = onDismiss,
             modifier = Modifier
                 .padding(16.dp)
                 .background(
-                    MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
-                    shape = CircleShape
+                    color = Color.White.copy(alpha = 0.7f),
+                    shape = MaterialTheme.shapes.small
                 )
         ) {
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Dismiss",
-                tint = MaterialTheme.colorScheme.onSurface
             )
         }
-    }
+
 }
 
 @Composable
-fun VideoPlayer(uri: Uri) {
+fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     AndroidView(
@@ -426,12 +425,10 @@ fun VideoPlayer(uri: Uri) {
                 setOnPreparedListener { it.start() }
             }
         },
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-
-
+        modifier = modifier
     )
 }
+
 
 
 @Composable

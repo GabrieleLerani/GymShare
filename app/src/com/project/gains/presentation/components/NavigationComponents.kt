@@ -335,17 +335,6 @@ fun DynamicTopBar(
         }
 
         Route.WorkoutModeScreen.route -> {
-            TopBar(
-                message = "Workout Mode",
-                button = { }
-            ) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        Icons.Filled.Close,
-                        contentDescription = "Close Icon",
-                    )
-                }
-            }
         }
 
         Route.TypedExerciseScreen.route -> {
