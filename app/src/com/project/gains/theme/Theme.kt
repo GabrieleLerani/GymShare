@@ -270,8 +270,8 @@ fun GainsAppTheme(
           if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
       }
       
-      darkTheme -> mediumContrastDarkColorScheme
-      else -> mediumContrastLightColorScheme
+      darkTheme -> darkScheme
+      else -> lightScheme
   }
     val view = LocalView.current
     if (!view.isInEditMode) {

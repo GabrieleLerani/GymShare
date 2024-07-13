@@ -151,7 +151,7 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
         actions = {button()},
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.secondary,
+            titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         ),
         /*
         backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -278,7 +278,7 @@ fun DynamicTopBar(
                         modifier = Modifier.size(45.dp),
                         onClick = { navController.navigate(Route.WorkoutModeScreen.route) }) {
                         Icon(
-                            imageVector = Icons.Default.FitnessCenter,
+                            imageVector = Icons.Filled.FitnessCenter,
                             contentDescription = "Workout Mode",
                         )
 
@@ -339,7 +339,7 @@ fun DynamicTopBar(
             ) {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
-                        Icons.Default.Close,
+                        Icons.Filled.Close,
                         contentDescription = "Close Icon",
                         modifier = Modifier.size(50.dp)
                     )
@@ -420,7 +420,7 @@ fun DynamicTopBar(
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.BarChart,
+                            imageVector = Icons.Filled.BarChart,
                             contentDescription = "Stats",
                         )
                     }
@@ -438,7 +438,7 @@ fun DynamicTopBar(
 
                 }) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = "Close Icon"
                     )
                 }
@@ -514,7 +514,7 @@ fun DynamicTopBar(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = "Close Icon"
                     )
                 }
@@ -534,7 +534,7 @@ fun DynamicTopBar(
                     navController.navigate(Route.SignInScreen.route)
                 }) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = "Close Icon"
                     )
                 }
@@ -550,7 +550,7 @@ fun DynamicTopBar(
                     navController.navigate(Route.SignInScreen.route)
                 }) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = "Close Icon"
                     )
                 }
