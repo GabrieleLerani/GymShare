@@ -322,34 +322,34 @@ fun DefaultSignUpContent(
                     navController.navigate(Route.SignInScreen.route)
                     viewModel.onNavigationComplete()}
             )
-        }
 
-        if (isLoading == true) {
-            val progress = remember { Animatable(0f) }
-            LaunchedEffect(Unit) {
+            if (isLoading == true) {
+                val progress = remember { Animatable(0f) }
+                LaunchedEffect(Unit) {
 
-                progress.animateTo(
-                    targetValue = 1f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 1000),
-                        repeatMode = RepeatMode.Reverse
+                    progress.animateTo(
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 1000),
+                            repeatMode = RepeatMode.Reverse
+                        )
                     )
-                )
 
-            }
+                }
 
-            Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
 
-                CircularProgressIndicator(
-                    progress = { progress.value },
-                    color = MaterialTheme.colorScheme.primary,
-                )
+                    CircularProgressIndicator(
+                        progress = { progress.value },
+                    )
+                }
             }
         }
+
 
         if (openPopup.value) {
             FeedbackAlertDialog(

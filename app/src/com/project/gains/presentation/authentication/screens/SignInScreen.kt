@@ -350,6 +350,31 @@ fun DefaultSignInContent(
                 modifier = Modifier.clickable { navController.navigate(Route.SignUpScreen.route)
                     viewModel.onNavigationComplete()}
             )
+
+            if (isLoading == true) {
+                val progress = remember { Animatable(0f) }
+                LaunchedEffect(Unit) {
+                    progress.animateTo(
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 1000),
+                            repeatMode = RepeatMode.Reverse
+                        )
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .height(60.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    CircularProgressIndicator(
+                        progress = { progress.value },
+                    )
+                }
+            }
         }
 
         // Observe changes in data
@@ -367,31 +392,6 @@ fun DefaultSignInContent(
             }
         }
 
-        if (isLoading == true) {
-            val progress = remember { Animatable(0f) }
-            LaunchedEffect(Unit) {
-                progress.animateTo(
-                    targetValue = 1f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 1000),
-                        repeatMode = RepeatMode.Reverse
-                    )
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .padding(top = 20.dp)
-                    .height(60.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                CircularProgressIndicator(
-                    progress = { progress.value },
-                    color = MaterialTheme.colorScheme.tertiary,
-                )
-            }
-        }
     }
 }
 
