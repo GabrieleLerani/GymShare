@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -29,7 +27,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,11 +41,8 @@ import com.project.gains.data.Option
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateOptions
 import com.project.gains.presentation.Dimension
-import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun LastNewPlanScreen(
@@ -214,10 +208,10 @@ fun LastNewPlanScreen(
             item {
                 OptionCheckbox(
                     option = allOptions[4],
-                    isChecked = selectedMetrics.contains(TrainingMetricType.FRQNCY),
+                    isChecked = selectedMetrics.contains(TrainingMetricType.FREQUENCY),
                     onCheckedChange = { isChecked ->
-                        if (isChecked) selectedMetrics.add(TrainingMetricType.FRQNCY)
-                        else selectedMetrics.remove(TrainingMetricType.FRQNCY)
+                        if (isChecked) selectedMetrics.add(TrainingMetricType.FREQUENCY)
+                        else selectedMetrics.remove(TrainingMetricType.FREQUENCY)
                         onOptionSelected(allOptions[4], isChecked)
                     }
                 )

@@ -31,11 +31,16 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -57,6 +62,7 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
+import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
 import com.project.gains.presentation.components.getPreviousDestination
@@ -69,6 +75,7 @@ import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.toLowerCaseString
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanScreen(
     navController: NavController,
@@ -106,76 +113,6 @@ fun PlanScreen(
                 verticalArrangement = Arrangement.Top
 
             ) {
-                item {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top,
-                        //modifier = Modifier.padding(16.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(5.dp)
-                                ),
-
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp)
-                            ) {
-                                Text(
-                                    text = selectedPlan?.name.toString(),
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.weight(1f)
-                                    // Take up the remaining space
-                                )
-                                IconButton(
-                                    onClick = { expanded = !expanded }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.ArrowDropDown,
-                                        contentDescription = "Dropdown Icon"
-                                    )
-                                }
-                            }
-                        }
-
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .background(
-                                    color = MaterialTheme.colorScheme.surface
-                                )
-                                .padding(10.dp) // Padding to match the Text above
-                        ) {
-                            plans?.forEach { plan ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            plan.name,
-                                        )
-                                    },
-                                    onClick = {
-                                        selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
-                                        expanded = false
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-
-                                )
-
-                            }
-                        }
-                    }
-                }
 
                 item {
                     Column(
@@ -184,6 +121,61 @@ fun PlanScreen(
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded },
+                        ) {
+
+                            OutlinedTextField(
+                                value = selectedPlan?.name.toString(),
+                                textStyle = MaterialTheme.typography.titleLarge,
+                                label = {Text("Your plans")},
+                                singleLine = true,
+                                onValueChange = {},
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(
+                                        expanded = expanded
+                                    )
+
+                                },
+                                readOnly = true,
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .fillMaxWidth(),
+                                colors = TextFieldDefaults.outlinedTextFieldColors(
+                                    focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+                                )
+
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false})
+                            {
+                                plans?.forEach { plan ->
+                                    DropdownMenuItem(
+                                        text = {
+                                            Text(
+                                                plan.name,
+                                            )
+                                        },
+                                        onClick = {
+                                            selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
+                                            expanded = false
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+
+                                    )
+                                }
+                            }
+
+                        }
+
+                        Spacer(modifier = Modifier.padding(10.dp))
+
                         WorkoutHeader(selectedLevel, selectedTraining, selectedFrequency)
                         Spacer(modifier = Modifier.height(30.dp))
                         WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {

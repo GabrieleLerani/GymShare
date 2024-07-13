@@ -175,7 +175,7 @@ fun ProgressDetailsScreen(
 
                                 OutlinedTextField(
                                     value = toLowerCaseString(selectedMetric.toString()),
-                                    textStyle = MaterialTheme.typography.bodyMedium,
+                                    textStyle = MaterialTheme.typography.bodySmall,
                                     label = {Text("Metric")},
                                     singleLine = true,
                                     onValueChange = {},
