@@ -1,5 +1,7 @@
 package com.project.gains.presentation.components
 
+import android.net.Uri
+import android.widget.VideoView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,12 +12,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextButton
@@ -63,11 +69,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.project.gains.R
 import com.project.gains.data.Exercise
+import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -311,8 +323,60 @@ fun WarningCard(message: String) {
     }
 }
 
+@Composable
+@Preview
+fun p(){
+    GainsAppTheme {
+        VideoAlertDialog(res = R.raw.chest) {
+            
+        }
+    }
+}
+@Composable
+fun VideoAlertDialog(res: Int, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val uri = remember {
+        Uri.parse("android.resource://" + context.packageName + "/" + res)
+    }
+
+    Dialog(onDismissRequest = onDismiss) {
+
+        VideoPlayer(uri = uri)
+        IconButton(
+            onClick = onDismiss,
+            modifier = Modifier
+                .padding(16.dp)
+                .background(
+                    MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                    shape = CircleShape
+                )
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Dismiss",
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+fun VideoPlayer(uri: Uri) {
+    val context = LocalContext.current
+
+    AndroidView(
+        factory = {
+            VideoView(context).apply {
+                setVideoURI(uri)
+                setOnPreparedListener { it.start() }
+            }
+        },
+        modifier = Modifier
+            .clip(RoundedCornerShape(16.dp))
 
 
+    )
+}
 
 
 @Composable
@@ -496,3 +560,5 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
         )
     }
 }
+
+

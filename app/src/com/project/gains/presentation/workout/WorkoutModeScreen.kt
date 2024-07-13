@@ -43,10 +43,16 @@ import com.project.gains.data.Song
 import com.project.gains.presentation.events.MusicEvent
 import androidx.compose.material3.Snackbar
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import com.project.gains.presentation.components.VideoAlertDialog
 
 
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
+import androidx.compose.ui.text.buildAnnotatedString as buildAnnotatedString1
 
 @Composable
 fun WorkoutModeScreen(
@@ -64,6 +70,7 @@ fun WorkoutModeScreen(
     var setsDone by remember { mutableStateOf(0) }
     var restCountdown by remember { mutableStateOf(60) }
     val rest = remember { mutableStateOf(false) }
+    val showVideoDialog = remember { mutableStateOf(false) }
 
     // Get the current exercise total time (dummy value 90 seconds for this example)
     val currentExerciseTime = workout?.exercises?.get(currentExerciseIndex)?.totalTime ?: 90
@@ -115,317 +122,345 @@ fun WorkoutModeScreen(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         }
-    ) {
-        paddingValues ->
+    ) { paddingValues ->
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = paddingValues)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 10.dp),
-                verticalArrangement = Arrangement.Top
+            Column(
+                modifier = Modifier.fillMaxSize()
             ) {
-
-                item {
-                    // Exercise Image (Animated GIF)
-                    Box(
+                Box(
+                    modifier = Modifier
+                        .height(315.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                ) {
+                    Image(
+                        painter = painterResource(id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
+                            ?: R.drawable.arms2),
+                        contentDescription = workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                    Text(
+                        text = workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
                         modifier = Modifier
-                            .height(380.dp)
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
-                    ) {
-                        Image(
-                            painter = painterResource(id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
-                                ?: R.drawable.arms2),
-                            contentDescription = workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .matchParentSize()
+                            .align(Alignment.BottomEnd)
+                            .background(
+                                Color.Black.copy(alpha = 0.5f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(20.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                        showVideoDialog.value = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                ) {
+                    Text(
+                        text = "Execution Video of ${workout?.exercises?.get(currentExerciseIndex)?.name}",
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Counters Section
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Sets Done Counter
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "${setsDone + 1}/$totalSets",
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text("Sets Done", fontSize = 20.sp)
+                    }
+
+                    // Timer
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            if (!rest.value) formattedTime else restTime,
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text =  workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
-                            color = Color.White,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .background(
-                                    Color.Black.copy(alpha = 0.5f),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(20.dp)
+                            if (!rest.value) "Time Left" else "Rest Left",
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Action Row (Previous, Start/Stop, Next Buttons)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Previous Exercise Button
+                    Button(
+                        onClick = {
+                            if (currentExerciseIndex > 0) {
+                                currentExerciseIndex--
+                            } else {
+                                currentExerciseIndex = workout?.exercises?.size!! - 1
+                            }
+                            isTimerRunning = false
+                            timerState = currentExerciseTime
+                            setsDone = 0
+                            restCountdown = 60
+                            rest.value = false
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Previous",
+                            modifier = Modifier.size(60.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Counters Section
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
+                    // Start/Stop Button
+                    Button(
+                        onClick = {
+                            isTimerRunning = !isTimerRunning
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
                     ) {
-                        // Sets Done Counter
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                "${setsDone + 1}/$totalSets",
-                                fontSize = 40.sp,
-                                fontWeight = FontWeight.Bold
+                        if (isTimerRunning) {
+                            Icon(
+                                imageVector = Icons.Default.Stop,
+                                contentDescription = "Stop",
+                                modifier = Modifier.size(60.dp)
                             )
-                            Text("Sets Done", fontSize = 20.sp)
-                        }
-
-                        // Timer
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                if (!rest.value) formattedTime else restTime,
-                                fontSize = 40.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                if (!rest.value) "Time Left" else "Rest Left",
-                                fontSize = 20.sp
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = "Start",
+                                modifier = Modifier.size(60.dp)
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Action Row (Previous, Start/Stop, Next Buttons)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Previous Exercise Button
-                        Button(
-                            onClick = {
-                                if (currentExerciseIndex > 0) {
-                                    currentExerciseIndex--
-                                } else {
-                                    currentExerciseIndex = workout?.exercises?.size!! - 1
-                                }
-                                isTimerRunning = false
-                                timerState = currentExerciseTime
-                                setsDone = 0
-                                restCountdown = 60
-                                rest.value = false
-                            },
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Previous",
-                                modifier = Modifier.size(60.dp)
-                            )
-                        }
-
-                        // Start/Stop Button
-                        Button(
-                            onClick = {
-                                isTimerRunning = !isTimerRunning
-                            },
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            if (isTimerRunning) {
-                                Icon(
-                                    imageVector = Icons.Default.Stop,
-                                    contentDescription = "Stop",
-                                    modifier = Modifier.size(60.dp)
-                                )
+                    // Next Exercise Button
+                    Button(
+                        onClick = {
+                            if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
+                                currentExerciseIndex++
                             } else {
-                                Icon(
-                                    imageVector = Icons.Default.PlayArrow,
-                                    contentDescription = "Start",
-                                    modifier = Modifier.size(60.dp)
-                                )
+                                currentExerciseIndex = 0
                             }
-                        }
-
-                        // Next Exercise Button
-                        Button(
-                            onClick = {
-                                if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
-                                    currentExerciseIndex++
-                                } else {
-                                    currentExerciseIndex = 0
-                                }
-                                isTimerRunning = false
-                                timerState = currentExerciseTime
-                                setsDone = 0
-                                restCountdown = 60
-                                rest.value = false
-                            },
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = "Next",
-                                modifier = Modifier.size(60.dp)
-                            )
-                        }
+                            isTimerRunning = false
+                            timerState = currentExerciseTime
+                            setsDone = 0
+                            restCountdown = 60
+                            rest.value = false
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Next",
+                            modifier = Modifier.size(60.dp)
+                        )
                     }
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-            ) {
-                 MusicSnackbar(
-                    snackbarHostState = snackbarHostState,
-                    musicHandler = musicHandler,
-                    currentSong = currentSong ?: Song("", "", "")
-                )
 
+            // Video Dialog
+            if (showVideoDialog.value) {
+                VideoAlertDialog(
+                    res = workout?.exercises?.get(currentExerciseIndex)?.videoId ?: R.raw.chest
+                ) {
+                    showVideoDialog.value = false
+                }
             }
+        }
+        Box(   modifier = Modifier.fillMaxSize()
+            .padding(top=605.dp)
+            .background(MaterialTheme.colorScheme.surface) ){
+            // Music Snackbar
+            MusicSnackbar(
+                snackbarHostState = snackbarHostState,
+                musicHandler = musicHandler,
+                currentSong = currentSong ?: Song("", "", "")
+            )
         }
     }
 }
 
-    @Composable
-    fun MusicSnackbar(
-        snackbarHostState: SnackbarHostState,
-        musicHandler: (MusicEvent) -> Unit,
-        currentSong: Song
-    ) {
-        val play = remember { mutableStateOf(false) }
-        var currentTime by remember { mutableStateOf(0f) }
-        val songTotalTime = 165f
 
-        // Simulate a timer to update the current playback position
-        LaunchedEffect(play.value) {
-            if (play.value) {
-                while (currentTime < songTotalTime && play.value) {
-                    delay(100L) // Shorter delay for finer granularity
-                    currentTime += 0.1f // Increment by 0.1 second
 
-                    // Adjust the timer to handle seconds incrementing correctly
-                    if (currentTime % 1.0f >= 0.9f) {
-                        currentTime = (currentTime - (currentTime % 1.0f)) + 1f
-                    }
+@Composable
+fun MusicSnackbar(
+    snackbarHostState: SnackbarHostState,
+    musicHandler: (MusicEvent) -> Unit,
+    currentSong: Song,
+) {
+    val play = remember { mutableStateOf(false) }
+    var currentTime by remember { mutableStateOf(0f) }
+    val songTotalTime = 165f
 
-                    if (currentTime >= songTotalTime) {
-                        play.value = false
-                        musicHandler(MusicEvent.Forward)
-                    }
+    // Simulate a timer to update the current playback position
+    LaunchedEffect(play.value) {
+        if (play.value) {
+            while (currentTime < songTotalTime && play.value) {
+                delay(100L) // Shorter delay for finer granularity
+                currentTime += 0.1f // Increment by 0.1 second
+
+                // Adjust the timer to handle seconds incrementing correctly
+                if (currentTime % 1.0f >= 0.9f) {
+                    currentTime = (currentTime - (currentTime % 1.0f)) + 1f
+                }
+
+                if (currentTime >= songTotalTime) {
+                    play.value = false
+                    musicHandler(MusicEvent.Forward)
                 }
             }
         }
+    }
 
-        // Display music controls as a snackbar
-        Snackbar(
-            modifier = Modifier.background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)),
-            action = {
-            },
-            content = {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.TopEnd
+    // Display music controls as a snackbar
+    Snackbar(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(20.dp)
+            ),
+        action = { },
+        content = {
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.TopEnd
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(16.dp)
+                    Text(
+                        text = "Song: ${currentSong.title}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Artist: ${currentSong.singer}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Album: ${currentSong.album}",
+                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = 14.sp,
+                        maxLines = 1,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    androidx.compose.material.LinearProgressIndicator(
+                        progress = currentTime / songTotalTime,
+                        color = MaterialTheme.colorScheme.surface,
+                        backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Song: ${currentSong.title}",
+                            text = formatTime(currentTime),
                             style = MaterialTheme.typography.bodySmall,
+                            fontSize = 12.sp
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Artist: ${currentSong.singer}",
+                            text = formatTime(songTotalTime),
                             style = MaterialTheme.typography.bodySmall,
+                            fontSize = 12.sp
                         )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "Album: ${currentSong.album}",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        androidx.compose.material.LinearProgressIndicator(
-                            progress = currentTime / songTotalTime,
-                            color = MaterialTheme.colorScheme.surface,
-                            backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(8.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        IconButton(
+                            onClick = {
+                                musicHandler(MusicEvent.Rewind)
+                                currentTime = 0f
+                            },
+                            modifier = Modifier.size(36.dp)
                         ) {
-                            Text(
-                                text = formatTime(currentTime),
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                            Text(
-                                text = formatTime(songTotalTime),
-                                style = MaterialTheme.typography.bodySmall,
+                            Icon(
+                                imageVector = Icons.Default.FastRewind,
+                                contentDescription = "Rewind",
+                                modifier = Modifier.size(18.dp)
                             )
                         }
-                        Row(
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.Bottom
+                        IconButton(
+                            onClick = {
+                                play.value = !play.value
+                                musicHandler(MusicEvent.Music)
+                            },
+                            modifier = Modifier.size(36.dp)
                         ) {
-                            IconButton(
-                                onClick = {
-                                    musicHandler(MusicEvent.Rewind)
-                                    currentTime = 0f
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.FastRewind,
-                                    contentDescription = "Rewind",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    play.value = !play.value
-                                    musicHandler(MusicEvent.Music)
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
-                                    contentDescription = if (play.value) "Stop" else "Play",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    musicHandler(MusicEvent.Forward)
-                                    currentTime = 0f
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.FastForward,
-                                    contentDescription = "Forward",
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                contentDescription = if (play.value) "Stop" else "Play",
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                musicHandler(MusicEvent.Forward)
+                                currentTime = 0f
+                            },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FastForward,
+                                contentDescription = "Forward",
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                     }
-                    Icon(
-                        painter = painterResource(id = R.drawable.spotify_icon),
-                        contentDescription = "Spotify Icon",
-                        modifier = Modifier
-                            .size(48.dp)
-                            .padding(16.dp)
-                    )
                 }
-
-
+                Icon(
+                    painter = painterResource(id = R.drawable.spotify_icon),
+                    contentDescription = "Spotify Icon",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(4.dp)
+                )
             }
-        )
-    }
+        }
+    )
+}
 
 private fun formatTime(time: Float): String {
     val totalSeconds = time.toInt()
@@ -433,6 +468,7 @@ private fun formatTime(time: Float): String {
     val seconds = totalSeconds % 60
     return String.format("%02d:%02d", minutes, seconds)
 }
+
 
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)

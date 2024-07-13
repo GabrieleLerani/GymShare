@@ -41,8 +41,7 @@ fun MainScreen(
     val messageState = remember { mutableStateOf("") } // Shared state for the message
 
 
-
-    GainsAppTheme {
+   GainsAppTheme {
         Scaffold(
             topBar = { DynamicTopBar(navController = navController ) },
             bottomBar = {

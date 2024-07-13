@@ -64,7 +64,8 @@ data class Exercise(
     val training: TrainingType,
     val sets: Int,
     val totalTime: Int,
-    val warnings: List<String> = listOf("")
+    val warnings: List<String> = listOf(""),
+    val videoId: Int
 )
 
 data class Plan(
@@ -159,17 +160,18 @@ fun generateSampleExercises(): MutableList<Exercise> {
                     "4. Continue to curl until the dumbbells are at shoulder level, and your biceps are fully contracted." ,
                     "5. Hold the contracted position for a moment, then slowly lower the dumbbells back to the starting position with control." ,
                     "6. Repeat for the desired number of repetitions." ,),
+            gifResId = R.drawable.arms2,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90,
             warnings = listOf(
                     "- Use a controlled motion throughout the exercise, avoiding swinging or momentum." ,
                     "- Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists." ,
                     "- Focus on squeezing the biceps at the top of the movement to maximize muscle engagement." ,
                     "- Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing." ,
                     "- Choose an appropriate weight that allows you to perform the exercise with proper form and control.",),
-            gifResId = R.drawable.arms2,
-            type = ExerciseType.ARMS,
-            training = TrainingType.STRENGTH,
-            sets = 4,
-            totalTime = 90
+            R.raw.chest
         ),
         Exercise(
             "Bench Press",
@@ -178,14 +180,15 @@ fun generateSampleExercises(): MutableList<Exercise> {
                 "3. Lower the barbell slowly towards your chest, keeping your elbows at a 45-degree angle." ,
                 "4. Push the barbell back up to the starting position, fully extending your arms." ,
                 "5. Repeat for the desired number of repetitions." ,),
-            warnings = listOf("- Keep your back flat against the bench and avoid arching excessively." ,
-                "- Maintain a steady breathing pattern, exhaling as you push the barbell up." ,
-                "- Ensure the barbell is balanced and controlled throughout the movement.",),
             gifResId = R.drawable.chest,
             type = ExerciseType.CHEST,
             training = TrainingType.STRENGTH,
             sets = 4,
-            totalTime = 90
+            totalTime = 90,
+            warnings = listOf("- Keep your back flat against the bench and avoid arching excessively." ,
+                "- Maintain a steady breathing pattern, exhaling as you push the barbell up." ,
+                "- Ensure the barbell is balanced and controlled throughout the movement.",),
+            R.raw.chest
         ),
         Exercise(
             "Squat",
@@ -195,15 +198,16 @@ fun generateSampleExercises(): MutableList<Exercise> {
                 "4. Continue lowering until your thighs are parallel to the ground." ,
                 "5. Push through your heels to return to the starting position." ,
                 "6. Repeat for the desired number of repetitions." ,),
-            warnings = listOf(
-                        "- Keep your knees in line with your toes throughout the movement." ,
-                        "- Avoid leaning forward excessively; maintain an upright posture." ,
-                        "- Breathe in as you lower your body and exhale as you push back up.",),
             gifResId = R.drawable.legs4,
             type = ExerciseType.LEGS,
             training = TrainingType.STRENGTH,
             sets = 4,
-            totalTime = 90
+            totalTime = 90,
+            warnings = listOf(
+                        "- Keep your knees in line with your toes throughout the movement." ,
+                        "- Avoid leaning forward excessively; maintain an upright posture." ,
+                        "- Breathe in as you lower your body and exhale as you push back up.",),
+            R.raw.chest
         ),
         Exercise(
             "Deadlift",
@@ -214,14 +218,15 @@ fun generateSampleExercises(): MutableList<Exercise> {
                     "4. Stand up fully, bringing the barbell to hip level." ,
                     "5. Lower the barbell back to the ground with control." ,
                     "6. Repeat for the desired number of repetitions." ,),
-               warnings = listOf(              "- Engage your core and keep your back straight to prevent injury." ,
-                   "- Use a mixed grip or overhand grip for better control." ,
-                   "- Breathe in as you lift the barbell and exhale as you lower it.",),
             gifResId = R.drawable.backk,
             type = ExerciseType.BACK,
             training = TrainingType.STRENGTH,
             sets = 4,
-            totalTime = 90
+            totalTime = 90,
+            warnings = listOf(              "- Engage your core and keep your back straight to prevent injury." ,
+                "- Use a mixed grip or overhand grip for better control." ,
+                "- Breathe in as you lift the barbell and exhale as you lower it.",),
+            R.raw.chest
         ),
         Exercise(
             "Shoulder Press",
@@ -229,15 +234,16 @@ fun generateSampleExercises(): MutableList<Exercise> {
                 "2. Press the dumbbells upward until your arms are fully extended." ,
                 "3. Lower the dumbbells back to shoulder level with control." ,
                 "4. Repeat for the desired number of repetitions." ,),
-            warnings = listOf(
-                "- Keep your core engaged and back straight throughout the exercise." ,
-                "- Avoid locking your elbows at the top of the movement." ,
-                "- Breathe out as you press the dumbbells up and breathe in as you lower them.",),
             gifResId = R.drawable.shoulders,
             type = ExerciseType.SHOULDERS,
             training = TrainingType.STRENGTH,
             sets = 4,
-            totalTime = 90
+            totalTime = 90,
+            warnings = listOf(
+                "- Keep your core engaged and back straight throughout the exercise." ,
+                "- Avoid locking your elbows at the top of the movement." ,
+                "- Breathe out as you press the dumbbells up and breathe in as you lower them.",),
+            R.raw.chest
         ),
         Exercise(
             "Lunges",
@@ -246,48 +252,64 @@ fun generateSampleExercises(): MutableList<Exercise> {
                 "3. Push through the front heel to return to the starting position." ,
                 "4. Repeat on the other leg." ,
                 "5. Continue alternating legs for the desired number of repetitions." ,),
-            warnings = listOf(   "- Keep your upper body straight and core engaged." ,
-                "- Ensure your front knee does not extend past your toes." ,
-                "- Maintain balance by keeping your feet hip-width apart.",),
             gifResId = R.drawable.legs,
             type = ExerciseType.LEGS,
             training = TrainingType.STRENGTH,
             sets = 4,
-            totalTime = 90
+            totalTime = 90,
+            warnings = listOf(   "- Keep your upper body straight and core engaged." ,
+                "- Ensure your front knee does not extend past your toes." ,
+                "- Maintain balance by keeping your feet hip-width apart.",),
+            R.raw.chest
         ),
         Exercise(
-            "Plank", description = listOf(                    "1. Start in a push-up position, with your forearms on the ground and elbows directly below your shoulders." ,
+            "Plank",
+            description = listOf(                    "1. Start in a push-up position, with your forearms on the ground and elbows directly below your shoulders." ,
                 "2. Keep your body in a straight line from head to heels." ,
                 "3. Hold this position for the desired amount of time." ,),
+            gifResId = R.drawable.abs,
+            type = ExerciseType.CORE,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90,
             warnings = listOf(  "- Engage your core and glutes to maintain a straight line." ,
                 "- Avoid letting your hips sag or rise too high." ,
-                "- Breathe steadily throughout the hold.",) ,
-            gifResId = R.drawable.abs,
-            type = ExerciseType.CORE, training = TrainingType.STRENGTH, sets = 4, totalTime = 90
+                "- Breathe steadily throughout the hold.",),
+            R.raw.chest
         ),
         Exercise(
-            "Pull-Ups", description = listOf(                    "1. Hang from a pull-up bar with your palms facing forward and hands slightly wider than shoulder-width apart." ,
+            "Pull-Ups",
+            description = listOf(                    "1. Hang from a pull-up bar with your palms facing forward and hands slightly wider than shoulder-width apart." ,
                 "2. Pull your body upward until your chin is above the bar." ,
                 "3. Lower yourself back to the starting position with control." ,
                 "4. Repeat for the desired number of repetitions." ,),
+            gifResId = R.drawable.back2,
+            type = ExerciseType.BACK,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90,
             warnings = listOf(
                 "- Engage your back and biceps to pull yourself up." ,
                 "- Avoid swinging or using momentum." ,
-                "- Keep your core tight and legs slightly bent.",) ,
-            gifResId = R.drawable.back2,
-            type = ExerciseType.BACK, training = TrainingType.STRENGTH, sets = 4, totalTime = 90
+                "- Keep your core tight and legs slightly bent.",),
+            R.raw.chest
         ),
         Exercise(
-            "Tricep Push Ups", description = listOf(  "1. Position your hands shoulder-width apart on a stable bench or chair." ,
+            "Tricep Push Ups",
+            description = listOf(  "1. Position your hands shoulder-width apart on a stable bench or chair." ,
                     "2. Extend your legs out in front of you." ,
                     "3. Lower your body by bending your elbows until your upper arms are parallel to the ground." ,
                     "4. Push back up to the starting position." ,
                     "5. Repeat for the desired number of repetitions." ,),
+            gifResId = R.drawable.arms3,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 4,
+            totalTime = 90,
             warnings = listOf("- Keep your back close to the bench." ,
                 "- Avoid locking your elbows at the top of the movement." ,
-                "- Maintain control throughout the exercise.",) ,
-            gifResId = R.drawable.arms3,
-            type = ExerciseType.ARMS, training = TrainingType.STRENGTH, sets = 4, totalTime = 90
+                "- Maintain control throughout the exercise.",),
+            R.raw.chest
         ),
         Exercise(
             "Leg Extension",
@@ -295,14 +317,15 @@ fun generateSampleExercises(): MutableList<Exercise> {
                 "2. Push the platform away by extending your legs." ,
                 "3. Slowly lower the platform back to the starting position." ,
                 "4. Repeat for the desired number of repetitions." ,),
-            warnings = listOf(        "- Keep your knees in line with your toes." ,
-                "- Avoid locking your knees at the top of the movement." ,
-                "- Breathe out as you push the platform and breathe in as you lower it.",),
             gifResId = R.drawable.legs2,
             type = ExerciseType.LEGS,
             training = TrainingType.STRENGTH,
             sets = 4,
-            totalTime = 90
+            totalTime = 90,
+            warnings = listOf(        "- Keep your knees in line with your toes." ,
+                "- Avoid locking your knees at the top of the movement." ,
+                "- Breathe out as you push the platform and breathe in as you lower it.",),
+            R.raw.chest
         )
     )
 }
@@ -544,7 +567,8 @@ fun generateRandomPlan(
                     type = exerciseType,
                     training = trainingType,
                     sets = 4,
-                    totalTime = 90 // Assuming you have a method to map ExerciseType to R.drawable
+                    totalTime = 90,
+                    videoId = R.raw.chest // Assuming you have a method to map ExerciseType to R.drawable
                 )
             )
         }
