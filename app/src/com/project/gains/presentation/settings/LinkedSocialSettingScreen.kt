@@ -24,11 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -79,7 +76,6 @@ fun LinkedSocialSettingScreen(
         R.drawable.tiktok_logo_icon
     )
 
-
     GainsAppTheme {
         Box(
             modifier = Modifier
@@ -102,7 +98,6 @@ fun LinkedSocialSettingScreen(
                             clickedApps = clickedApps
                         )
                         Spacer(modifier = Modifier.height(20.dp))
-
                     }
 
                     Spacer(modifier = Modifier.height(30.dp))
@@ -127,7 +122,7 @@ fun LinkedSocialSettingScreen(
                             },
                             modifier = Modifier.size(60.dp),
                         ) {
-                            androidx.compose.material3.Icon(
+                            Icon(
                                 imageVector = Icons.Default.Check,
                                 tint = MaterialTheme.colorScheme.onPrimary,
                                 contentDescription = "Save Icon",
@@ -136,15 +131,14 @@ fun LinkedSocialSettingScreen(
                                     .padding(10.dp),
                             )
                         }
-                    } }
-
-                    if (showDialog.value) {
-                        completionMessage.value="Sharing Apps Updated!"
-                        showDialog.value=false
                     }
+                }
 
+                if (showDialog.value) {
+                    completionMessage.value="Sharing Apps Updated!"
+                    showDialog.value=false
+                }
             }
-
         }
     }
 }
@@ -169,7 +163,7 @@ fun SocialMediaRow(
                 { },
                 modifier = Modifier.size(60.dp),
             ) {
-                androidx.compose.material.Icon(
+                Icon(
                     imageVector = Icons.Default.Check,
                     tint = MaterialTheme.colorScheme.onPrimary,
                     contentDescription = "Linked Icon",
