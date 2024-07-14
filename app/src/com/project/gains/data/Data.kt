@@ -166,11 +166,11 @@ fun generateSampleExercises(): MutableList<Exercise> {
             sets = 4,
             totalTime = 90,
             warnings = listOf(
-                    "- Use a controlled motion throughout the exercise, avoiding swinging or momentum." ,
-                    "- Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists." ,
-                    "- Focus on squeezing the biceps at the top of the movement to maximize muscle engagement." ,
-                    "- Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing." ,
-                    "- Choose an appropriate weight that allows you to perform the exercise with proper form and control.",),
+                    "Use a controlled motion throughout the exercise, avoiding swinging or momentum." ,
+                    "Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists." ,
+                    "Focus on squeezing the biceps at the top of the movement to maximize muscle engagement." ,
+                    "Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing." ,
+                    "Choose an appropriate weight that allows you to perform the exercise with proper form and control.",),
             R.raw.chest
         ),
         Exercise(
@@ -185,9 +185,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             training = TrainingType.STRENGTH,
             sets = 4,
             totalTime = 90,
-            warnings = listOf("- Keep your back flat against the bench and avoid arching excessively." ,
-                "- Maintain a steady breathing pattern, exhaling as you push the barbell up." ,
-                "- Ensure the barbell is balanced and controlled throughout the movement.",),
+            warnings = listOf("Keep your back flat against the bench and avoid arching excessively." ,
+                "Maintain a steady breathing pattern, exhaling as you push the barbell up." ,
+                "Ensure the barbell is balanced and controlled throughout the movement.",),
             R.raw.chest
         ),
         Exercise(
@@ -204,9 +204,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             sets = 4,
             totalTime = 90,
             warnings = listOf(
-                        "- Keep your knees in line with your toes throughout the movement." ,
-                        "- Avoid leaning forward excessively; maintain an upright posture." ,
-                        "- Breathe in as you lower your body and exhale as you push back up.",),
+                        "Keep your knees in line with your toes throughout the movement." ,
+                        "Avoid leaning forward excessively; maintain an upright posture." ,
+                        "Breathe in as you lower your body and exhale as you push back up.",),
             R.raw.chest
         ),
         Exercise(
@@ -223,9 +223,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             training = TrainingType.STRENGTH,
             sets = 4,
             totalTime = 90,
-            warnings = listOf(              "- Engage your core and keep your back straight to prevent injury." ,
-                "- Use a mixed grip or overhand grip for better control." ,
-                "- Breathe in as you lift the barbell and exhale as you lower it.",),
+            warnings = listOf(              "Engage your core and keep your back straight to prevent injury." ,
+                "Use a mixed grip or overhand grip for better control." ,
+                "Breathe in as you lift the barbell and exhale as you lower it.",),
             R.raw.chest
         ),
         Exercise(
@@ -240,9 +240,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             sets = 4,
             totalTime = 90,
             warnings = listOf(
-                "- Keep your core engaged and back straight throughout the exercise." ,
-                "- Avoid locking your elbows at the top of the movement." ,
-                "- Breathe out as you press the dumbbells up and breathe in as you lower them.",),
+                "Keep your core engaged and back straight throughout the exercise." ,
+                "Avoid locking your elbows at the top of the movement." ,
+                "Breathe out as you press the dumbbells up and breathe in as you lower them.",),
             R.raw.chest
         ),
         Exercise(
@@ -257,9 +257,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             training = TrainingType.STRENGTH,
             sets = 4,
             totalTime = 90,
-            warnings = listOf(   "- Keep your upper body straight and core engaged." ,
-                "- Ensure your front knee does not extend past your toes." ,
-                "- Maintain balance by keeping your feet hip-width apart.",),
+            warnings = listOf(   "Keep your upper body straight and core engaged." ,
+                "Ensure your front knee does not extend past your toes." ,
+                "Maintain balance by keeping your feet hip-width apart.",),
             R.raw.chest
         ),
         Exercise(
@@ -272,9 +272,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             training = TrainingType.STRENGTH,
             sets = 4,
             totalTime = 90,
-            warnings = listOf(  "- Engage your core and glutes to maintain a straight line." ,
-                "- Avoid letting your hips sag or rise too high." ,
-                "- Breathe steadily throughout the hold.",),
+            warnings = listOf(  "Engage your core and glutes to maintain a straight line." ,
+                "Avoid letting your hips sag or rise too high." ,
+                "Breathe steadily throughout the hold.",),
             R.raw.chest
         ),
         Exercise(
@@ -289,9 +289,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             sets = 4,
             totalTime = 90,
             warnings = listOf(
-                "- Engage your back and biceps to pull yourself up." ,
-                "- Avoid swinging or using momentum." ,
-                "- Keep your core tight and legs slightly bent.",),
+                "Engage your back and biceps to pull yourself up." ,
+                "Avoid swinging or using momentum." ,
+                "Keep your core tight and legs slightly bent.",),
             R.raw.chest
         ),
         Exercise(
@@ -306,9 +306,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             training = TrainingType.STRENGTH,
             sets = 4,
             totalTime = 90,
-            warnings = listOf("- Keep your back close to the bench." ,
-                "- Avoid locking your elbows at the top of the movement." ,
-                "- Maintain control throughout the exercise.",),
+            warnings = listOf("Keep your back close to the bench." ,
+                "Avoid locking your elbows at the top of the movement." ,
+                "Maintain control throughout the exercise.",),
             R.raw.chest
         ),
         Exercise(
@@ -322,9 +322,9 @@ fun generateSampleExercises(): MutableList<Exercise> {
             training = TrainingType.STRENGTH,
             sets = 4,
             totalTime = 90,
-            warnings = listOf(        "- Keep your knees in line with your toes." ,
-                "- Avoid locking your knees at the top of the movement." ,
-                "- Breathe out as you push the platform and breathe in as you lower it.",),
+            warnings = listOf(        "Keep your knees in line with your toes." ,
+                "Avoid locking your knees at the top of the movement." ,
+                "Breathe out as you push the platform and breathe in as you lower it.",),
             R.raw.chest
         )
     )

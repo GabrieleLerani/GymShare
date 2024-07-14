@@ -1,5 +1,6 @@
 package com.project.gains.presentation.explore
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.R
@@ -101,7 +102,7 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                     social="TikTok"
 
                 }
-                val user =event.username
+
                 val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = event.username, social = social, randomSocialId = event.social, caption = desc, time = "10:13", likes = "123", comment = "234")
                 _posts.value?.add(post)
             }
@@ -170,6 +171,13 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                 _posts.value?.add(post)
 
 
+            }
+
+            is SearchEvent.GeneralPostEvent -> {
+                // TODO
+                Log.d("DEBUG","Event content: ${event.content}")
+                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.pexels2, username = event.username, social = "Instagram", randomSocialId = R.drawable.instagram_icon, caption = event.content, time = "10:13", likes = "123", comment = "234")
+                _posts.value?.add(post)
             }
         }
     }
