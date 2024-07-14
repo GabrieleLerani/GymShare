@@ -116,7 +116,7 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                 val desc: String = buildString {
                     appendLine("Exercise: $exerciseName")
                     event.exercise.description.forEachIndexed { index, desc ->
-                        appendLine("${index + 1}. ${desc}")
+                        appendLine(" ${desc}")
                     }
                 }
                 var social:String="Instagram"
@@ -147,7 +147,7 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                     appendLine("Progress: $progressName")
                     val desc = listOf("")
                    desc.forEachIndexed { index, desc ->
-                        appendLine("${index + 1}. ${desc}")
+                        appendLine("${desc}")
                     }
                 }
                 var social:String="Instagram"
