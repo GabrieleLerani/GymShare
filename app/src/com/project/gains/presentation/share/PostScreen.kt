@@ -2,7 +2,6 @@ package com.project.gains.presentation.share
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.ExperimentalMaterialApi
@@ -87,7 +85,7 @@ fun PostScreen(
                     FilledTonalButton(
                         onClick = { },
                         modifier = Modifier.padding(end = 8.dp),
-                        enabled = textState.text.isNotEmpty()
+                        enabled = textState.text.isNotEmpty() || imageUri != null
                     ) {
                         Text("Post")
                     }
@@ -111,14 +109,42 @@ fun PostScreen(
             Column(modifier = Modifier.fillMaxSize()) {
 
                 imageUri?.let {
-                    AsyncImage(
-                        model = imageUri,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    )
+
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)) {
+
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            IconButton(
+                                onClick = { imageUri = null } ,
+                                modifier = Modifier
+                                    .padding(end = 4.dp),
+
+                                colors = IconButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    contentColor = MaterialTheme.colorScheme.primary,
+                                    disabledContentColor = MaterialTheme.colorScheme.primary,
+                                    disabledContainerColor = MaterialTheme.colorScheme.primary
+                                ),
+                                enabled = imageUri != null
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = "Remove Image")
+                            }
+
+                            AsyncImage(
+                                model = imageUri,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                            )
+                        }
+
+
+                    }
+
                 }
+
 
                 OutlinedTextField(
                     value = textState,
