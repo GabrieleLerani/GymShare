@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -63,6 +63,7 @@ fun LinkedSocialSettingScreen(
     val linkedApps by shareContentViewModel.linkedApps.observeAsState()
     val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
 
+    val exit = remember { mutableStateOf(false) }
 
     val showDialog = remember { mutableStateOf(false) }
     val icons = listOf(
@@ -93,7 +94,7 @@ fun LinkedSocialSettingScreen(
                             icon = icon,
                             isLinked = linkedApps?.contains(icon) == true,
                             linkHandler = linkHandler,
-                            clickedApps = clickedApps
+                            clickedApps = clickedApps,
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                     }
@@ -111,12 +112,19 @@ fun LinkedSocialSettingScreen(
                             colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
                                     onClick =
                             {
+                                exit.value=true
                                 showDialog.value = true
                                 saveLinkHandler(
                                     ManageDataStoreEvent.Save(
                                         linkedApps ?: mutableListOf()
                                     )
                                 )
+                                clickedApps.value.forEach { icon->
+                                    linkHandler(LinkAppEvent.LinkApp(icon))
+
+
+                                }
+
                             },
                             modifier = Modifier.size(60.dp),
                         ) {
@@ -141,13 +149,16 @@ fun LinkedSocialSettingScreen(
     }
 }
 
+
+
 @Composable
 fun SocialMediaRow(
     icon: Int,
     isLinked: Boolean,
     linkHandler: (LinkAppEvent) -> Unit,
-    clickedApps: MutableState<MutableList<Int>>
+    clickedApps: MutableState<MutableList<Int>>,
 ) {
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -155,40 +166,34 @@ fun SocialMediaRow(
         SocialMediaIcon(icon = icon, onClick = {  }, isSelected = isLinked)
         Spacer(modifier = Modifier.width(50.dp))
         if (isLinked || clickedApps.value.contains(icon)) {
-            IconButton(
-                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
-                onClick =
-                {  clickedApps.value = clickedApps.value.toMutableList().apply { remove(icon) }
-                    linkHandler(LinkAppEvent.LinkApp(icon))},
-                modifier = Modifier.size(60.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    contentDescription = "Linked Icon",
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(10.dp)
-                )
-            }
+            // State to manage the checked status of the checkbox
+            val checkedState = remember { mutableStateOf(true) } // Replace 'true' with initial value if needed
+
+            Checkbox(
+                checked = checkedState.value ,
+                onCheckedChange = { isChecked ->
+                    checkedState.value = isChecked
+                        clickedApps.value = clickedApps.value.toMutableList().apply { remove(icon) }
+
+                },
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(10.dp),
+            )
         } else if (!clickedApps.value.contains(icon)){
-            IconButton(
-                colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
-                        onClick =
-                {
+            val checkedState = remember { mutableStateOf(false) } // Replace 'true' with initial value if needed
+
+            Checkbox(
+                checked =checkedState.value ,
+                onCheckedChange = { isChecked ->
+                    checkedState.value = isChecked
+
                     clickedApps.value = clickedApps.value.toMutableList().apply { add(icon) }
-                    linkHandler(LinkAppEvent.LinkApp(icon)) },
-                modifier = Modifier.size(60.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    contentDescription = "Save Icon",
-                    modifier = Modifier
-                        .size(60.dp)
-                        .padding(10.dp),
-                )
-            }
+                },
+                modifier = Modifier
+                    .size(60.dp)
+                    .padding(10.dp),
+            )
         }
     }
 }
