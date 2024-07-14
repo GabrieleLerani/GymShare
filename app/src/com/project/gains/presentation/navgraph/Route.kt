@@ -35,6 +35,7 @@ sealed class Route(
 
 
     data object ShareScreen : Route(route = "shareScreen")
+    data object PostScreen : Route(route = "postScreen")
 
     data object ExerciseDetailsScreen : Route(route = "exerciseDetailsScreen")
     data object LastNewPlanScreen : Route(route = "lastNewPlanScreen")

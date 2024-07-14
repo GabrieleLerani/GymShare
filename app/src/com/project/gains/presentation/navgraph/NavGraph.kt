@@ -51,6 +51,7 @@ import com.project.gains.presentation.plan.PlanViewModel
 import com.project.gains.presentation.progress.ProgressDetailsScreen
 import com.project.gains.presentation.settings.AccountScreen
 import com.project.gains.presentation.settings.LinkedSocialSettingScreen
+import com.project.gains.presentation.share.PostScreen
 import com.project.gains.presentation.share.ShareScreen
 import com.project.gains.presentation.workout.WorkoutScreen
 import com.project.gains.presentation.workout.WorkoutViewModel
@@ -260,6 +261,16 @@ fun NavGraph(
                     mainViewModel = mainViewModel
                 )
             }
+            composable(
+                route = Route.PostScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
+            ) {
+                PostScreen(onExit = {navController.popBackStack()})
+            }
+
             composable(
                 route = Route.ProgressDetailsScreen.route,
                 enterTransition = ::slideInToLeft,

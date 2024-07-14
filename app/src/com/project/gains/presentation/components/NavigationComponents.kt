@@ -6,13 +6,12 @@ package com.project.gains.presentation.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FitnessCenter
@@ -28,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,12 +39,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
@@ -154,34 +152,7 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
         ),
-        /*
-        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-        contentColor = MaterialTheme.colorScheme.tertiary,
-        elevation = 0.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)*/
-    )/* {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            button1()
-
-            Text(
-                text = message,
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-            )
-            button()
-
-        }
-
-    }*/
+    )
 }
 
 
@@ -357,11 +328,15 @@ fun DynamicTopBar(
 
         Route.FeedScreen.route -> {
             TopBar(
-                message = " Explore Feed",
+                message = "Explore Feed",
                 button = {
-                    LogoUser(
-                        modifier = Modifier.size(60.dp), R.drawable.pexels5
-                    ) { navController.navigate(Route.AccountScreen.route) }
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Route.PostScreen.route)
+                        },
+                    ) {
+                        Icon(Icons.Default.AddComment, contentDescription = "New post")
+                    }
                 },
                 button1 = {
                 },
@@ -570,6 +545,7 @@ fun DynamicBottomBar(navController: NavController) {
         Route.WorkoutModeScreen.route -> {}
         Route.SearchScreen.route -> {}
         Route.ShareScreen.route -> {}
+        Route.PostScreen.route -> {}
         Route.ExerciseDetailsScreen.route -> {}
         Route.TypedExerciseScreen.route -> {}
         Route.ProgressDetailsScreen.route -> {}
