@@ -5,7 +5,10 @@ import android.net.Uri
 import android.widget.VideoView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -199,6 +202,7 @@ fun WorkoutModeScreen(
                                 )
                                 .padding(20.dp)
                         )
+
                         IconButton(
                             onClick = {
                                 videoDialogHandler(VideoEvent.VisibilityVideoEvent(true))
@@ -206,13 +210,22 @@ fun WorkoutModeScreen(
                             modifier = Modifier
                                 .align(Alignment.Center)
                         ) {
-                            Icon(
-                                Icons.Filled.PlayCircleOutline,
-                                contentDescription = "Play Icon",
-                                tint = Color.White,
+                            Box(
                                 modifier = Modifier
-                                    .scale(6f)
-                            )
+                                    .background(
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                            ) {
+                                Icon(
+                                    Icons.Filled.PlayCircleOutline,
+                                    contentDescription = "Play Icon",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .scale(6f)
+                                        .background(color = Color.Black)
+                                )
+                            }
                         }
                     }
                 }
