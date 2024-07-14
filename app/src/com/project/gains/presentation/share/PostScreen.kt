@@ -1,6 +1,9 @@
 package com.project.gains.presentation.share
 
-import androidx.compose.foundation.clickable
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AudioFile
@@ -46,9 +51,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun PostScreen(
     onExit: () -> Unit
@@ -57,6 +63,9 @@ fun PostScreen(
     var textState by remember { mutableStateOf(TextFieldValue("")) }
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
 
     BottomSheetScaffold(
         topBar = {
@@ -68,6 +77,13 @@ fun PostScreen(
                     }
                 },
                 actions = {
+
+                    AttachButton(onClick = {
+                        scope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                        }
+                    })
+
                     FilledTonalButton(
                         onClick = { },
                         modifier = Modifier.padding(end = 8.dp),
@@ -81,7 +97,9 @@ fun PostScreen(
         },
         scaffoldState = scaffoldState,
         sheetContent = {
-            SheetContent()
+            SheetContent { selectedUri ->
+                imageUri = selectedUri
+            }
         },
         sheetPeekHeight = 0.dp
     ) {
@@ -91,6 +109,16 @@ fun PostScreen(
         ) {
 
             Column(modifier = Modifier.fillMaxSize()) {
+
+                imageUri?.let {
+                    AsyncImage(
+                        model = imageUri,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                    )
+                }
 
                 OutlinedTextField(
                     value = textState,
@@ -102,27 +130,8 @@ fun PostScreen(
                         focusedBorderColor = Color.Transparent
                     )
                 )
-                
+
             }
-
-
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        scaffoldState.bottomSheetState.expand()
-                    }
-                },
-                modifier = Modifier.align(Alignment.BottomEnd).padding(8.dp),
-                colors = IconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    contentColor = MaterialTheme.colorScheme.primary,
-                    disabledContentColor = MaterialTheme.colorScheme.primary,
-                    disabledContainerColor = MaterialTheme.colorScheme.primary
-                )
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Attach content")
-            }
-
 
         }
     }
@@ -130,23 +139,53 @@ fun PostScreen(
 }
 
 
-
 @Composable
-fun SheetContent() {
-    GridContent {
+fun AttachButton(onClick: () -> Unit){
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.padding(end = 4.dp),
+        colors = IconButtonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.primary,
+            disabledContentColor = MaterialTheme.colorScheme.primary,
+            disabledContainerColor = MaterialTheme.colorScheme.primary
+        )
+    ) {
+        Icon(Icons.Default.Add, contentDescription = "Attach content")
     }
 }
 
+
+
 @Composable
-fun GridContent(onItemClick: (String) -> Unit) {
+fun SheetContent(onImageSelected: (Uri) -> Unit) {
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                onImageSelected(it)
+            }
+        }
+
+    GridContent(onItemClick = {
+        launcher.launch(
+            "image/*"
+        )
+    })
+
+}
+
+
+
+@Composable
+fun GridContent(onItemClick: () -> Unit) {
 
     val items = listOf(
-        Pair("Exercise", Icons.Default.SportsGymnastics),
-        Pair("Workout", Icons.Default.FormatListNumbered),
-        Pair("Plan", Icons.Default.CalendarMonth),
-        Pair("Image", Icons.Default.Image),
-        Pair("Video", Icons.Default.VideoFile),
-        Pair("Audio", Icons.Default.AudioFile),
+        Triple("Exercise", Icons.Default.SportsGymnastics, {}),
+        Triple("Workout", Icons.Default.FormatListNumbered, {}),
+        Triple("Plan", Icons.Default.CalendarMonth, {}),
+        Triple("Image", Icons.Default.Image, onItemClick),
+        Triple("Video", Icons.Default.VideoFile, {}),
+        Triple("Audio", Icons.Default.AudioFile, {}),
     )
 
     LazyVerticalGrid(
@@ -154,10 +193,11 @@ fun GridContent(onItemClick: (String) -> Unit) {
         modifier = Modifier.padding(16.dp)
     ) {
         items(items.size) { index ->
-            val (label, icon) = items[index]
-            GridItem(icon, label) {
-                onItemClick(label)
-            }
+            val (label, icon, onClick) = items[index]
+            GridItem(
+                icon = icon,
+                label = label,
+                onClick = onClick)
         }
     }
 }
@@ -167,13 +207,12 @@ fun GridItem(icon: ImageVector, label: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .padding(8.dp)
-            .clickable { onClick() }
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         IconButton(
-            onClick = {},
+            onClick = onClick,
             colors = IconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = MaterialTheme.colorScheme.primary,
@@ -183,7 +222,6 @@ fun GridItem(icon: ImageVector, label: String, onClick: () -> Unit) {
         ) {
             Icon(icon, contentDescription = label)
         }
-
 
         Spacer(modifier = Modifier.height(4.dp))
         Text(
