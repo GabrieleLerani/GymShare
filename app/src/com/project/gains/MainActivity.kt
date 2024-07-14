@@ -37,10 +37,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel.orientation.observe(this, Observer { orientation ->
-            requestedOrientation = orientation
-        })
-
         setContent {
 
             GainsAppTheme {
@@ -64,7 +60,6 @@ class MainActivity : ComponentActivity() {
                         scheduleNotificationWorker(applicationContext)
                     }
                 }
-
             }
         }
     }
@@ -93,9 +88,6 @@ class MainActivity : ComponentActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
-
     }
-
-
 }
 
