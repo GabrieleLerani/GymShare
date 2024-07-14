@@ -73,7 +73,6 @@ fun NavGraph(
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
     val feedViewModel : FeedViewModel = hiltViewModel()
 
-
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -271,7 +270,11 @@ fun NavGraph(
                 popEnterTransition = ::slideInToRight,
                 popExitTransition = ::slideOutToRight
             ) {
-                PostScreen(onExit = {navController.popBackStack()})
+                PostScreen(
+                    onPost = {navController.navigate(Route.FeedScreen.route)},
+                    onExit = {navController.popBackStack()},
+                    generalPostHandler = feedViewModel::onSearchEvent,
+                    )
             }
 
             composable(

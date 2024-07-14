@@ -16,6 +16,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AudioFile
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FormatListNumbered
@@ -50,12 +51,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.project.gains.presentation.explore.events.SearchEvent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun PostScreen(
-    onExit: () -> Unit
+    onPost: () -> Unit,
+    onExit: () -> Unit,
+    generalPostHandler: (SearchEvent.GeneralPostEvent) -> Unit,
 ){
 
     var textState by remember { mutableStateOf(TextFieldValue("")) }
@@ -83,7 +87,17 @@ fun PostScreen(
                     })
 
                     FilledTonalButton(
-                        onClick = { },
+                        onClick = {
+
+                            generalPostHandler(
+                                SearchEvent.GeneralPostEvent(
+                                    content = textState.text,
+                                    social = 1, // TODO image is not passed
+                                    username = "user 2",
+                                )
+                            )
+                            onPost()
+                                  },
                         modifier = Modifier.padding(end = 8.dp),
                         enabled = textState.text.isNotEmpty() || imageUri != null
                     ) {
@@ -206,12 +220,9 @@ fun SheetContent(onImageSelected: (Uri) -> Unit) {
 fun GridContent(onItemClick: () -> Unit) {
 
     val items = listOf(
-        Triple("Exercise", Icons.Default.SportsGymnastics, {}),
-        Triple("Workout", Icons.Default.FormatListNumbered, {}),
-        Triple("Plan", Icons.Default.CalendarMonth, {}),
         Triple("Image", Icons.Default.Image, onItemClick),
         Triple("Video", Icons.Default.VideoFile, {}),
-        Triple("Audio", Icons.Default.AudioFile, {}),
+
     )
 
     LazyVerticalGrid(
@@ -264,5 +275,5 @@ fun GridItem(icon: ImageVector, label: String, onClick: () -> Unit) {
 fun Prev(){
     val navController = rememberNavController()
 
-    PostScreen { navController.popBackStack() }
+    //PostScreen { navController.popBackStack() }
 }
