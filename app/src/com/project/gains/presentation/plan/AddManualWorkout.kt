@@ -249,7 +249,7 @@ fun AddManualWorkout(
                                 ManageWorkoutEvent.CreateWorkout(
                                     Workout(
                                         id = 0,
-                                        name = workoutTitleStored.text.ifEmpty { "workout 4" },
+                                        name = workoutTitle.text.ifEmpty { "workout 1" },
                                         workoutDay = selectedDay,
                                         exercises = exercisesList
                                     )
