@@ -34,6 +34,7 @@ class MainViewModel @Inject constructor(
     val orientation: LiveData<Int> get() = _orientation
 
     init {
+        _orientation.value = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         appEntryUseCases.readAppEntry().onEach { shouldStartFromHomeScreen ->
             startDestination = if (shouldStartFromHomeScreen) {
                 if (authenticationUseCases.authCheck()) {
@@ -49,8 +50,12 @@ class MainViewModel @Inject constructor(
 
     fun onOrientationEvent(event: OrientationEvent) {
         when(event) {
-            is OrientationEvent.SetOrientation -> {
-                _orientation.value = event.newOrientation
+            is OrientationEvent.ChangeOrientation -> {
+                if (_orientation.value == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                    _orientation.value = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                } else {
+                    _orientation.value = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                }
             }
         }
     }
@@ -71,7 +76,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun resume(){
-        _userProfile.value=appEntryUseCases.readUser()
+        _userProfile.value = appEntryUseCases.readUser()
         Log.d("MAIN VIEW","resuming resources ${_userProfile.value}")
     }
 

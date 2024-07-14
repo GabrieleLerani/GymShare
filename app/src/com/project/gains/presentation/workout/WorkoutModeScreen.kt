@@ -14,7 +14,10 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircleOutline
+import androidx.compose.material.icons.filled.ScreenRotation
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -45,6 +48,7 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.OrientationEvent
 import com.project.gains.presentation.settings.ShareContentViewModel
@@ -58,17 +62,18 @@ fun WorkoutModeScreen(
     navController: NavController,
     musicHandler: (MusicEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
+    mainViewModel: MainViewModel,
     completionMessage: MutableState<String>,
-    setOrientationHandler: (OrientationEvent.SetOrientation) -> Unit,
+    setOrientationHandler: (OrientationEvent.ChangeOrientation) -> Unit,
     videoDialogHandler: (VideoEvent.VisibilityVideoEvent) -> Unit,
-    shareContentViewModel: ShareContentViewModel,
-
-    ) {
+    shareContentViewModel: ShareContentViewModel
+) {
     val currentSong by workoutViewModel.currentSong.observeAsState()
     val workout by workoutViewModel.selectedWorkout.observeAsState()
     val showVideoDialog by workoutViewModel.showVideoDialog.observeAsState()
+    val fullscreenVideoDialog by workoutViewModel.fullscreenDialog.observeAsState()
     val linkedApps by shareContentViewModel.linkedApps.observeAsState()
-
+    val orientation by mainViewModel.orientation.observeAsState()
 
     var currentExerciseIndex by remember { mutableStateOf(0) }
     var timerState by remember { mutableStateOf(0) }
@@ -126,35 +131,26 @@ fun WorkoutModeScreen(
     // Snackbar host state
     val snackbarHostState = remember { SnackbarHostState() }
 
-    // Video Dialog
-    if (showVideoDialog == true) {
-        VideoAlertDialog(
-            res = workout?.exercises?.get(currentExerciseIndex)?.videoId ?: R.raw.chest
-        ) {
-            setOrientationHandler(OrientationEvent.SetOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT))
-            videoDialogHandler(VideoEvent.VisibilityVideoEvent(false))
-        }
-    } else {
-
-        Scaffold(
-            topBar = {
-                TopBar(
-                    message = "Workout Mode",
-                    button = { }
-                ) {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Filled.Close,
-                            contentDescription = "Close Icon",
-                        )
-                    }
+    Scaffold(
+        topBar = {
+            TopBar(
+                message = "Workout Mode",
+                button = { }
+            ) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = "Close Icon",
+                    )
                 }
-            },
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
             }
-        ) { paddingValues ->
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) { paddingValues ->
 
+        if (fullscreenVideoDialog == true) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -168,55 +164,71 @@ fun WorkoutModeScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .height(315.dp)
+                            .height(200.dp)
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(16.dp))
                     ) {
-                        Image(
-                            painter = painterResource(
-                                id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
-                                    ?: R.drawable.arms2
-                            ),
-                            contentDescription = workout?.exercises?.get(currentExerciseIndex)?.name
-                                ?: "arms",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                        Text(
-                            text = workout?.exercises?.get(currentExerciseIndex)?.name ?: "arms",
-                            color = Color.White,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .background(
-                                    Color.Black.copy(alpha = 0.5f),
-                                    shape = RoundedCornerShape(8.dp)
+                        // Video Dialog
+                        if (showVideoDialog == true) {
+                            VideoAlertDialog(
+                                res = workout?.exercises?.get(currentExerciseIndex)?.videoId
+                                    ?: R.raw.chest,
+                                onDismiss = {
+                                    videoDialogHandler(
+                                        VideoEvent.VisibilityVideoEvent(
+                                            false
+                                        )
+                                    )
+                                    if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+                                        setOrientationHandler(OrientationEvent.ChangeOrientation)
+                                    }
+                                },
+                                changeOrientation = { setOrientationHandler(OrientationEvent.ChangeOrientation) }
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(
+                                    id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
+                                        ?: R.drawable.arms2
+                                ),
+                                contentDescription = workout?.exercises?.get(
+                                    currentExerciseIndex
+                                )?.name
+                                    ?: "arms",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            Text(
+                                text = workout?.exercises?.get(currentExerciseIndex)?.name
+                                    ?: "arms",
+                                color = Color.White,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .background(
+                                        Color.Black.copy(alpha = 0.5f),
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(20.dp)
+                            )
+                            IconButton(
+                                onClick = {
+                                    videoDialogHandler(VideoEvent.VisibilityVideoEvent(true))
+                                },
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .align(Alignment.Center)
+                            ) {
+                                Icon(
+                                    Icons.Filled.PlayCircleOutline,
+                                    contentDescription = "Play Icon"
                                 )
-                                .padding(20.dp)
-                        )
+                            }
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    Button(
-                        onClick = {
-                            setOrientationHandler(OrientationEvent.SetOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE))
-                            videoDialogHandler(VideoEvent.VisibilityVideoEvent(true))
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                    ) {
-                        Text(
-                            text = "Execution Video of ${
-                                workout?.exercises?.get(
-                                    currentExerciseIndex
-                                )?.name
-                            }",
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -339,9 +351,22 @@ fun WorkoutModeScreen(
                     snackbarHostState = snackbarHostState,
                     musicHandler = musicHandler,
                     currentSong = currentSong ?: Song("Linkin Park", "", "In the end"),
-                    show = linkedApps?.contains(R.drawable.spotify_icon)==true
+                    show = linkedApps?.contains(R.drawable.spotify_icon) == true
                 )
             }
+        } else {
+            VideoAlertDialog(
+                res = workout?.exercises?.get(currentExerciseIndex)?.videoId
+                    ?: R.raw.chest,
+                onDismiss = {
+                    videoDialogHandler(
+                        VideoEvent.VisibilityVideoEvent(
+                            false
+                        )
+                    )
+                },
+                changeOrientation = { setOrientationHandler(OrientationEvent.ChangeOrientation) }
+            )
         }
     }
 }
@@ -378,128 +403,127 @@ fun MusicSnackbar(
             }
         }
 
-    // Display music controls as a snackbar
-    Snackbar(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(20.dp)
-            )
-            .height(110.dp),
-        action = { },
-        content = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                Column (
-                    modifier = Modifier.fillMaxSize()
+        // Display music controls as a snackbar
+        Snackbar(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .height(110.dp),
+            action = { },
+            content = {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
                 ) {
-
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    Row {
-                        Icon(
-                            painter = painterResource(id = R.drawable.spotify_icon),
-                            contentDescription = "Spotify Icon",
-                            modifier = Modifier
-                                .size(15.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Text(
-                            text = "Spotify",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    Column (
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start,
-                        ) {
-                            Text(
-                                text = "Song: ${currentSong.title}",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp,
-                                maxLines = 1,
+
+                        Spacer(modifier = Modifier.height(5.dp))
+
+                        Row {
+                            Icon(
+                                painter = painterResource(id = R.drawable.spotify_icon),
+                                contentDescription = "Spotify Icon",
+                                modifier = Modifier
+                                    .size(15.dp)
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = "Singer: ${currentSong.singer}",
-                                style = MaterialTheme.typography.bodySmall,
-                                fontSize = 20.sp,
-                                maxLines = 1,
+                                text = "Spotify",
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
                         Row(
-                            horizontalArrangement = Arrangement.End,
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            IconButton(
-                                onClick = {
-                                    musicHandler(MusicEvent.Rewind)
-                                    currentTime = 0f
-                                },
-                                modifier = Modifier.size(50.dp)
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start,
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.FastRewind,
-                                    contentDescription = "Rewind",
-                                    modifier = Modifier.size(50.dp)
+                                Text(
+                                    text = "Song: ${currentSong.title}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp,
+                                    maxLines = 1,
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "Singer: ${currentSong.singer}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontSize = 20.sp,
+                                    maxLines = 1,
                                 )
                             }
-                            IconButton(
-                                onClick = {
-                                    play.value = !play.value
-                                    musicHandler(MusicEvent.Music)
-                                },
-                                modifier = Modifier.size(50.dp)
+                            Row(
+                                horizontalArrangement = Arrangement.End,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
-                                    contentDescription = if (play.value) "Stop" else "Play",
+                                IconButton(
+                                    onClick = {
+                                        musicHandler(MusicEvent.Rewind)
+                                        currentTime = 0f
+                                    },
                                     modifier = Modifier.size(50.dp)
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    musicHandler(MusicEvent.Forward)
-                                    currentTime = 0f
-                                },
-                                modifier = Modifier.size(50.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.FastForward,
-                                    contentDescription = "Forward",
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.FastRewind,
+                                        contentDescription = "Rewind",
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+                                        play.value = !play.value
+                                        musicHandler(MusicEvent.Music)
+                                    },
                                     modifier = Modifier.size(50.dp)
-                                )
+                                ) {
+                                    Icon(
+                                        imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                        contentDescription = if (play.value) "Stop" else "Play",
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                }
+                                IconButton(
+                                    onClick = {
+                                        musicHandler(MusicEvent.Forward)
+                                        currentTime = 0f
+                                    },
+                                    modifier = Modifier.size(50.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.FastForward,
+                                        contentDescription = "Forward",
+                                        modifier = Modifier.size(50.dp)
+                                    )
+                                }
                             }
                         }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        androidx.compose.material.LinearProgressIndicator(
+                            progress = currentTime / songTotalTime,
+                            color = MaterialTheme.colorScheme.surface,
+                            backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(5.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    androidx.compose.material.LinearProgressIndicator(
-                        progress = currentTime / songTotalTime,
-                        color = MaterialTheme.colorScheme.surface,
-                        backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(5.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                    )
                 }
             }
-        }
-    )
-}
-
+        )
+    }
 }
 
 private fun formatTime(time: Float): String {
@@ -510,32 +534,56 @@ private fun formatTime(time: Float): String {
 }
 
 @Composable
-fun VideoAlertDialog(res: Int, onDismiss: () -> Unit) {
+fun VideoAlertDialog(res: Int, onDismiss: () -> Unit, changeOrientation: () -> Unit) {
     val context = LocalContext.current
     val uri = remember {
         Uri.parse("android.resource://" + context.packageName + "/" + res)
-    }
-
-    IconButton(
-        onClick = onDismiss,
-        modifier = Modifier
-            .padding(16.dp)
-            .background(
-                color = Color.White.copy(alpha = 0.7f),
-                shape = MaterialTheme.shapes.small
-            )
-    ) {
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = "Dismiss",
-        )
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        VideoPlayer(uri = uri, modifier = Modifier.fillMaxHeight().align(Alignment.CenterHorizontally))
+        VideoPlayer(uri = uri, modifier = Modifier
+            .fillMaxHeight()
+            .align(Alignment.CenterHorizontally))
+    }
+
+    Box (
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        IconButton(
+            onClick = onDismiss,
+            modifier = Modifier
+                .padding(start = 16.dp, top = 16.dp)
+                .background(
+                    color = Color.White.copy(alpha = 0.7f),
+                    shape = MaterialTheme.shapes.small
+                )
+                .align(Alignment.TopStart)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Dismiss",
+            )
+        }
+
+        IconButton(
+            onClick = changeOrientation,
+            modifier = Modifier
+                .padding(end = 16.dp, bottom = 16.dp)
+                .background(
+                    color = Color.White.copy(alpha = 0.7f),
+                    shape = MaterialTheme.shapes.small
+                )
+                .align(Alignment.BottomEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Fullscreen,
+                contentDescription = "FullScreen",
+            )
+        }
     }
 }
 
@@ -559,17 +607,19 @@ fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
 @Composable
 fun WorkoutModePreview() {
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
+    val mainViewModel: MainViewModel = hiltViewModel()
     val shareContentViewModel: ShareContentViewModel = hiltViewModel()
 
     GainsAppTheme {
         WorkoutModeScreen(
             rememberNavController(),
             musicHandler = {},
-            workoutViewModel,
-            mutableStateOf(""),
-            {},
-            {},
-            shareContentViewModel =shareContentViewModel
+            mainViewModel = mainViewModel,
+            workoutViewModel =  workoutViewModel,
+            completionMessage = mutableStateOf(""),
+            setOrientationHandler =  {},
+            videoDialogHandler =  {},
+            shareContentViewModel = shareContentViewModel
         )
     }
 }

@@ -310,10 +310,11 @@ fun NavGraph(
                     navController = navController,
                     musicHandler = workoutViewModel::onMusicEvent,
                     workoutViewModel = workoutViewModel,
+                    mainViewModel = mainViewModel,
                     completionMessage = completionMessage,
                     setOrientationHandler = mainViewModel::onOrientationEvent,
                     videoDialogHandler = workoutViewModel::onVideoEvent,
-                    shareContentViewModel=shareContentViewModel
+                    shareContentViewModel = shareContentViewModel
                 )
             }
             composable(

@@ -1,5 +1,6 @@
 package com.project.gains.presentation.workout
 
+import android.provider.MediaStore.Video
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.Exercise
@@ -40,15 +41,19 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private var _showVideoDialog = MutableLiveData<Boolean>()
     val showVideoDialog : MutableLiveData<Boolean> = _showVideoDialog
 
+    private var _fullscreenDialog = MutableLiveData<Boolean>()
+    val fullscreenDialog : MutableLiveData<Boolean> = _fullscreenDialog
+
     private var songIndex = 0
 
     init {
         _favouriteWorkouts.value= mutableListOf()
         _workouts.value = mutableListOf()
         _exercises.value = generateSampleExercises()
-        _currentSong.value=Song("","","") // Dummy init
-        _songs.value= generateRandomSongs(5)
-        _selectedWorkout.value= generateSampleWorkouts()[0]
+        _currentSong.value = Song("Linkin Park","","In the end") // Dummy init
+        _songs.value = generateRandomSongs(5)
+        _selectedWorkout.value = generateSampleWorkouts()[0]
+        _fullscreenDialog.value = true
     }
 
     fun onMusicEvent(event: MusicEvent) {
@@ -114,6 +119,9 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
         when(event) {
             is VideoEvent.VisibilityVideoEvent -> {
                 _showVideoDialog.value = event.visible
+            }
+            is VideoEvent.FullscreenVideoEvent -> {
+                _fullscreenDialog.value = event.fullscreen
             }
         }
     }
