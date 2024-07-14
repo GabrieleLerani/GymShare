@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +26,8 @@ import androidx.compose.material3.IconButtonDefaults
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -102,42 +105,29 @@ fun LinkedSocialSettingScreen(
                     Spacer(modifier = Modifier.height(30.dp))
                 }
                 item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
-                                    onClick =
-                            {
-                                exit.value=true
+
+                        TextButton(
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                            onClick = {
+                                exit.value = true
                                 showDialog.value = true
                                 saveLinkHandler(
                                     ManageDataStoreEvent.Save(
                                         linkedApps ?: mutableListOf()
                                     )
                                 )
-                                clickedApps.value.forEach { icon->
+                                clickedApps.value.forEach { icon ->
                                     linkHandler(LinkAppEvent.LinkApp(icon))
-
-
                                 }
-
                             },
-                            modifier = Modifier.size(60.dp),
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                tint = MaterialTheme.colorScheme.onPrimary,
-                                contentDescription = "Save Icon",
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    .padding(10.dp),
+                            Text(
+                                text = "Save Preferences",
+                                color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
-                    }
+
+
                 }
 
                 if (showDialog.value) {
