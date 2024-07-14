@@ -45,7 +45,6 @@ import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateOptions
 import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.getPreviousDestination
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 
@@ -81,9 +80,10 @@ fun LastNewPlanScreen(
                 navController.navigate(Route.PlanScreen.route)
 
             },
-            title ="Plan Created!" ,
-            text ="You have successfully created your plan!" ,
-            icon = Icons.Default.Check
+            title ="Plan Created!",
+            text ="You have successfully created your plan!",
+            icon = Icons.Default.Check,
+            dismiss = false
         )
     }
 

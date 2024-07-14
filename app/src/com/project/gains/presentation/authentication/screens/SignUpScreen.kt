@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -33,7 +32,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -49,8 +47,6 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -58,7 +54,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -353,13 +348,14 @@ fun DefaultSignUpContent(
 
         if (openPopup.value) {
             FeedbackAlertDialog(
-                title = "Double Check!",
-                text = "Are you sure your credentials are correct?",
                 onDismissRequest = {openPopup.value=false},
-                icon = Icons.Default.Warning,
                 onConfirm = {
                 openPopup.value=false
-                signInHandler(SignUpEvent.SignUp(name, email, password, password)) })
+                signInHandler(SignUpEvent.SignUp(name, email, password, password)) },
+                title = "Double Check!",
+                text = "Are you sure your credentials are correct?",
+                icon = Icons.Default.Warning
+            )
         }
 
         // Observe changes in data

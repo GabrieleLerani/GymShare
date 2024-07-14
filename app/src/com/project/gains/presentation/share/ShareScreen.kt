@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -227,13 +226,13 @@ fun ShareScreen(
                 }
                 if (showErrorDialog.value) {
                     FeedbackAlertDialog(
-                        title = "Error occured",
                         onDismissRequest = {
                             showErrorDialog.value = false
                         },
                         onConfirm = {
                             showErrorDialog.value = false
                         },
+                        title = "Error occured",
                         text = "An error has occurred, check your connection and retry later",
                         icon = Icons.Default.Error
                     )
