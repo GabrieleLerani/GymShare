@@ -3,6 +3,7 @@ package com.project.gains.presentation.share
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
@@ -18,8 +20,14 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -30,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
@@ -45,6 +54,7 @@ import com.project.gains.presentation.components.getPreviousDestination
 import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.progress.ProgressViewModel
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel
@@ -67,6 +77,8 @@ fun ShareScreen(
     val showDialog = remember { mutableStateOf(false) }
 
     val showErrorDialog = remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+
     val workout by workoutViewModel.selectedWorkout.observeAsState()
     val exercise by exerciseViewModel.selectedExercise.observeAsState()
 
@@ -77,6 +89,11 @@ fun ShareScreen(
         mutableStateOf("")
     }
     val prevDest = getPreviousDestination(navController = navController)
+    var test = remember {
+        mutableStateOf(true)
+    }
+    var testAppnames= listOf("Instagram","X","Facebook","TikTok","Google Drive")
+
 
 
 
@@ -146,27 +163,31 @@ fun ShareScreen(
 
             item {
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
-                    apps?.forEach { app ->
-                        if (app!= R.drawable.spotify_icon) {
-                            SocialMediaIcon(
-                                icon = app,
+                    if (test.value==false){
+                        apps?.forEach { app ->
+                            if (app!= R.drawable.spotify_icon) {
+                                SocialMediaIcon(
+                                    icon = app,
+                                    onClick = {
+                                        clickedApp = app
+                                    },
+                                    isSelected = clickedApp == app
+                                )
+                                Spacer(modifier = Modifier.width(2.dp))
+                            }
+                        }
+                        sharingMedia?.forEach { media ->
+                            SharingMediaIcon(
+                                icon = media,
                                 onClick = {
-                                    clickedApp = app
+                                    clickedMedia = media
                                 },
-                                isSelected = clickedApp == app
+                                isSelected = clickedMedia == media
                             )
                             Spacer(modifier = Modifier.width(2.dp))
                         }
-                    }
-                    sharingMedia?.forEach { media ->
-                        SharingMediaIcon(
-                            icon = media,
-                            onClick = {
-                                clickedMedia = media
-                            },
-                            isSelected = clickedMedia == media
-                        )
-                        Spacer(modifier = Modifier.width(2.dp))
+                    }else{
+                        RadioButtonList(names = testAppnames)
                     }
                 }
             }
@@ -174,7 +195,7 @@ fun ShareScreen(
             item { Spacer(modifier = Modifier.height(20.dp)) }
 
             item {
-                if (apps?.isEmpty() == true) {
+                if (apps?.isEmpty() == true && !test.value) {
                     Text(
                         text = "You have no linked apps to link an app go to settings -> sharing preferences or click the link apps button below",
                         style = MaterialTheme.typography.bodySmall,
@@ -260,9 +281,13 @@ fun ShareScreen(
                                 showDialog.value = true
 
 
-                            }else{
+                            }else if (!test.value){
                                 showErrorDialog.value=true
 
+                            }
+                            else{
+                                appName.value="this social"
+                                showDialog.value = true
                             }
                         },
                         modifier = Modifier
@@ -308,4 +333,32 @@ fun ShareScreen(
         }
     }
 }
+@Composable
+fun RadioButtonList(names: List<String>) {
+    // State to keep track of the selected name
+    var selectedName by remember { mutableStateOf<String?>(null) }
 
+    Column {
+        names.forEach { name ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .selectable(
+                        selected = (name == selectedName),
+                        onClick = { selectedName = name },
+                        role = Role.RadioButton
+                    )
+            ) {
+                RadioButton(
+                    selected = (name == selectedName),
+                    onClick = null // The click is handled by the Row's onClick
+                )
+                Text(
+                    text = name,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+        }
+    }
+}

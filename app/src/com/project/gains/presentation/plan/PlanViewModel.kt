@@ -88,6 +88,7 @@ class PlanViewModel @Inject constructor() : ViewModel() {
             }
 
             is ManagePlanEvent.SelectPlan -> {
+
                 _selectedPlan.value = event.plan
             }
 
