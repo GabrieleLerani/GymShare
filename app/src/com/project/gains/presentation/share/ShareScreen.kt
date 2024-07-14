@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.project.gains.R
 import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.SharingMediaIcon
@@ -62,6 +64,43 @@ fun ShareScreen(
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
     val apps by shareContentViewModel.linkedApps.observeAsState()
     val username by mainViewModel.userProfile.observeAsState()
+    val appName = remember {
+        mutableStateOf("")
+    }
+
+
+    if (showDialog.value) {
+
+        FeedbackAlertDialog(
+            onDismissRequest = {
+
+            },
+            onConfirm = {
+                showDialog.value=false
+
+            },
+            title = "Content Shared!",
+            text = "You have correctly shared your content trough ${appName.value}",
+            icon = Icons.Default.Check,
+            dismiss = false
+        )
+    }
+
+
+    if (showErrorDialog.value) {
+        FeedbackAlertDialog(
+            onDismissRequest = {
+
+            },
+            onConfirm = {
+                showErrorDialog.value = false
+            },
+            title = "Error Occurred",
+            text = "You have to select a social to share the content",
+            icon = Icons.Default.Error,
+            dismiss = false
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -164,7 +203,9 @@ fun ShareScreen(
                         ClickableText(
                             text = text,
                             onClick = { offset ->
+                                appName.value="Email"
                                 showDialog.value = true
+
                             },
 
                         )
@@ -174,6 +215,22 @@ fun ShareScreen(
                         onClick = {
                             workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp,username?.displayName ?: "user 2") }
                                 ?.let { shareHandler(it) }
+
+                            if (clickedApp== R.drawable.instagram_icon){
+                                appName.value="Instagram"
+                            }
+                            else if (clickedApp== R.drawable.x_logo_icon){
+                                appName.value="X"
+
+                            }
+                            else if (clickedApp== R.drawable.facebook_icon){
+                                appName.value="Facebook"
+
+                            }
+                            else if (clickedApp== R.drawable.tiktok_logo_icon){
+                                appName.value="TikTok"
+
+                            }
 
                             showDialog.value = true
                         },
@@ -209,33 +266,14 @@ fun ShareScreen(
                         ClickableText(
                             text = text,
                             onClick = { offset ->
+                                appName.value="Email"
                                 showDialog.value = true
+
                             },
                         )
                     }
                 } else {
                     showErrorDialog.value = true
-                }
-            }
-            item {
-
-
-                if (showDialog.value) {
-                    completionMessage.value="Content Shared!"
-                    showDialog.value=false
-                }
-                if (showErrorDialog.value) {
-                    FeedbackAlertDialog(
-                        onDismissRequest = {
-                            showErrorDialog.value = false
-                        },
-                        onConfirm = {
-                            showErrorDialog.value = false
-                        },
-                        title = "Error occured",
-                        text = "An error has occurred, check your connection and retry later",
-                        icon = Icons.Default.Error
-                    )
                 }
             }
         }
