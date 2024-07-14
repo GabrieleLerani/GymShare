@@ -56,7 +56,14 @@ class ShareContentViewModel @Inject constructor(
     fun onLinkAppEvent(event: LinkAppEvent) {
         when (event) {
             is LinkAppEvent.LinkApp -> {
-                _linkedApps.value?.add(event.app)
+                if (_linkedApps.value?.contains(event.app)== true){
+                    _linkedApps.value?.remove(event.app)
+
+                }
+                else{
+                    _linkedApps.value?.add(event.app)
+
+                }
             }
         }
     }
