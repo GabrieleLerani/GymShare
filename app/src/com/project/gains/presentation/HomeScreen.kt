@@ -72,7 +72,6 @@ fun HomeScreen(
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
     val workouts by workoutViewModel.workouts.observeAsState()
-    val showDialog = remember { mutableStateOf(true) }
 
 
 
@@ -111,7 +110,7 @@ fun HomeScreen(
                 }
 
                 item {
-                    HorizontalScrollScreenWorkout(navController, "Your daily workouts", items2 = workouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
+                    HorizontalScrollScreenWorkout(navController, "Your workouts", items2 = workouts!!.toList() + favouriteWorkouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
@@ -126,9 +125,6 @@ fun HomeScreen(
                     Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
                 }
 
-                item {
-                    HorizontalScrollScreenWorkoutFavourites(navController, "Your favourite workouts", items2 = favouriteWorkouts!!.toList(), selectWorkoutHandler = selectWorkoutHandler)
-                }
             }
         }
     }
@@ -264,11 +260,8 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                             )
                         }
                     }
-
-                    if (items2.isNotEmpty()) {
+                    else  {
                         itemsIndexed(items2) { _, item ->
-                            if (currentWeekday() == item.workoutDay.ordinal + 1) {
-
                                 val onClick = {
                                     selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
                                     navController.navigate(Route.WorkoutScreen.route)
@@ -280,16 +273,7 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                                     buttonEnabled = true,
                                     buttonText = "More details"
                                 )
-                            } else {
 
-                                ElevatedCardItem(
-                                    onClick = {},
-                                    imageResId = R.drawable.logo,
-                                    title = "There is no workout for you today",
-                                    buttonEnabled = false,
-                                    buttonText = ""
-                                )
-                            }
                         }
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
@@ -301,71 +285,6 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
     }
 }
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
-@Composable
-fun HorizontalScrollScreenWorkoutFavourites(navController: NavController, title: String, items2:List<Workout> = listOf(),selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .height(300.dp)
-    ) {
-        // BowWithConstraints will provide the maxWidth used below
-        BoxWithConstraints(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                TextItem(title = title)
-
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    state = rememberLazyListState()
-                ) {
-
-                    if (items2.isEmpty()) {
-                        val onClick = {
-                            navController.navigate(Route.PlanScreen.route)
-                        }
-                        item {
-                            ElevatedCardItem(
-                                onClick = onClick,
-                                imageResId = R.drawable.logo,
-                                title = "Like a workout",
-                                buttonEnabled = true,
-                                buttonText = "Add workout to favourites"
-                            )
-                        }
-                    }
-
-                    if (items2.isNotEmpty()) {
-                        itemsIndexed(items2) { _, item ->
-
-                            val onClick = {
-                                selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
-                                navController.navigate(Route.WorkoutScreen.route)
-                            }
-                            ElevatedCardItem(
-                                onClick = { onClick() },
-                                imageResId = R.drawable.logo,
-                                title = item.name,
-                                buttonEnabled = true,
-                                buttonText = "More details"
-                            )
-                        }
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun TextItem(title: String) {
