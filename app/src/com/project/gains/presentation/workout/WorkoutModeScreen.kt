@@ -45,7 +45,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.events.VideoEvent
@@ -227,22 +226,22 @@ fun WorkoutModeScreen(
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             "${setsDone + 1}/$totalSets",
-                            fontSize = 40.sp,
+                            fontSize = 60.sp,
                             fontWeight = FontWeight.Bold
                         )
-                        Text("Sets Done", fontSize = 20.sp)
+                        Text("Sets Done", fontSize = 30.sp)
                     }
 
                     // Timer
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             if (!rest.value) formattedTime else restTime,
-                            fontSize = 40.sp,
+                            fontSize = 60.sp,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             if (!rest.value) "Time Left" else "Rest Left",
-                            fontSize = 20.sp
+                            fontSize = 30.sp
                         )
                     }
                 }
