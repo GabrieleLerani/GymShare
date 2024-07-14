@@ -42,6 +42,7 @@ import com.project.gains.R
 import com.project.gains.data.Song
 import com.project.gains.presentation.events.MusicEvent
 import androidx.compose.material3.Snackbar
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -203,12 +204,14 @@ fun WorkoutModeScreen(
                                 videoDialogHandler(VideoEvent.VisibilityVideoEvent(true))
                             },
                             modifier = Modifier
-                                .size(50.dp)
                                 .align(Alignment.Center)
                         ) {
                             Icon(
                                 Icons.Filled.PlayCircleOutline,
-                                contentDescription = "Play Icon"
+                                contentDescription = "Play Icon",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .scale(6f)
                             )
                         }
                     }
