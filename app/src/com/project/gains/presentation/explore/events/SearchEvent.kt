@@ -11,4 +11,8 @@ sealed class SearchEvent {
 
     data object ResetPostEvent : SearchEvent()
 
+    data class GymPostExerciseEvent(val exercise: Exercise, val social: Int,val username:String) : SearchEvent()
+
+    data class GymPostProgressEvent( val social: Int,val username:String) : SearchEvent()
+
 }
