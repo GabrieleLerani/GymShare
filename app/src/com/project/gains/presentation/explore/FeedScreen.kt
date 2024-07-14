@@ -23,7 +23,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -90,6 +94,26 @@ fun FeedScreen(
                     item { FeedPost(gymPost) }
                 }
             }
+
+            ExtendedFloatingActionButton(
+                text = {Text(
+                    text = "New post",
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )},
+                onClick = {
+                    navController.navigate(Route.PostScreen.route)
+                },
+                icon = {Icon(
+                    Icons.Default.AddComment,
+                    contentDescription = "New post",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )},
+
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
+            )
         }
     }
 }
@@ -103,6 +127,7 @@ fun FeedPost(gymPost: GymPost) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
+
         // Header Row
         Row(
             verticalAlignment = Alignment.CenterVertically,

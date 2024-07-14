@@ -1,5 +1,6 @@
 package com.project.gains.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,7 +74,10 @@ fun MainScreen(
                 startDestination = startDestination,
                 navController = navController,
                 paddingValues = paddingValues,
-               completionMessage= messageState,mainViewModel)
+                completionMessage= messageState,
+                mainViewModel =  mainViewModel
+            )
+            Log.d("DEBUG", messageState.value)
             if (messageState.value.isNotEmpty()) {
                 LaunchedEffect(key1 = messageState.value) {
                     val result = snackBarHostState.showSnackbar(
@@ -81,7 +85,7 @@ fun MainScreen(
                         duration = SnackbarDuration.Long
                     )
                     when (result) {
-                        SnackbarResult.ActionPerformed, SnackbarResult.Dismissed -> {
+                        SnackbarResult.ActionPerformed,SnackbarResult.Dismissed -> {
                             messageState.value = ""
                         }
                     }

@@ -263,8 +263,6 @@ fun AddManualWorkout(
 
                             navController.navigate(Route.HomeScreen.route)
 
-
-
                         },
                         onClickAddExercise = {
                             selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
@@ -304,7 +302,7 @@ fun FooterButton(onClickSaveWorkout: () -> Unit, onClickAddExercise: () -> Unit,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = { onClickSaveWorkout()},
+            onClick = onClickSaveWorkout,
             modifier = Modifier
                 .weight(0.7f)
                 .height(60.dp),
@@ -312,7 +310,7 @@ fun FooterButton(onClickSaveWorkout: () -> Unit, onClickAddExercise: () -> Unit,
             enabled = enabled
         ) {
             Text(
-                text = "SAVE WORKOUT",
+                text = "Save workout",
             )
         }
 

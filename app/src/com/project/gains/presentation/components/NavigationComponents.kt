@@ -317,7 +317,7 @@ fun DynamicTopBar(
 
         Route.HomeSearchScreen.route -> {
             TopBar(
-                message = "Look for exercises",
+                message = "Exercises",
                 button = {}
             ) {
                 BackButton {
@@ -330,13 +330,13 @@ fun DynamicTopBar(
             TopBar(
                 message = "Explore Feed",
                 button = {
-                    IconButton(
+                    /*IconButton(
                         onClick = {
                             navController.navigate(Route.PostScreen.route)
                         },
                     ) {
                         Icon(Icons.Default.AddComment, contentDescription = "New post")
-                    }
+                    }*/
                 },
                 button1 = {
                 },
