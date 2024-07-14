@@ -42,6 +42,7 @@ import com.project.gains.R
 import com.project.gains.data.Song
 import com.project.gains.presentation.events.MusicEvent
 import androidx.compose.material3.Snackbar
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.project.gains.presentation.components.TopBar
@@ -74,6 +75,9 @@ fun WorkoutModeScreen(
     // Get the current exercise total time (dummy value 90 seconds for this example)
     val currentExerciseTime = workout?.exercises?.get(currentExerciseIndex)?.totalTime ?: 90
     val totalSets = workout?.exercises?.get(currentExerciseIndex)?.sets ?: 4
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
 
     // Function to start the timer
     LaunchedEffect(isTimerRunning) {
@@ -322,21 +326,19 @@ fun WorkoutModeScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 650.dp)
+                    .padding(top = screenHeight - 120.dp)
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 // Music Snackbar
                 MusicSnackbar(
                     snackbarHostState = snackbarHostState,
                     musicHandler = musicHandler,
-                    currentSong = currentSong ?: Song("", "", "")
+                    currentSong = currentSong ?: Song("Linkin Park", "", "In the end")
                 )
             }
         }
     }
 }
-
-
 
 @Composable
 fun MusicSnackbar(
@@ -374,116 +376,117 @@ fun MusicSnackbar(
             .background(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(20.dp)
-            ),
+            )
+            .height(110.dp),
         action = { },
         content = {
             Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.TopEnd
+                modifier = Modifier.fillMaxSize(),
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Column (
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    Text(
-                        text = "Song: ${currentSong.title}",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 20.sp,
-                        maxLines = 1,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Artist: ${currentSong.singer}",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 20.sp,
-                        maxLines = 1,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Album: ${currentSong.album}",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 20.sp,
-                        maxLines = 1,
-                    )
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    Row {
+                        Icon(
+                            painter = painterResource(id = R.drawable.spotify_icon),
+                            contentDescription = "Spotify Icon",
+                            modifier = Modifier
+                                .size(15.dp)
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Text(
+                            text = "Spotify",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.Start,
+                        ) {
+                            Text(
+                                text = "Song: ${currentSong.title}",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp,
+                                maxLines = 1,
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Singer: ${currentSong.singer}",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontSize = 20.sp,
+                                maxLines = 1,
+                            )
+                        }
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    musicHandler(MusicEvent.Rewind)
+                                    currentTime = 0f
+                                },
+                                modifier = Modifier.size(50.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FastRewind,
+                                    contentDescription = "Rewind",
+                                    modifier = Modifier.size(50.dp)
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    play.value = !play.value
+                                    musicHandler(MusicEvent.Music)
+                                },
+                                modifier = Modifier.size(50.dp)
+                            ) {
+                                Icon(
+                                    imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                    contentDescription = if (play.value) "Stop" else "Play",
+                                    modifier = Modifier.size(50.dp)
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    musicHandler(MusicEvent.Forward)
+                                    currentTime = 0f
+                                },
+                                modifier = Modifier.size(50.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.FastForward,
+                                    contentDescription = "Forward",
+                                    modifier = Modifier.size(50.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
                     androidx.compose.material.LinearProgressIndicator(
                         progress = currentTime / songTotalTime,
                         color = MaterialTheme.colorScheme.surface,
                         backgroundColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(10.dp)
+                            .height(5.dp)
                             .clip(RoundedCornerShape(16.dp))
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = formatTime(currentTime),
-                            style = MaterialTheme.typography.bodySmall,
-                            fontSize = 20.sp
-                        )
-                        Text(
-                            text = formatTime(songTotalTime),
-                            style = MaterialTheme.typography.bodySmall,
-                            fontSize = 20.sp
-                        )
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        IconButton(
-                            onClick = {
-                                musicHandler(MusicEvent.Rewind)
-                                currentTime = 0f
-                            },
-                            modifier = Modifier.size(50.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FastRewind,
-                                contentDescription = "Rewind",
-                                modifier = Modifier.size(50.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = {
-                                play.value = !play.value
-                                musicHandler(MusicEvent.Music)
-                            },
-                            modifier = Modifier.size(50.dp)
-                        ) {
-                            Icon(
-                                imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
-                                contentDescription = if (play.value) "Stop" else "Play",
-                                modifier = Modifier.size(50.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = {
-                                musicHandler(MusicEvent.Forward)
-                                currentTime = 0f
-                            },
-                            modifier = Modifier.size(50.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FastForward,
-                                contentDescription = "Forward",
-                                modifier = Modifier.size(50.dp)
-                            )
-                        }
-                    }
                 }
-                Icon(
-                    painter = painterResource(id = R.drawable.spotify_icon),
-                    contentDescription = "Spotify Icon",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(4.dp)
-                )
             }
         }
     )
