@@ -2,20 +2,27 @@ package com.project.gains.presentation.exercises
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -38,11 +45,8 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FavoriteTopBar
-import com.project.gains.presentation.components.InstructionCard
-import com.project.gains.presentation.components.WarningCard
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
-
 
 @Composable
 fun ExerciseDetailsScreen(
@@ -196,10 +200,57 @@ fun ExerciseDetailsScreen(
     }
 }
 
+@Composable
+fun InstructionCard(text: String) {
+    androidx.compose.material.Card(
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth(),
+        backgroundColor = MaterialTheme.colorScheme.onTertiary,
+        elevation = 4.dp,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = text,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
 
-
-
-
+@Composable
+fun WarningCard(message: String) {
+    androidx.compose.material.Card(
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                MaterialTheme.colorScheme.secondaryContainer,
+                RoundedCornerShape(16.dp)
+            ),
+        backgroundColor = MaterialTheme.colorScheme.secondaryContainer
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.WarningAmber,
+                contentDescription = "Warning",
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
 
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)

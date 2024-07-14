@@ -334,58 +334,6 @@ fun NotificationCard(
     }
 }
 
-
-@Composable
-fun InstructionCard(text: String) {
-    androidx.compose.material.Card(
-        modifier = Modifier
-            .padding(10.dp)
-            .fillMaxWidth(),
-        backgroundColor = MaterialTheme.colorScheme.onTertiary,
-        elevation = 4.dp,
-        shape = RoundedCornerShape(10.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            androidx.compose.material.Text(
-                text = text,
-                style = androidx.compose.material.MaterialTheme.typography.body1
-            )
-        }
-    }
-}
-
-@Composable
-fun WarningCard(message: String) {
-    androidx.compose.material.Card(
-        shape = RoundedCornerShape(8.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                MaterialTheme.colorScheme.secondaryContainer,
-                RoundedCornerShape(16.dp)
-            ),
-        backgroundColor = MaterialTheme.colorScheme.secondaryContainer
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.WarningAmber,
-                contentDescription = "Warning",
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = message,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 14.sp
-            )
-        }
-    }
-}
-
 @Composable
 @Preview
 fun p(){
