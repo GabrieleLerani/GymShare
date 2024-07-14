@@ -1,5 +1,6 @@
 package com.project.gains.presentation.plan
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
@@ -41,6 +44,8 @@ import com.project.gains.data.Option
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateOptions
 import com.project.gains.presentation.Dimension
+import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.getPreviousDestination
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 
@@ -68,6 +73,20 @@ fun LastNewPlanScreen(
         }
     }
 
+    if (showDialog.value ){
+
+        FeedbackAlertDialog(
+            onDismissRequest = {   },
+            onConfirm = {   showDialog.value=false
+                navController.navigate(Route.PlanScreen.route)
+
+            },
+            title ="Plan Created!" ,
+            text ="You have successfully created your plan!" ,
+            icon = Icons.Default.Check
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -90,12 +109,6 @@ fun LastNewPlanScreen(
             item { Spacer(modifier = Modifier.height(10.dp)) }
 
 
-
-
-                if (showDialog.value) {
-                    completionMessage.value="Workout added. You will find it in the home"
-                    showDialog.value=false
-                }
 
 
 
@@ -348,7 +361,7 @@ fun LastNewPlanScreen(
                             selectedBackup.value
                         )
                     )
-                    navController.navigate(Route.PlanScreen.route)
+                    showDialog.value=true
 
                 },
             ) {
@@ -415,6 +428,7 @@ fun OptionCheckbox(
 
 
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun LastNewPlanScreenPreview() {

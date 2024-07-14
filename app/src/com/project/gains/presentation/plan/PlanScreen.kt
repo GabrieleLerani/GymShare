@@ -80,11 +80,6 @@ fun PlanScreen(
 
 
 
-    if (showDialog.value && getPreviousDestination(navController = navController) == Route.LastNewPlanScreen.route){
-        completionMessage.value="You have successfully created your plan!"
-        showDialog.value=false
-
-    }
 
     GainsAppTheme {
         Box(

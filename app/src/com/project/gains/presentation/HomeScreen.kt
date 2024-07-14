@@ -72,20 +72,7 @@ fun HomeScreen(
     val workouts by workoutViewModel.workouts.observeAsState()
     val showDialog = remember { mutableStateOf(true) }
 
-    if (showDialog.value && getPreviousDestination(navController = navController) == Route.AddManualWorkoutScreen.route){
-        completionMessage.value = "You have successfully created your workout!"
-        showDialog.value = false
-    }
 
-    if (showDialog.value && getPreviousDestination(navController = navController) == Route.SignInScreen.route){
-        completionMessage.value="Welcome Back to GymShare!"
-        showDialog.value=false
-    }
-
-    if (showDialog.value && getPreviousDestination(navController = navController) == Route.SignUpScreen.route){
-        completionMessage.value="Welcome to GymShare!, enjoy our workout app!"
-        showDialog.value=false
-    }
 
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher

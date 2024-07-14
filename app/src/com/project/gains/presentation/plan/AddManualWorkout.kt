@@ -27,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
@@ -111,6 +112,23 @@ fun AddManualWorkout(
     val removedExercises = remember { mutableStateOf(listOf<Exercise>()) }
     var selectedDay by rememberSaveable { mutableStateOf(Weekdays.MONDAY) }
     var expanded by remember { mutableStateOf(false) }
+
+
+
+    if (showDialog.value ){
+
+        FeedbackAlertDialog(
+            onDismissRequest = {   },
+            onConfirm = {   showDialog.value=false
+                navController.navigate(Route.HomeScreen.route)
+
+
+            },
+            title ="Workout Created!" ,
+            text ="You find it in the home!" ,
+            icon = Icons.Default.Check
+        )
+    }
 
     LaunchedEffect(workoutTitleStored) {
         workoutTitle = workoutTitleStored
@@ -260,8 +278,8 @@ fun AddManualWorkout(
                             // after the assignment, delete all exercises so it is ready for a new use
                             deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
 
+                            showDialog.value=true
 
-                            navController.navigate(Route.HomeScreen.route)
 
                         },
                         onClickAddExercise = {
