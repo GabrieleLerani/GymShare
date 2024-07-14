@@ -67,40 +67,6 @@ fun SettingsScreen(
 
 
                 }
-                item {
-                    SettingItem(
-                        icon = Icons.Default.Group,
-                        title = "Tutorial",
-                        onClick = { /* Handle click */ }
-                    )
-
-
-                }
-                item {
-                    SettingItem(
-                        icon = Icons.Default.Support,
-                        title = "Write to support",
-                        onClick = {  }
-                    )
-
-                }
-                item {
-                    SettingItem(
-                        icon = Icons.Default.Share,
-                        title = "Tell a friend",
-                        onClick = { /* Handle click */ }
-                    )
-
-                }
-                item {
-                    SettingItem(
-                        icon = Icons.Default.Star,
-                        title = "Rate the app",
-                        onClick = { /* Handle click */ }
-                    )
-
-
-                }
             }
         }
     }

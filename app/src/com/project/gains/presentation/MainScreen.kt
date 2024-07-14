@@ -48,10 +48,10 @@ fun MainScreen(
             bottomBar = {
                     DynamicBottomBar(navController = navController)
               },
-            snackbarHost = {    SnackbarHost(hostState = snackBarHostState) { data ->
+            snackbarHost = {    SnackbarHost(hostState = snackBarHostState) {
                 Snackbar(
                     modifier = Modifier
-                        .padding(start= 16.dp,end=16.dp,bottom=80.dp)
+                        .padding(start= 16.dp,end=16.dp,bottom= 16.dp)
                         .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)),
                     action = {
                         IconButton(onClick = { messageState.value="" }) {

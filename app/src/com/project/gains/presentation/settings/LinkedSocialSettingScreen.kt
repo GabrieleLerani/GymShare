@@ -62,9 +62,7 @@ fun LinkedSocialSettingScreen(
 ) {
     val linkedApps by shareContentViewModel.linkedApps.observeAsState()
     val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
-    val notification = remember {
-        mutableStateOf(false)
-    }
+
 
     val showDialog = remember { mutableStateOf(false) }
     val icons = listOf(
@@ -160,7 +158,8 @@ fun SocialMediaRow(
             IconButton(
                 colors = IconButtonDefaults.iconButtonColors(MaterialTheme.colorScheme.primary),
                 onClick =
-                { },
+                {  clickedApps.value = clickedApps.value.toMutableList().apply { remove(icon) }
+                    linkHandler(LinkAppEvent.LinkApp(icon))},
                 modifier = Modifier.size(60.dp),
             ) {
                 Icon(

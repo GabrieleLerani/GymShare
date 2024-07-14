@@ -63,7 +63,9 @@ fun HomeScreen(
     workoutViewModel: WorkoutViewModel,
     paddingValues: PaddingValues,
     exerciseViewModel: ExerciseViewModel,
-    selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit,completionMessage:MutableState<String>
+    selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,
+    selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit,
+    completionMessage:MutableState<String>
 ) {
 
     val openPopup = remember { mutableStateOf(false) }

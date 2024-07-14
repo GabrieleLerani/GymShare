@@ -330,13 +330,6 @@ fun DynamicTopBar(
             TopBar(
                 message = "Explore Feed",
                 button = {
-                    /*IconButton(
-                        onClick = {
-                            navController.navigate(Route.PostScreen.route)
-                        },
-                    ) {
-                        Icon(Icons.Default.AddComment, contentDescription = "New post")
-                    }*/
                 },
                 button1 = {
                 },
@@ -450,13 +443,6 @@ fun DynamicTopBar(
                         onClick = {
                             navController.navigate(Route.ShareScreen.route)
                         }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Share",
-                            modifier = Modifier.graphicsLayer {
-                                rotationZ = -45f // Rotate 45 degrees counterclockwise
-                            }
-                        )
                     }
                 }
             ) {

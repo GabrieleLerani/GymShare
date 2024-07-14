@@ -59,6 +59,7 @@ fun ShareScreen(
     var clickedApp by remember { mutableIntStateOf(1) }
     var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
     val showDialog = remember { mutableStateOf(false) }
+
     val showErrorDialog = remember { mutableStateOf(false) }
     val workout by workoutViewModel.selectedWorkout.observeAsState()
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
@@ -136,14 +137,16 @@ fun ShareScreen(
             item {
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
                     apps?.forEach { app ->
-                        SocialMediaIcon(
-                            icon = app,
-                            onClick = {
-                                clickedApp = app
-                            },
-                            isSelected = clickedApp == app
-                        )
-                        Spacer(modifier = Modifier.width(2.dp))
+                        if (app!= R.drawable.spotify_icon) {
+                            SocialMediaIcon(
+                                icon = app,
+                                onClick = {
+                                    clickedApp = app
+                                },
+                                isSelected = clickedApp == app
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
+                        }
                     }
                     sharingMedia?.forEach { media ->
                         SharingMediaIcon(
@@ -210,7 +213,7 @@ fun ShareScreen(
 
                         )
                     }
-                } else if (apps?.isEmpty() == false) {
+                } else  {
                     Button(
                         onClick = {
                             workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp,username?.displayName ?: "user 2") }
@@ -218,27 +221,36 @@ fun ShareScreen(
 
                             if (clickedApp== R.drawable.instagram_icon){
                                 appName.value="Instagram"
+                                showDialog.value = true
+
                             }
                             else if (clickedApp== R.drawable.x_logo_icon){
                                 appName.value="X"
+                                showDialog.value = true
+
 
                             }
                             else if (clickedApp== R.drawable.facebook_icon){
                                 appName.value="Facebook"
+                                showDialog.value = true
+
 
                             }
                             else if (clickedApp== R.drawable.tiktok_logo_icon){
                                 appName.value="TikTok"
+                                showDialog.value = true
+
+
+                            }else{
+                                showErrorDialog.value=true
 
                             }
-
-                            showDialog.value = true
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(55.dp),
                     ) {
-                        Text(text = "Share content")
+                        Text(text =   "Share content")
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     val text = AnnotatedString.Builder().apply {
@@ -272,8 +284,6 @@ fun ShareScreen(
                             },
                         )
                     }
-                } else {
-                    showErrorDialog.value = true
                 }
             }
         }

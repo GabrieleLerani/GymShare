@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.events.OrientationEvent
+import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.events.VideoEvent
 
 import com.project.gains.theme.GainsAppTheme
@@ -59,11 +60,15 @@ fun WorkoutModeScreen(
     workoutViewModel: WorkoutViewModel,
     completionMessage: MutableState<String>,
     setOrientationHandler: (OrientationEvent.SetOrientation) -> Unit,
-    videoDialogHandler: (VideoEvent.VisibilityVideoEvent) -> Unit
-) {
+    videoDialogHandler: (VideoEvent.VisibilityVideoEvent) -> Unit,
+    shareContentViewModel: ShareContentViewModel,
+
+    ) {
     val currentSong by workoutViewModel.currentSong.observeAsState()
     val workout by workoutViewModel.selectedWorkout.observeAsState()
     val showVideoDialog by workoutViewModel.showVideoDialog.observeAsState()
+    val linkedApps by shareContentViewModel.linkedApps.observeAsState()
+
 
     var currentExerciseIndex by remember { mutableStateOf(0) }
     var timerState by remember { mutableStateOf(0) }
@@ -333,7 +338,8 @@ fun WorkoutModeScreen(
                 MusicSnackbar(
                     snackbarHostState = snackbarHostState,
                     musicHandler = musicHandler,
-                    currentSong = currentSong ?: Song("Linkin Park", "", "In the end")
+                    currentSong = currentSong ?: Song("Linkin Park", "", "In the end"),
+                    show = linkedApps?.contains(R.drawable.spotify_icon)==true
                 )
             }
         }
@@ -345,30 +351,32 @@ fun MusicSnackbar(
     snackbarHostState: SnackbarHostState,
     musicHandler: (MusicEvent) -> Unit,
     currentSong: Song,
+    show:Boolean
 ) {
-    val play = remember { mutableStateOf(false) }
-    var currentTime by remember { mutableStateOf(0f) }
-    val songTotalTime = 165f
+    if (show) {
+        val play = remember { mutableStateOf(false) }
+        var currentTime by remember { mutableStateOf(0f) }
+        val songTotalTime = 165f
 
-    // Simulate a timer to update the current playback position
-    LaunchedEffect(play.value) {
-        if (play.value) {
-            while (currentTime < songTotalTime && play.value) {
-                delay(100L) // Shorter delay for finer granularity
-                currentTime += 0.1f // Increment by 0.1 second
+        // Simulate a timer to update the current playback position
+        LaunchedEffect(play.value) {
+            if (play.value) {
+                while (currentTime < songTotalTime && play.value) {
+                    delay(100L) // Shorter delay for finer granularity
+                    currentTime += 0.1f // Increment by 0.1 second
 
-                // Adjust the timer to handle seconds incrementing correctly
-                if (currentTime % 1.0f >= 0.9f) {
-                    currentTime = (currentTime - (currentTime % 1.0f)) + 1f
-                }
+                    // Adjust the timer to handle seconds incrementing correctly
+                    if (currentTime % 1.0f >= 0.9f) {
+                        currentTime = (currentTime - (currentTime % 1.0f)) + 1f
+                    }
 
-                if (currentTime >= songTotalTime) {
-                    play.value = false
-                    musicHandler(MusicEvent.Forward)
+                    if (currentTime >= songTotalTime) {
+                        play.value = false
+                        musicHandler(MusicEvent.Forward)
+                    }
                 }
             }
         }
-    }
 
     // Display music controls as a snackbar
     Snackbar(
@@ -492,6 +500,8 @@ fun MusicSnackbar(
     )
 }
 
+}
+
 private fun formatTime(time: Float): String {
     val totalSeconds = time.toInt()
     val minutes = totalSeconds / 60
@@ -549,6 +559,8 @@ fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
 @Composable
 fun WorkoutModePreview() {
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
+    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
+
     GainsAppTheme {
         WorkoutModeScreen(
             rememberNavController(),
@@ -556,7 +568,8 @@ fun WorkoutModePreview() {
             workoutViewModel,
             mutableStateOf(""),
             {},
-            {}
+            {},
+            shareContentViewModel =shareContentViewModel
         )
     }
 }
