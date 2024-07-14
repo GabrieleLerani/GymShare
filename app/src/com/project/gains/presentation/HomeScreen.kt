@@ -271,7 +271,7 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
 
                                 val onClick = {
                                     selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
-                                    navController.navigate(Route.PlanScreen.route)
+                                    navController.navigate(Route.WorkoutScreen.route)
                                 }
                                 ElevatedCardItem(
                                     onClick = onClick,
