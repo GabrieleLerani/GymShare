@@ -312,7 +312,8 @@ fun NavGraph(
                     workoutViewModel = workoutViewModel,
                     completionMessage = completionMessage,
                     setOrientationHandler = mainViewModel::onOrientationEvent,
-                    videoDialogHandler = workoutViewModel::onVideoEvent
+                    videoDialogHandler = workoutViewModel::onVideoEvent,
+                    shareContentViewModel=shareContentViewModel
                 )
             }
             composable(
