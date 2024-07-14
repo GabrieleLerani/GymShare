@@ -102,12 +102,74 @@ class FeedViewModel @Inject constructor() : ViewModel() {
 
                 }
                 val user =event.username
-                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = event.username, social = social, randomSocialId = R.drawable.instagram_icon, caption = desc, time = "10:13", likes = "123", comment = "234")
+                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = event.username, social = social, randomSocialId = event.social, caption = desc, time = "10:13", likes = "123", comment = "234")
                 _posts.value?.add(post)
             }
 
             is SearchEvent.ResetPostEvent -> {
                 _posts.value = generateRandomGymPost(10).toMutableList()
+            }
+
+            is SearchEvent.GymPostExerciseEvent -> {
+                val exerciseName: String = event.exercise.name // Assuming event.workout.name is the workout name
+
+                val desc: String = buildString {
+                    appendLine("Exercise: $exerciseName")
+                    event.exercise.description.forEachIndexed { index, desc ->
+                        appendLine(" ${desc}")
+                    }
+                }
+                var social:String="Instagram"
+                if (event.social==R.drawable.instagram_icon){
+                    social="Instagram"
+                }
+                else if (event.social==R.drawable.x_logo_icon){
+                    social="X"
+
+                }
+                else if (event.social==R.drawable.facebook_icon){
+                    social="Facebook"
+
+                }
+                else if (event.social==R.drawable.tiktok_logo_icon){
+                    social="TikTok"
+
+                }
+                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = event.exercise.gifResId ?: R.drawable.chest, username = event.username, social = social, randomSocialId = event.social, caption = desc, time = "10:13", likes = "123", comment = "234")
+                _posts.value?.add(post)
+
+
+            }
+            is SearchEvent.GymPostProgressEvent -> {
+                val progressName: String = "Your progress" // Assuming event.workout.name is the workout name
+
+                val desc: String = buildString {
+                    appendLine("Progress: $progressName")
+                    val desc = listOf("")
+                   desc.forEachIndexed { index, desc ->
+                        appendLine("${desc}")
+                    }
+                }
+                var social:String="Instagram"
+                if (event.social==R.drawable.instagram_icon){
+                    social="Instagram"
+                }
+                else if (event.social==R.drawable.x_logo_icon){
+                    social="X"
+
+                }
+                else if (event.social==R.drawable.facebook_icon){
+                    social="Facebook"
+
+                }
+                else if (event.social==R.drawable.tiktok_logo_icon){
+                    social="TikTok"
+
+                }
+                val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.logo, username = event.username, social = social, randomSocialId = event.social, caption = desc, time = "10:13", likes = "123", comment = "234")
+                _posts.value?.add(post)
+
+
             }
         }
     }

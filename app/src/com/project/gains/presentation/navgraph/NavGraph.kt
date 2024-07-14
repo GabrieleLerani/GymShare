@@ -258,7 +258,10 @@ fun NavGraph(
                     shareContentViewModel = shareContentViewModel,
                     shareHandler = feedViewModel::onSearchEvent,
                     workoutViewModel = workoutViewModel,completionMessage=completionMessage,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    shareHandlerExercise =feedViewModel::onSearchEvent,
+                    shareHandlerProgress = feedViewModel::onSearchEvent,
+                    exerciseViewModel = exerciseViewModel
                 )
             }
             composable(

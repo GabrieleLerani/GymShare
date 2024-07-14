@@ -41,8 +41,11 @@ import com.project.gains.presentation.MainViewModel
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.SharingMediaIcon
 import com.project.gains.presentation.components.SocialMediaIcon
+import com.project.gains.presentation.components.getPreviousDestination
+import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.progress.ProgressViewModel
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel
 
@@ -53,7 +56,10 @@ fun ShareScreen(
     shareContentViewModel: ShareContentViewModel,
     workoutViewModel: WorkoutViewModel,
     shareHandler: (SearchEvent.GymPostWorkoutEvent) -> Unit,
+    shareHandlerExercise: (SearchEvent.GymPostExerciseEvent) -> Unit,
+    shareHandlerProgress: (SearchEvent.GymPostProgressEvent) -> Unit,
     mainViewModel: MainViewModel,
+    exerciseViewModel: ExerciseViewModel,
     completionMessage: MutableState<String>
 ) {
     var clickedApp by remember { mutableIntStateOf(1) }
@@ -62,12 +68,16 @@ fun ShareScreen(
 
     val showErrorDialog = remember { mutableStateOf(false) }
     val workout by workoutViewModel.selectedWorkout.observeAsState()
+    val exercise by exerciseViewModel.selectedExercise.observeAsState()
+
     val sharingMedia by shareContentViewModel.linkedSharingMedia.observeAsState()
     val apps by shareContentViewModel.linkedApps.observeAsState()
     val username by mainViewModel.userProfile.observeAsState()
     val appName = remember {
         mutableStateOf("")
     }
+    val prevDest = getPreviousDestination(navController = navController)
+
 
 
     if (showDialog.value) {
@@ -216,8 +226,17 @@ fun ShareScreen(
                 } else  {
                     Button(
                         onClick = {
-                            workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp,username?.displayName ?: "user 2") }
-                                ?.let { shareHandler(it) }
+                            if (prevDest==Route.WorkoutScreen.route){
+                                workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp,username?.displayName ?: "user 2") }
+                                    ?.let { shareHandler(it) }
+                            }else if (prevDest==Route.ExerciseDetailsScreen.route){
+                                exercise?.let { SearchEvent.GymPostExerciseEvent(it,clickedApp,username?.displayName ?: "user 2") }?.let { shareHandlerExercise(it) }
+
+                            }
+                            else if (prevDest==Route.ProgressDetailsScreen.route){
+                                shareHandlerProgress(SearchEvent.GymPostProgressEvent(clickedApp,username?.displayName ?: "user 2"))
+
+                            }
 
                             if (clickedApp== R.drawable.instagram_icon){
                                 appName.value="Instagram"

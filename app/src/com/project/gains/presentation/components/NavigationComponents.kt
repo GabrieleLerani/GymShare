@@ -442,7 +442,15 @@ fun DynamicTopBar(
                         modifier = Modifier.size(45.dp),
                         onClick = {
                             navController.navigate(Route.ShareScreen.route)
-                        }) {
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "Share",
+                            modifier = Modifier.graphicsLayer {
+                                rotationZ = -45f // Rotate 45 degrees counterclockwise
+                            }
+                        )
                     }
                 }
             ) {
