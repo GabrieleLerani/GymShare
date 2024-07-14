@@ -314,58 +314,6 @@ fun NotificationCard(
 }
 
 @Composable
-@Preview
-fun p(){
-    GainsAppTheme {
-        VideoAlertDialog(res = R.raw.chest) {
-            
-        }
-    }
-}
-@Composable
-fun VideoAlertDialog(res: Int, onDismiss: () -> Unit) {
-    val context = LocalContext.current
-    val uri = remember {
-        Uri.parse("android.resource://" + context.packageName + "/" + res)
-    }
-
-        VideoPlayer(uri = uri, modifier = Modifier.fillMaxHeight())
-
-        IconButton(
-            onClick = onDismiss,
-            modifier = Modifier
-                .padding(16.dp)
-                .background(
-                    color = Color.White.copy(alpha = 0.7f),
-                    shape = MaterialTheme.shapes.small
-                )
-        ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Dismiss",
-            )
-        }
-
-}
-
-@Composable
-fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-
-    AndroidView(
-        factory = {
-            VideoView(context).apply {
-                setVideoURI(uri)
-                setOnPreparedListener { it.start() }
-            }
-        },
-        modifier = modifier
-    )
-}
-
-
-
-@Composable
 fun FeedbackAlertDialog(
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,

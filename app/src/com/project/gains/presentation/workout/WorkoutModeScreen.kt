@@ -1,10 +1,12 @@
 package com.project.gains.presentation.workout
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
+import android.net.Uri
+import android.widget.VideoView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -20,8 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,28 +42,27 @@ import com.project.gains.R
 import com.project.gains.data.Song
 import com.project.gains.presentation.events.MusicEvent
 import androidx.compose.material3.Snackbar
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
 import com.project.gains.presentation.components.TopBar
-import com.project.gains.presentation.components.VideoAlertDialog
-
+import com.project.gains.presentation.events.OrientationEvent
+import com.project.gains.presentation.workout.events.VideoEvent
 
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
-import androidx.compose.ui.text.buildAnnotatedString as buildAnnotatedString1
 
 @Composable
 fun WorkoutModeScreen(
     navController: NavController,
     musicHandler: (MusicEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
-    completionMessage: MutableState<String>
+    completionMessage: MutableState<String>,
+    setOrientationHandler: (OrientationEvent.SetOrientation) -> Unit,
+    videoDialogHandler: (VideoEvent.VisibilityVideoEvent) -> Unit
 ) {
     val currentSong by workoutViewModel.currentSong.observeAsState()
     val workout by workoutViewModel.selectedWorkout.observeAsState()
+    val showVideoDialog by workoutViewModel.showVideoDialog.observeAsState()
 
     var currentExerciseIndex by remember { mutableStateOf(0) }
     var timerState by remember { mutableStateOf(0) }
@@ -71,7 +70,6 @@ fun WorkoutModeScreen(
     var setsDone by remember { mutableStateOf(0) }
     var restCountdown by remember { mutableStateOf(60) }
     val rest = remember { mutableStateOf(false) }
-    val showVideoDialog = remember { mutableStateOf(false) }
 
     // Get the current exercise total time (dummy value 90 seconds for this example)
     val currentExerciseTime = workout?.exercises?.get(currentExerciseIndex)?.totalTime ?: 90
@@ -120,26 +118,29 @@ fun WorkoutModeScreen(
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Video Dialog
-    if (showVideoDialog.value) {
+    if (showVideoDialog == true) {
         VideoAlertDialog(
             res = workout?.exercises?.get(currentExerciseIndex)?.videoId ?: R.raw.chest
         ) {
-            showVideoDialog.value = false
+            setOrientationHandler(OrientationEvent.SetOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT))
+            videoDialogHandler(VideoEvent.VisibilityVideoEvent(false))
         }
-    }else {
+    } else {
 
         Scaffold(
-            topBar = {TopBar(
-                message = "Workout Mode",
-                button = { }
-            ) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        Icons.Filled.Close,
-                        contentDescription = "Close Icon",
-                    )
+            topBar = {
+                TopBar(
+                    message = "Workout Mode",
+                    button = { }
+                ) {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Filled.Close,
+                            contentDescription = "Close Icon",
+                        )
+                    }
                 }
-            }},
+            },
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             }
@@ -152,7 +153,9 @@ fun WorkoutModeScreen(
                     .background(MaterialTheme.colorScheme.surface)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxSize().padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
                     Box(
                         modifier = Modifier
@@ -189,7 +192,8 @@ fun WorkoutModeScreen(
 
                     Button(
                         onClick = {
-                            showVideoDialog.value = true
+                            setOrientationHandler(OrientationEvent.SetOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE))
+                            videoDialogHandler(VideoEvent.VisibilityVideoEvent(true))
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -316,7 +320,8 @@ fun WorkoutModeScreen(
                 }
             }
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(top = 650.dp)
                     .background(MaterialTheme.colorScheme.surface)
             ) {
@@ -491,6 +496,50 @@ private fun formatTime(time: Float): String {
     return String.format("%02d:%02d", minutes, seconds)
 }
 
+@Composable
+fun VideoAlertDialog(res: Int, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val uri = remember {
+        Uri.parse("android.resource://" + context.packageName + "/" + res)
+    }
+
+    IconButton(
+        onClick = onDismiss,
+        modifier = Modifier
+            .padding(16.dp)
+            .background(
+                color = Color.White.copy(alpha = 0.7f),
+                shape = MaterialTheme.shapes.small
+            )
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            contentDescription = "Dismiss",
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        VideoPlayer(uri = uri, modifier = Modifier.fillMaxHeight().align(Alignment.CenterHorizontally))
+    }
+}
+
+@Composable
+fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    AndroidView(
+        factory = {
+            VideoView(context).apply {
+                setVideoURI(uri)
+                setOnPreparedListener { it.start() }
+            }
+        },
+        modifier = modifier
+    )
+}
 
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
@@ -502,7 +551,9 @@ fun WorkoutModePreview() {
             rememberNavController(),
             musicHandler = {},
             workoutViewModel,
-            mutableStateOf("")
+            mutableStateOf(""),
+            {},
+            {}
         )
     }
 }

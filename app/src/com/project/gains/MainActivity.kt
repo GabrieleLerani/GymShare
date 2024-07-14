@@ -3,6 +3,7 @@ package com.project.gains
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Observer
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -32,9 +34,12 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel by viewModels<MainViewModel>()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel.orientation.observe(this, Observer { orientation ->
+            requestedOrientation = orientation
+        })
 
         setContent {
 
@@ -51,7 +56,8 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 Log.d("DEBUG","viewModel check ${viewModel.isAuth()}")
-                if (viewModel.isAuth()){
+
+                if (viewModel.isAuth()) {
                     LaunchedEffect(key1 = Unit) {
                         Log.d("DEBUG","recomposed")
                         createNotificationChannel()

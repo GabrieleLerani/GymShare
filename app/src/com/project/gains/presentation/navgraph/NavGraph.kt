@@ -307,7 +307,12 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 WorkoutModeScreen(
-                    navController, workoutViewModel::onMusicEvent, workoutViewModel = workoutViewModel,completionMessage=completionMessage
+                    navController = navController,
+                    musicHandler = workoutViewModel::onMusicEvent,
+                    workoutViewModel = workoutViewModel,
+                    completionMessage = completionMessage,
+                    setOrientationHandler = mainViewModel::onOrientationEvent,
+                    videoDialogHandler = workoutViewModel::onVideoEvent
                 )
             }
             composable(

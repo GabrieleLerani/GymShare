@@ -1,5 +1,6 @@
 package com.project.gains.presentation
 
+import android.content.pm.ActivityInfo
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +12,7 @@ import com.project.gains.data.UserProfileBundle
 
 import com.project.gains.domain.usecase.appEntry.AppEntryUseCases
 import com.project.gains.domain.usecase.auth.AuthenticationUseCases
+import com.project.gains.presentation.events.OrientationEvent
 import com.project.gains.presentation.navgraph.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 
@@ -27,6 +29,10 @@ class MainViewModel @Inject constructor(
     val userProfile: LiveData<UserProfileBundle?> = _userProfile
 
     var startDestination by mutableStateOf(Route.AppStartNavigation.route)
+
+    private val _orientation = MutableLiveData<Int>()
+    val orientation: LiveData<Int> get() = _orientation
+
     init {
         appEntryUseCases.readAppEntry().onEach { shouldStartFromHomeScreen ->
             startDestination = if (shouldStartFromHomeScreen) {
@@ -41,6 +47,13 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onOrientationEvent(event: OrientationEvent) {
+        when(event) {
+            is OrientationEvent.SetOrientation -> {
+                _orientation.value = event.newOrientation
+            }
+        }
+    }
 
     fun isAuth() : Boolean{
         return authenticationUseCases.authCheck()
