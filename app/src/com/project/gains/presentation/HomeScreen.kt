@@ -181,7 +181,6 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                     state = rememberLazyListState()
                 ) {
                     // by default, there is a card that suggests you to add a new exercise
-                    if (items.isEmpty()) {
 
                         val onClick = { navController.navigate(Route.HomeSearchScreen.route) }
                         item {
@@ -193,7 +192,7 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                                 buttonText = "Add exercise to favourites"
                             )
                         }
-                    }
+
 
                     itemsIndexed(items) { _, item ->
                         item.gifResId?.let {
@@ -246,7 +245,6 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                     state = rememberLazyListState()
                 ) {
 
-                    if (items2.isEmpty()) {
                         val onClick = {
                             navController.navigate(Route.NewPlanScreen.route)
                         }
@@ -259,8 +257,8 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                                 buttonText = "Add workout"
                             )
                         }
-                    }
-                    else  {
+
+
                         itemsIndexed(items2) { _, item ->
                                 val onClick = {
                                     selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
@@ -278,7 +276,7 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                         item {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
-                    }
+
                 }
             }
         }

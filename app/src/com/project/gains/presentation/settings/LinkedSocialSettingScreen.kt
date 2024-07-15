@@ -72,7 +72,7 @@ fun LinkedSocialSettingScreen(
 
     val exit = remember { mutableStateOf(false) }
     var test = remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
 
     val showDialog = remember { mutableStateOf(false) }

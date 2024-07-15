@@ -200,7 +200,7 @@ fun DynamicTopBar(
     val notificationMessage = remember { mutableStateOf("") }
 
     var test = remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
     when (currentRoute) {
 
