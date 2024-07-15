@@ -20,14 +20,9 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -58,6 +53,7 @@ import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.progress.ProgressViewModel
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel
+import com.project.gains.util.getResByName
 
 
 @Composable
@@ -72,7 +68,7 @@ fun ShareScreen(
     exerciseViewModel: ExerciseViewModel,
     completionMessage: MutableState<String>
 ) {
-    var clickedApp by remember { mutableIntStateOf(1) }
+    var clickedApp = remember { mutableIntStateOf(1) }
     var clickedMedia by remember { mutableStateOf(Icons.Default.Home) }
     val showDialog = remember { mutableStateOf(false) }
 
@@ -90,7 +86,7 @@ fun ShareScreen(
     }
     val prevDest = getPreviousDestination(navController = navController)
     var test = remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
     var testAppnames= listOf("Instagram","X","Facebook","TikTok","Google Drive")
 
@@ -169,9 +165,9 @@ fun ShareScreen(
                                 SocialMediaIcon(
                                     icon = app,
                                     onClick = {
-                                        clickedApp = app
+                                        clickedApp.intValue = app
                                     },
-                                    isSelected = clickedApp == app
+                                    isSelected = clickedApp.intValue == app
                                 )
                                 Spacer(modifier = Modifier.width(2.dp))
                             }
@@ -187,7 +183,7 @@ fun ShareScreen(
                             Spacer(modifier = Modifier.width(2.dp))
                         }
                     }else{
-                        RadioButtonList(names = testAppnames)
+                        RadioButtonList(names = testAppnames, clickedApp =clickedApp)
                     }
                 }
             }
@@ -248,35 +244,35 @@ fun ShareScreen(
                     Button(
                         onClick = {
                             if (prevDest==Route.WorkoutScreen.route){
-                                workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp,username?.displayName ?: "user 2") }
+                                workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp.intValue,username?.displayName ?: "user 2") }
                                     ?.let { shareHandler(it) }
                             }else if (prevDest==Route.ExerciseDetailsScreen.route){
-                                exercise?.let { SearchEvent.GymPostExerciseEvent(it,clickedApp,username?.displayName ?: "user 2") }?.let { shareHandlerExercise(it) }
+                                exercise?.let { SearchEvent.GymPostExerciseEvent(it,clickedApp.intValue,username?.displayName ?: "user 2") }?.let { shareHandlerExercise(it) }
 
                             }
                             else if (prevDest==Route.ProgressDetailsScreen.route){
-                                shareHandlerProgress(SearchEvent.GymPostProgressEvent(clickedApp,username?.displayName ?: "user 2"))
+                                shareHandlerProgress(SearchEvent.GymPostProgressEvent(clickedApp.intValue,username?.displayName ?: "user 2"))
 
                             }
 
-                            if (clickedApp== R.drawable.instagram_icon){
+                            if (clickedApp.intValue== R.drawable.instagram_icon){
                                 appName.value="Instagram"
                                 showDialog.value = true
 
                             }
-                            else if (clickedApp== R.drawable.x_logo_icon){
+                            else if (clickedApp.intValue== R.drawable.x_logo_icon){
                                 appName.value="X"
                                 showDialog.value = true
 
 
                             }
-                            else if (clickedApp== R.drawable.facebook_icon){
+                            else if (clickedApp.intValue== R.drawable.facebook_icon){
                                 appName.value="Facebook"
                                 showDialog.value = true
 
 
                             }
-                            else if (clickedApp== R.drawable.tiktok_logo_icon){
+                            else if (clickedApp.intValue== R.drawable.tiktok_logo_icon){
                                 appName.value="TikTok"
                                 showDialog.value = true
 
@@ -334,25 +330,30 @@ fun ShareScreen(
     }
 }
 @Composable
-fun RadioButtonList(names: List<String>) {
+fun RadioButtonList(names: List<String>, clickedApp: MutableState<Int>) {
     // State to keep track of the selected name
     var selectedName by remember { mutableStateOf<String?>(null) }
 
     Column {
         names.forEach { name ->
-            Row(
+            Row( verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
                     .selectable(
                         selected = (name == selectedName),
-                        onClick = { selectedName = name },
+                        onClick = {
+                            selectedName = name
+                            clickedApp.value = getResByName(appName = selectedName ?: "")
+                        },
                         role = Role.RadioButton
                     )
             ) {
                 RadioButton(
                     selected = (name == selectedName),
-                    onClick = null // The click is handled by the Row's onClick
+                    onClick = {selectedName = name
+                        clickedApp.value= getResByName(appName = selectedName ?: "")
+                    }
                 )
                 Text(
                     text = name,

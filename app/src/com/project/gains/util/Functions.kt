@@ -1,5 +1,6 @@
 package com.project.gains.util
 
+import com.project.gains.R
 import com.project.gains.data.Weekdays
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -22,4 +23,29 @@ fun Weekdays.toFormattedString(): String {
 fun toLowerCaseString(text : String): String {
     return text.lowercase(Locale.ROOT)
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+}
+
+fun getResByName(appName : String): Int {
+    var app :Int
+    if (appName=="Instagram"){
+        app = R.drawable.instagram_icon
+    }
+    else if (appName== "X"){
+        app=R.drawable.x_logo_icon
+    }
+    else if (appName=="Facebook"){
+        app=R.drawable.facebook_icon
+    }
+    else if (appName=="TikTok"){
+        app=    R.drawable.tiktok_logo_icon
+    }
+    else if (appName=="Google Drive"){
+        app=    R.drawable.drive_google_icon
+    }
+    else{
+        app = R.drawable.instagram_icon
+    }
+
+    return app
+
 }
