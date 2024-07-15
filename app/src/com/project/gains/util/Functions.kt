@@ -49,3 +49,28 @@ fun getResByName(appName : String): Int {
     return app
 
 }
+
+fun getNameByRes(app : Int): String {
+    var appName :String
+    if (app==R.drawable.instagram_icon){
+        appName = "Instagram"
+    }
+    else if (app== R.drawable.x_logo_icon){
+        appName="X"
+    }
+    else if (app==R.drawable.facebook_icon){
+        appName="Facebook"
+    }
+    else if (app==R.drawable.tiktok_logo_icon){
+        appName= "TikTok"
+    }
+    else if (app==R.drawable.drive_google_icon){
+        appName= "Google Drive"
+    }
+    else{
+        appName = "Instagram"
+    }
+
+    return appName
+
+}

@@ -286,7 +286,7 @@ fun DefaultSignInContent(
 
                     Text(
                         text = "Forgot Password?",
-                        color = MaterialTheme.colorScheme.tertiary,
+                        color = Color.Blue,
                         style = TextStyle(textDecoration = TextDecoration.Underline ),
                         modifier = Modifier
                             .align(Alignment.End)

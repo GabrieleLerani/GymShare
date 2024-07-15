@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -208,11 +209,12 @@ fun DynamicTopBar(
             TopBar(
                 message = "Home",
                 button = {
-                    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column( modifier = Modifier.padding(end=20.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                         IconButton(
-                            modifier = Modifier.size(45.dp),
+                            modifier = Modifier.size(46.dp),
                             onClick = { navController.navigate(Route.WorkoutModeScreen.route) }) {
                             Icon(
+                                modifier = Modifier.size(46.dp),
                                 imageVector = Icons.Filled.FitnessCenter,
                                 contentDescription = "Workout Mode",
                             )
