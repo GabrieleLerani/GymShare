@@ -205,7 +205,7 @@ fun ShareScreen(
                 if (apps?.isEmpty() == true ) {
                     Text(
                         text = "You have no linked apps to link an app go to settings -> sharing preferences or click the link apps button below",
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.background(shape = RoundedCornerShape(16.dp), color = Color.LightGray).padding(16.dp)
                     )
                     Spacer(modifier = Modifier.height(20.dp))

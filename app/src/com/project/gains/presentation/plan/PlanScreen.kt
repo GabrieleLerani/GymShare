@@ -271,21 +271,17 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = if (index == 0) Icons.Default.FitnessCenter else Icons.Default.Lock,
+                        imageVector = Icons.Default.FitnessCenter,
                         contentDescription = null,
-                        tint = if (index == 0) MaterialTheme.colorScheme.primary else Color.Gray,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(40.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "workout day $index",
+                            text = "${toLowerCaseString(workout.workoutDay.toString())} Workout",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = toLowerCaseString(workout.workoutDay.toString()),
-                            fontSize = 14.sp,
                         )
                     }
                 }
