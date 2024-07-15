@@ -90,7 +90,7 @@ fun ShareScreen(
     }
     val prevDest = getPreviousDestination(navController = navController)
     var test = remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     var testAppnames= listOf("Instagram","X","Facebook","TikTok","Google Drive")
 

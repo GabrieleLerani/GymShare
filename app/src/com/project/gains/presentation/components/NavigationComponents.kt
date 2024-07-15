@@ -4,6 +4,7 @@ package com.project.gains.presentation.components
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -241,22 +242,30 @@ fun DynamicTopBar(
     val showNotification = remember { mutableStateOf(false) }
     val notificationMessage = remember { mutableStateOf("") }
 
-
+    var test = remember {
+        mutableStateOf(false)
+    }
     when (currentRoute) {
 
         Route.HomeScreen.route -> {
             TopBar(
                 message = "Home",
                 button = {
-                    IconButton(
-                        modifier = Modifier.size(45.dp),
-                        onClick = { navController.navigate(Route.WorkoutModeScreen.route) }) {
-                        Icon(
-                            imageVector = Icons.Filled.FitnessCenter,
-                            contentDescription = "Workout Mode",
-                        )
+                    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                        IconButton(
+                            modifier = Modifier.size(45.dp),
+                            onClick = { navController.navigate(Route.WorkoutModeScreen.route) }) {
+                            Icon(
+                                imageVector = Icons.Filled.FitnessCenter,
+                                contentDescription = "Workout Mode",
+                            )
 
+                        }
+                        if (test.value==true){
+                            Text(text = "Workout Mode")
+                        }
                     }
+
                 },
 
             ) {}

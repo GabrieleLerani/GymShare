@@ -1,6 +1,7 @@
 package com.project.gains.presentation.settings
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -13,10 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -37,6 +40,7 @@ import androidx.compose.runtime.remember
 
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,6 +71,9 @@ fun LinkedSocialSettingScreen(
     val clickedApps = remember { mutableStateOf(mutableListOf<Int>()) }
 
     val exit = remember { mutableStateOf(false) }
+    var test = remember {
+        mutableStateOf(false)
+    }
 
     val showDialog = remember { mutableStateOf(false) }
     val icons = listOf(
@@ -105,7 +112,7 @@ fun LinkedSocialSettingScreen(
                     Spacer(modifier = Modifier.height(30.dp))
                 }
                 item {
-
+                    if (test.value==false){
                         TextButton(
                             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                             onClick = {
@@ -126,6 +133,33 @@ fun LinkedSocialSettingScreen(
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
                         }
+                    }else{
+                        IconButton(
+                            onClick = {       exit.value = true
+                                showDialog.value = true
+                                saveLinkHandler(
+                                    ManageDataStoreEvent.Save(
+                                        linkedApps ?: mutableListOf()
+                                    )
+                                )
+                                clickedApps.value.forEach { icon ->
+                                    linkHandler(LinkAppEvent.LinkApp(icon))
+                                } },
+                            modifier = Modifier
+                                .size(60.dp)
+                                .clip(RoundedCornerShape(100.dp))
+                                .background(MaterialTheme.colorScheme.primary)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Add Exercise",
+                                tint = MaterialTheme.colorScheme.surface
+                            )
+                        }
+
+                    }
+
+
 
 
                 }
