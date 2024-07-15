@@ -73,9 +73,9 @@ fun BottomNavigationBar(navController: NavController) {
                     navController.navigate(item.route) {
                     launchSingleTop = true
                     restoreState = true
-                    popUpTo(navController.graph.startDestinationId) {
+                   /* popUpTo(navController.graph.startDestinationId) {
                         saveState = true
-                    }
+                    }*/
                     launchSingleTop = true
                     restoreState = true
                 } },
@@ -176,52 +176,9 @@ fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Co
             button2()
             button()
                   },
-        /*
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-
-        backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-        contentColor = MaterialTheme.colorScheme.tertiary,
-        elevation = 0.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-        */
     )
 
-    /*
-    TopAppBar(
-        backgroundColor = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        elevation = 0.dp,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            button1()
 
-            Text(
-                text = message,
-                style = MaterialTheme.typography.displayMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
-            )
-            button2()
-            button()
-
-        }
-    }*/
 }
 
 
