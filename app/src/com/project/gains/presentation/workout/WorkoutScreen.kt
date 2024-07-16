@@ -1,24 +1,19 @@
 package com.project.gains.presentation.workout
 
 
-import androidx.compose.foundation.layout.Box
-
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 //noinspection UsingMaterialAndMaterial3Libraries
 
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.outlined.Help
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -26,27 +21,18 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-
-
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
-
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.gains.presentation.settings.ShareContentViewModel
-
 import com.project.gains.presentation.components.AddExerciseItem
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FavoriteTopBar
-
-
-import com.project.gains.presentation.components.FeedbackAlertDialog
-import com.project.gains.presentation.components.getPreviousDestination
-
-
+import com.project.gains.presentation.components.MenuItem
+import com.project.gains.presentation.components.MyDropdownMenu
 import com.project.gains.presentation.exercises.events.ExerciseEvent
-
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.settings.events.ManageDialogEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
@@ -64,6 +50,7 @@ fun WorkoutScreen(
 
 
 ) {
+
     val favoriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
 
     // Sample list of exercises
@@ -75,6 +62,42 @@ fun WorkoutScreen(
     if (showDialog.value) {
         showDialog.value=false
     }
+
+    var favoritesText = "Add to favorites"
+    val favoritesIcon : ImageVector
+
+    if (favorite.value || favoriteWorkouts?.contains(selectedWorkout) == true){
+        favoritesText = "Delete from favorites"
+        favoritesIcon = Icons.Default.Delete
+    }
+    else {
+        favoritesIcon = Icons.Default.FavoriteBorder
+    }
+
+    val workoutDropDownMenuList = listOf(
+        MenuItem(
+            text = favoritesText,
+            icon = favoritesIcon,
+            onClick = { if (favorite.value){
+                removeFavouriteWorkoutHandler(ManageWorkoutEvent.DeleteWorkoutFavourite)
+                favorite.value=false
+                completionMessage.value="Workout removed from favorites!"
+                showDialog.value=true
+            }
+            else{
+                addFavouriteWorkoutHandler(ManageWorkoutEvent.AddWorkoutFavourite)
+                favorite.value=true
+                completionMessage.value="Workout added to favorites!"
+                showDialog.value=true
+            } }
+        ),
+        MenuItem(
+            text = "Share",
+            icon = Icons.Outlined.Share,
+            onClick = { navController.navigate(Route.ShareScreen.route) }
+        )
+
+    )
 
 
     GainsAppTheme {
@@ -111,60 +134,17 @@ fun WorkoutScreen(
             // First Box (Top bar)
             FavoriteTopBar(
                 message = "Workout",
-                button2 = {
-                    IconButton(
-                        modifier = Modifier
-                            .size(45.dp)
-                            .fillMaxWidth(),
-                        onClick = {
-                            if (favorite.value){
-                                removeFavouriteWorkoutHandler(ManageWorkoutEvent.DeleteWorkoutFavourite)
-                                favorite.value=false
-                                completionMessage.value="Workout removed from favorites!"
-                                showDialog.value=true
-                            }
-                            else{
-                                addFavouriteWorkoutHandler(ManageWorkoutEvent.AddWorkoutFavourite)
-                                favorite.value=true
-                                completionMessage.value="Workout added to favorites!"
-                                showDialog.value=true
-                            }
-                        }) {
-                        Icon(
-                            imageVector = if (favorite.value){
-                                Icons.Default.Favorite
-                            }else if (favoriteWorkouts?.contains(selectedWorkout) == true) {
-                                Icons.Default.Favorite
-                            }
-                            else {
-                                Icons.Default.FavoriteBorder
-                            },
-                            contentDescription = "Favorite",
-                        )
-                    }
-                },
-                button = {
-                    IconButton(
-                        modifier = Modifier.size(45.dp),
-                        onClick = {
-                            navController.navigate(Route.ShareScreen.route)
-                        }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Share",
-                            modifier = Modifier.graphicsLayer {
-                                rotationZ = -45f // Rotate 45 degrees counterclockwise
-                            }
-                        )
-                    }
-                },
-                button1 = {
+                navigationIcon = {
                     BackButton {
                         navController.popBackStack()
                     }
                 },
-            )
 
+                dropDownMenu = {
+                    MyDropdownMenu(menuItems = workoutDropDownMenuList)
+                },
+
+            )
 
         }
 

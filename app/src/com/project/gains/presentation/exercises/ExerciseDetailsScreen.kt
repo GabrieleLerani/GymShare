@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +45,8 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FavoriteTopBar
+import com.project.gains.presentation.components.MenuItem
+import com.project.gains.presentation.components.MyDropdownMenu
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 
@@ -65,6 +67,43 @@ fun ExerciseDetailsScreen(
     if (showDialog.value) {
         showDialog.value=false
     }
+
+    var favoritesText = "Add to favorites"
+    val favoritesIcon : ImageVector
+
+    if (favorite.value || favoriteExercises?.contains(selectExercise) == true){
+        favoritesText = "Delete from favorites"
+        favoritesIcon = Icons.Default.Delete
+    }
+    else {
+        favoritesIcon = Icons.Default.FavoriteBorder
+    }
+
+    val exerciseDetailMenuItems = listOf(
+        MenuItem(
+            text = favoritesText,
+            icon = favoritesIcon,
+            onClick = { if (favorite.value){
+                removeFavouriteExerciseHandler(ExerciseEvent.DeleteExercise)
+                favorite.value=false
+                completionMessage.value="Exercise removed from favorites!"
+                showDialog.value=true
+            }
+            else{
+                addFavouriteExerciseHandler(ExerciseEvent.AddExercise)
+                favorite.value=true
+                completionMessage.value="Exercise added to favorites!"
+                showDialog.value=true
+            } }
+        ),
+        MenuItem(
+            text = "Share",
+            icon = Icons.Outlined.Share,
+            onClick = { navController.navigate(Route.ShareScreen.route) }
+        )
+
+    )
+
     Box(modifier = Modifier.fillMaxSize()) {
         // Second Box (main content)
         LazyColumn(
@@ -141,62 +180,20 @@ fun ExerciseDetailsScreen(
             }
         }
 
-        // First Box (Top bar)
         FavoriteTopBar(
             message = "Exercise",
-            button2 = {
-                IconButton(
-                    modifier = Modifier
-                        .size(45.dp)
-                        .fillMaxWidth(),
-                    onClick = {
-                        if (favorite.value){
-                            removeFavouriteExerciseHandler(ExerciseEvent.DeleteExercise)
-                            favorite.value=false
-                            completionMessage.value="Exercise removed from favorites!"
-                            showDialog.value=true
-                        }
-                        else{
-                            addFavouriteExerciseHandler(ExerciseEvent.AddExercise)
-                            favorite.value=true
-                            completionMessage.value="Exercise added to favorites!"
-                            showDialog.value=true
-                        }
-                    }) {
-                    Icon(
-                        imageVector = if (favorite.value){
-                            Icons.Default.Favorite
-                        }else if (favoriteExercises?.contains(selectExercise) == true) {
-                            Icons.Default.Favorite
-                        }
-                        else {
-                            Icons.Default.FavoriteBorder
-                        },
-                        contentDescription = "Favorite",
-                    )
-                }
-            },
-            button = {
-                IconButton(
-                    modifier = Modifier.size(45.dp),
-                    onClick = {
-                        navController.navigate(Route.ShareScreen.route)
-                    }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Send,
-                        contentDescription = "Share",
-                        modifier = Modifier.graphicsLayer {
-                            rotationZ = -45f // Rotate 45 degrees counterclockwise
-                        }
-                    )
-                }
-            },
-            button1 = {
+            navigationIcon = {
                 BackButton {
                     navController.popBackStack()
                 }
             },
-        )
+
+            dropDownMenu = {
+                MyDropdownMenu(menuItems = exerciseDetailMenuItems)
+            },
+
+            )
+
     }
 }
 

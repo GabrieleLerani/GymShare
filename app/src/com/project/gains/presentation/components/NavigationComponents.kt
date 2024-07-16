@@ -7,20 +7,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,14 +43,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
 import com.project.gains.presentation.navgraph.Route
+
+
+data class MenuItem(
+    val text: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
+)
+
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
@@ -161,7 +173,7 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit,button2: @Composable () -> Unit) {
+fun FavoriteTopBar(message: String, navigationIcon: @Composable () -> Unit, dropDownMenu: @Composable () -> Unit) {
 
     TopAppBar(
         title = {
@@ -172,11 +184,8 @@ fun FavoriteTopBar(message: String, button: @Composable () -> Unit, button1: @Co
                 modifier = Modifier
             )
         },
-        navigationIcon = {button1()},
-        actions = {
-            button2()
-            button()
-                  },
+        navigationIcon = {navigationIcon()},
+        actions = { dropDownMenu() },
     )
 
 
@@ -196,6 +205,20 @@ fun currentRoute(navController: NavController): String? {
 fun DynamicTopBar(
     navController: NavController,
 ) {
+    val planScreenMenuItems = listOf(
+        MenuItem(
+            text = "Progress",
+            icon = Icons.Filled.BarChart,
+            onClick = { navController.navigate(Route.ProgressDetailsScreen.route) }
+        ),
+        MenuItem(
+            text = "Settings",
+            icon = Icons.Outlined.Settings,
+            onClick = { /* Handle settings! */ } // TODO find other
+        )
+
+    )
+
     val currentRoute = currentRoute(navController = navController)
     val showNotification = remember { mutableStateOf(false) }
     val notificationMessage = remember { mutableStateOf("") }
@@ -220,7 +243,7 @@ fun DynamicTopBar(
                             )
 
                         }
-                        if (test.value==true){
+                        if (test.value){
                             Text(text = "Workout Mode")
                         }
                     }
@@ -318,21 +341,8 @@ fun DynamicTopBar(
         Route.PlanScreen.route -> {
             TopBar(
                 message = "Your plan",
-                button = {
-                    IconButton(
-                    modifier = Modifier.size(45.dp),
-                    onClick = {
-                        navController.navigate(Route.ProgressDetailsScreen.route)
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.BarChart,
-                        contentDescription = "Stats",
-                    )
-                }
-                },
-                button1 = {
-                }
+                button = { MyDropdownMenu(menuItems = planScreenMenuItems) },
+                button1 = {}
             )
         }
 
@@ -535,4 +545,51 @@ fun BackButton(onClick: () -> Unit) {
                 .padding(10.dp),
         )
     }
+}
+
+@Composable
+fun MyDropdownMenu(menuItems: List<MenuItem>) {
+    var expanded by remember { mutableStateOf(false) }
+
+    IconButton(onClick = { expanded = true }) {
+        Icon(Icons.Default.MoreVert, contentDescription = "Localized description")
+    }
+    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        menuItems.forEach { item ->
+            DropdownMenuItem(
+                text = { Text(item.text) },
+                onClick = {
+                    item.onClick()
+                    expanded = false
+                },
+                leadingIcon = { Icon(item.icon, contentDescription = null) }
+            )
+        }
+    }
+
+}
+
+
+
+
+@Preview
+@Composable
+fun MyDropPrev(){
+
+    val planScreenMenuItems = listOf(
+        MenuItem(
+            text = "Progress",
+            icon = Icons.Filled.BarChart,
+            onClick = { }
+        ),
+        MenuItem(
+            text = "Settings",
+            icon = Icons.Outlined.Settings,
+            onClick = { /* Handle settings! */ } // TODO find other
+        )
+
+    )
+
+    TopBar(message = "top bar", button1 = {},button = { MyDropdownMenu(planScreenMenuItems) })
+
 }
