@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -496,5 +497,36 @@ fun SettingItem(icon: ImageVector, title: String, onClick: () -> Unit) {
             tint = MaterialTheme.colorScheme.onSurface
         )
     }
+
+
 }
 
+
+@Composable
+fun ErrorMessage(message : String){
+    Card(
+        backgroundColor = Color.hsl(0f, 1f, 0.85f),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Row {
+            Image(
+                painter = painterResource(id = R.drawable.red_alert_icon),
+                contentDescription = "Error",
+                modifier = Modifier
+                    .weight(1f, true)
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 15.dp)
+            )
+
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier
+                    .padding(16.dp)
+                    //.weight(9f, true)
+            )
+        }
+    }
+}

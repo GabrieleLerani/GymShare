@@ -1,50 +1,46 @@
 package com.project.gains.presentation.authentication.screens
 
+//noinspection UsingMaterialAndMaterial3Libraries
+
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-
 import androidx.compose.foundation.layout.Arrangement
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-
 import androidx.compose.foundation.layout.padding
-
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
-
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material3.Button
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material3.CircularProgressIndicator
-
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.OutlinedTextField
-//noinspection UsingMaterialAndMaterial3Libraries
-
-import androidx.compose.material3.Text
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Card
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,11 +50,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -72,14 +66,12 @@ import androidx.navigation.NavController
 import com.project.gains.R
 import com.project.gains.presentation.CustomBackHandler
 import com.project.gains.presentation.Dimension.ButtonCornerShape
-
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.events.SignInEvent
+import com.project.gains.presentation.components.ErrorMessage
 import com.project.gains.presentation.components.GoogleLoginButton
-import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
-
 import com.project.gains.util.Constants.LOGIN_FAILED
 
 @Composable
@@ -137,31 +129,8 @@ fun DefaultSignInContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (errorMessage.value.isNotEmpty()) {
-            Card(
-                backgroundColor = Color.hsl(0f, 1f, 0.85f),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Row {
-                    Image(
-                        painter = painterResource(id = R.drawable.red_alert_icon),
-                        contentDescription = "Wrong credentials",
-                        modifier = Modifier
-                            .weight(1f, true)
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 15.dp)
-                    )
-                    Text(
-                        text = "Login failed. Please check your credentials and try again.",
-                        color = MaterialTheme.colorScheme.error,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .weight(9f, true)
-                    )
-                }
-            }
+            ErrorMessage(message = "Login failed. Please check your credentials and try again.")
+
         }
 
         Column(
@@ -320,18 +289,18 @@ fun DefaultSignInContent(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                     ) {
-                        Divider(
-                            color = Color.Gray,
-                            modifier = Modifier.weight(1f)
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            color = Color.Gray
                         )
                         Text(
                             text = "OR",
                             modifier = Modifier.padding(horizontal = 8.dp),
                             color = Color.Gray
                         )
-                        Divider(
-                            color = Color.Gray,
-                            modifier = Modifier.weight(1f)
+                        HorizontalDivider(
+                            modifier = Modifier.weight(1f),
+                            color = Color.Gray
                         )
                     }
 

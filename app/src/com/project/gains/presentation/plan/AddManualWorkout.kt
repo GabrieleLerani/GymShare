@@ -20,19 +20,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Today
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -47,8 +48,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -62,6 +61,7 @@ import com.project.gains.data.Exercise
 import com.project.gains.data.Weekdays
 import com.project.gains.data.Workout
 import com.project.gains.presentation.components.AddExerciseItem
+import com.project.gains.presentation.components.ErrorMessage
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -94,7 +94,8 @@ fun AddManualWorkout(
     var selectedDay by rememberSaveable { mutableStateOf(Weekdays.MONDAY) }
     var expanded by remember { mutableStateOf(false) }
 
-
+    var inputInserted by remember { mutableStateOf(false) }
+    var allFilled by remember { mutableStateOf(false) }
 
     if (showDialog.value ){
 
@@ -127,30 +128,48 @@ fun AddManualWorkout(
                     .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 item {
                     Header()
 
-                    OutlinedTextField(
-                        value = workoutTitle,
-                        onValueChange = { newValue ->
-                            workoutTitle = newValue
-                            addNameHandler(ManageExercises.SelectWorkoutStored(newValue))
-                        },
-                        label = {
-                            Text(
-                                if (workoutTitle.text.isEmpty()) "Enter workout name" else "",
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        OutlinedTextField(
+                            value = workoutTitle,
+                            onValueChange = { newValue ->
+                                workoutTitle = newValue
+                                addNameHandler(ManageExercises.SelectWorkoutStored(newValue))
+                            },
+                            label = {
+                                Text(
+                                    "Workout name",
+                                )
+                            },
+                            placeholder = { Text("Set name...") },
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp),
+                            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = "name")
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = if (workoutTitle.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = if (workoutTitle.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
                             )
-                        },
-                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
                         )
-                    )
+
+                        // check error
+                        if (inputInserted && (workoutTitle.text.isEmpty())) {
+                            Text(
+                                text = "Empty name. Please insert one",
+                                color = MaterialTheme.colorScheme.error,
+                                fontSize = 15.sp,
+                                modifier = Modifier
+                                    .align(Alignment.Start)
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(16.dp))
 
@@ -162,15 +181,18 @@ fun AddManualWorkout(
                             value = toLowerCaseString(selectedDay.name),
                             label = {Text("Select workout day")},
                             onValueChange = {},
+                            leadingIcon = {
+                              Icon(Icons.Default.Today, contentDescription = "day")
+                            },
                             trailingIcon = {
                                 ExposedDropdownMenuDefaults.TrailingIcon(
                                     expanded = expanded
                                 )
-
                             },
                             readOnly = true,
                             modifier = Modifier
-                                .menuAnchor().fillMaxWidth(),
+                                .menuAnchor()
+                                .fillMaxWidth(),
                             colors = TextFieldDefaults.outlinedTextFieldColors(
                                 focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
                                 unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
@@ -201,6 +223,15 @@ fun AddManualWorkout(
                             }
                         }
 
+                    }
+
+                }
+
+                item {
+
+                    // TODO adjust element position and leave lazy column only for exercises
+                    if (inputInserted && selectedExercises.isEmpty()) {
+                        ErrorMessage(message = "Please insert at least one exercise.")
                     }
 
                 }
@@ -238,20 +269,31 @@ fun AddManualWorkout(
 
                 }
                 item { Spacer(modifier = Modifier.height(10.dp)) }
+            }
 
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 24.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-
-                item {
-                    if (selectedExercises.isEmpty()){
-                        Text(
-                            text = "You have to add at least an exercise to save the workout",
-                            style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier.background(shape = RoundedCornerShape(16.dp), color = Color.LightGray).padding(16.dp)
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AddExerciseButton {
+                        selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
+                        navController.navigate(Route.TypedExerciseScreen.route)
                     }
-                    FooterButton(
-                        onClickSaveWorkout = {
+
+                    SaveButton {
+                        if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()){
+                            inputInserted = true
+                        } else {
                             val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
                             addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
                             createWorkoutHandler(
@@ -268,17 +310,14 @@ fun AddManualWorkout(
                             deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
 
                             showDialog.value=true
+                        }
+                    }
 
-
-                        },
-                        onClickAddExercise = {
-                            selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
-                            navController.navigate(Route.TypedExerciseScreen.route)
-                        },
-                        enabled = selectedExercises.isNotEmpty()
-                    )
                 }
+
+
             }
+
         }
     }
 }
@@ -300,48 +339,37 @@ fun Header(){
 }
 
 @Composable
-fun FooterButton(onClickSaveWorkout: () -> Unit, onClickAddExercise: () -> Unit, enabled: Boolean){
-    Row(
+fun AddExerciseButton(onClick: () -> Unit) {
+    OutlinedButton(
+        onClick =  onClick ,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(
-            onClick = onClickSaveWorkout,
-            modifier = Modifier
-                .weight(0.7f)
-                .height(60.dp),
-
-            enabled = enabled
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Save workout",
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Exercise",
+
             )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Add Exercise")
         }
-
-        Spacer(modifier = Modifier.width(15.dp))
-
-        AddExerciseButton (onClick = onClickAddExercise)
-
     }
 }
 
 @Composable
-fun AddExerciseButton(onClick: () -> Unit) {
-    IconButton(
+fun SaveButton(onClick: () -> Unit){
+    FilledTonalButton(
         onClick = { onClick() },
-        modifier = Modifier
-            .size(60.dp)
-            .clip(RoundedCornerShape(100.dp))
-            .background(MaterialTheme.colorScheme.primary)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = "Add Exercise",
-            tint = MaterialTheme.colorScheme.surface
+        modifier = Modifier.padding(8.dp),
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.surface
         )
+    ) {
+        Text("Save workout")
     }
 }
 
