@@ -1,5 +1,7 @@
 package com.project.gains.presentation.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,18 +11,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -36,9 +43,10 @@ fun Modifier.slidingLineTransition(pagerState: PagerState, distance: Float) =
         translationX = scrollPosition * distance
     }
 
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SlidingComponent(
+fun OnBoardingScreenSlidingComponent(
     spacing: Dp,
     dotWidth: Dp,
     dotHeight: Dp,
@@ -77,9 +85,9 @@ fun SlidingComponent(
                             )
                             .clickable {
                                 scope.launch {
-                                        pagerState.animateScrollToPage(
-                                            page = int
-                                        )
+                                    pagerState.animateScrollToPage(
+                                        page = int
+                                    )
 
                                 }
                             }
@@ -101,14 +109,49 @@ fun SlidingComponent(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun PlanSlidingComponent(
+    inactiveColor: Color,
+    activeColor: Color,
+    pagerState: PagerState,
+    modifier : Modifier
+) {
+    val count = pagerState.pageCount
+    val targetProgress = (pagerState.currentPage + 1) / count.toFloat()
+    val animatedProgress by animateFloatAsState(
+        targetValue = targetProgress,
+        animationSpec = tween(durationMillis = 500),
+        label = "effect"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        // Text showing the current page out of the total count
+        Text(
+            text = "${pagerState.currentPage + 1} of $count",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        LinearProgressIndicator(
+            progress = animatedProgress,
+            color = activeColor,
+            backgroundColor = inactiveColor,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
-fun PreviewSlidingComponent() {
-    val pagerState = rememberPagerState(pageCount = { 5 })
-    val dotWidth = 20.dp
-    val dotHeight = 3.dp
-    val spacing = 5.dp
-    val distance = with(LocalDensity.current) { (dotWidth + spacing).toPx() }
+fun PreviewSlidingComponent2() {
+    val pagerState = rememberPagerState(pageCount = { 6 })
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -117,14 +160,11 @@ fun PreviewSlidingComponent() {
             .fillMaxSize()
             .padding(20.dp)
     ) {
-        SlidingComponent(
-            spacing = spacing,
-            dotWidth = dotWidth,
-            dotHeight = dotHeight,
+        PlanSlidingComponent(
             inactiveColor = Color.Gray,
             activeColor = Color.Blue,
             pagerState = pagerState,
-            distance = distance
+            modifier = Modifier.padding()
         )
         Spacer(modifier = Modifier.padding(5.dp))
 
