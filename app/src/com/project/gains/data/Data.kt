@@ -1,11 +1,14 @@
 package com.project.gains.data
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.material.icons.outlined.Groups
@@ -540,6 +543,8 @@ val trainingTypeExercises = mapOf(
     TrainingType.CALISTHENICS to calisthenicsExercises,
     TrainingType.CROSSFIT to crossfitExercises
 )
+
+val tabTitles = listOf(Pair("Details", Icons.AutoMirrored.Filled.Article), Pair("Instructions",Icons.Default.FormatListNumbered), Pair("Warnings",Icons.Default.Warning))
 
 // Function to generate random workout plan with Exercise objects including GIFs and descriptions
 fun generateRandomPlan(

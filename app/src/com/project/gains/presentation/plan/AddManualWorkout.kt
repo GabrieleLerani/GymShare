@@ -4,28 +4,21 @@ package com.project.gains.presentation.plan
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -44,12 +37,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -67,14 +58,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.data.ExerciseType
-import com.project.gains.data.TrainingType
 import com.project.gains.data.Weekdays
 import com.project.gains.data.Workout
-import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.ErrorMessage
+import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -83,9 +71,6 @@ import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.toFormattedString
 import com.project.gains.util.toLowerCaseString
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,10 +102,9 @@ fun AddManualWorkout(
 
         FeedbackAlertDialog(
             onDismissRequest = {   },
-            onConfirm = {   showDialog.value=false
+            onConfirm = {
+                showDialog.value=false
                 navController.navigate(Route.HomeScreen.route)
-
-
             },
             title ="Workout Created!",
             text ="You find it in the home!",
@@ -260,28 +244,6 @@ fun AddManualWorkout(
                         .fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-                    /*
-                    item {
-                        AnimatedVisibility(
-                            visible = true,
-                            exit = shrinkVertically(animationSpec = tween(durationMillis = 400))
-                        ) {
-                            ExerciseItem(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(top = 8.dp, bottom = 8.dp),
-                                exercise = Exercise("ex", listOf("aa"),R.drawable.arms2,ExerciseType.ARMS,TrainingType.CROSSFIT,1,1,listOf("a"),1),
-                                onItemClick = {},
-                                onItemClick2 = {},
-                                onRemove = {},
-                                isSelected = true,
-                                isToAdd = false,
-                                isToRemove = true
-                                )
-
-                        }
-                    }*/
 
 
                     if (selectedExercises.isNotEmpty()) {
