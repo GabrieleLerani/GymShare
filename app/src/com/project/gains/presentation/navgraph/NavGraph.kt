@@ -390,11 +390,9 @@ fun NavGraph(
             HomeScreen(
                 navController = navController,
                 workoutViewModel = workoutViewModel,
-                paddingValues = paddingValues,
                 exerciseViewModel = exerciseViewModel,
                 selectWorkoutHandler = workoutViewModel::onManageWorkoutEvent,
-                selectExerciseHandler = exerciseViewModel::onExerciseEvent,
-                completionMessage=completionMessage
+                selectExerciseHandler = exerciseViewModel::onExerciseEvent
             )
         }
         composable(

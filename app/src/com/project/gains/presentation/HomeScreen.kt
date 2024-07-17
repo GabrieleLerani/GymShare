@@ -63,20 +63,14 @@ import com.project.gains.util.currentWeekday
 fun HomeScreen(
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
-    paddingValues: PaddingValues,
     exerciseViewModel: ExerciseViewModel,
     selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,
-    selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit,
-    completionMessage:MutableState<String>
+    selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit
 ) {
-    // TODO IF clauses so that if a liked exercise exists, then the default card disappears
 
     val openPopup = remember { mutableStateOf(false) }
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
-    val favouriteWorkouts by workoutViewModel.favouriteWorkouts.observeAsState()
     val workouts by workoutViewModel.workouts.observeAsState()
-
-
 
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
@@ -94,11 +88,26 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top
-
             ) {
-
+                // TODO exercise search bar must be moved into the search bar in explore feed
+                /*
                 item {
-                    HorizontalScrollScreenWorkout(navController, "Your workouts", items2 = workouts!!.toList() + favouriteWorkouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    SearchAppBar(
+                        value = "",
+                        placeholder = "Search exercises here...",
+                        onValueChange = {},
+                        onCloseClicked = {},
+                        onSearchClicked = {},
+                        onClick = {
+                            navController.navigate(Route.HomeSearchScreen.route)
+                        },
+                        enabled = false
+                    )
+                }
+                */
+                item {
+                    HorizontalScrollScreenWorkout(navController, "Your workouts", items2 = workouts!!, selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
@@ -162,17 +171,20 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                 ) {
                     // by default, there is a card that suggests you to add a new exercise
 
-                    val onClick = { navController.navigate(Route.HomeSearchScreen.route) }
-                    item {
-                        ElevatedCardItem(
-                            onClick = onClick,
-                            imageResId = R.drawable.logo,
-                            title = "Like an exercise",
-                            buttonEnabled = true,
-                            buttonText = "Look for exercises"
-                        )
-                    }
+                    if (items.isEmpty()) {
+                        item {
+                            val onClick = { navController.navigate(Route.HomeSearchScreen.route) }
 
+                            ElevatedCardItem(
+                                onClick = onClick,
+                                imageResId = R.drawable.logo,
+                                title = "Like an exercise",
+                                buttonEnabled = true,
+                                buttonText = "Look for exercises",
+                                description = "Look for exercises and press the like button to save them, so you can have them always at hand"
+                            )
+                        }
+                    }
 
                     itemsIndexed(items) { _, item ->
                         item.gifResId?.let {
@@ -186,7 +198,8 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                                 imageResId = it,
                                 title = item.name,
                                 buttonEnabled = true,
-                                buttonText = "More details"
+                                buttonText = "More details",
+                                description = item.description.toString()
                             )
                         }
                     }
@@ -201,7 +214,7 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun HorizontalScrollScreenWorkout(navController: NavController, title: String, items2:List<Workout> = listOf(),selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit) {
+fun HorizontalScrollScreenWorkout(navController: NavController, title: String, items2: List<Workout> = listOf(), selectWorkoutHandler: (ManageWorkoutEvent.SelectWorkout)->Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -225,18 +238,19 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                     state = rememberLazyListState()
                 ) {
 
-                    item {
-                        val onClick = {
-                            navController.navigate(Route.NewPlanScreen.route)
-                        }
+                    if (items2.isEmpty()) {
+                        item {
+                            val onClick = { navController.navigate(Route.NewPlanScreen.route) }
 
-                        ElevatedCardItem(
-                            onClick = onClick,
-                            imageResId = R.drawable.logo,
-                            title = "Add new workout",
-                            buttonEnabled = true,
-                            buttonText = "Add workout"
-                        )
+                            ElevatedCardItem(
+                                onClick = onClick,
+                                imageResId = R.drawable.logo,
+                                title = "Add new workout",
+                                buttonEnabled = true,
+                                buttonText = "Add workout",
+                                description = "Add a new workout, either by generating a plan automatically or by adding it manually"
+                            )
+                        }
                     }
 
                     itemsIndexed(items2) { _, item ->
@@ -244,12 +258,17 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                             selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
                             navController.navigate(Route.WorkoutScreen.route)
                         }
+                        var description = "Exercises:\n"
+                        item.exercises.forEachIndexed { index, exercise ->
+                            description += "${index + 1}. " + exercise.name + "\n"
+                        }
                         ElevatedCardItem(
                             onClick = onClick,
                             imageResId = R.drawable.logo,
                             title = item.name,
                             buttonEnabled = true,
-                            buttonText = "More details"
+                            buttonText = "More details",
+                            description = description
                         )
                     }
                 }
@@ -271,7 +290,7 @@ fun TextItem(title: String) {
 }
 
 @Composable
-fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, buttonEnabled: Boolean, buttonText: String) {
+fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, buttonEnabled: Boolean, buttonText: String, description: String) {
     val configuration = LocalConfiguration.current
     val screenWith = configuration.screenWidthDp.dp
 
@@ -311,6 +330,15 @@ fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, button
                     text = title,
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp, end = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 3,
                     modifier = Modifier
                         .padding(bottom = 16.dp, end = 16.dp)
                         .align(Alignment.CenterHorizontally)
