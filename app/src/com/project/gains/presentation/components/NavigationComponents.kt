@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
@@ -232,24 +233,29 @@ fun DynamicTopBar(
             TopBar(
                 message = "Home",
                 button = {
-                    Column( modifier = Modifier.padding(end=20.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 10.dp, bottom = 5.dp, end = 10.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
                         IconButton(
-                            modifier = Modifier.size(46.dp),
+                            modifier = Modifier.size(35.dp),
                             onClick = { navController.navigate(Route.WorkoutModeScreen.route) }) {
                             Icon(
-                                modifier = Modifier.size(46.dp),
+                                modifier = Modifier.size(35.dp),
                                 imageVector = Icons.Filled.FitnessCenter,
                                 contentDescription = "Workout Mode",
                             )
-
                         }
                         if (test.value){
-                            Text(text = "Workout Mode")
+                            Text(
+                                text = "Workout Mode",
+                                fontSize = 12.sp
+                            )
                         }
                     }
-
                 },
-
             ) {}
         }
 

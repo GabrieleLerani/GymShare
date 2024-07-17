@@ -3,7 +3,7 @@ package com.project.gains.presentation.plan
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,9 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -77,9 +78,6 @@ fun PlanScreen(
     val plans by planViewModel.plans.observeAsState()
     var expanded by remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(true) }
-
-
-
 
     GainsAppTheme {
         Box(
@@ -150,13 +148,14 @@ fun PlanScreen(
                                     )
                                 }
                             }
-
                         }
 
                         Spacer(modifier = Modifier.padding(10.dp))
 
                         WorkoutHeader(selectedLevel, selectedTraining, selectedFrequency)
+
                         Spacer(modifier = Modifier.height(30.dp))
+
                         WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
                             navController.navigate(Route.WorkoutScreen.route)
                         }
@@ -164,13 +163,7 @@ fun PlanScreen(
                 }
             }
         }
-
-
     }
-
-
-
-
 }
 
 @Composable
@@ -178,11 +171,10 @@ fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, select
     Column(
         modifier = Modifier
             .fillMaxWidth(),
-        //.padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
-            text = "Workout settings",
+            text = "Plan details",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -200,23 +192,11 @@ fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, select
                 val frequency = toLowerCaseString(selectedFrequency.toString())
 
                 AlignedTextItem(label = "Level", value = toLowerCaseString(selectedLevel.toString()))
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    thickness = 0.5.dp,
-                    color = Color.LightGray
-                )
                 AlignedTextItem(label = "Type", value = toLowerCaseString(selectedTraining.toString()))
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 8.dp),
-                    thickness = 0.5.dp,
-                    color = Color.LightGray
-                )
                 AlignedTextItem(label = "Frequency", value = "$frequency per week")
             }
         }
     }
-
-
 }
 
 @Composable
@@ -242,47 +222,78 @@ fun AlignedTextItem(label: String, value: String) {
 
 @Composable
 fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,) {
-
-
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Workout days",
+            text = "Workouts",
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        workouts.forEachIndexed { index,workout ->
+        workouts.forEachIndexed { _, workout ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-                    .clickable {
-                        selectHandler(ManageWorkoutEvent.SelectWorkout(workout))
-                    },
-
+                    .padding(bottom = 10.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(16.dp)
+                    ),
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.FitnessCenter,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(40.dp)
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text(
-                            text = "${toLowerCaseString(workout.workoutDay.toString())} Workout",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FitnessCenter,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(40.dp)
                         )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                text = "Day: ${toLowerCaseString(workout.workoutDay.toString())}",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "Name: ${workout.name}",
+                                fontSize = 18.sp
+                            )
+                        }
+                    }
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .padding(start = 16.dp, bottom = 8.dp)
+                        ) {
+                            Text(
+                                text = "Modify workout",
+                            )
+                        }
+                        Button(
+                            onClick = { selectHandler(ManageWorkoutEvent.SelectWorkout(workout)) },
+                            modifier = Modifier
+                                .padding(end = 16.dp, bottom = 8.dp)
+                        ) {
+                            Text(
+                                text = "Workout details"
+                            )
+                        }
                     }
                 }
             }
