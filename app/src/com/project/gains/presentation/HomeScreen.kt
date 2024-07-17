@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -67,6 +69,7 @@ fun HomeScreen(
     selectExerciseHandler: (ExerciseEvent.SelectExercise)->Unit,
     completionMessage:MutableState<String>
 ) {
+    // TODO IF clauses so that if a liked exercise exists, then the default card disappears
 
     val openPopup = remember { mutableStateOf(false) }
     val favouriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
@@ -95,34 +98,11 @@ fun HomeScreen(
             ) {
 
                 item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    SearchAppBar(
-                        value = "",
-                        placeholder = "Search exercises here...",
-                        onValueChange = {},
-                        onCloseClicked = {},
-                        onSearchClicked = {},
-                        onClick = {
-                            navController.navigate(Route.HomeSearchScreen.route)
-                        },
-                        enabled = false
-                    )
-                }
-
-                item {
                     HorizontalScrollScreenWorkout(navController, "Your workouts", items2 = workouts!!.toList() + favouriteWorkouts!!.toList(),selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
-                    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
-                }
-
-                item {
                     HorizontalScrollScreenExercise(navController, "Your favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler,)
-                }
-
-                item {
-                    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
                 }
 
             }
@@ -161,7 +141,7 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .height(300.dp)
+            .height(250.dp)
     ) {
         // BowWithConstraints will provide the maxWidth used below
         BoxWithConstraints(
@@ -182,16 +162,16 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                 ) {
                     // by default, there is a card that suggests you to add a new exercise
 
-                        val onClick = { navController.navigate(Route.HomeSearchScreen.route) }
-                        item {
-                            ElevatedCardItem(
-                                onClick = onClick,
-                                imageResId = R.drawable.logo,
-                                title = "Like an exercise",
-                                buttonEnabled = true,
-                                buttonText = "Add exercise to favourites"
-                            )
-                        }
+                    val onClick = { navController.navigate(Route.HomeSearchScreen.route) }
+                    item {
+                        ElevatedCardItem(
+                            onClick = onClick,
+                            imageResId = R.drawable.logo,
+                            title = "Like an exercise",
+                            buttonEnabled = true,
+                            buttonText = "Look for exercises"
+                        )
+                    }
 
 
                     itemsIndexed(items) { _, item ->
@@ -226,7 +206,7 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .height(300.dp)
+            .height(250.dp)
     ) {
         // BowWithConstraints will provide the maxWidth used below
         BoxWithConstraints(
@@ -245,44 +225,38 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                     state = rememberLazyListState()
                 ) {
 
+                    item {
                         val onClick = {
                             navController.navigate(Route.NewPlanScreen.route)
                         }
-                        item {
-                            ElevatedCardItem(
-                                onClick = onClick,
-                                imageResId = R.drawable.logo,
-                                title = "Add a new workout",
-                                buttonEnabled = true,
-                                buttonText = "Add workout"
-                            )
+
+                        ElevatedCardItem(
+                            onClick = onClick,
+                            imageResId = R.drawable.logo,
+                            title = "Add new workout",
+                            buttonEnabled = true,
+                            buttonText = "Add workout"
+                        )
+                    }
+
+                    itemsIndexed(items2) { _, item ->
+                        val onClick = {
+                            selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
+                            navController.navigate(Route.WorkoutScreen.route)
                         }
-
-
-                        itemsIndexed(items2) { _, item ->
-                                val onClick = {
-                                    selectWorkoutHandler(ManageWorkoutEvent.SelectWorkout(item))
-                                    navController.navigate(Route.WorkoutScreen.route)
-                                }
-                                ElevatedCardItem(
-                                    onClick = onClick,
-                                    imageResId = R.drawable.logo,
-                                    title = item.name,
-                                    buttonEnabled = true,
-                                    buttonText = "More details"
-                                )
-
-                        }
-                        item {
-                            Spacer(modifier = Modifier.height(16.dp))
-                        }
-
+                        ElevatedCardItem(
+                            onClick = onClick,
+                            imageResId = R.drawable.logo,
+                            title = item.name,
+                            buttonEnabled = true,
+                            buttonText = "More details"
+                        )
+                    }
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun TextItem(title: String) {
@@ -292,7 +266,7 @@ fun TextItem(title: String) {
         color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp)
+            .padding(start = 20.dp, top = 20.dp, bottom = 15.dp)
     )
 }
 
@@ -304,41 +278,53 @@ fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, button
     ElevatedCard(
         elevation = CardDefaults.cardElevation(16.dp),
         modifier = Modifier
-            .padding(start = 16.dp, top = 16.dp)
+            .padding(start = 16.dp)
             .width(width = screenWith - 64.dp)
+            .fillMaxHeight()
             .background(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
-        Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
                 painter = painterResource(id = imageResId),
                 contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop
+                    .padding(16.dp)
+                    .background(color = Color.White, shape = RoundedCornerShape(16.dp))
+                    .weight(0.4f)
+                    .fillMaxHeight()
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            if (buttonEnabled) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(
-                    onClick = { onClick() },
+            Column (
+                modifier = Modifier
+                    .weight(0.6f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .padding(bottom = 16.dp),
-                ) {
-                    Text(
-                        text = buttonText
-                    )
+                        .padding(bottom = 16.dp, end = 16.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
+                if (buttonEnabled) {
+                    Button(
+                        onClick = { onClick() },
+                        modifier = Modifier
+                            .padding(bottom = 16.dp, end = 16.dp),
+                    ) {
+                        Text(
+                            text = buttonText
+                        )
+                    }
                 }
             }
         }
