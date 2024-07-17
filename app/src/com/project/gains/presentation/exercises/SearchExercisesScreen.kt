@@ -110,10 +110,8 @@ fun SearchExercisesScreen(
                         isSelected = true,
                         isToAdd = isToAdd ?: false,
                         isToRemove = false,
-                        modifier = Modifier
+                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
                     )
-
-                    Spacer(modifier = Modifier.padding(8.dp))
 
                 }
             }
