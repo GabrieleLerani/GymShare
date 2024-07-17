@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -14,14 +13,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.Exercise
-import com.project.gains.presentation.components.AddExerciseItem
+import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.SearchAppBar
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -31,7 +29,7 @@ import com.project.gains.theme.GainsAppTheme
 
 //@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TypedExerciseScreen(
+fun SearchExercisesScreen(
     navController: NavController,
     addExerciseHandler: (ManageExercises.AddExercise) -> Unit,
     selectExerciseHandler:(ExerciseEvent.SelectExercise) -> Unit,
@@ -94,7 +92,7 @@ fun TypedExerciseScreen(
                 }
 
                 items(searchedExercises.value) { exercise ->
-                    AddExerciseItem(
+                    ExerciseItem(
                         exercise = exercise,
                         onItemClick = { exerciseToAdd ->
                             searchedExercises.value =
@@ -108,12 +106,14 @@ fun TypedExerciseScreen(
                             addExerciseHandler(ManageExercises.AddExercise(exercise))
                             navController.popBackStack()
                         },
+                        onRemove = {},
                         isSelected = true,
                         isToAdd = isToAdd ?: false,
+                        isToRemove = false,
                         modifier = Modifier
                     )
 
-                    //Spacer(modifier = Modifier.padding(8.dp))
+                    Spacer(modifier = Modifier.padding(8.dp))
 
                 }
             }
@@ -128,7 +128,7 @@ fun DefaultPreview() {
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
     val exerciseViewModel: ExerciseViewModel = hiltViewModel()
     GainsAppTheme {
-        TypedExerciseScreen(
+        SearchExercisesScreen(
             navController = rememberNavController(),
             selectExerciseHandler = {},
             workoutViewModel = workoutViewModel,

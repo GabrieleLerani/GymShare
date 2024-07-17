@@ -1,7 +1,5 @@
 package com.project.gains.presentation.components
 
-import android.net.Uri
-import android.widget.VideoView
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -62,30 +59,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.viewinterop.AndroidView
 import com.project.gains.R
 import com.project.gains.data.Exercise
-import com.project.gains.theme.GainsAppTheme
+import com.project.gains.presentation.plan.DeleteExerciseButton
 
 @Composable
-fun AddExerciseItem(
+fun ExerciseItem(
     exercise: Exercise,
     onItemClick: (Exercise) -> Unit,
     onItemClick2: () -> Unit,
+    onRemove: () -> Unit,
     isSelected: Boolean,
     isToAdd: Boolean,
-    modifier: Modifier
+    modifier: Modifier,
+    isToRemove: Boolean
 ) {
 
     ListItem(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .fillMaxWidth(),
         leadingContent = {
             Image(
                 painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
@@ -113,13 +108,19 @@ fun AddExerciseItem(
                             )
                         }
                     }
-                    IconButton(onClick = { onItemClick(exercise) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                            contentDescription = "Forward",
-
-                        )
+                    if (isToRemove){
+                        DeleteExerciseButton(onClick = onRemove)
                     }
+                    else {
+                        IconButton(onClick = { onItemClick(exercise) }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                contentDescription = "Forward",
+
+                                )
+                        }
+                    }
+
                 }
             }
         },
@@ -132,47 +133,6 @@ fun AddExerciseItem(
         shadowElevation = 1.dp
     )
 
-    /*
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(8.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
-            contentDescription = exercise.name,
-            modifier = Modifier.size(64.dp),
-            contentScale = ContentScale.Crop
-        )
-        Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            text = exercise.name,
-            color = Color.White,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-        Row( modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.onSurface, RoundedCornerShape(8.dp)),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        )  {
-            if (isSelected) {
-                if (isToAdd) {
-                    IconButton(onClick = { onItemClick2() }) {
-                        Icon(imageVector = Icons.Default.Add , contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
-                    }
-                }
-                IconButton(onClick = { onItemClick(exercise) }) {
-                    Icon(imageVector =  Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = "Exercise Button", tint = MaterialTheme.colorScheme.surface)
-                }
-            }
-        }
-    }
-    */
 }
 
 @Composable

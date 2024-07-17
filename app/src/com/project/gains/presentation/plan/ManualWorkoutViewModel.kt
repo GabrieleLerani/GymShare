@@ -1,5 +1,6 @@
 package com.project.gains.presentation.plan
 
+import android.util.Log
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,7 +24,14 @@ class ManualWorkoutViewModel @Inject constructor() : ViewModel() {
     fun onManageExercisesEvent(event: ManageExercises) {
         when(event) {
             is ManageExercises.AddExercise -> {
-                _selectedExercises.value?.add(event.exercise)
+
+                // add element only if it doesn't exist yet
+                _selectedExercises.value?.let {
+                  if (!it.contains(event.exercise)){
+                      _selectedExercises.value?.add(event.exercise)
+                  }
+                }
+
             }
             is ManageExercises.DeleteExercise -> {
                 _selectedExercises.value?.remove(event.exercise)
@@ -33,7 +41,7 @@ class ManualWorkoutViewModel @Inject constructor() : ViewModel() {
             }
 
             is ManageExercises.DeleteAllExercise -> {
-                _selectedExercises.value= mutableListOf()
+                _selectedExercises.value = mutableListOf()
             }
         }
     }

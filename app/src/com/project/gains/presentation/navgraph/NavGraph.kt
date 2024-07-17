@@ -36,7 +36,7 @@ import com.project.gains.presentation.onboarding.OnBoardingViewModel
 import com.project.gains.presentation.settings.SettingsScreen
 import com.project.gains.presentation.settings.SettingsViewModel
 import com.project.gains.presentation.settings.ShareContentViewModel
-import com.project.gains.presentation.exercises.TypedExerciseScreen
+import com.project.gains.presentation.exercises.SearchExercisesScreen
 import com.project.gains.presentation.workout.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
@@ -236,14 +236,16 @@ fun NavGraph(
                 popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
-                AddManualWorkout(navController = navController,
+                AddManualWorkout(
+                    navController = navController,
                     paddingValues = paddingValues,
                     manualWorkoutViewModel = manualWorkoutViewModel,
                     addNameHandler =  manualWorkoutViewModel::onManageExercisesEvent,
+                    selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     deleteExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
                     deleteAllExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
-                    selectExerciseHandler = exerciseViewModel::onExerciseEvent,
-                    createWorkoutHandler = workoutViewModel::onManageWorkoutEvent,completionMessage=completionMessage)
+                    createWorkoutHandler = workoutViewModel::onManageWorkoutEvent
+                )
             }
             composable(
                 route = Route.ShareScreen.route,
@@ -329,7 +331,7 @@ fun NavGraph(
                 popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
-                TypedExerciseScreen(
+                SearchExercisesScreen(
                     navController = navController,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     workoutViewModel = workoutViewModel,

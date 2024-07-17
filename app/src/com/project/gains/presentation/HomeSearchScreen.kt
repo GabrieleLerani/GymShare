@@ -12,18 +12,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.Exercise
-import com.project.gains.presentation.components.AddExerciseItem
+import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.SearchAppBar
-import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.plan.events.ManageExercises
 import com.project.gains.presentation.workout.WorkoutViewModel
 import com.project.gains.theme.GainsAppTheme
 
@@ -76,7 +71,7 @@ fun HomeSearchScreen(
                 }
 
                 items(searchedExercises.value) { exercise ->
-                    AddExerciseItem(
+                    ExerciseItem(
                         exercise = exercise,
                         onItemClick = { exerciseToAdd ->
                             searchedExercises.value =
@@ -86,9 +81,11 @@ fun HomeSearchScreen(
                             selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
                             navController.navigate(Route.ExerciseDetailsScreen.route)
                         },
+                        onRemove = {},
                         onItemClick2 = {},
                         isSelected = true,
                         isToAdd = false,
+                        isToRemove = false,
                         modifier = Modifier
                     )
                 }

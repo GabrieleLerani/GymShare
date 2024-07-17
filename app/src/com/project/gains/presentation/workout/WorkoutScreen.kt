@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.project.gains.presentation.components.AddExerciseItem
+import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.FavoriteTopBar
 import com.project.gains.presentation.components.MenuItem
@@ -113,15 +113,17 @@ fun WorkoutScreen(
             ) {
                 selectedWorkout?.exercises?.forEach { exercise ->
                     item {
-                        AddExerciseItem(
+                        ExerciseItem(
                             exercise = exercise, {
 
                                 exerciseHandler(ExerciseEvent.SelectExercise(exercise))
                                 navController.navigate(Route.ExerciseDetailsScreen.route)
                             },
                             onItemClick2 = {},
+                            onRemove = {},
                             isSelected = true,
                             isToAdd = false,
+                            isToRemove = false,
                             modifier = Modifier
                         )
                     }
