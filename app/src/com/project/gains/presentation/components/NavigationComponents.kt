@@ -24,17 +24,23 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,8 +58,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
+import com.project.gains.data.Plan
 import com.project.gains.data.bottomNavItems
 import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.plan.PlanViewModel
+import com.project.gains.presentation.plan.events.ManagePlanEvent
 
 
 data class MenuItem(
@@ -151,7 +160,6 @@ fun WorkoutBottomBar(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
-
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -161,8 +169,8 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
 
             )
         },
-        navigationIcon = {button1()},
-        actions = {button()},
+        navigationIcon = { button1() },
+        actions = { button() },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -170,12 +178,9 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
     )
 }
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoriteTopBar(message: String, navigationIcon: @Composable () -> Unit, dropDownMenu: @Composable () -> Unit) {
-
     TopAppBar(
         title = {
             Text(
@@ -185,27 +190,15 @@ fun FavoriteTopBar(message: String, navigationIcon: @Composable () -> Unit, drop
                 modifier = Modifier
             )
         },
-        navigationIcon = {navigationIcon()},
+        navigationIcon = { navigationIcon() },
         actions = { dropDownMenu() },
     )
-
-
-}
-
-
-
-
-
-@Composable
-fun currentRoute(navController: NavController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
 }
 
 @Composable
-fun DynamicTopBar(
-    navController: NavController,
-) {
+fun PlanTopBar(navController: NavController, plans: List<Plan>?, selectedPlan: Plan?, selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit) {
+    val expanded = remember { mutableStateOf(false) }
+
     val planScreenMenuItems = listOf(
         MenuItem(
             text = "Progress",
@@ -217,16 +210,31 @@ fun DynamicTopBar(
             icon = Icons.Outlined.Settings,
             onClick = { /* Handle settings! */ } // TODO find other
         )
-
     )
 
+    TopBar(
+        message = "",
+        button = { MyDropdownMenu(menuItems = planScreenMenuItems) },
+        button1 = { MyExposedDropdownMenu(expanded = expanded, selectedPlan = selectedPlan, plans = plans, selectPlanHandler = selectPlanHandler) }
+    )
+}
+
+@Composable
+fun currentRoute(navController: NavController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
+}
+
+@Composable
+fun DynamicTopBar(
+    navController: NavController
+) {
     val currentRoute = currentRoute(navController = navController)
     val showNotification = remember { mutableStateOf(false) }
     val notificationMessage = remember { mutableStateOf("") }
 
-    var test = remember {
-        mutableStateOf(true)
-    }
+    val test = remember { mutableStateOf(true) }
+
     when (currentRoute) {
 
         Route.HomeScreen.route -> {
@@ -345,11 +353,6 @@ fun DynamicTopBar(
         }
 
         Route.PlanScreen.route -> {
-            TopBar(
-                message = "Your plan",
-                button = { MyDropdownMenu(menuItems = planScreenMenuItems) },
-                button1 = {}
-            )
         }
 
         Route.NewPlanScreen.route -> {
@@ -572,11 +575,60 @@ fun MyDropdownMenu(menuItems: List<MenuItem>) {
             )
         }
     }
-
 }
 
+/* TODO two tabs: one with the list of plans and one with the progress screen. Each plan redirects to a new page with two tabs: the plan details and the list of workouts */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MyExposedDropdownMenu(expanded: MutableState<Boolean>, selectedPlan: Plan?, plans: List<Plan>?, selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit) {
+    ExposedDropdownMenuBox(
+        expanded = expanded.value,
+        onExpandedChange = { expanded.value = !expanded.value },
+    ) {
 
+        OutlinedTextField(
+            value = selectedPlan?.name.toString(),
+            textStyle = MaterialTheme.typography.titleLarge,
+            label = {Text("Your plans")},
+            singleLine = true,
+            onValueChange = {},
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(
+                    expanded = expanded.value
+                )
+            },
+            readOnly = true,
+            modifier = Modifier
+                .menuAnchor(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
+                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
+            )
+        )
 
+        ExposedDropdownMenu(
+            expanded = expanded.value,
+            onDismissRequest = { expanded.value = false }
+        ) {
+            plans?.forEach { plan ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            plan.name,
+                        )
+                    },
+                    onClick = {
+                        selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
+                        expanded.value = false
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                )
+            }
+        }
+    }
+}
 
 @Preview
 @Composable

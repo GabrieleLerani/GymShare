@@ -22,26 +22,16 @@ import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,21 +43,19 @@ import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
-import com.project.gains.presentation.components.getPreviousDestination
+import com.project.gains.presentation.components.PlanTopBar
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.toLowerCaseString
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanScreen(
     navController: NavController,
     planViewModel: PlanViewModel,
     selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit,
     completionMessage: MutableState<String>
-
 ) {
     // Sample list of workouts
     val selectedPlan by planViewModel.selectedPlan.observeAsState()
@@ -76,88 +64,38 @@ fun PlanScreen(
     val selectedTraining  by planViewModel.selectedTrainingType.observeAsState()
 
     val plans by planViewModel.plans.observeAsState()
-    var expanded by remember { mutableStateOf(false) }
-    val showDialog = remember { mutableStateOf(true) }
 
     GainsAppTheme {
-        Box(
+        Column (
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            LazyColumn(
+            PlanTopBar(navController = navController, plans = plans, selectedPlan = selectedPlan, selectPlanHandler = selectPlanHandler)
+
+            Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Top
-
+                    .fillMaxSize()
             ) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Top
+                ) {
 
-                item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = { expanded = !expanded },
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            WorkoutHeader(selectedLevel, selectedTraining, selectedFrequency)
 
-                            OutlinedTextField(
-                                value = selectedPlan?.name.toString(),
-                                textStyle = MaterialTheme.typography.titleLarge,
-                                label = {Text("Your plans")},
-                                singleLine = true,
-                                onValueChange = {},
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(
-                                        expanded = expanded
-                                    )
+                            Spacer(modifier = Modifier.height(30.dp))
 
-                                },
-                                readOnly = true,
-                                modifier = Modifier
-                                    .menuAnchor()
-                                    .fillMaxWidth(),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(
-                                    focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                                    unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
-                                )
-
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false})
-                            {
-                                plans?.forEach { plan ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                plan.name,
-                                            )
-                                        },
-                                        onClick = {
-                                            selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
-                                            expanded = false
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-
-                                    )
-                                }
+                            WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
+                                navController.navigate(Route.WorkoutScreen.route)
                             }
-                        }
-
-                        Spacer(modifier = Modifier.padding(10.dp))
-
-                        WorkoutHeader(selectedLevel, selectedTraining, selectedFrequency)
-
-                        Spacer(modifier = Modifier.height(30.dp))
-
-                        WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
-                            navController.navigate(Route.WorkoutScreen.route)
                         }
                     }
                 }
