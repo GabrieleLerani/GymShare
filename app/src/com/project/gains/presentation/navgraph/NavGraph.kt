@@ -40,7 +40,6 @@ import com.project.gains.presentation.exercises.SearchExercisesScreen
 import com.project.gains.presentation.workout.WorkoutModeScreen
 import com.project.gains.presentation.explore.FeedScreen
 import com.project.gains.presentation.explore.FeedViewModel
-import com.project.gains.presentation.explore.SearchScreen
 import com.project.gains.presentation.plan.AddGeneratedPlan
 import com.project.gains.presentation.plan.AddManualWorkout
 import com.project.gains.presentation.plan.LastNewPlanScreen
@@ -171,23 +170,7 @@ fun NavGraph(
 
                 )
             }
-            composable(
-                route = Route.SearchScreen.route,
-                enterTransition = ::slideInToLeft,
-                exitTransition = ::slideOutToLeft,
-                popEnterTransition = ::slideInToRight,
-                popExitTransition = ::slideOutToRight
-            ) {
-                val searchViewModel : SearchViewModel = hiltViewModel()
-                // set screen as the node state
-                SearchScreen(
-                    searchViewModel = searchViewModel,
-                    searchGymPostHandler = feedViewModel::onSearchEvent,
-                    assignCategoryHandler = searchViewModel::onCategoriesEvent,
-                    navController = navController,
-                    resetGymPostHandler = feedViewModel::onSearchEvent
-                )
-            }
+
             composable(
                 route = Route.PlanScreen.route,
                 popEnterTransition = ::slideInToRight,
@@ -335,13 +318,16 @@ fun NavGraph(
                 popEnterTransition = ::slideInToRight,
                 popExitTransition = ::slideOutToRight
             ) {
+                val searchViewModel : SearchViewModel = hiltViewModel()
                 // set screen as the node state
                 SearchExercisesScreen(
                     navController = navController,
                     selectExerciseHandler = exerciseViewModel::onExerciseEvent,
                     workoutViewModel = workoutViewModel,
                     exerciseViewModel = exerciseViewModel,
-                    addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent
+                    addExerciseHandler = manualWorkoutViewModel::onManageExercisesEvent,
+                    assignCategoryHandler = searchViewModel::onCategoriesEvent,
+                    searchViewModel = searchViewModel
                 )
             }
 

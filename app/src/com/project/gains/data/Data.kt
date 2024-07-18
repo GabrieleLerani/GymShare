@@ -55,6 +55,11 @@ enum class Categories {
     User, Workout, Keyword, Social
 }
 
+enum class ExerciseCategories {
+    Chest, Back, Shoulders, Arms, Abdominals, Legs, Glutes, Calves, Forearms, Core
+}
+
+
 enum class Socials {
     Facebook, TikTok, Instagram, X
 }

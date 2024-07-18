@@ -35,7 +35,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,10 +50,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.project.gains.data.Categories
 import com.project.gains.presentation.components.events.ManageCategoriesEvent
 import com.project.gains.presentation.explore.events.SearchEvent
+import com.project.gains.util.getExerciseCategory
+import com.project.gains.util.getFeedCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -167,18 +167,18 @@ fun SearchAppBar(
 @Composable
 fun FeedSearchBar(
     modifier : Modifier,
-    searchViewModel: SearchViewModel,
+    categories : List<String>,
+    selectedCategory: String?,
     searchGymPostHandler: (SearchEvent.SearchGymPostEvent) -> Unit,
     resetGymPostHandler: (SearchEvent.ResetPostEvent) -> Unit,
     assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit){
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     val items = remember {
-        mutableListOf("gabriele","gianmarco","carlo","curl", "planck")
+        mutableListOf("gabriele","gianmarco","carlo","curl", "planck") // dummy values
     }
 
-    val categories = searchViewModel.categories
-    val selectedCategory by searchViewModel.selectedCategory.observeAsState()
+
 
     SearchBar(
 
@@ -186,7 +186,11 @@ fun FeedSearchBar(
         query = text,
         onQueryChange = { text = it },
         onSearch = {
-            searchGymPostHandler(SearchEvent.SearchGymPostEvent(text = text, selectedCategory = selectedCategory))
+            searchGymPostHandler(SearchEvent.SearchGymPostEvent(text = text, selectedCategory = selectedCategory?.let { it1 ->
+                getFeedCategory(
+                    it1
+                )
+            }))
             items.add(text)
             active = false
 
@@ -222,21 +226,22 @@ fun FeedSearchBar(
             categories = categories,
             selectedCategory = selectedCategory,
             onCategorySelected = { category ->
-                assignCategoryHandler(ManageCategoriesEvent.AssignCategoryEvent(category))
+                assignCategoryHandler(ManageCategoriesEvent.AssignCategoryEvent(getFeedCategory(category) ))
             })
 
         items.forEach {
-            Row(modifier = Modifier.padding(14.dp)){
+            Row(modifier = Modifier.padding(14.dp).fillMaxWidth().clickable {
+                text = it
+            }){
                 Icon(
                     modifier = Modifier.padding(end = 10.dp),
                     imageVector = Icons.Default.History,
                     contentDescription = "History Icon",
-                )
+                    )
                 Text(text = it)
             }
         }
     }
-
 
 }
 
@@ -244,14 +249,13 @@ fun FeedSearchBar(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ResearchFilter(
-    categories: List<Categories>,
-    selectedCategory: Categories?,
-    onCategorySelected: (Categories) -> Unit
+    categories: List<String>,
+    selectedCategory: String?,
+    onCategorySelected: (String) -> Unit
 ) {
     Column(Modifier.padding(15.dp)) {
         Text(text = "Filter by categories", style = MaterialTheme.typography.titleSmall)
 
-        //Spacer(modifier = Modifier.height(10.dp))
 
         FlowRow (
             horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
@@ -274,14 +278,14 @@ fun ResearchFilter(
 @ExperimentalMaterialApi
 @Composable
 fun FilterChip(
-    category: Categories,
+    category: String,
     isSelected: Boolean,
-    onCategorySelected: (Categories) -> Unit
+    onCategorySelected: (String) -> Unit
 ) {
     androidx.compose.material3.FilterChip(
         onClick = { onCategorySelected(category) },
         label = {
-            Text(text = category.toString())
+            Text(text = category)
         },
         selected = isSelected,
 
@@ -299,6 +303,82 @@ fun FilterChip(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@Composable
+fun ExerciseSearchBar(
+    modifier : Modifier,
+    categories : List<String>,
+    selectedCategory: String?,
+    onSearchClicked: (String) -> Unit,
+    assignCategoryHandler: (ManageCategoriesEvent.AssignExerciseCategoryEvent) -> Unit)
+{
+    var text by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(false) }
+    val items = remember {
+        mutableListOf("Plank","Bench press","Tricep","curl", "planck") // dummy values
+    }
+
+
+    SearchBar(
+        modifier = modifier,
+        query = text,
+        onQueryChange = { text = it },
+        onSearch = {
+            onSearchClicked(text)
+            items.add(text)
+            active = false
+
+        },
+        active = active,
+        onActiveChange = { active = it},
+        placeholder = { Text("Search")},
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search Icon"
+            )
+        },
+        trailingIcon = {
+            if (active) {
+                Icon(
+                    modifier = Modifier.clickable {
+                        if (text.isNotEmpty()){
+                            text = ""
+
+                        } else {
+                            active = false
+                        }
+                    },
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close Icon",
+                )
+            }
+
+        }
+    ){
+        ResearchFilter(
+            categories = categories,
+            selectedCategory = selectedCategory.toString(),
+            onCategorySelected = { category ->
+                assignCategoryHandler(ManageCategoriesEvent.AssignExerciseCategoryEvent(
+                    getExerciseCategory(category) ))
+            })
+
+        items.forEach {
+            Row(modifier = Modifier.padding(14.dp).fillMaxWidth().clickable {
+                text = it
+            }){
+                Icon(
+                    modifier = Modifier.padding(end = 10.dp),
+                    imageVector = Icons.Default.History,
+                    contentDescription = "History Icon",
+                )
+                Text(text = it)
+            }
+        }
+    }
+
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Preview(showBackground = true)
@@ -307,10 +387,10 @@ fun ResearchFilterPreview() {
     var selectedCategory by remember { mutableStateOf(Categories.User) }
 
     ResearchFilter(
-        categories = listOf(Categories.User, Categories.Workout, Categories.Keyword, Categories.Social),
-        selectedCategory = selectedCategory,
+        categories = listOf(Categories.User.toString(), Categories.Workout.toString(), Categories.Keyword.toString(), Categories.Social.toString()),
+        selectedCategory = selectedCategory.toString(),
         onCategorySelected = { category ->
-            selectedCategory = category
+            selectedCategory = getFeedCategory(category)
         }
     )
 }
@@ -338,10 +418,11 @@ fun SearchAppBarPreview() {
 @Composable
 @Preview
 fun FeedSearchBarPreview(){
-    val searchViewModel : SearchViewModel = hiltViewModel()
+
     FeedSearchBar(
-        modifier = Modifier,//.padding(start = 16.dp, end = 16.dp),
-        searchViewModel = searchViewModel,
+        modifier = Modifier,
+        categories = listOf(Categories.User.toString()),
+        selectedCategory = null,
         searchGymPostHandler = {},
         resetGymPostHandler = {}) {
 

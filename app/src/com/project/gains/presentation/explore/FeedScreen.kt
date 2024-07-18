@@ -69,6 +69,8 @@ fun FeedScreen(
     assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit,
 
     ) {
+    val categories = searchViewModel.categories
+    val selectedCategory by searchViewModel.selectedCategory.observeAsState()
     val gymPosts by feedViewModel.posts.observeAsState()
     val listState = rememberLazyListState()
     val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 }}
@@ -103,7 +105,8 @@ fun FeedScreen(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .semantics { traversalIndex = 0f },
-                    searchViewModel = searchViewModel,
+                    categories = categories,
+                    selectedCategory = selectedCategory.toString(),
                     searchGymPostHandler = searchGymPostHandler,
                     resetGymPostHandler = resetGymPostHandler,
                     assignCategoryHandler = assignCategoryHandler

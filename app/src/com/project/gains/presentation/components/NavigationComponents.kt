@@ -392,16 +392,6 @@ fun DynamicTopBar(
 
         }
 
-        Route.SearchScreen.route -> {
-            TopBar(
-                message = " Search on GymFeed",
-                button = {},
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
-        }
 
         Route.PlanScreen.route -> {
         }
@@ -562,7 +552,6 @@ fun DynamicBottomBar(navController: NavController, scrollBehavior: BottomAppBarS
         Route.AddGeneratedPlanScreen.route -> {}
         Route.LastNewPlanScreen.route -> {}
         Route.WorkoutModeScreen.route -> {}
-        Route.SearchScreen.route -> {}
         Route.ShareScreen.route -> {}
         Route.PostScreen.route -> {}
         Route.ExerciseDetailsScreen.route -> {}
