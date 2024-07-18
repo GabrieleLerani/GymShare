@@ -195,6 +195,12 @@ fun FavoriteTopBar(message: String, navigationIcon: @Composable () -> Unit, drop
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FeedSearchTopBar(searchBar :@Composable () -> Unit){
+    TopAppBar(title = {searchBar()})
+}
+
 @Composable
 fun PlanTopBar(navController: NavController, plans: List<Plan>?, selectedPlan: Plan?, selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit) {
     val expanded = remember { mutableStateOf(false) }
@@ -332,13 +338,14 @@ fun DynamicTopBar(
         }
 
         Route.FeedScreen.route -> {
+            /*
             TopBar(
                 message = "Explore Feed",
                 button = {
                 },
                 button1 = {
                 },
-            )
+            )*/
         }
 
         Route.SearchScreen.route -> {

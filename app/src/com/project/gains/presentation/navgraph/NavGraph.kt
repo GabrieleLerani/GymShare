@@ -160,10 +160,15 @@ fun NavGraph(
 
             ) {
                 // set screen as the node state
+                val searchViewModel : SearchViewModel = hiltViewModel()
                 FeedScreen(
                     navController = navController,
                     feedViewModel =feedViewModel,
+                    searchViewModel = searchViewModel,
+                    searchGymPostHandler = feedViewModel::onSearchEvent,
+                    assignCategoryHandler = searchViewModel::onCategoriesEvent,
                     resetGymPostHandler = feedViewModel::onSearchEvent
+
                 )
             }
             composable(

@@ -42,9 +42,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.GymPost
+import com.project.gains.presentation.components.FeedSearchBar
+import com.project.gains.presentation.components.FeedSearchTopBar
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.SearchAppBar
+import com.project.gains.presentation.components.SearchViewModel
 import com.project.gains.presentation.components.SocialMediaIcon
+import com.project.gains.presentation.components.events.ManageCategoriesEvent
 import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
@@ -53,7 +57,11 @@ import com.project.gains.theme.GainsAppTheme
 fun FeedScreen(
     navController: NavController,
     feedViewModel: FeedViewModel,
+    searchViewModel: SearchViewModel,
+    searchGymPostHandler: (SearchEvent.SearchGymPostEvent) -> Unit,
     resetGymPostHandler: (SearchEvent.ResetPostEvent) -> Unit,
+    assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit,
+
     ) {
     val gymPosts by feedViewModel.posts.observeAsState()
 
@@ -64,13 +72,35 @@ fun FeedScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                /*FeedSearchTopBar {
+                    FeedSearchBar(
+                        searchViewModel = searchViewModel,
+                        searchGymPostHandler = searchGymPostHandler,
+                        resetGymPostHandler = resetGymPostHandler,
+                        assignCategoryHandler = assignCategoryHandler
+                    )
+                }*/
+                FeedSearchBar(
+                    searchViewModel = searchViewModel,
+                    searchGymPostHandler = searchGymPostHandler,
+                    resetGymPostHandler = resetGymPostHandler,
+                    assignCategoryHandler = assignCategoryHandler
+                )
+
+            }
+
             LazyColumn(
                 modifier = Modifier
-                    .fillMaxSize() ,
+                    .fillMaxSize()
+                    .padding(top = 50.dp) ,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    SearchAppBar(
+                    /*SearchAppBar(
                         value = "",
                         placeholder = "Search here...",
                         onValueChange = {},
@@ -81,7 +111,8 @@ fun FeedScreen(
                             navController.navigate(Route.SearchScreen.route)
                         },
                         enabled = false
-                    )
+                    )*/
+
                 }
 
                 gymPosts?.forEach{gymPost ->
@@ -89,6 +120,7 @@ fun FeedScreen(
                 }
             }
 
+            // button to create a new post
             ExtendedFloatingActionButton(
                 text = {Text(
                     text = "New post",
@@ -111,6 +143,8 @@ fun FeedScreen(
         }
     }
 }
+
+
 
 @Composable
 fun FeedPost(gymPost: GymPost) {
@@ -222,9 +256,13 @@ fun FeedPost(gymPost: GymPost) {
 fun FeedScreenPreview() {
     val navController = rememberNavController()
     val feedViewModel: FeedViewModel = hiltViewModel()
+    val searchViewModel: SearchViewModel = hiltViewModel()
     FeedScreen(
         navController = navController,
         feedViewModel = feedViewModel,
-        resetGymPostHandler = {}
+        resetGymPostHandler = {},
+        assignCategoryHandler = {},
+        searchGymPostHandler = {},
+        searchViewModel = searchViewModel
     )
 }
