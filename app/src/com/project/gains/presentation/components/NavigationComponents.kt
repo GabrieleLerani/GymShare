@@ -20,6 +20,9 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.BottomAppBarScrollBehavior
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -72,13 +75,67 @@ data class MenuItem(
 )
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavController, scrollBehavior: BottomAppBarScrollBehavior? = null) {
 
     var selectedItemIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
+
+    BottomAppBar(
+        scrollBehavior = scrollBehavior
+    ) {
+        val currentRoute = currentRoute(navController)
+        bottomNavItems.forEachIndexed { index, item ->
+            val isSelected = currentRoute == item.route
+
+            NavigationBarItem(
+                selected = isSelected,
+                alwaysShowLabel = true,
+                onClick = {
+                    if(item.badgeCount != null) {
+                        item.badgeCount = null
+                    }
+
+                    selectedItemIndex = index
+                    navController.navigate(item.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                        /* popUpTo(navController.graph.startDestinationId) {
+                             saveState = true
+                         }*/
+                        launchSingleTop = true
+                        restoreState = true
+                    } },
+                label = {
+                    Text(text = item.title)
+                },
+                icon = { BadgedBox(
+                    badge = {
+                        if(item.badgeCount != null) {
+                            Badge {
+                                Text(text = item.badgeCount.toString())
+                            }
+                        } else if(item.hasNews) {
+                            Badge()
+                        }
+                    })
+                {
+                    Icon(
+                        imageVector = if (index == selectedItemIndex) {
+                            item.selectedIcon
+                        } else item.unselectedIcon,
+                        contentDescription = item.title
+                    )
+                }
+                }
+            )
+        }
+    }
+
+    /*
     NavigationBar {
         val currentRoute = currentRoute(navController)
         bottomNavItems.forEachIndexed { index, item ->
@@ -126,7 +183,7 @@ fun BottomNavigationBar(navController: NavController) {
                 }
             )
         }
-    }
+    }*/
 }
 
 @Composable
@@ -193,12 +250,6 @@ fun FavoriteTopBar(message: String, navigationIcon: @Composable () -> Unit, drop
         navigationIcon = { navigationIcon() },
         actions = { dropDownMenu() },
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FeedSearchTopBar(searchBar :@Composable () -> Unit){
-    TopAppBar(title = {searchBar()})
 }
 
 @Composable
@@ -338,14 +389,7 @@ fun DynamicTopBar(
         }
 
         Route.FeedScreen.route -> {
-            /*
-            TopBar(
-                message = "Explore Feed",
-                button = {
-                },
-                button1 = {
-                },
-            )*/
+
         }
 
         Route.SearchScreen.route -> {
@@ -501,8 +545,9 @@ fun DynamicTopBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DynamicBottomBar(navController: NavController) {
+fun DynamicBottomBar(navController: NavController, scrollBehavior: BottomAppBarScrollBehavior? = null) {
     val currentRoute = currentRoute(navController = navController)
 
     // Show the bottom bar only for specific routes
@@ -532,6 +577,11 @@ fun DynamicBottomBar(navController: NavController) {
         Route.OTPScreen.route -> {}
         Route.ChangePasswordScreen.route -> {}
         Route.HomeSearchScreen.route -> {}
+
+        // provide scrolling behavior
+        Route.FeedScreen.route -> {
+            BottomNavigationBar(navController = navController, scrollBehavior = scrollBehavior)
+        }
 
         else -> {
             BottomNavigationBar(navController = navController)

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 
 
@@ -32,6 +35,7 @@ import com.project.gains.presentation.navgraph.NavGraph
 import com.project.gains.theme.GainsAppTheme
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     startDestination: String,
@@ -41,11 +45,13 @@ fun MainScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val messageState = remember { mutableStateOf("") } // Shared state for the message
 
+    val scrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
 
     GainsAppTheme {
         Scaffold(
-            topBar = { DynamicTopBar(navController = navController ) },
-            bottomBar = { DynamicBottomBar(navController = navController) },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = { DynamicTopBar(navController = navController) },
+            bottomBar = { DynamicBottomBar(navController = navController, scrollBehavior = scrollBehavior) },
             snackbarHost = { SnackbarHost(hostState = snackBarHostState) {
                 Snackbar(
                     modifier = Modifier

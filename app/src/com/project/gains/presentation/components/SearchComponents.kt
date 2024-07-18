@@ -166,26 +166,23 @@ fun SearchAppBar(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FeedSearchBar(
+    modifier : Modifier,
     searchViewModel: SearchViewModel,
     searchGymPostHandler: (SearchEvent.SearchGymPostEvent) -> Unit,
     resetGymPostHandler: (SearchEvent.ResetPostEvent) -> Unit,
-    assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit
-
-    ){
-    var text by remember {
-        mutableStateOf("")
-    }
-    var active by remember {
-        mutableStateOf(false)
-    }
+    assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit){
+    var text by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf(false) }
     val items = remember {
         mutableListOf("gabriele","gianmarco","carlo","curl", "planck")
     }
 
     val categories = searchViewModel.categories
     val selectedCategory by searchViewModel.selectedCategory.observeAsState()
+
     SearchBar(
-        modifier = Modifier.fillMaxWidth(),
+
+        modifier = modifier,
         query = text,
         onQueryChange = { text = it },
         onSearch = {
@@ -239,6 +236,8 @@ fun FeedSearchBar(
             }
         }
     }
+
+
 }
 
 @ExperimentalMaterialApi
@@ -250,7 +249,7 @@ fun ResearchFilter(
     onCategorySelected: (Categories) -> Unit
 ) {
     Column(Modifier.padding(15.dp)) {
-        Text(text = "Filter by Categories", style = MaterialTheme.typography.headlineSmall)
+        Text(text = "Filter by categories", style = MaterialTheme.typography.titleSmall)
 
         //Spacer(modifier = Modifier.height(10.dp))
 
@@ -282,12 +281,7 @@ fun FilterChip(
     androidx.compose.material3.FilterChip(
         onClick = { onCategorySelected(category) },
         label = {
-            Text(
-                text = category.toString(),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                ,
-            )
+            Text(text = category.toString())
         },
         selected = isSelected,
 
@@ -326,8 +320,8 @@ fun ResearchFilterPreview() {
 @Preview
 fun SearchAppBarPreview() {
     Scaffold {
-        val searchViewModel : SearchViewModel = hiltViewModel()
-        /*SearchAppBar(
+
+        SearchAppBar(
             value = "",
             placeholder = "Some random text",
             onValueChange = {},
@@ -335,15 +329,22 @@ fun SearchAppBarPreview() {
             onSearchClicked = {},
             onClick = {},
             enabled = true
-        )*/
-        FeedSearchBar(searchViewModel = searchViewModel, searchGymPostHandler = {}, resetGymPostHandler = {}) {
-            
-        }
+        )
+
     }
 
 }
 
-enum class SearchWidgetState {
-    OPENED,
-    CLOSED
+@Composable
+@Preview
+fun FeedSearchBarPreview(){
+    val searchViewModel : SearchViewModel = hiltViewModel()
+    FeedSearchBar(
+        modifier = Modifier,//.padding(start = 16.dp, end = 16.dp),
+        searchViewModel = searchViewModel,
+        searchGymPostHandler = {},
+        resetGymPostHandler = {}) {
+
+    }
 }
+

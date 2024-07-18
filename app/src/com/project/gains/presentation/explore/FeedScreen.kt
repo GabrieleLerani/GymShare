@@ -1,9 +1,11 @@
 package com.project.gains.presentation.explore
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,27 +15,32 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,9 +50,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.GymPost
 import com.project.gains.presentation.components.FeedSearchBar
-import com.project.gains.presentation.components.FeedSearchTopBar
 import com.project.gains.presentation.components.LogoUser
-import com.project.gains.presentation.components.SearchAppBar
 import com.project.gains.presentation.components.SearchViewModel
 import com.project.gains.presentation.components.SocialMediaIcon
 import com.project.gains.presentation.components.events.ManageCategoriesEvent
@@ -53,6 +58,7 @@ import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FeedScreen(
     navController: NavController,
@@ -64,64 +70,12 @@ fun FeedScreen(
 
     ) {
     val gymPosts by feedViewModel.posts.observeAsState()
-
-    // Assuming you have a function to fetch gym posts from an API or elsewhere
-    // You'll need to implement this function accordingly
+    val listState = rememberLazyListState()
+    val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 }}
     GainsAppTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                /*FeedSearchTopBar {
-                    FeedSearchBar(
-                        searchViewModel = searchViewModel,
-                        searchGymPostHandler = searchGymPostHandler,
-                        resetGymPostHandler = resetGymPostHandler,
-                        assignCategoryHandler = assignCategoryHandler
-                    )
-                }*/
-                FeedSearchBar(
-                    searchViewModel = searchViewModel,
-                    searchGymPostHandler = searchGymPostHandler,
-                    resetGymPostHandler = resetGymPostHandler,
-                    assignCategoryHandler = assignCategoryHandler
-                )
 
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 50.dp) ,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    /*SearchAppBar(
-                        value = "",
-                        placeholder = "Search here...",
-                        onValueChange = {},
-                        onCloseClicked = {    resetGymPostHandler(SearchEvent.ResetPostEvent)
-                        },
-                        onSearchClicked = {},
-                        onClick = {
-                            navController.navigate(Route.SearchScreen.route)
-                        },
-                        enabled = false
-                    )*/
-
-                }
-
-                gymPosts?.forEach{gymPost ->
-                    item { FeedPost(gymPost) }
-                }
-            }
-
-            // button to create a new post
-            ExtendedFloatingActionButton(
+        Scaffold(
+            floatingActionButton = { ExtendedFloatingActionButton(
                 text = {Text(
                     text = "New post",
                     color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -136,11 +90,44 @@ fun FeedScreen(
                 )},
 
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp)
-            )
+                expanded = isFabExpanded,
+                modifier = Modifier.padding(8.dp)
+            )}
+        ) {
+
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .semantics { isTraversalGroup = true }) {
+                FeedSearchBar(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .semantics { traversalIndex = 0f },
+                    searchViewModel = searchViewModel,
+                    searchGymPostHandler = searchGymPostHandler,
+                    resetGymPostHandler = resetGymPostHandler,
+                    assignCategoryHandler = assignCategoryHandler
+                )
+
+                LazyColumn(
+                    modifier = Modifier.semantics { traversalIndex = 1f },
+                    contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    state = listState
+                ) {
+
+                    gymPosts?.forEach{gymPost ->
+                        item {
+                            FeedPost(gymPost)
+                        }
+                    }
+                }
+
+            }
         }
+
+
     }
 }
 
@@ -148,12 +135,11 @@ fun FeedScreen(
 
 @Composable
 fun FeedPost(gymPost: GymPost) {
-    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+
     ) {
 
         // Header Row
