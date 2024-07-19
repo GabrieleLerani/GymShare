@@ -1,7 +1,5 @@
 package com.project.gains.presentation.plan
 
-//noinspection UsingMaterialAndMaterial3Libraries
-
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,18 +16,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CheckCircleOutline
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -41,9 +41,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
+import com.project.gains.data.Plan
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
-import com.project.gains.presentation.components.PlanTopBar
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
@@ -54,24 +54,24 @@ import com.project.gains.util.toLowerCaseString
 fun PlanScreen(
     navController: NavController,
     planViewModel: PlanViewModel,
-    selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit,
-    completionMessage: MutableState<String>
+    planId: Int,
+    selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit
 ) {
-    // Sample list of workouts
-    val selectedPlan by planViewModel.selectedPlan.observeAsState()
-    val selectedFrequency by planViewModel.selectedFrequency.observeAsState()
-    val selectedLevel by planViewModel.selectedLvl.observeAsState()
-    val selectedTraining  by planViewModel.selectedTrainingType.observeAsState()
-
     val plans by planViewModel.plans.observeAsState()
+    val selectedPlan by planViewModel.selectedPlan.observeAsState()
+    var plan = Plan(1, "Default Plan", mutableListOf(), Frequency.TWO, Level.BEGINNER, TrainingType.STRENGTH)
+
+    plans?.forEach {
+        if (it.id == planId) {
+            plan = it
+        }
+    }
 
     GainsAppTheme {
         Column (
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            PlanTopBar(navController = navController, plans = plans, selectedPlan = selectedPlan, selectPlanHandler = selectPlanHandler)
-
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -81,7 +81,6 @@ fun PlanScreen(
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.Top
                 ) {
-
                     item {
                         Column(
                             modifier = Modifier
@@ -89,23 +88,67 @@ fun PlanScreen(
                                 .padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            WorkoutHeader(selectedLevel, selectedTraining, selectedFrequency)
+                            WorkoutHeader(plan.level, plan.training, plan.frequency)
 
                             Spacer(modifier = Modifier.height(30.dp))
 
-                            WorkoutDaysList(selectedPlan?.workouts ?: mutableListOf()) {
+                            WorkoutDaysList(plan.workouts) {
                                 navController.navigate(Route.WorkoutScreen.route)
                             }
                         }
                     }
                 }
+                val onClick = {
+                    selectPlanHandler(ManagePlanEvent.SelectPlan(plan = plan))
+                }
+                SelectButton(
+                    onClick = { onClick() },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp),
+                    isSelected = selectedPlan?.id == plan.id
+                )
             }
         }
     }
 }
 
 @Composable
-fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, selectedFrequency:Frequency?) {
+fun SelectButton(onClick: () -> Unit, modifier: Modifier, isSelected: Boolean){
+    FilledTonalButton(
+        onClick = { onClick() },
+        modifier = modifier,
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if (isSelected) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = "Select Plan",
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Current Plan")
+            } else {
+                Icon(
+                    imageVector = Icons.Default.CheckCircleOutline,
+                    contentDescription = "Select Plan",
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Set it to current plan")
+            }
+        }
+
+    }
+}
+
+@Composable
+fun WorkoutHeader(selectedLevel: Level?, selectedTraining: TrainingType?, selectedFrequency: Frequency?) {
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -247,8 +290,8 @@ fun PlanScreenPreview() {
     val planViewModel: PlanViewModel = hiltViewModel()
     PlanScreen(
         navController = navController,
+        planId = 1,
         planViewModel = planViewModel,
-        selectPlanHandler = {},
-        completionMessage = mutableStateOf("")
+        selectPlanHandler = {}
     )
 }

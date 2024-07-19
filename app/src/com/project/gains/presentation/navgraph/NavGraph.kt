@@ -9,9 +9,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.project.gains.presentation.exercises.ExerciseDetailsScreen
 import com.project.gains.presentation.HomeScreen
 import com.project.gains.presentation.HomeSearchScreen
@@ -47,7 +49,7 @@ import com.project.gains.presentation.plan.ManualWorkoutViewModel
 import com.project.gains.presentation.plan.NewPlanScreen
 import com.project.gains.presentation.plan.PlanScreen
 import com.project.gains.presentation.plan.PlanViewModel
-import com.project.gains.presentation.progress.ProgressDetailsScreen
+import com.project.gains.presentation.plan.TabScreen
 import com.project.gains.presentation.settings.AccountScreen
 import com.project.gains.presentation.settings.LinkedSocialSettingScreen
 import com.project.gains.presentation.share.PostScreen
@@ -152,7 +154,6 @@ fun NavGraph(
                     completionMessage=completionMessage
                 )
             }
-
             composable(
                 route = Route.FeedScreen.route,
                 popEnterTransition = ::slideInToRight,
@@ -170,16 +171,30 @@ fun NavGraph(
 
                 )
             }
-
             composable(
-                route = Route.PlanScreen.route,
+                route = Route.PlansProgressesScreen.route,
                 popEnterTransition = ::slideInToRight,
             ) {
                 // set screen as the node state
-                PlanScreen(navController = navController,
+                TabScreen(
                     planViewModel = planViewModel,
-                    selectPlanHandler = planViewModel::onCreatePlanEvent,
-                    completionMessage=completionMessage
+                    onPlanClicked = {
+                        navController.navigate("planScreen/$it")
+                    }
+                )
+            }
+            composable(
+                route = "planScreen/{planId}",
+                arguments = listOf(navArgument("planId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val planId: Int = backStackEntry.arguments?.getInt("planId") ?: 1
+
+                // set screen as the node state
+                PlanScreen(
+                    navController = navController,
+                    planViewModel = planViewModel,
+                    planId = planId,
+                    selectPlanHandler = planViewModel::onCreatePlanEvent
                 )
             }
             composable(
@@ -264,19 +279,6 @@ fun NavGraph(
                     onExit = {navController.popBackStack()},
                     generalPostHandler = feedViewModel::onSearchEvent,
                     )
-            }
-
-            composable(
-                route = Route.ProgressDetailsScreen.route,
-                enterTransition = ::slideInToLeft,
-                exitTransition = ::slideOutToLeft,
-                popEnterTransition = ::slideInToRight,
-                popExitTransition = ::slideOutToRight
-            ) {
-                // set screen as the node state
-                ProgressDetailsScreen(
-                    navController = navController
-                )
             }
             composable(
                 route = Route.ExerciseDetailsScreen.route,

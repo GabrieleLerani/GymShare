@@ -170,7 +170,7 @@ fun ShareScreen(
 
             item {
                 Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.padding(8.dp)) {
-                    if (test.value==false){
+                    if (!test.value){
                         apps?.forEach { app ->
                             if (app!= R.drawable.spotify_icon) {
                                 SocialMediaIcon(
@@ -255,46 +255,41 @@ fun ShareScreen(
                 } else  {
                     Button(
                         onClick = {
-                            if (prevDest==Route.WorkoutScreen.route){
+                            if (prevDest == Route.WorkoutScreen.route){
                                 workout?.let { SearchEvent.GymPostWorkoutEvent(it,clickedApp.intValue,username?.displayName ?: "user 2") }
                                     ?.let { shareHandler(it) }
-                            }else if (prevDest==Route.ExerciseDetailsScreen.route){
+                            } else if (prevDest == Route.ExerciseDetailsScreen.route){
                                 exercise?.let { SearchEvent.GymPostExerciseEvent(it,clickedApp.intValue,username?.displayName ?: "user 2") }?.let { shareHandlerExercise(it) }
-
-                            }
-                            else if (prevDest==Route.ProgressDetailsScreen.route){
-                                shareHandlerProgress(SearchEvent.GymPostProgressEvent(clickedApp.intValue,username?.displayName ?: "user 2"))
-
                             }
 
-                            if (clickedApp.intValue== R.drawable.instagram_icon){
-                                appName.value="Instagram"
+                            if (clickedApp.intValue == R.drawable.instagram_icon){
+                                appName.value = "Instagram"
                                 showDialog.value = true
 
                             }
-                            else if (clickedApp.intValue== R.drawable.x_logo_icon){
-                                appName.value="X"
+                            else if (clickedApp.intValue == R.drawable.x_logo_icon){
+                                appName.value = "X"
                                 showDialog.value = true
 
 
                             }
-                            else if (clickedApp.intValue== R.drawable.facebook_icon){
-                                appName.value="Facebook"
+                            else if (clickedApp.intValue == R.drawable.facebook_icon){
+                                appName.value = "Facebook"
                                 showDialog.value = true
 
 
                             }
-                            else if (clickedApp.intValue== R.drawable.tiktok_logo_icon){
-                                appName.value="TikTok"
+                            else if (clickedApp.intValue == R.drawable.tiktok_logo_icon){
+                                appName.value = "TikTok"
                                 showDialog.value = true
 
 
                             }else if (!test.value){
-                                showErrorDialog.value=true
+                                showErrorDialog.value = true
 
                             }
                             else{
-                                appName.value="this social"
+                                appName.value = "this social"
                                 showDialog.value = true
                             }
                         },

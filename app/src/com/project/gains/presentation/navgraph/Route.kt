@@ -24,14 +24,11 @@ sealed class Route(
 
     data object FeedScreen : Route(route = "feedScreen")
 
-    data object PlanScreen : Route(route = "planScreen")
-    data object ProgressScreen : Route(route = "progressScreen")
-    data object ProgressDetailsScreen : Route(route = "progressDetailsScreen")
+    data object PlansProgressesScreen : Route(route = "plansProgressesScreen")
 
     data object NewPlanScreen : Route(route = "newPlanScreen")
     data object AddGeneratedPlanScreen : Route(route = "addGeneratedPlan")
     data object AddManualWorkoutScreen : Route(route = "addManualWorkout")
-
 
     data object ShareScreen : Route(route = "shareScreen")
     data object PostScreen : Route(route = "postScreen")
@@ -39,7 +36,5 @@ sealed class Route(
     data object ExerciseDetailsScreen : Route(route = "exerciseDetailsScreen")
     data object LastNewPlanScreen : Route(route = "lastNewPlanScreen")
 
-
     data object AppStartNavigation : Route(route = "appStartNavigation")
-
 }

@@ -77,8 +77,7 @@ fun LastNewPlanScreen(
         FeedbackAlertDialog(
             onDismissRequest = {   },
             onConfirm = {   showDialog.value=false
-                navController.navigate(Route.PlanScreen.route)
-
+                navController.navigate(Route.PlansProgressesScreen.route)
             },
             title ="Plan Created!",
             text ="You have successfully created your plan!",

@@ -127,10 +127,8 @@ fun WorkoutModeButton(modifier: Modifier,onClick: () -> Unit){
             Spacer(modifier = Modifier.width(8.dp))
             Text("Workout mode")
         }
-
     }
 }
-
 
 @Composable
 fun CustomBackHandler(

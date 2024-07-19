@@ -246,30 +246,6 @@ fun FavoriteTopBar(message: String, navigationIcon: @Composable () -> Unit, drop
 }
 
 @Composable
-fun PlanTopBar(navController: NavController, plans: List<Plan>?, selectedPlan: Plan?, selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit) {
-    val expanded = remember { mutableStateOf(false) }
-
-    val planScreenMenuItems = listOf(
-        MenuItem(
-            text = "Progress",
-            icon = Icons.Filled.BarChart,
-            onClick = { navController.navigate(Route.ProgressDetailsScreen.route) }
-        ),
-        MenuItem(
-            text = "Settings",
-            icon = Icons.Outlined.Settings,
-            onClick = { /* Handle settings! */ } // TODO find other
-        )
-    )
-
-    TopBar(
-        message = "",
-        button = { MyDropdownMenu(menuItems = planScreenMenuItems) },
-        button1 = { MyExposedDropdownMenu(expanded = expanded, selectedPlan = selectedPlan, plans = plans, selectPlanHandler = selectPlanHandler) }
-    )
-}
-
-@Composable
 fun currentRoute(navController: NavController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route
@@ -353,11 +329,6 @@ fun DynamicTopBar(
         }
 
         Route.FeedScreen.route -> {
-
-        }
-
-
-        Route.PlanScreen.route -> {
         }
 
         Route.NewPlanScreen.route -> {
@@ -405,32 +376,6 @@ fun DynamicTopBar(
             TopBar(
                 message = "",
                 button= {}
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
-        }
-
-        Route.ProgressDetailsScreen.route -> {
-            TopBar(
-                message = "Progress Details",
-                button= {
-                    IconButton(
-                        modifier = Modifier.size(45.dp),
-                        onClick = {
-                            navController.navigate(Route.ShareScreen.route)
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Share",
-                            modifier = Modifier.graphicsLayer {
-                                rotationZ = -45f // Rotate 45 degrees counterclockwise
-                            }
-                        )
-                    }
-                }
             ) {
                 BackButton {
                     navController.popBackStack()
@@ -520,7 +465,6 @@ fun DynamicBottomBar(navController: NavController, scrollBehavior: BottomAppBarS
         Route.PostScreen.route -> {}
         Route.ExerciseDetailsScreen.route -> {}
         Route.TypedExerciseScreen.route -> {}
-        Route.ProgressDetailsScreen.route -> {}
         Route.AccountScreen.route -> {}
         Route.LinkedSocialSettingScreen.route -> {}
         Route.SignInScreen.route -> {}
@@ -583,59 +527,6 @@ fun MyDropdownMenu(menuItems: List<MenuItem>) {
                 },
                 leadingIcon = { Icon(item.icon, contentDescription = null) }
             )
-        }
-    }
-}
-
-/* TODO two tabs: one with the list of plans and one with the progress screen. Each plan redirects to a new page with two tabs: the plan details and the list of workouts */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MyExposedDropdownMenu(expanded: MutableState<Boolean>, selectedPlan: Plan?, plans: List<Plan>?, selectPlanHandler: (ManagePlanEvent.SelectPlan) -> Unit) {
-    ExposedDropdownMenuBox(
-        expanded = expanded.value,
-        onExpandedChange = { expanded.value = !expanded.value },
-    ) {
-
-        OutlinedTextField(
-            value = selectedPlan?.name.toString(),
-            textStyle = MaterialTheme.typography.titleLarge,
-            label = {Text("Your plans")},
-            singleLine = true,
-            onValueChange = {},
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded.value
-                )
-            },
-            readOnly = true,
-            modifier = Modifier
-                .menuAnchor(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
-            )
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded.value,
-            onDismissRequest = { expanded.value = false }
-        ) {
-            plans?.forEach { plan ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            plan.name,
-                        )
-                    },
-                    onClick = {
-                        selectPlanHandler(ManagePlanEvent.SelectPlan(plan))
-                        expanded.value = false
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-
-                )
-            }
         }
     }
 }

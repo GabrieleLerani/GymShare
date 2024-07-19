@@ -79,7 +79,10 @@ data class Exercise(
 data class Plan(
     val id: Int,
     val name: String,
-    val workouts: MutableList<Workout>
+    val workouts: MutableList<Workout>,
+    val frequency: Frequency,
+    val level: Level,
+    val training: TrainingType
 )
 
 data class Song(
@@ -135,7 +138,7 @@ sealed class BottomNavItem(
     ) {
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Filled.Home, Icons.Outlined.Home, "Home", false)
     data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Filled.AddCircleOutline, Icons.Outlined.AddCircleOutline,"Add", false)
-    data object Plan : BottomNavItem(Route.PlanScreen.route, Icons.Filled.Event, Icons.Outlined.Event,"Plan" , false)
+    data object Plan : BottomNavItem(Route.PlansProgressesScreen.route, Icons.Filled.Event, Icons.Outlined.Event,"Plan" , false)
     data object Settings : BottomNavItem(Route.SettingsScreen.route, Icons.Filled.Settings, Icons.Outlined.Settings,"Settings", false)
     data object Explore : BottomNavItem(Route.FeedScreen.route, Icons.Filled.Groups, Icons.Outlined.Groups, "Explore", false ,8)
 }
@@ -369,9 +372,8 @@ fun generateOptions(): List<Option> {
         Option(ExerciseType.SHOULDERS.toString()),
         Option(ExerciseType.ARMS.toString()),
         Option(ExerciseType.LEGS.toString()),
-        Option(ExerciseType.CORE.toString()),
-
-        )
+        Option(ExerciseType.CORE.toString())
+    )
 }
 
 fun generateSamplePlans(): MutableList<Plan> {
@@ -379,17 +381,26 @@ fun generateSamplePlans(): MutableList<Plan> {
         Plan(
             id = 1,
             name = "My strength plan",
-            workouts = generateSampleWorkouts()
+            workouts = generateSampleWorkouts(),
+            frequency = Frequency.entries.shuffled().first(),
+            level = Level.entries.toList().shuffled().first(),
+            training = TrainingType.entries.toList().shuffled().first(),
         ),
         Plan(
             id = 2,
             name = "My Aerobic routine",
-            workouts = generateSampleWorkouts()
+            workouts = generateSampleWorkouts(),
+            frequency = Frequency.entries.shuffled().first(),
+            level = Level.entries.toList().shuffled().first(),
+            training = TrainingType.entries.toList().shuffled().first(),
         ),
         Plan(
             id = 3,
             name = "Cardio plan",
-            workouts = generateSampleWorkouts()
+            workouts = generateSampleWorkouts(),
+            frequency = Frequency.entries.shuffled().first(),
+            level = Level.entries.toList().shuffled().first(),
+            training = TrainingType.entries.toList().shuffled().first(),
         )
 
         // Add more sample plans as needed
@@ -557,6 +568,7 @@ fun generateRandomPlan(
     muscleGroups: MutableList<ExerciseType>,
     numberOfWorkouts: Int
 ): List<Workout> {
+
     val exerciseMap = trainingTypeExercises[trainingType] ?: return emptyList()
     val workouts = mutableListOf<Workout>()
     val exerciseTypes: List<ExerciseType> = muscleGroups

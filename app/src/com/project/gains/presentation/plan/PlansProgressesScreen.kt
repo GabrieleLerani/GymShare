@@ -1,11 +1,10 @@
-package com.project.gains.presentation.progress
+package com.project.gains.presentation.plan
 
 //noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
-
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,16 +17,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,10 +58,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.PeriodMetricType
+import com.project.gains.data.Plan
 import com.project.gains.data.PlotType
 import com.project.gains.data.TrainingData
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.generateRandomTrainingData
+import com.project.gains.presentation.plan.events.ManagePlanEvent
+import com.project.gains.presentation.plan.components.SummaryCard
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.toLowerCaseString
 import kotlin.math.PI
@@ -61,13 +72,83 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
+@Composable
+fun TabScreen(planViewModel: PlanViewModel, onPlanClicked: (Int) -> Unit) {
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
+    val tabs = listOf("Plans", "Progresses")
+
+    Column {
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = { Text(text = title) }
+                )
+            }
+        }
+
+        when (selectedTabIndex) {
+            0 -> PlansScreen(planViewModel, onPlanClicked)
+            1 -> ProgressDetailsScreen()
+        }
+    }
+}
+
+@Composable
+fun PlansScreen(
+    planViewModel: PlanViewModel,
+    onPlanClicked: (Int) -> Unit
+) {
+    val plans by planViewModel.plans.observeAsState()
+
+    Column {
+        plans!!.forEach { plan ->
+            CustomCard(plan = plan, onNavigate = { onPlanClicked(plan.id) })
+        }
+    }
+}
+
+@Composable
+fun CustomCard(
+    plan: Plan,
+    onNavigate: () -> Unit
+) {
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable { onNavigate() }
+    ) {
+        Column (
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = plan.name,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            plan.workouts.forEach { workout ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Text(
+                        text = workout.name,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgressDetailsScreen(
-    navController: NavController,
-
-) {
-
+fun ProgressDetailsScreen() {
     var selectedMetric by remember { mutableStateOf(TrainingMetricType.BPM) }
     var selectedPeriod by remember { mutableStateOf(PeriodMetricType.MONTH) }
     var selectedPlot by remember { mutableStateOf(PlotType.BAR) }
@@ -91,7 +172,7 @@ fun ProgressDetailsScreen(
                 item {
                     SummaryCard(workouts = 57, calories = 10779, minutes = 539)
                 }
-                
+
                 item {
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -126,7 +207,7 @@ fun ProgressDetailsScreen(
                                     readOnly = true,
                                     modifier = Modifier
                                         .menuAnchor(),
-                                        //.fillMaxWidth(),
+                                    //.fillMaxWidth(),
                                     colors = TextFieldDefaults.outlinedTextFieldColors(
                                         focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
                                         unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
@@ -157,7 +238,6 @@ fun ProgressDetailsScreen(
                                         Spacer(modifier = Modifier.height(2.dp))
                                     }
                                 }
-
                             }
                         }
 
@@ -176,7 +256,7 @@ fun ProgressDetailsScreen(
                                 OutlinedTextField(
                                     value = toLowerCaseString(selectedMetric.toString()),
                                     textStyle = MaterialTheme.typography.bodySmall,
-                                    label = {Text("Metric")},
+                                    label = { Text("Metric") },
                                     singleLine = true,
                                     onValueChange = {},
                                     trailingIcon = {
@@ -198,13 +278,15 @@ fun ProgressDetailsScreen(
 
                                 ExposedDropdownMenu(
                                     expanded = expandedMetric,
-                                    onDismissRequest = { expandedMetric = false})
+                                    onDismissRequest = { expandedMetric = false })
                                 {
                                     TrainingMetricType.entries.forEach { metric ->
                                         DropdownMenuItem(
                                             text = {
                                                 Text(
-                                                    text = toLowerCaseString(metric.toString()).take(15) + if (toLowerCaseString(metric.toString()).length > 15) "..." else "",
+                                                    text = toLowerCaseString(metric.toString()).take(
+                                                        15
+                                                    ) + if (toLowerCaseString(metric.toString()).length > 15) "..." else "",
                                                 )
                                             },
                                             onClick = {
@@ -218,10 +300,7 @@ fun ProgressDetailsScreen(
                                         Spacer(modifier = Modifier.height(2.dp))
                                     }
                                 }
-
                             }
-
-
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
@@ -296,10 +375,6 @@ fun ProgressDetailsScreen(
         }
     }
 }
-
-
-
-
 
 @Composable
 fun TrainingOverviewChart(
@@ -562,8 +637,5 @@ fun PiePlot(trainingData: List<TrainingData>, valueType: String) {
 @Preview(showBackground = true)
 @Composable
 fun ProgressDetailsScreenPreview() {
-    
-    ProgressDetailsScreen(
-        navController = rememberNavController()
-    )
+    ProgressDetailsScreen()
 }
