@@ -2,9 +2,10 @@ package com.project.gains.presentation.exercises
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,7 +27,6 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.Exercise
 import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.ExerciseSearchBar
-import com.project.gains.presentation.components.SearchAppBar
 import com.project.gains.presentation.components.SearchViewModel
 import com.project.gains.presentation.components.events.ManageCategoriesEvent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
@@ -62,58 +62,68 @@ fun SearchExercisesScreen(
                 .fillMaxSize()
                 .semantics { isTraversalGroup = true }) {
 
-            ExerciseSearchBar(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .semantics { traversalIndex = 0f },
-                categories = categories,
-                selectedCategory = selectedCategory.toString(),
-                onSearchClicked = {
-                        query ->
-                    searchQuery.value = query
-                    isSearchQueryEmpty.value = query.isBlank()
-                    searchedExercises.value = if (query.isNotBlank()) {
-                        allExercises?.filter {
-                            it.name.contains(query, ignoreCase = true)
-                        } ?: listOf()
-                    } else {
-                        listOf()
-                    }
-                },
-                assignCategoryHandler = assignCategoryHandler
-            )
-
-            LazyColumn(
-                modifier = Modifier.semantics { traversalIndex = 1f },
-                contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
+            Column(modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
+                verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
-                items(searchedExercises.value) { exercise ->
-                    ExerciseItem(
-                        exercise = exercise,
-                        onItemClick = { exerciseToAdd ->
-                            searchedExercises.value =
-                                searchedExercises.value.toMutableList().apply {
-                                    add(exerciseToAdd)
-                                }
-                            selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
-                            navController.navigate(Route.ExerciseDetailsScreen.route)
-                        },
-                        onItemClick2 = {
-                            addExerciseHandler(ManageExercises.AddExercise(exercise))
-                            navController.popBackStack()
-                        },
-                        onRemove = {},
-                        isSelected = true,
-                        isToAdd = isToAdd ?: false,
-                        isToRemove = false,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
-                    )
+                ExerciseSearchBar(
+                    modifier = Modifier
+                        //.align(Alignment.TopCenter)
+                        .semantics { traversalIndex = 0f },
+                    categories = categories,
+                    selectedCategory = selectedCategory.toString(),
+                    onSearchClicked = {
+                            query ->
+                        searchQuery.value = query
+                        isSearchQueryEmpty.value = query.isBlank()
+                        searchedExercises.value = if (query.isNotBlank()) {
+                            allExercises?.filter {
+                                it.name.contains(query, ignoreCase = true)
+                            } ?: listOf()
+                        } else {
+                            listOf()
+                        }
+                    },
+                    assignCategoryHandler = assignCategoryHandler
+                )
 
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth().semantics { traversalIndex = 1f },
+                    contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+
+
+                    items(searchedExercises.value) { exercise ->
+                        ExerciseItem(
+                            exercise = exercise,
+                            onItemClick = { exerciseToAdd ->
+                                searchedExercises.value =
+                                    searchedExercises.value.toMutableList().apply {
+                                        add(exerciseToAdd)
+                                    }
+                                selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
+                                navController.navigate(Route.ExerciseDetailsScreen.route)
+                            },
+                            onItemClick2 = {
+                                addExerciseHandler(ManageExercises.AddExercise(exercise))
+                                navController.popBackStack()
+                            },
+                            onRemove = {},
+                            isSelected = true,
+                            isToAdd = isToAdd ?: false,
+                            isToRemove = false,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+                        )
+
+                    }
                 }
             }
+
+
+
+
 
 
         }

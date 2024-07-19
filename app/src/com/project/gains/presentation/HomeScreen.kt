@@ -166,7 +166,7 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
 
                     if (items.isEmpty()) {
                         item {
-                            val onClick = { navController.navigate(Route.HomeSearchScreen.route) }
+                            val onClick = { navController.navigate(Route.TypedExerciseScreen.route) }
 
                             ElevatedCardItem(
                                 onClick = onClick,

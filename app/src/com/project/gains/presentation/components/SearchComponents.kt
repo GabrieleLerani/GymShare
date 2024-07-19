@@ -2,6 +2,7 @@ package com.project.gains.presentation.components
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -230,9 +232,12 @@ fun FeedSearchBar(
             })
 
         items.forEach {
-            Row(modifier = Modifier.padding(14.dp).fillMaxWidth().clickable {
-                text = it
-            }){
+            Row(modifier = Modifier
+                .padding(14.dp)
+                .fillMaxWidth()
+                .clickable {
+                    text = it
+                }){
                 Icon(
                     modifier = Modifier.padding(end = 10.dp),
                     imageVector = Icons.Default.History,
@@ -253,6 +258,27 @@ fun ResearchFilter(
     selectedCategory: String?,
     onCategorySelected: (String) -> Unit
 ) {
+
+    val scrollState = rememberScrollState()
+
+    FlowRow (
+        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(scrollState).padding(8.dp)
+    ) {
+        categories.forEach { category ->
+            val isSelected = selectedCategory == category
+            FilterChip(
+                category = category,
+                isSelected = isSelected,
+                onCategorySelected = onCategorySelected,
+
+                )
+        }
+    }
+
+    /*
     Column(Modifier.padding(15.dp)) {
         Text(text = "Filter by categories", style = MaterialTheme.typography.titleSmall)
 
@@ -272,7 +298,7 @@ fun ResearchFilter(
                 )
             }
         }
-    }
+    }*/
 }
 
 @ExperimentalMaterialApi
@@ -315,68 +341,81 @@ fun ExerciseSearchBar(
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     val items = remember {
-        mutableListOf("Plank","Bench press","Tricep","curl", "planck") // dummy values
+        mutableListOf("Plank","Bench press")
     }
 
-
-    SearchBar(
+    Column(
         modifier = modifier,
-        query = text,
-        onQueryChange = { text = it },
-        onSearch = {
-            onSearchClicked(text)
-            items.add(text)
-            active = false
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-        },
-        active = active,
-        onActiveChange = { active = it},
-        placeholder = { Text("Search")},
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = "Search Icon"
-            )
-        },
-        trailingIcon = {
-            if (active) {
+        SearchBar(
+            modifier = modifier,
+            query = text,
+            onQueryChange = { text = it },
+            onSearch = {
+                onSearchClicked(text)
+                items.add(text)
+                active = false
+
+            },
+            active = active,
+            onActiveChange = { active = it},
+            placeholder = { Text("Search")},
+            leadingIcon = {
                 Icon(
-                    modifier = Modifier.clickable {
-                        if (text.isNotEmpty()){
-                            text = ""
-
-                        } else {
-                            active = false
-                        }
-                    },
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close Icon",
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Icon"
                 )
-            }
+            },
+            trailingIcon = {
+                if (active) {
+                    Icon(
+                        modifier = Modifier.clickable {
+                            if (text.isNotEmpty()){
+                                text = ""
 
+                            } else {
+                                active = false
+                            }
+                        },
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close Icon",
+                    )
+                }
+
+            }
+        ){
+
+            items.forEach {
+                Row(modifier = Modifier
+                    .padding(14.dp)
+                    .fillMaxWidth()
+                    .clickable {
+                        text = it
+                    }){
+                    Icon(
+                        modifier = Modifier.padding(end = 10.dp),
+                        imageVector = Icons.Default.History,
+                        contentDescription = "History Icon",
+                    )
+                    Text(text = it)
+                }
+            }
         }
-    ){
+
         ResearchFilter(
             categories = categories,
             selectedCategory = selectedCategory.toString(),
             onCategorySelected = { category ->
                 assignCategoryHandler(ManageCategoriesEvent.AssignExerciseCategoryEvent(
                     getExerciseCategory(category) ))
-            })
-
-        items.forEach {
-            Row(modifier = Modifier.padding(14.dp).fillMaxWidth().clickable {
-                text = it
-            }){
-                Icon(
-                    modifier = Modifier.padding(end = 10.dp),
-                    imageVector = Icons.Default.History,
-                    contentDescription = "History Icon",
-                )
-                Text(text = it)
             }
-        }
+        )
+
     }
+
+
 
 }
 
@@ -387,7 +426,7 @@ fun ResearchFilterPreview() {
     var selectedCategory by remember { mutableStateOf(Categories.User) }
 
     ResearchFilter(
-        categories = listOf(Categories.User.toString(), Categories.Workout.toString(), Categories.Keyword.toString(), Categories.Social.toString()),
+        categories = listOf(Categories.User.toString(), Categories.Workout.toString(), Categories.Keyword.toString(), Categories.Social.toString(),Categories.Social.toString(),Categories.Social.toString()),
         selectedCategory = selectedCategory.toString(),
         onCategorySelected = { category ->
             selectedCategory = getFeedCategory(category)
@@ -429,3 +468,14 @@ fun FeedSearchBarPreview(){
     }
 }
 
+@Composable
+@Preview
+fun ExPrev(){
+
+    ExerciseSearchBar(
+        modifier = Modifier,
+        categories = listOf(Categories.User.toString(), Categories.Workout.toString(), Categories.Keyword.toString(), Categories.Social.toString(),Categories.Social.toString(),Categories.Social.toString()),
+        selectedCategory = null,
+        onSearchClicked = {},
+        assignCategoryHandler = {})
+}
