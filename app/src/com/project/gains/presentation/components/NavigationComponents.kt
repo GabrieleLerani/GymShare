@@ -127,56 +127,6 @@ fun BottomNavigationBar(navController: NavController, scrollBehavior: BottomAppB
             )
         }
     }
-
-    /*
-    NavigationBar {
-        val currentRoute = currentRoute(navController)
-        bottomNavItems.forEachIndexed { index, item ->
-            val isSelected = currentRoute == item.route
-
-            NavigationBarItem(
-                selected = isSelected,
-                alwaysShowLabel = true,
-                onClick = {
-                    if(item.badgeCount != null) {
-                        item.badgeCount = null
-                    }
-
-                    selectedItemIndex = index
-                    navController.navigate(item.route) {
-                    launchSingleTop = true
-                    restoreState = true
-                   /* popUpTo(navController.graph.startDestinationId) {
-                        saveState = true
-                    }*/
-                    launchSingleTop = true
-                    restoreState = true
-                } },
-                label = {
-                        Text(text = item.title)
-                },
-                icon = { BadgedBox(
-                    badge = {
-                        if(item.badgeCount != null) {
-                            Badge {
-                                Text(text = item.badgeCount.toString())
-                            }
-                        } else if(item.hasNews) {
-                            Badge()
-                        }
-                    })
-                    {
-                        Icon(
-                            imageVector = if (index == selectedItemIndex) {
-                                item.selectedIcon
-                            } else item.unselectedIcon,
-                            contentDescription = item.title
-                        )
-                    }
-                }
-            )
-        }
-    }*/
 }
 
 @Composable
@@ -475,13 +425,8 @@ fun DynamicBottomBar(navController: NavController, scrollBehavior: BottomAppBarS
         Route.ChangePasswordScreen.route -> {}
         Route.HomeSearchScreen.route -> {}
 
-        // provide scrolling behavior
-        Route.FeedScreen.route -> {
-            BottomNavigationBar(navController = navController, scrollBehavior = scrollBehavior)
-        }
-
         else -> {
-            BottomNavigationBar(navController = navController)
+            BottomNavigationBar(navController = navController, scrollBehavior = scrollBehavior)
         }
     }
 }
