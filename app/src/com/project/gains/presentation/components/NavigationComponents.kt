@@ -295,6 +295,7 @@ fun DynamicTopBar(
     when (currentRoute) {
 
         Route.HomeScreen.route -> {
+            /*
             TopBar(
                 message = "Home",
                 button = {
@@ -304,24 +305,10 @@ fun DynamicTopBar(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        IconButton(
-                            modifier = Modifier.size(35.dp),
-                            onClick = { navController.navigate(Route.WorkoutModeScreen.route) }) {
-                            Icon(
-                                modifier = Modifier.size(35.dp),
-                                imageVector = Icons.Filled.FitnessCenter,
-                                contentDescription = "Workout Mode",
-                            )
-                        }
-                        if (test.value){
-                            Text(
-                                text = "Workout Mode",
-                                fontSize = 12.sp
-                            )
-                        }
                     }
                 },
             ) {}
+            */
         }
 
         Route.SettingsScreen.route -> {

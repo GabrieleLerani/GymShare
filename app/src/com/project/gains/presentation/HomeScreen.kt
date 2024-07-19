@@ -23,10 +23,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -82,35 +87,50 @@ fun HomeScreen(
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top
             ) {
-                // TODO exercise search bar must be moved into the search bar in explore feed
-                /*
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    SearchAppBar(
-                        value = "",
-                        placeholder = "Search exercises here...",
-                        onValueChange = {},
-                        onCloseClicked = {},
-                        onSearchClicked = {},
-                        onClick = {
-                            navController.navigate(Route.HomeSearchScreen.route)
-                        },
-                        enabled = false
-                    )
-                }
-                */
                 item {
                     HorizontalScrollScreenWorkout(navController, "Your workouts", items2 = workouts!!, selectWorkoutHandler = selectWorkoutHandler)
                 }
 
                 item {
-                    HorizontalScrollScreenExercise(navController, "Your favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler,)
+                    HorizontalScrollScreenExercise(navController, "Your favourite exercises", items = favouriteExercises!!.toList(),selectExerciseHandler = selectExerciseHandler)
                 }
 
             }
+
+            WorkoutModeButton(
+                modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp),
+                onClick = {navController.navigate(Route.WorkoutModeScreen.route)}
+            )
+
         }
     }
 }
+
+@Composable
+fun WorkoutModeButton(modifier: Modifier,onClick: () -> Unit){
+    FilledTonalButton(
+        onClick = { onClick() },
+        modifier = modifier,
+        colors = ButtonDefaults.filledTonalButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Filled.FitnessCenter,
+                contentDescription = "Workout Mode",
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Workout mode")
+        }
+
+    }
+}
+
 
 @Composable
 fun CustomBackHandler(
@@ -238,7 +258,7 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                             ElevatedCardItem(
                                 onClick = onClick,
                                 imageResId = R.drawable.logo,
-                                title = "Add new workout",
+                                title = "Create workout",
                                 buttonEnabled = true,
                                 buttonText = "Add workout",
                                 description = "Add a new workout, either by generating a plan automatically or by adding it manually"
@@ -285,16 +305,16 @@ fun TextItem(title: String) {
 @Composable
 fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, buttonEnabled: Boolean, buttonText: String, description: String) {
     val configuration = LocalConfiguration.current
-    val screenWith = configuration.screenWidthDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
 
     ElevatedCard(
-        elevation = CardDefaults.cardElevation(16.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier
             .padding(start = 16.dp)
-            .width(width = screenWith - 64.dp)
+            .width(width = screenWidth - 64.dp)
             .fillMaxHeight()
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
                 shape = RoundedCornerShape(16.dp)
             )
     ) {
@@ -337,15 +357,22 @@ fun ElevatedCardItem(onClick: () -> Unit, imageResId: Int, title: String, button
                         .align(Alignment.CenterHorizontally)
                 )
                 if (buttonEnabled) {
-                    Button(
-                        onClick = { onClick() },
-                        modifier = Modifier
-                            .padding(bottom = 16.dp, end = 16.dp),
+
+                    OutlinedButton(
+                        onClick =  onClick ,
+
+                        colors = ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            //contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
                     ) {
+
                         Text(
-                            text = buttonText
+                            text = buttonText,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
+
                 }
             }
         }
