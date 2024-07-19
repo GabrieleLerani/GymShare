@@ -108,10 +108,6 @@ fun LastNewPlanScreen(
 
             item { Spacer(modifier = Modifier.height(10.dp)) }
 
-
-
-
-
             item {
                 Text(
                     text = "Choose if you want to have music while training",

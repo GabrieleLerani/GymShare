@@ -93,7 +93,7 @@ fun FeedScreen(
 
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 expanded = isFabExpanded,
-                modifier = Modifier.padding(8.dp)
+                //modifier = Modifier.padding(8.dp)
             )}
         ) {
 

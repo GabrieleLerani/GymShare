@@ -7,10 +7,10 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,19 +19,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Today
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +67,7 @@ import com.project.gains.data.Workout
 import com.project.gains.presentation.components.ErrorMessage
 import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.PlanSlidingComponent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
@@ -71,20 +75,19 @@ import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 import com.project.gains.theme.GainsAppTheme
 import com.project.gains.util.toFormattedString
 import com.project.gains.util.toLowerCaseString
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddManualWorkout(
     navController: NavController,
-    paddingValues: PaddingValues,
     manualWorkoutViewModel: ManualWorkoutViewModel,
     addNameHandler: (ManageExercises.SelectWorkoutStored) -> Unit,
     selectExerciseHandler: (ExerciseEvent.SelectIsToAdd) -> Unit,
     deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
     deleteAllExerciseHandler: (ManageExercises.DeleteAllExercise) -> Unit,
     createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit,
-
 ) {
     var workoutTitle by remember { mutableStateOf(TextFieldValue("")) }
     val showDialog = remember { mutableStateOf(false) }
@@ -97,17 +100,18 @@ fun AddManualWorkout(
 
     var inputInserted by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val isOptionSelected = remember { mutableStateOf(false) }
+    val pagerState = rememberPagerState(initialPage = 0) { 2 }
 
-    if (showDialog.value ){
-
+    if (showDialog.value) {
         FeedbackAlertDialog(
-            onDismissRequest = {   },
+            onDismissRequest = { },
             onConfirm = {
-                showDialog.value=false
+                showDialog.value = false
                 navController.navigate(Route.HomeScreen.route)
             },
-            title ="Workout Created!",
-            text ="You find it in the home!",
+            title = "Workout Created!",
+            text = "You find it in the home!",
             icon = Icons.Default.Check,
             dismiss = false
         )
@@ -118,242 +122,399 @@ fun AddManualWorkout(
     }
 
     GainsAppTheme {
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                PlanSlidingComponent(
+                    inactiveColor = MaterialTheme.colorScheme.secondaryContainer,
+                    activeColor = MaterialTheme.colorScheme.primary,
+                    pagerState = pagerState,
+                    modifier = Modifier.padding(20.dp),
+                )
 
-            ){
+                Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                // error message if no exercise
+                // header that contains only written information
+                //Header()
+
+                Spacer(modifier = Modifier.padding(top = 8.dp))
+
+                // TODO check error message if no exercise
                 if (inputInserted && selectedExercises.isEmpty()) {
                     ErrorMessage(message = "Please insert at least one exercise.")
                 }
 
-                // header that contains only written information
-                Header()
-
-                // Field of workout name and day
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    OutlinedTextField(
-                        value = workoutTitle,
-                        onValueChange = { newValue ->
-                            workoutTitle = newValue
-                            addNameHandler(ManageExercises.SelectWorkoutStored(newValue))
-                        },
-                        label = {
-                            Text(
-                                "Workout name",
-                            )
-                        },
-                        placeholder = { Text("Set name...") },
-                        textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp),
-                        leadingIcon = { Icon(Icons.Default.Edit, contentDescription = "name")
-                        },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = if (workoutTitle.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = if (workoutTitle.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+                HorizontalPager(
+                    state = pagerState,
+                    userScrollEnabled = false
+                ) { page ->
+                    when (page) {
+                        0 -> WorkoutInfoPage(
+                            workoutTitle = workoutTitle,
+                            onWorkoutTitleChange = { newValue ->
+                                workoutTitle = newValue
+                                addNameHandler(ManageExercises.SelectWorkoutStored(newValue))
+                            },
+                            selectedDay = selectedDay,
+                            onSelectedDayChange = { selectedDay = it },
+                            expanded = expanded,
+                            onExpandedChange = { expanded = it },
+                            inputInserted = inputInserted,
+                            isOptionSelected = isOptionSelected
                         )
-                    )
-
-                    // check error
-                    if (inputInserted && (workoutTitle.text.isEmpty())) {
-                        Text(
-                            text = "Empty name. Please insert one",
-                            color = MaterialTheme.colorScheme.error,
-                            fontSize = 15.sp,
-                            modifier = Modifier
-                                .align(Alignment.Start)
+                        1 -> ExerciseSelectionPage(
+                            navController = navController,
+                            selectedExercises = selectedExercises,
+                            removedExercises = removedExercises,
+                            scope = scope,
+                            deleteExerciseHandler = deleteExerciseHandler,
+                            selectExerciseHandler = selectExerciseHandler,
+                            workoutTitle = workoutTitle,
+                            onSave = {inputInserted = true},
+                            createWorkoutHandler = createWorkoutHandler,
+                            selectedDay = selectedDay,
+                            deleteAllExerciseHandler = deleteAllExerciseHandler,
+                            showDialog = showDialog,
+                            addNameHandler = addNameHandler
                         )
                     }
                 }
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // menu for selecting the day of the workout
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded }) {
-
-                    OutlinedTextField(
-                        value = toLowerCaseString(selectedDay.name),
-                        label = {Text("Select workout day")},
-                        onValueChange = {},
-                        leadingIcon = {
-                            Icon(Icons.Default.Today, contentDescription = "day")
-                        },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(
-                                expanded = expanded
-                            )
-                        },
-                        readOnly = true,
-                        modifier = Modifier
-                            .menuAnchor()
-                            .fillMaxWidth(),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
-                        )
-
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        Weekdays.entries.forEach { day ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        day.toFormattedString(),
-                                    )
-                                },
-                                onClick = {
-                                    expanded = false
-                                    selectedDay = day
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-
-                            )
-                            Spacer(modifier = Modifier.height(2.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            if (pagerState.currentPage > 0) {
+                                pagerState.animateScrollToPage(page = pagerState.currentPage - 1)
+                                isOptionSelected.value = false // Reset option selected state
+                            }
                         }
-                    }
-
-                }
-
-
-                HorizontalDivider(modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
-
-                // exercises list
-                LazyColumn(
+                    },
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-
-                    if (selectedExercises.isNotEmpty()) {
-
-                        selectedExercises.forEach { exercise: Exercise ->
-                            item{
-                                AnimatedVisibility(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    visible = !removedExercises.value.contains(exercise),
-                                    exit = shrinkVertically(animationSpec = tween(durationMillis = 200))
-                                ) {
-
-                                    ExerciseItem(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .padding(top = 8.dp, bottom = 8.dp),
-                                        exercise = exercise,
-                                        onItemClick = {},
-                                        onItemClick2 = {},
-                                        isSelected = true,
-                                        isToAdd = false,
-                                        isToRemove = true,
-                                        onRemove = {
-                                            scope.launch {
-                                                removedExercises.value += exercise
-                                                deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
-                                            }
-
-                                        }
-                                    )
-
-                                }
-                            }
-                        }
-
-                    } else {
-
-                        item { Text(text = "No exercises selected") }
-                    }
-
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Bottom,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp),
-                                horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                AddExerciseButton {
-                                    selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
-                                    navController.navigate(Route.TypedExerciseScreen.route)
-                                }
-
-                                SaveButton {
-                                    if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()){
-                                        inputInserted = true
-                                    } else {
-
-                                        val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
-
-                                        addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
-                                        createWorkoutHandler(
-                                            ManageWorkoutEvent.CreateWorkout(
-                                                Workout(
-                                                    id = 0,
-                                                    name = workoutTitle.text.ifEmpty { "workout 1" },
-                                                    workoutDay = selectedDay,
-                                                    exercises = exercisesList
-                                                )
-                                            )
-                                        )
-                                        // after the assignment, delete all exercises so it is ready for a new use
-                                        deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
-
-                                        showDialog.value=true
-                                    }
-                                }
-
-                            }
-
-
-                        }
-                    }
-
+                    Text("Back")
                 }
 
+                Button(
+                    onClick = {
+                        scope.launch {
+                            if (pagerState.currentPage < pagerState.pageCount - 1) {
+                                if (workoutTitle.text.isNotEmpty() && selectedDay.name.isNotEmpty()) {
+                                    pagerState.animateScrollToPage(page = pagerState.currentPage + 1)
+                                    isOptionSelected.value = false // Reset option selected state
+                                } else {
+                                    inputInserted = true
+                                }
+                            } else {
+                                // do something
+                            }
+                        }
+                    },
+                    enabled = isOptionSelected.value
+                ) {
+                    Text(text = "Next")
+                }
             }
 
         }
+    }
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WorkoutInfoPage(
+    workoutTitle: TextFieldValue,
+    onWorkoutTitleChange: (TextFieldValue) -> Unit,
+    selectedDay: Weekdays,
+    onSelectedDayChange: (Weekdays) -> Unit,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    inputInserted: Boolean,
+    isOptionSelected: MutableState<Boolean>
+) {
+    var duration by remember { mutableStateOf(TextFieldValue("")) }
+    var restIntervals by remember { mutableStateOf(TextFieldValue("")) }
+    var description by remember { mutableStateOf(TextFieldValue("")) }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            value = workoutTitle,
+            onValueChange = onWorkoutTitleChange,
+            label = { Text("Workout name") },
+            placeholder = { Text("Set name...") },
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = "name") },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = if (workoutTitle.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (workoutTitle.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            )
+        )
+
+        if (inputInserted && workoutTitle.text.isEmpty()) {
+            Text(
+                text = "Empty name. Please insert one",
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 15.sp,
+                modifier = Modifier.align(Alignment.Start)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = duration,
+            onValueChange = { duration = it },
+            label = { Text("Duration (minutes)") },
+            placeholder = { Text("Enter duration...") },
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = "duration") },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = if (duration.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (duration.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            )
+        )
+
+        if (inputInserted && duration.text.isEmpty()) {
+            Text(
+                text = "Empty duration. Please insert one",
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 15.sp,
+                modifier = Modifier.align(Alignment.Start)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = restIntervals,
+            onValueChange = { restIntervals = it },
+            label = { Text("Rest Intervals (seconds)") },
+            placeholder = { Text("Enter rest intervals...") },
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = "rest intervals") },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = if (restIntervals.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (restIntervals.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            )
+        )
+
+        if (inputInserted && restIntervals.text.isEmpty()) {
+            Text(
+                text = "Empty rest intervals. Please insert one",
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 15.sp,
+                modifier = Modifier.align(Alignment.Start)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text("Workout Description") },
+            placeholder = { Text("Enter description...") },
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = "description") },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = if (description.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = if (description.text.isEmpty() && inputInserted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            )
+        )
+
+        if (inputInserted && description.text.isEmpty()) {
+            Text(
+                text = "Empty description. Please insert one",
+                color = MaterialTheme.colorScheme.error,
+                fontSize = 15.sp,
+                modifier = Modifier.align(Alignment.Start)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = onExpandedChange
+        ) {
+            OutlinedTextField(
+                value = toLowerCaseString(selectedDay.name),
+                label = { Text("Select workout day") },
+                onValueChange = {},
+                leadingIcon = {
+                    Icon(Icons.Default.Today, contentDescription = "day")
+                },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                readOnly = true,
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .menuAnchor()
+                    .fillMaxWidth(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.primary
+                )
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { onExpandedChange(false) }
+            ) {
+                Weekdays.entries.forEach { day ->
+                    DropdownMenuItem(
+                        text = { Text(day.toFormattedString()) },
+                        onClick = {
+                            onExpandedChange(false)
+                            onSelectedDayChange(day)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
+            }
+        }
+
+        LaunchedEffect(workoutTitle.text, duration.text, restIntervals.text, description.text, selectedDay) {
+            isOptionSelected.value = workoutTitle.text.isNotEmpty() && duration.text.isNotEmpty() && restIntervals.text.isNotEmpty() && description.text.isNotEmpty() && selectedDay.name.isNotEmpty()
+        }
     }
 }
 
 
 @Composable
-fun Header(){
+fun ExerciseSelectionPage(
+    navController: NavController,
+    selectedExercises: List<Exercise>,
+    removedExercises: MutableState<List<Exercise>>,
+    scope: CoroutineScope,
+    deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
+    selectExerciseHandler: (ExerciseEvent.SelectIsToAdd) -> Unit,
+    workoutTitle: TextFieldValue,
+    onSave: () -> Unit,
+    createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit,
+    selectedDay: Weekdays,
+    deleteAllExerciseHandler: (ManageExercises.DeleteAllExercise) -> Unit,
+    showDialog: MutableState<Boolean>,
+    addNameHandler: (ManageExercises.SelectWorkoutStored) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (selectedExercises.isNotEmpty()) {
+            selectedExercises.forEach { exercise: Exercise ->
+                item {
+                    AnimatedVisibility(
+                        modifier = Modifier.fillMaxWidth(),
+                        visible = !removedExercises.value.contains(exercise),
+                        exit = shrinkVertically(animationSpec = tween(durationMillis = 200))
+                    ) {
+                        ExerciseItem(
+                            modifier = Modifier
+                                //.weight(1f)
+                                .padding(top = 8.dp, bottom = 8.dp),
+                            exercise = exercise,
+                            onItemClick = {},
+                            onItemClick2 = {},
+                            isSelected = true,
+                            isToAdd = false,
+                            isToRemove = true,
+                            onRemove = {
+                                scope.launch {
+                                    removedExercises.value += exercise
+                                    deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        } else {
+            item { Text(text = "No exercises selected") }
+        }
+
+        item {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AddExerciseButton {
+                        selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
+                        navController.navigate(Route.TypedExerciseScreen.route)
+                    }
+
+                    SaveButton {
+                        if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()) {
+                            onSave()
+                        } else {
+                            val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
+
+                            addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
+                            createWorkoutHandler(
+                                ManageWorkoutEvent.CreateWorkout(
+                                    Workout(
+                                        id = 0,
+                                        name = workoutTitle.text.ifEmpty { "workout 1" },
+                                        workoutDay = selectedDay,
+                                        exercises = exercisesList
+                                    )
+                                )
+                            )
+                            deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
+                            showDialog.value = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Header() {
     Text(
         text = "Create your workout!",
         style = MaterialTheme.typography.headlineMedium,
-
-        )
+    )
     Spacer(modifier = Modifier.height(8.dp))
-
     Text(
         text = "Manually add each exercise to your workout",
         style = MaterialTheme.typography.bodySmall,
@@ -363,7 +524,7 @@ fun Header(){
 @Composable
 fun AddExerciseButton(onClick: () -> Unit) {
     OutlinedButton(
-        onClick =  onClick ,
+        onClick = onClick,
         modifier = Modifier
     ) {
         Row(
@@ -373,7 +534,6 @@ fun AddExerciseButton(onClick: () -> Unit) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add Exercise",
-
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text("Add Exercise")
@@ -382,7 +542,7 @@ fun AddExerciseButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun SaveButton(onClick: () -> Unit){
+fun SaveButton(onClick: () -> Unit) {
     FilledTonalButton(
         onClick = { onClick() },
         modifier = Modifier.padding(start = 8.dp),
@@ -405,7 +565,6 @@ fun DeleteExerciseButton(onClick: () -> Unit) {
             contentDescription = "Deletion"
         )
     }
-
 }
 
 
@@ -419,7 +578,6 @@ fun ScreenPrev(){
 
     AddManualWorkout(
         navController = navController,
-        paddingValues = PaddingValues(0.dp),
         manualWorkoutViewModel = manualWorkoutViewModel,
         addNameHandler = {},
         selectExerciseHandler = {},
