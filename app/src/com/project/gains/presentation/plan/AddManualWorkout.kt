@@ -4,6 +4,7 @@ package com.project.gains.presentation.plan
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkVertically
@@ -62,6 +63,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.Exercise
+import com.project.gains.data.ExerciseButtonMode
+import com.project.gains.data.ExerciseType
+import com.project.gains.data.TrainingType
 import com.project.gains.data.Weekdays
 import com.project.gains.data.Workout
 import com.project.gains.presentation.components.ErrorMessage
@@ -191,41 +195,69 @@ fun AddManualWorkout(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                OutlinedButton(
-                    onClick = {
-                        scope.launch {
-                            if (pagerState.currentPage > 0) {
+                if (pagerState.currentPage > 0) {
+                    OutlinedButton(
+                        onClick = {
+                            scope.launch {
                                 pagerState.animateScrollToPage(page = pagerState.currentPage - 1)
                                 isOptionSelected.value = false // Reset option selected state
                             }
-                        }
-                    },
-                    modifier = Modifier
-                ) {
-                    Text("Back")
+                        },
+                        modifier = Modifier
+                    ) {
+                        Text("Back")
+                    }
                 }
 
-                Button(
-                    onClick = {
-                        scope.launch {
-                            if (pagerState.currentPage < pagerState.pageCount - 1) {
-                                if (workoutTitle.text.isNotEmpty() && selectedDay.name.isNotEmpty()) {
-                                    pagerState.animateScrollToPage(page = pagerState.currentPage + 1)
-                                    isOptionSelected.value = false // Reset option selected state
-                                } else {
-                                    inputInserted = true
-                                }
-                            } else {
-                                // do something
-                            }
+                // if it's last page show only save workout button
+                if (pagerState.currentPage + 1 == pagerState.pageCount){
+                    SaveButton {
+                        if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()) {
+                            inputInserted = true
+                        } else {
+                            val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
+
+                            addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
+                            createWorkoutHandler(
+                                ManageWorkoutEvent.CreateWorkout(
+                                    Workout(
+                                        id = 0,
+                                        name = workoutTitle.text.ifEmpty { "workout 1" },
+                                        workoutDay = selectedDay,
+                                        exercises = exercisesList
+                                    )
+                                )
+                            )
+                            deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
+                            showDialog.value = true
                         }
-                    },
-                    enabled = isOptionSelected.value
-                ) {
-                    Text(text = "Next")
+                    }
+
+                } else {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                if (pagerState.currentPage < pagerState.pageCount - 1) {
+                                    if (workoutTitle.text.isNotEmpty() && selectedDay.name.isNotEmpty()) {
+                                        pagerState.animateScrollToPage(page = pagerState.currentPage + 1)
+                                        isOptionSelected.value = false // Reset option selected state
+                                    } else {
+                                        inputInserted = true
+                                    }
+                                } else {
+                                    // do something
+                                }
+                            }
+                        },
+                        enabled = isOptionSelected.value
+                    ) {
+                        Text(text = "Next")
+                    }
                 }
+
+
             }
 
         }
@@ -445,16 +477,13 @@ fun ExerciseSelectionPage(
                                 .padding(top = 8.dp, bottom = 8.dp),
                             exercise = exercise,
                             onItemClick = {},
-                            onItemClick2 = {},
-                            isSelected = true,
-                            isToAdd = false,
-                            isToRemove = true,
                             onRemove = {
                                 scope.launch {
                                     removedExercises.value += exercise
                                     deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
                                 }
-                            }
+                            },
+                            mode = ExerciseButtonMode.REMOVE
                         )
                     }
                 }
@@ -478,9 +507,9 @@ fun ExerciseSelectionPage(
                 ) {
                     AddExerciseButton {
                         selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
-                        navController.navigate(Route.TypedExerciseScreen.route)
+                        navController.navigate(Route.SearchExerciseScreen.route)
                     }
-
+                    /*
                     SaveButton {
                         if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()) {
                             onSave()
@@ -501,7 +530,7 @@ fun ExerciseSelectionPage(
                             deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
                             showDialog.value = true
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -584,4 +613,69 @@ fun ScreenPrev(){
         deleteExerciseHandler = {},
         deleteAllExerciseHandler = {}
     ) {}
+}
+
+@Composable
+@Preview(showBackground = true)
+fun PreviewExerciseSelectionPage() {
+    // Mock NavController
+    val navController = rememberNavController()
+
+    // Mock data and state
+    val selectedExercises = listOf(
+        Exercise(
+            name = "Push-Up",
+            description = listOf("Place hands shoulder-width apart", "Lower your body until your chest nearly touches the floor", "Push yourself back up"),
+            gifResId = null,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 300,
+            warnings = listOf("Avoid arching your back", "Keep your core tight"),
+            videoId = 201
+        ),
+        Exercise(
+            name = "Jumping Jacks",
+            description = listOf("Stand upright with legs together", "Jump and spread your legs", "Simultaneously raise your arms above your head", "Return to starting position"),
+            gifResId = null,
+            type = ExerciseType.CORE,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 180,
+            warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
+            videoId = 202
+        )
+    )
+    val removedExercises = remember { mutableStateOf(listOf<Exercise>()) }
+    val scope = rememberCoroutineScope()
+    val workoutTitle = remember { mutableStateOf(TextFieldValue("My Workout")) }
+    val showDialog = remember { mutableStateOf(false) }
+
+    // Mock handlers
+    val deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit = {}
+    val selectExerciseHandler: (ExerciseEvent.SelectIsToAdd) -> Unit = {}
+    val createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit = {}
+    val deleteAllExerciseHandler: (ManageExercises.DeleteAllExercise) -> Unit = {}
+    val addNameHandler: (ManageExercises.SelectWorkoutStored) -> Unit = {}
+    val onSave: () -> Unit = {}
+
+    // Mock selected day
+    val selectedDay = Weekdays.MONDAY
+
+    // Call the composable function with mock data
+    ExerciseSelectionPage(
+        navController = navController,
+        selectedExercises = selectedExercises,
+        removedExercises = removedExercises,
+        scope = scope,
+        deleteExerciseHandler = deleteExerciseHandler,
+        selectExerciseHandler = selectExerciseHandler,
+        workoutTitle = workoutTitle.value,
+        onSave = onSave,
+        createWorkoutHandler = createWorkoutHandler,
+        selectedDay = selectedDay,
+        deleteAllExerciseHandler = deleteAllExerciseHandler,
+        showDialog = showDialog,
+        addNameHandler = addNameHandler
+    )
 }

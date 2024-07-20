@@ -3,7 +3,6 @@ package com.project.gains.presentation.exercises
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,13 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Article
-import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,7 +64,7 @@ fun ExerciseDetailsScreen(
     removeFavouriteExerciseHandler: (ExerciseEvent.DeleteExercise) -> Unit,
     completionMessage: MutableState<String>
 ) {
-    val selectExercise by exerciseViewModel.selectedExercise.observeAsState()
+    val selectedExercise by exerciseViewModel.selectedExercise.observeAsState()
     val favoriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favorite = remember { mutableStateOf(false) }
     val showDialog = remember { mutableStateOf(false) }
@@ -82,7 +76,7 @@ fun ExerciseDetailsScreen(
     var favoritesText = "Add to favorites"
     val favoritesIcon: ImageVector
 
-    if (favorite.value || favoriteExercises?.contains(selectExercise) == true) {
+    if (favorite.value || favoriteExercises?.contains(selectedExercise) == true) {
         favoritesText = "Delete from favorites"
         favoritesIcon = Icons.Default.Delete
     } else {
@@ -118,11 +112,13 @@ fun ExerciseDetailsScreen(
 
 
     Column(modifier = Modifier.fillMaxSize()){
-        FavoriteTopBar(
-            message = "Exercise",
-            navigationIcon = { BackButton { navController.popBackStack() } },
-            dropDownMenu = { MyDropdownMenu(menuItems = exerciseDetailMenuItems) }
-        )
+        selectedExercise?.let {
+            FavoriteTopBar(
+                message = it.name,
+                navigationIcon = { BackButton { navController.popBackStack() } },
+                dropDownMenu = { MyDropdownMenu(menuItems = exerciseDetailMenuItems) }
+            )
+        }
         PrimaryTabRow(selectedTabIndex = selectedTabIndex) {
             tabTitles.forEachIndexed { index, tab ->
                 Tab(
@@ -136,9 +132,9 @@ fun ExerciseDetailsScreen(
 
         Column(modifier = Modifier.padding(4.dp)) {
             when (selectedTabIndex) {
-                0 -> ExerciseDetailsTab(selectExercise)
-                1 -> ExerciseInstructionsTab(selectExercise)
-                2 -> ExerciseWarningsTab(selectExercise)
+                0 -> ExerciseDetailsTab(selectedExercise)
+                1 -> ExerciseInstructionsTab(selectedExercise)
+                2 -> ExerciseWarningsTab(selectedExercise)
             }
         }
     }
@@ -165,14 +161,6 @@ fun ExerciseDetailsTab(selectExercise: Exercise?) {
         }
         item {
             Text(
-                text = selectExercise?.name ?: "Dumbbell",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
-        item {
-            Text(
                 text = "The inclined dumbbell bench press is considered as the best basic exercise for developing the pectoral muscles and increasing general strength. This exercise allows a greater amplitude of movement than the classic bar press, and allows you to work out the muscles more efficiently.",
                 fontSize = 16.sp
             )
@@ -188,14 +176,6 @@ fun ExerciseInstructionsTab(selectExercise: Exercise?) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            Text(
-                text = "Instruction",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
         selectExercise?.description?.forEach { instruction ->
             item {
                 InstructionCard(text = instruction)
@@ -212,14 +192,7 @@ fun ExerciseWarningsTab(selectExercise: Exercise?) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item {
-            Text(
-                text = "Warning",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
-        }
+
         selectExercise?.warnings?.forEach { warning ->
             item {
                 WarningCard(message = warning)

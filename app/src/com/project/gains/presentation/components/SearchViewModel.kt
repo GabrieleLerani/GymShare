@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.gains.data.Categories
+import com.project.gains.data.Exercise
 import com.project.gains.data.ExerciseCategories
 import com.project.gains.data.Socials
 import com.project.gains.presentation.components.events.ManageCategoriesEvent
@@ -33,6 +34,23 @@ class SearchViewModel @Inject constructor() : ViewModel() {
 
     private var _selectedExerciseCategory: MutableLiveData<ExerciseCategories> = MutableLiveData<ExerciseCategories>()
     val selectedExerciseCategory: LiveData<ExerciseCategories> = _selectedExerciseCategory
+
+    private val _searchQuery = MutableLiveData<String>("")
+    val searchQuery: LiveData<String> = _searchQuery
+
+    private val _searchedExercises = MutableLiveData<List<Exercise>>(listOf())
+    val searchedExercises: LiveData<List<Exercise>> = _searchedExercises
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun setAllExercises(exercises: List<Exercise>) {
+        _searchedExercises.value = exercises
+    }
+    fun updateSearchedExercises(exercises: List<Exercise>) {
+        _searchedExercises.value = exercises
+    }
 
     fun onCategoriesEvent(event: ManageCategoriesEvent) {
         when(event) {

@@ -278,27 +278,6 @@ fun ResearchFilter(
         }
     }
 
-    /*
-    Column(Modifier.padding(15.dp)) {
-        Text(text = "Filter by categories", style = MaterialTheme.typography.titleSmall)
-
-
-        FlowRow (
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.Start),
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            categories.forEach { category ->
-                val isSelected = selectedCategory == category
-                FilterChip(
-                    category = category,
-                    isSelected = isSelected,
-                    onCategorySelected = onCategorySelected,
-
-                )
-            }
-        }
-    }*/
 }
 
 @ExperimentalMaterialApi
@@ -309,7 +288,10 @@ fun FilterChip(
     onCategorySelected: (String) -> Unit
 ) {
     androidx.compose.material3.FilterChip(
-        onClick = { onCategorySelected(category) },
+        onClick = {
+
+            onCategorySelected(category)
+                  },
         label = {
             Text(text = category)
         },
@@ -355,7 +337,9 @@ fun ExerciseSearchBar(
             onQueryChange = { text = it },
             onSearch = {
                 onSearchClicked(text)
-                items.add(text)
+                if (text.isNotBlank() && !items.contains(text)){
+                    items.add(text)
+                }
                 active = false
 
             },

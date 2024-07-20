@@ -8,6 +8,8 @@ sealed class ManageExercises {
     data class DeleteExercise(val exercise: Exercise) : ManageExercises()
     data object DeleteAllExercise : ManageExercises()
 
+    data class AddAllExercises(val list: MutableList<Exercise>) : ManageExercises()
+
     data class SelectWorkoutStored(val name: TextFieldValue) :
         ManageExercises()
 }

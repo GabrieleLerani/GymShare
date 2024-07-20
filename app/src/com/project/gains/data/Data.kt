@@ -20,6 +20,59 @@ import com.project.gains.presentation.navgraph.Route
 import kotlin.random.Random
 
 // structures
+
+// TODO dummy list for testing
+val exercises = listOf(
+    Exercise(
+        name = "Push-Up",
+        description = listOf("Place hands shoulder-width apart", "Lower your body until your chest nearly touches the floor", "Push yourself back up"),
+        gifResId = null,
+        type = ExerciseType.ARMS,
+        training = TrainingType.CALISTHENICS,
+        sets = 3,
+        totalTime = 300,  // in seconds
+        warnings = listOf("Avoid arching your back", "Keep your core tight"),
+        videoId = 201
+    ),
+    Exercise(
+        name = "Jumping Jacks",
+        description = listOf("Stand upright with legs together", "Jump and spread your legs", "Simultaneously raise your arms above your head", "Return to starting position"),
+        gifResId = null,
+        type = ExerciseType.ARMS,
+        training = TrainingType.CALISTHENICS,
+        sets = 3,
+        totalTime = 180,  // in seconds
+        warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
+        videoId = 202
+    ),
+    Exercise(
+        name = "Plank",
+        description = listOf("Start in a push-up position", "Lower your forearms to the ground", "Hold the position with your body in a straight line"),
+        gifResId = null,
+        type = ExerciseType.ARMS,
+        training = TrainingType.CALISTHENICS,
+        sets = 3,
+        totalTime = 240,  // in seconds
+        warnings = listOf("Keep your back straight", "Avoid sagging your hips"),
+        videoId = 203
+    ),
+    Exercise(
+        name = "Squat",
+        description = listOf("Stand with feet shoulder-width apart", "Bend your knees and lower your hips", "Keep your back straight", "Return to standing position"),
+        gifResId = null,
+        type = ExerciseType.ARMS,
+        training = TrainingType.CALISTHENICS,
+        sets = 3,
+        totalTime = 300,  // in seconds
+        warnings = listOf("Keep your knees behind your toes", "Avoid rounding your back"),
+        videoId = 204
+    )
+)
+
+enum class ExerciseButtonMode {
+    REMOVE, NEXT, SELECT
+}
+
 enum class TrainingType {
     STRENGTH, CALISTHENICS, CROSSFIT
 }

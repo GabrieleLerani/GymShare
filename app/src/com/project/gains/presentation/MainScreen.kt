@@ -30,8 +30,10 @@ import androidx.compose.ui.unit.dp
 
 import com.project.gains.presentation.components.DynamicBottomBar
 import com.project.gains.presentation.components.DynamicTopBar
+import com.project.gains.presentation.components.currentRoute
 
 import com.project.gains.presentation.navgraph.NavGraph
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
 
 
@@ -46,17 +48,24 @@ fun MainScreen(
     val messageState = remember { mutableStateOf("") } // Shared state for the message
 
     val scrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
+        
+    val modifier = if (currentRoute(navController) == Route.FeedScreen.route){
+        Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    } else { Modifier }
 
     GainsAppTheme {
         Scaffold(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier = modifier,
             topBar = { DynamicTopBar(navController = navController) },
             bottomBar = { DynamicBottomBar(navController = navController, scrollBehavior = scrollBehavior) },
             snackbarHost = { SnackbarHost(hostState = snackBarHostState) {
                 Snackbar(
                     modifier = Modifier
-                        .padding(start= 16.dp,end=16.dp,bottom= 16.dp)
-                        .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp)),
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = RoundedCornerShape(20.dp)
+                        ),
                     action = {
                         IconButton(onClick = { messageState.value="" }) {
                             Icon(

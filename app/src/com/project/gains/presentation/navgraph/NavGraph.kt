@@ -16,9 +16,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import com.project.gains.presentation.exercises.ExerciseDetailsScreen
 import com.project.gains.presentation.HomeScreen
-import com.project.gains.presentation.HomeSearchScreen
 import com.project.gains.presentation.MainViewModel
-
 import com.project.gains.presentation.authentication.AuthenticationViewModel
 import com.project.gains.presentation.authentication.screens.ChangePasswordScreen
 import com.project.gains.presentation.authentication.screens.ForgotPasswordScreen
@@ -313,7 +311,7 @@ fun NavGraph(
                 )
             }
             composable(
-                route = Route.TypedExerciseScreen.route,
+                route = Route.SearchExerciseScreen.route,
                 enterTransition = ::slideInToLeft,
                 exitTransition = ::slideOutToLeft,
                 popEnterTransition = ::slideInToRight,
@@ -387,20 +385,7 @@ fun NavGraph(
                 selectExerciseHandler = exerciseViewModel::onExerciseEvent
             )
         }
-        composable(
-            route = Route.HomeSearchScreen.route,
-            enterTransition = ::slideInToLeft,
-            exitTransition = ::slideOutToLeft,
-            popEnterTransition = ::slideInToRight,
-            popExitTransition = ::slideOutToRight
-        ) {
-            // set screen as the node state
-            HomeSearchScreen(
-                navController = navController,
-                workoutViewModel = workoutViewModel,
-                selectExerciseHandler = exerciseViewModel::onExerciseEvent
-            )
-        }
+
     }
 }
 

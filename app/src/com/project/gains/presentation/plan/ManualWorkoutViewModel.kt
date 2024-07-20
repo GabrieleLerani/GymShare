@@ -40,9 +40,21 @@ class ManualWorkoutViewModel @Inject constructor() : ViewModel() {
                 _workoutTitle.value=event.name
             }
 
+            is ManageExercises.AddAllExercises -> {
+
+                event.list.forEach {
+                    if (!_selectedExercises.value?.contains(it)!!){
+                        _selectedExercises.value?.add(it)
+                    }
+                }
+
+            }
+
             is ManageExercises.DeleteAllExercise -> {
                 _selectedExercises.value = mutableListOf()
             }
+
+
         }
     }
 }
