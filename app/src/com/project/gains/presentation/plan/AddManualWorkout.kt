@@ -4,11 +4,11 @@ package com.project.gains.presentation.plan
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -178,87 +178,88 @@ fun AddManualWorkout(
                             removedExercises = removedExercises,
                             scope = scope,
                             deleteExerciseHandler = deleteExerciseHandler,
-                            selectExerciseHandler = selectExerciseHandler,
-                            workoutTitle = workoutTitle,
-                            onSave = {inputInserted = true},
-                            createWorkoutHandler = createWorkoutHandler,
-                            selectedDay = selectedDay,
-                            deleteAllExerciseHandler = deleteAllExerciseHandler,
-                            showDialog = showDialog,
-                            addNameHandler = addNameHandler
+                            selectExerciseHandler = selectExerciseHandler
                         )
                     }
                 }
             }
 
-            Row(
+            Box(
                 modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .background(MaterialTheme.colorScheme.surface)
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                if (pagerState.currentPage > 0) {
-                    OutlinedButton(
-                        onClick = {
-                            scope.launch {
-                                pagerState.animateScrollToPage(page = pagerState.currentPage - 1)
-                                isOptionSelected.value = false // Reset option selected state
-                            }
-                        },
-                        modifier = Modifier
-                    ) {
-                        Text("Back")
-                    }
-                }
-
-                // if it's last page show only save workout button
-                if (pagerState.currentPage + 1 == pagerState.pageCount){
-                    SaveButton {
-                        if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()) {
-                            inputInserted = true
-                        } else {
-                            val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
-
-                            addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
-                            createWorkoutHandler(
-                                ManageWorkoutEvent.CreateWorkout(
-                                    Workout(
-                                        id = 0,
-                                        name = workoutTitle.text.ifEmpty { "workout 1" },
-                                        workoutDay = selectedDay,
-                                        exercises = exercisesList
-                                    )
-                                )
-                            )
-                            deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
-                            showDialog.value = true
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                ) {
+                    if (pagerState.currentPage > 0) {
+                        OutlinedButton(
+                            onClick = {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(page = pagerState.currentPage - 1)
+                                    isOptionSelected.value = false // Reset option selected state
+                                }
+                            },
+                            modifier = Modifier
+                        ) {
+                            Text("Back")
                         }
                     }
 
-                } else {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                if (pagerState.currentPage < pagerState.pageCount - 1) {
-                                    if (workoutTitle.text.isNotEmpty() && selectedDay.name.isNotEmpty()) {
-                                        pagerState.animateScrollToPage(page = pagerState.currentPage + 1)
-                                        isOptionSelected.value = false // Reset option selected state
-                                    } else {
-                                        inputInserted = true
-                                    }
-                                } else {
-                                    // do something
-                                }
+                    // if it's last page show only save workout button
+                    if (pagerState.currentPage + 1 == pagerState.pageCount){
+                        SaveButton {
+                            if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()) {
+                                inputInserted = true
+                            } else {
+                                val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
+
+                                addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
+                                createWorkoutHandler(
+                                    ManageWorkoutEvent.CreateWorkout(
+                                        Workout(
+                                            id = 0,
+                                            name = workoutTitle.text.ifEmpty { "workout 1" },
+                                            workoutDay = selectedDay,
+                                            exercises = exercisesList
+                                        )
+                                    )
+                                )
+                                deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
+                                showDialog.value = true
                             }
-                        },
-                        enabled = isOptionSelected.value
-                    ) {
-                        Text(text = "Next")
+                        }
+
+                    } else {
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    if (pagerState.currentPage < pagerState.pageCount - 1) {
+                                        if (workoutTitle.text.isNotEmpty() && selectedDay.name.isNotEmpty()) {
+                                            pagerState.animateScrollToPage(page = pagerState.currentPage + 1)
+                                            isOptionSelected.value = false // Reset option selected state
+                                        } else {
+                                            inputInserted = true
+                                        }
+                                    } else {
+                                        // do something
+                                    }
+                                }
+                            },
+                            enabled = isOptionSelected.value
+                        ) {
+                            Text(text = "Next")
+                        }
                     }
+
+
                 }
-
-
             }
+
 
         }
     }
@@ -450,17 +451,10 @@ fun ExerciseSelectionPage(
     scope: CoroutineScope,
     deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
     selectExerciseHandler: (ExerciseEvent.SelectIsToAdd) -> Unit,
-    workoutTitle: TextFieldValue,
-    onSave: () -> Unit,
-    createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit,
-    selectedDay: Weekdays,
-    deleteAllExerciseHandler: (ManageExercises.DeleteAllExercise) -> Unit,
-    showDialog: MutableState<Boolean>,
-    addNameHandler: (ManageExercises.SelectWorkoutStored) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth().padding(bottom = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (selectedExercises.isNotEmpty()) {
@@ -488,51 +482,22 @@ fun ExerciseSelectionPage(
                     }
                 }
             }
-        } else {
-            item { Text(text = "No exercises selected") }
         }
 
         item {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 42.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AddExerciseButton {
-                        selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
-                        navController.navigate(Route.SearchExerciseScreen.route)
-                    }
-                    /*
-                    SaveButton {
-                        if (workoutTitle.text.isEmpty() || selectedExercises.isEmpty()) {
-                            onSave()
-                        } else {
-                            val exercisesList: MutableList<Exercise> = selectedExercises.toMutableList()
-
-                            addNameHandler(ManageExercises.SelectWorkoutStored(TextFieldValue()))
-                            createWorkoutHandler(
-                                ManageWorkoutEvent.CreateWorkout(
-                                    Workout(
-                                        id = 0,
-                                        name = workoutTitle.text.ifEmpty { "workout 1" },
-                                        workoutDay = selectedDay,
-                                        exercises = exercisesList
-                                    )
-                                )
-                            )
-                            deleteAllExerciseHandler(ManageExercises.DeleteAllExercise)
-                            showDialog.value = true
-                        }
-                    }*/
+                AddExerciseButton {
+                    selectExerciseHandler(ExerciseEvent.SelectIsToAdd(true))
+                    navController.navigate(Route.SearchExerciseScreen.route)
                 }
             }
+
         }
     }
 }
@@ -644,20 +609,125 @@ fun PreviewExerciseSelectionPage() {
             totalTime = 180,
             warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
             videoId = 202
-        )
+        ),
+        Exercise(
+            name = "Push-Up",
+            description = listOf("Place hands shoulder-width apart", "Lower your body until your chest nearly touches the floor", "Push yourself back up"),
+            gifResId = null,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 300,
+            warnings = listOf("Avoid arching your back", "Keep your core tight"),
+            videoId = 201
+        ),
+        Exercise(
+            name = "Jumping Jacks",
+            description = listOf("Stand upright with legs together", "Jump and spread your legs", "Simultaneously raise your arms above your head", "Return to starting position"),
+            gifResId = null,
+            type = ExerciseType.CORE,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 180,
+            warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
+            videoId = 202
+        ),
+        Exercise(
+            name = "Push-Up",
+            description = listOf("Place hands shoulder-width apart", "Lower your body until your chest nearly touches the floor", "Push yourself back up"),
+            gifResId = null,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 300,
+            warnings = listOf("Avoid arching your back", "Keep your core tight"),
+            videoId = 201
+        ),
+        Exercise(
+            name = "Jumping Jacks",
+            description = listOf("Stand upright with legs together", "Jump and spread your legs", "Simultaneously raise your arms above your head", "Return to starting position"),
+            gifResId = null,
+            type = ExerciseType.CORE,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 180,
+            warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
+            videoId = 202
+        ),
+        Exercise(
+            name = "Push-Up",
+            description = listOf("Place hands shoulder-width apart", "Lower your body until your chest nearly touches the floor", "Push yourself back up"),
+            gifResId = null,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 300,
+            warnings = listOf("Avoid arching your back", "Keep your core tight"),
+            videoId = 201
+        ),
+        Exercise(
+            name = "Jumping Jacks",
+            description = listOf("Stand upright with legs together", "Jump and spread your legs", "Simultaneously raise your arms above your head", "Return to starting position"),
+            gifResId = null,
+            type = ExerciseType.CORE,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 180,
+            warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
+            videoId = 202
+        ),
+        Exercise(
+            name = "Push-Up",
+            description = listOf("Place hands shoulder-width apart", "Lower your body until your chest nearly touches the floor", "Push yourself back up"),
+            gifResId = null,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 300,
+            warnings = listOf("Avoid arching your back", "Keep your core tight"),
+            videoId = 201
+        ),
+        Exercise(
+            name = "Jumping Jacks",
+            description = listOf("Stand upright with legs together", "Jump and spread your legs", "Simultaneously raise your arms above your head", "Return to starting position"),
+            gifResId = null,
+            type = ExerciseType.CORE,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 180,
+            warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
+            videoId = 202
+        ),
+        Exercise(
+            name = "Push-Up",
+            description = listOf("Place hands shoulder-width apart", "Lower your body until your chest nearly touches the floor", "Push yourself back up"),
+            gifResId = null,
+            type = ExerciseType.ARMS,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 300,
+            warnings = listOf("Avoid arching your back", "Keep your core tight"),
+            videoId = 201
+        ),
+        Exercise(
+            name = "Jumping Jacks",
+            description = listOf("Stand upright with legs together", "Jump and spread your legs", "Simultaneously raise your arms above your head", "Return to starting position"),
+            gifResId = null,
+            type = ExerciseType.CORE,
+            training = TrainingType.STRENGTH,
+            sets = 3,
+            totalTime = 180,
+            warnings = listOf("Land softly on your feet", "Keep your knees slightly bent"),
+            videoId = 202
+        ),
     )
     val removedExercises = remember { mutableStateOf(listOf<Exercise>()) }
     val scope = rememberCoroutineScope()
-    val workoutTitle = remember { mutableStateOf(TextFieldValue("My Workout")) }
-    val showDialog = remember { mutableStateOf(false) }
 
     // Mock handlers
     val deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit = {}
     val selectExerciseHandler: (ExerciseEvent.SelectIsToAdd) -> Unit = {}
-    val createWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit = {}
-    val deleteAllExerciseHandler: (ManageExercises.DeleteAllExercise) -> Unit = {}
-    val addNameHandler: (ManageExercises.SelectWorkoutStored) -> Unit = {}
-    val onSave: () -> Unit = {}
+
 
     // Mock selected day
     val selectedDay = Weekdays.MONDAY
@@ -669,13 +739,6 @@ fun PreviewExerciseSelectionPage() {
         removedExercises = removedExercises,
         scope = scope,
         deleteExerciseHandler = deleteExerciseHandler,
-        selectExerciseHandler = selectExerciseHandler,
-        workoutTitle = workoutTitle.value,
-        onSave = onSave,
-        createWorkoutHandler = createWorkoutHandler,
-        selectedDay = selectedDay,
-        deleteAllExerciseHandler = deleteAllExerciseHandler,
-        showDialog = showDialog,
-        addNameHandler = addNameHandler
+        selectExerciseHandler = selectExerciseHandler
     )
 }
