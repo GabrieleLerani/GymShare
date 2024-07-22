@@ -1,6 +1,7 @@
 package com.project.gains.presentation.share
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.AudioFile
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.SportsGymnastics
@@ -37,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,14 +52,19 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.project.gains.presentation.explore.events.SearchEvent
+import com.project.gains.presentation.navgraph.Route
+import com.project.gains.presentation.plan.PlanViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun PostScreen(
+    navController: NavController,
+    planViewModel: PlanViewModel,
     onPost: () -> Unit,
     onExit: () -> Unit,
     generalPostHandler: (SearchEvent.GeneralPostEvent) -> Unit,
@@ -67,7 +75,7 @@ fun PostScreen(
     val scope = rememberCoroutineScope()
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-
+    val selectedWorkouts by planViewModel.selectedWorkouts.observeAsState(listOf())
 
     BottomSheetScaffold(
         topBar = {
@@ -109,7 +117,9 @@ fun PostScreen(
         },
         scaffoldState = scaffoldState,
         sheetContent = {
-            SheetContent { selectedUri ->
+            SheetContent(onShareWorkout = {
+                navController.navigate(Route.WorkoutListScreen.route)
+            }) { selectedUri ->
                 imageUri = selectedUri
             }
         },
@@ -121,6 +131,7 @@ fun PostScreen(
         ) {
 
             Column(modifier = Modifier.fillMaxSize()) {
+
 
                 imageUri?.let {
 
@@ -158,6 +169,14 @@ fun PostScreen(
                     }
 
                 }
+
+                // TODO check here selected workouts
+                if (selectedWorkouts.isNotEmpty()){
+                    selectedWorkouts.forEach {
+                        Log.d("DEBUG", "workout name ${it.name}")
+                    }
+                }
+
 
 
                 OutlinedTextField(
@@ -198,7 +217,7 @@ fun AttachButton(onClick: () -> Unit){
 
 
 @Composable
-fun SheetContent(onImageSelected: (Uri) -> Unit) {
+fun SheetContent(onShareWorkout : () -> Unit, onImageSelected: (Uri) -> Unit) {
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
@@ -206,22 +225,26 @@ fun SheetContent(onImageSelected: (Uri) -> Unit) {
             }
         }
 
-    GridContent(onItemClick = {
-        launcher.launch(
-            "image/*"
-        )
-    })
+    GridContent(
+        onItemClick = {
+            launcher.launch(
+                "image/*"
+            )},
+        onShareWorkout = onShareWorkout
+
+    )
 
 }
 
 
 
 @Composable
-fun GridContent(onItemClick: () -> Unit) {
+fun GridContent(onShareWorkout: () -> Unit,onItemClick: () -> Unit) {
 
     val items = listOf(
+        Triple("Workout", Icons.Default.FitnessCenter, onShareWorkout),
         Triple("Image", Icons.Default.Image, onItemClick),
-        Triple("Video", Icons.Default.VideoFile, {}),
+        Triple("Video", Icons.Default.VideoFile, {})
 
     )
 
@@ -270,10 +293,3 @@ fun GridItem(icon: ImageVector, label: String, onClick: () -> Unit) {
     }
 }
 
-@Preview
-@Composable
-fun Prev(){
-    val navController = rememberNavController()
-
-    //PostScreen { navController.popBackStack() }
-}

@@ -52,6 +52,7 @@ import com.project.gains.presentation.settings.AccountScreen
 import com.project.gains.presentation.settings.LinkedSocialSettingScreen
 import com.project.gains.presentation.share.PostScreen
 import com.project.gains.presentation.share.ShareScreen
+import com.project.gains.presentation.share.WorkoutListScreen
 import com.project.gains.presentation.workout.WorkoutScreen
 import com.project.gains.presentation.workout.WorkoutViewModel
 
@@ -152,6 +153,20 @@ fun NavGraph(
                     completionMessage=completionMessage
                 )
             }
+            composable(
+                route = Route.WorkoutListScreen.route,
+                enterTransition = ::slideInToLeft,
+                exitTransition = ::slideOutToLeft,
+                popEnterTransition = ::slideInToRight,
+                popExitTransition = ::slideOutToRight
+            ) {
+                // set screen as the node state
+                WorkoutListScreen(
+                    navController = navController,
+                    planViewModel = planViewModel
+                )
+            }
+
             composable(
                 route = Route.FeedScreen.route,
                 popEnterTransition = ::slideInToRight,
@@ -278,6 +293,8 @@ fun NavGraph(
                 popExitTransition = ::slideOutToRight
             ) {
                 PostScreen(
+                    navController = navController,
+                    planViewModel = planViewModel,
                     onPost = {navController.navigate(Route.FeedScreen.route)},
                     onExit = {navController.popBackStack()},
                     generalPostHandler = feedViewModel::onSearchEvent,

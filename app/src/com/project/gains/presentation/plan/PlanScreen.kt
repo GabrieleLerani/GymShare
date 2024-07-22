@@ -25,10 +25,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -107,7 +109,10 @@ fun PlanScreen(
 
                             Spacer(modifier = Modifier.height(30.dp))
 
-                            WorkoutDaysList(plan.workouts) {
+                            WorkoutDaysList(
+                                title = "Workouts",
+                                workouts = plan.workouts
+                            ) {
                                 navController.navigate(Route.WorkoutScreen.route)
                             }
                         }
@@ -130,8 +135,11 @@ fun PlanScreen(
 
 @Composable
 fun SelectButton(onClick: () -> Unit, modifier: Modifier, isSelected: Boolean){
-    FilledTonalButton(
+    ElevatedButton(
         onClick = { onClick() },
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 4.dp
+        ),
         modifier = modifier,
         colors = ButtonDefaults.filledTonalButtonColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -217,12 +225,12 @@ fun AlignedTextItem(label: String, value: String) {
 }
 
 @Composable
-fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,) {
+fun WorkoutDaysList(title : String,workouts: MutableList<Workout>, selectHandler: (ManageWorkoutEvent.SelectWorkout)->Unit,) {
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = "Workouts",
+            text = title,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -247,7 +255,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                             .fillMaxWidth()
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+                        horizontalArrangement = Arrangement.Start
                     ) {
                         Icon(
                             imageVector = Icons.Default.FitnessCenter,
@@ -270,8 +278,9 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                     }
                     Row (
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
+
                         Button(
                             onClick = { /*TODO*/ },
                             modifier = Modifier
@@ -281,7 +290,7 @@ fun WorkoutDaysList(workouts: MutableList<Workout>, selectHandler: (ManageWorkou
                                 text = "Modify workout",
                             )
                         }
-                        Button(
+                        OutlinedButton(
                             onClick = { selectHandler(ManageWorkoutEvent.SelectWorkout(workout)) },
                             modifier = Modifier
                                 .padding(end = 16.dp, bottom = 8.dp)

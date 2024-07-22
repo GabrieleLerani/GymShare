@@ -130,15 +130,16 @@ fun WorkoutModeScreen(
         topBar = {
             TopBar(
                 message = "Workout Mode",
-                button = { }
-            ) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        Icons.Filled.Close,
-                        contentDescription = "Close Icon",
-                    )
-                }
-            }
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            Icons.Filled.Close,
+                            contentDescription = "Close Icon",
+                        )
+                    }
+                },
+                actionIcon = {}
+            )
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)

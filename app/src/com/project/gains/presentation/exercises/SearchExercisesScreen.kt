@@ -56,6 +56,7 @@ import com.project.gains.presentation.components.BackButton
 import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.ExerciseSearchBar
 import com.project.gains.presentation.components.SearchViewModel
+import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.components.events.ManageCategoriesEvent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -116,7 +117,7 @@ fun SearchExercisesScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
-                ExerciseTopBar(
+                TopBar(
                     message = "Exercises",
                     navigationIcon = {
                         if (multiSelectionState.isMultiSelectionModeEnabled){
@@ -305,26 +306,6 @@ fun rememberMultiSelectionState(): MultiSelectionState {
     return rememberSaveable(saver = MultiSelectionStateSaver) {
         MultiSelectionState()
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExerciseTopBar(message: String, navigationIcon: @Composable () -> Unit, actionIcon: @Composable () -> Unit) {
-
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = message,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-            )
-        },
-        navigationIcon = { navigationIcon() },
-        actions = { actionIcon() },
-        colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer)
-    )
 }
 
 

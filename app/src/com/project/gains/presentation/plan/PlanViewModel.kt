@@ -2,11 +2,13 @@ package com.project.gains.presentation.plan
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.project.gains.data.Exercise
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.Plan
 import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
+import com.project.gains.data.Workout
 import com.project.gains.data.generateRandomPlan
 import com.project.gains.data.generateSamplePlans
 import com.project.gains.presentation.plan.events.ManagePlanEvent
@@ -34,12 +36,23 @@ class PlanViewModel @Inject constructor() : ViewModel() {
 
     private var int = 0
 
+    private val _selectedWorkouts = MutableLiveData<MutableList<Workout>>()
+    val selectedWorkouts: MutableLiveData<MutableList<Workout>> = _selectedWorkouts
+
     init {
         _plans.value = generateSamplePlans()
         _selectedPlan.value = generateSamplePlans().get(0)
         _selectedLvl.value = Level.BEGINNER
         _selectedTrainingType.value = TrainingType.STRENGTH
         _selectedFrequency.value = Frequency.THREE
+    }
+
+    // TODO check if required
+    fun updateSelectedWorkouts(workouts: List<Workout>){
+        workouts.forEach {
+            _selectedWorkouts.value?.add(it)
+        }
+
     }
 
     fun onCreatePlanEvent(event: ManagePlanEvent) {

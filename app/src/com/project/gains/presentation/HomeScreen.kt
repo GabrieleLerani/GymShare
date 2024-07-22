@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -108,8 +109,11 @@ fun HomeScreen(
 
 @Composable
 fun WorkoutModeButton(modifier: Modifier,onClick: () -> Unit){
-    FilledTonalButton(
+    ElevatedButton(
         onClick = { onClick() },
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = 4.dp
+        ),
         modifier = modifier,
         colors = ButtonDefaults.filledTonalButtonColors(
             containerColor = MaterialTheme.colorScheme.primary,

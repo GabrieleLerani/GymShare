@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
@@ -150,7 +149,7 @@ fun WorkoutBottomBar(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable () -> Unit) {
+fun TopBar(message: String, actionIcon: @Composable () -> Unit, navigationIcon: @Composable () -> Unit) {
     CenterAlignedTopAppBar(
         title = {
             Text(
@@ -160,8 +159,8 @@ fun TopBar(message: String, button: @Composable () -> Unit, button1: @Composable
 
             )
         },
-        navigationIcon = { button1() },
-        actions = { button() },
+        navigationIcon = { navigationIcon() },
+        actions = { actionIcon() },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             titleContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -229,137 +228,148 @@ fun DynamicTopBar(
         Route.SettingsScreen.route -> {
             TopBar(
                 message = " General Settings",
-                button= {
+                navigationIcon = {
                 },
-
-            ) {}
+                actionIcon = {}
+            )
         }
 
         Route.LinkedSocialSettingScreen.route -> {
             TopBar(
                 message = "Sharing Preferences",
-                button= {
+                navigationIcon = {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                },
+                actionIcon = {
                     LogoUser(
                         modifier = Modifier.size(60.dp), R.drawable.pexels5
                     ) { navController.navigate(Route.AccountScreen.route) }
                 }
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
+            )
         }
 
         Route.AccountScreen.route -> {
             TopBar(
                 message = "Account Settings",
-                button = {
-                }
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
+                navigationIcon = {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                },
+                actionIcon = {}
+            )
         }
 
         Route.NewPlanScreen.route -> {
             TopBar(
                 message = "",
-                button = {}
-            ) {
-                IconButton(onClick = {
-                    navController.popBackStack()
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
 
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close Icon"
-                    )
-                }
-            }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Icon"
+                        )
+                    }
+                },
+                actionIcon = {}
+            )
         }
 
         Route.AddGeneratedPlanScreen.route -> {
             TopBar(
                 message = "",
-                button= {}
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
+                navigationIcon = {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                },
+                actionIcon = {}
+            )
         }
 
         Route.AddManualWorkoutScreen.route -> {
             TopBar(
                 message = "",
-                button= {}
-            ) {
-                BackButton {
-                    navController.currentBackStackEntry
-                    navController.popBackStack()
+                navigationIcon = {
+                    BackButton {
+                        navController.currentBackStackEntry
+                        navController.popBackStack()
 
-                }
-            }
+                    }
+                },
+                actionIcon = {}
+            )
         }
 
         Route.LastNewPlanScreen.route -> {
             TopBar(
                 message = "",
-                button= {}
-            ) {
-                BackButton {
-                    navController.popBackStack()
-                }
-            }
+                navigationIcon = {
+                    BackButton {
+                        navController.popBackStack()
+                    }
+                },
+                actionIcon = {}
+            )
         }
 
         Route.ShareScreen.route -> {
             TopBar(
                 message = "",
-                button= {}
-            ) {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close Icon"
-                    )
-                }
-            }
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Icon"
+                        )
+                    }
+                },
+                actionIcon = {}
+            )
         }
 
         Route.ForgotPasswordScreen.route -> {
             TopBar(
                 message = "",
-                button= {}
-            ) {
-                IconButton(onClick = {
-                    navController.navigate(Route.SignInScreen.route)
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close Icon"
-                    )
-                }
-            }
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.navigate(Route.SignInScreen.route)
+
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Icon"
+                        )
+                    }
+                },
+                actionIcon = {}
+            )
         }
 
         Route.OTPScreen.route -> {
             TopBar(
                 message = "",
-                button= {}
-            ) {
-                IconButton(onClick = {
-                    navController.navigate(Route.SignInScreen.route)
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Close Icon"
-                    )
-                }
-            }
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.navigate(Route.SignInScreen.route)
+
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Close Icon"
+                        )
+                    }
+                },
+                actionIcon = {}
+            )
         }
     }
     if (showNotification.value) {
@@ -389,6 +399,7 @@ fun DynamicBottomBar(navController: NavController, scrollBehavior: BottomAppBarS
         Route.LastNewPlanScreen.route -> {}
         Route.WorkoutModeScreen.route -> {}
         Route.ShareScreen.route -> {}
+        Route.WorkoutListScreen.route -> {}
         Route.PostScreen.route -> {}
         Route.ExerciseDetailsScreen.route -> {}
         Route.SearchExerciseScreen.route -> {}
@@ -471,6 +482,6 @@ fun MyDropPrev(){
 
     )
 
-    TopBar(message = "top bar", button1 = {},button = { MyDropdownMenu(planScreenMenuItems) })
+    TopBar(message = "top bar", navigationIcon = {}, actionIcon = { MyDropdownMenu(planScreenMenuItems) })
 
 }
