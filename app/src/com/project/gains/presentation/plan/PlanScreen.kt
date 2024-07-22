@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CheckCircleOutline
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,6 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +47,7 @@ import com.project.gains.data.Level
 import com.project.gains.data.Plan
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
+import com.project.gains.presentation.components.PlanTopBar
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.presentation.workout.events.ManageWorkoutEvent
@@ -72,6 +76,17 @@ fun PlanScreen(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            PlanTopBar(message = plan.name) {
+                IconButton(onClick = {
+                    navController.navigate(Route.PlansProgressesScreen.route)
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Back Icon"
+                    )
+                }
+            }
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()

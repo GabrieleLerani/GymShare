@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
@@ -49,7 +50,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.project.gains.R
 import com.project.gains.data.bottomNavItems
 import com.project.gains.presentation.navgraph.Route
-
 
 data class MenuItem(
     val text: String,
@@ -186,6 +186,23 @@ fun FavoriteTopBar(message: String, navigationIcon: @Composable () -> Unit, drop
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlanTopBar(message: String, navigationIcon: @Composable () -> Unit) {
+
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = message,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier
+            )
+        },
+        navigationIcon = { navigationIcon() },
+        actions = {},
+    )
+}
+
 @Composable
 fun currentRoute(navController: NavController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -201,7 +218,6 @@ fun DynamicTopBar(
     val notificationMessage = remember { mutableStateOf("") }
 
     when (currentRoute) {
-
 
         Route.HomeScreen.route,
         Route.WorkoutScreen.route,
@@ -384,7 +400,7 @@ fun DynamicBottomBar(navController: NavController, scrollBehavior: BottomAppBarS
         Route.ForgotPasswordScreen.route -> {}
         Route.OTPScreen.route -> {}
         Route.ChangePasswordScreen.route -> {}
-
+        "planScreen/{planId}" -> {}
 
         else -> {
             BottomNavigationBar(navController = navController, scrollBehavior = scrollBehavior)
