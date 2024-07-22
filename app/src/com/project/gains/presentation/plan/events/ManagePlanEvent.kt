@@ -1,16 +1,14 @@
 package com.project.gains.presentation.plan.events
 
-import com.project.gains.data.ExerciseType
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.Plan
-import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
+import com.project.gains.data.Workout
 
 sealed class ManagePlanEvent {
     data class CreatePlan(
-        val selectedMetricType: MutableList<TrainingMetricType>,
-        val selectedExerciseType: MutableList<ExerciseType>,
+        val workouts: List<Workout>,
         val selectedMusic: Boolean,
         val selectedBackup: Boolean
     ) : ManagePlanEvent()

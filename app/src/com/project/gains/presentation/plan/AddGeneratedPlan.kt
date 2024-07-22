@@ -26,8 +26,6 @@ import com.project.gains.presentation.plan.components.OnGeneratedPage
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 import com.project.gains.theme.GainsAppTheme
 
-// TODO test it because it can be completely broken
-// TODO if it is, then insert the pages with checkboxes inside the onboardingpages
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddGeneratedPlan(
@@ -71,17 +69,11 @@ fun AddGeneratedPlan(
                         navController = navController,
                         planOptionsHandler = planOptionsHandler
                     )
-
                 }
-
             }
         }
     }
-
-
 }
-
-
 
 @Preview(showBackground = true)
 @Composable

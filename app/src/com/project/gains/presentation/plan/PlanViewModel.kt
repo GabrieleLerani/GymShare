@@ -28,7 +28,9 @@ class PlanViewModel @Inject constructor() : ViewModel() {
 
     private val _selectedLvl = MutableLiveData<Level>()
     private val _selectedTrainingType = MutableLiveData<TrainingType>()
+    val selectedTrainingType: MutableLiveData<TrainingType> = _selectedTrainingType
     private val _selectedFrequency = MutableLiveData<Frequency>()
+    val selectedFrequency: MutableLiveData<Frequency> = _selectedFrequency
 
     private var int = 0
 
@@ -44,11 +46,6 @@ class PlanViewModel @Inject constructor() : ViewModel() {
         when (event) {
 
             is ManagePlanEvent.CreatePlan -> {
-                val workouts = generateRandomPlan(
-                    _selectedTrainingType.value ?: TrainingType.STRENGTH,
-                    event.selectedExerciseType,
-                    (_selectedFrequency.value?.ordinal ?: 1) + 2
-                )
 
                 int += 1
 
@@ -57,8 +54,8 @@ class PlanViewModel @Inject constructor() : ViewModel() {
 
                 val plan = Plan(
                     id = int,
-                    name = "plan $int",
-                    workouts = workouts.toMutableList(),
+                    name = "Plan $int",
+                    workouts = event.workouts.toMutableList(),
                     frequency = _selectedFrequency.value ?: Frequency.THREE,
                     level = _selectedLvl.value ?: Level.BEGINNER,
                     training = _selectedTrainingType.value ?: TrainingType.STRENGTH,

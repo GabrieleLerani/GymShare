@@ -1,6 +1,5 @@
 package com.project.gains.presentation.plan
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +21,6 @@ import androidx.navigation.compose.rememberNavController
 import com.project.gains.presentation.navgraph.Route
 
 import com.project.gains.theme.GainsAppTheme
-
-
 
 @Composable
 fun NewPlanScreen(

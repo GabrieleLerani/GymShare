@@ -215,7 +215,12 @@ fun NavGraph(
                 popExitTransition = ::slideOutToRight
             ) {
                 // set screen as the node state
-                LastNewPlanScreen(navController = navController,planViewModel::onCreatePlanEvent,completionMessage=completionMessage)
+                LastNewPlanScreen(
+                    navController = navController,
+                    createPlanHandler = planViewModel::onCreatePlanEvent,
+                    addWorkoutHandler = workoutViewModel::onManageWorkoutEvent,
+                    planViewModel = planViewModel,
+                    completionMessage = completionMessage)
             }
             composable(
                 route = Route.AddGeneratedPlanScreen.route,

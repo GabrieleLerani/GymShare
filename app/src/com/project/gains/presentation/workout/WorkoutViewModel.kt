@@ -41,19 +41,15 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
     private var _showVideoDialog = MutableLiveData<Boolean>()
     val showVideoDialog : MutableLiveData<Boolean> = _showVideoDialog
 
-    private var _fullscreenDialog = MutableLiveData<Boolean>()
-    val fullscreenDialog : MutableLiveData<Boolean> = _fullscreenDialog
-
     private var songIndex = 0
 
     init {
-        _favouriteWorkouts.value= mutableListOf()
+        _favouriteWorkouts.value = mutableListOf()
         _workouts.value = mutableListOf()
         _exercises.value = generateSampleExercises()
         _currentSong.value = Song("Linkin Park","","In the end") // Dummy init
         _songs.value = generateRandomSongs(5)
         _selectedWorkout.value = generateSampleWorkouts()[0]
-        _fullscreenDialog.value = true
     }
 
     fun onMusicEvent(event: MusicEvent) {
@@ -66,7 +62,7 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                 if (songIndex < _songs.value?.size!! - 1) {
                     songIndex++
                 } else {
-                    songIndex=0
+                    songIndex = 0
                 }
                 _currentSong.value= _songs.value?.get(songIndex)
             }
@@ -74,9 +70,9 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                 if (songIndex > 0) {
                     songIndex--
                 } else {
-                    songIndex=_songs.value?.size!! - 1
+                    songIndex = _songs.value?.size!! - 1
                 }
-                _currentSong.value= _songs.value?.get(songIndex)
+                _currentSong.value = _songs.value?.get(songIndex)
             }
         }
     }
@@ -95,7 +91,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                 _selectedWorkout.value = event.workout
             }
 
-
             is ManageWorkoutEvent.AddWorkoutFavourite -> {
                 selectedWorkout.value?.let {
                     if (!_favouriteWorkouts.value?.contains(it)!!) {
@@ -103,8 +98,8 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
                         _favouriteWorkouts.value?.add(it)
                     }
                 }
-
             }
+
             is ManageWorkoutEvent.DeleteWorkoutFavourite -> {
                 selectedWorkout.value?.let {
                     if (_favouriteWorkouts.value?.contains(it) == true) {
@@ -119,9 +114,6 @@ class WorkoutViewModel @Inject constructor() : ViewModel(){
         when(event) {
             is VideoEvent.VisibilityVideoEvent -> {
                 _showVideoDialog.value = event.visible
-            }
-            is VideoEvent.FullscreenVideoEvent -> {
-                _fullscreenDialog.value = event.fullscreen
             }
         }
     }

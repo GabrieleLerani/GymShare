@@ -103,9 +103,11 @@ fun PlansScreen(
 ) {
     val plans by planViewModel.plans.observeAsState()
 
-    Column {
+    LazyColumn {
         plans!!.forEach { plan ->
-            CustomCard(plan = plan, onNavigate = { onPlanClicked(plan.id) })
+            item {
+                CustomCard(plan = plan, onNavigate = { onPlanClicked(plan.id) })
+            }
         }
     }
 }
@@ -214,7 +216,6 @@ fun ProgressDetailsScreen() {
                                     )
 
                                 )
-
 
                                 ExposedDropdownMenu(
                                     expanded = expandedPeriod,
@@ -325,7 +326,6 @@ fun ProgressDetailsScreen() {
                                         ExposedDropdownMenuDefaults.TrailingIcon(
                                             expanded = expandedPlot
                                         )
-
                                     },
                                     readOnly = true,
                                     modifier = Modifier
@@ -335,7 +335,6 @@ fun ProgressDetailsScreen() {
                                         focusedBorderColor = MaterialTheme.colorScheme.primary, // Set the contour color when focused
                                         unfocusedBorderColor = MaterialTheme.colorScheme.primary // Set the contour color when not focused
                                     )
-
                                 )
 
                                 ExposedDropdownMenu(

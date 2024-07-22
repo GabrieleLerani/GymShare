@@ -27,6 +27,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,21 +38,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.project.gains.data.ExerciseType
 import com.project.gains.data.Option
 import com.project.gains.data.TrainingMetricType
+import com.project.gains.data.TrainingType
 import com.project.gains.data.generateOptions
+import com.project.gains.data.generateRandomPlan
 import com.project.gains.presentation.Dimension
 import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManagePlanEvent
+import com.project.gains.presentation.workout.events.ManageWorkoutEvent
 
 @Composable
 fun LastNewPlanScreen(
     navController: NavController,
     createPlanHandler: (ManagePlanEvent.CreatePlan) -> Unit,
+    addWorkoutHandler: (ManageWorkoutEvent.CreateWorkout) -> Unit,
+    planViewModel: PlanViewModel,
     completionMessage: MutableState<String>
 ) {
     val selectedExerciseTypes = remember { mutableStateListOf<ExerciseType>() }
@@ -61,6 +68,9 @@ fun LastNewPlanScreen(
     val allOptions = remember { generateOptions() }
     val options = remember { mutableStateListOf<Option>().apply { addAll(allOptions) } }
     val showDialog = remember { mutableStateOf(false) }
+
+    val selectedFrequency = planViewModel.selectedFrequency.observeAsState()
+    val selectedTrainingType = planViewModel.selectedTrainingType.observeAsState()
 
     // Function to handle checkbox state change
     fun onOptionSelected(option: Option, isChecked: Boolean) {
@@ -348,15 +358,27 @@ fun LastNewPlanScreen(
                     .align(Alignment.Center)
                     .height(60.dp),
                 onClick = {
+                    val workouts = generateRandomPlan(
+                        trainingType = selectedTrainingType.value ?: TrainingType.STRENGTH,
+                        muscleGroups = selectedExerciseTypes,
+                        numberOfWorkouts = (selectedFrequency.value?.ordinal ?: 1) + 2
+                    )
+
                     createPlanHandler(
                         ManagePlanEvent.CreatePlan(
-                            selectedMetrics,
-                            selectedExerciseTypes,
-                            selectedMusic.value,
-                            selectedBackup.value
+                            workouts = workouts,
+                            selectedMusic = selectedMusic.value,
+                            selectedBackup = selectedBackup.value
                         )
                     )
-                    showDialog.value=true
+
+                    workouts.forEach { workout ->
+                        addWorkoutHandler(
+                            ManageWorkoutEvent.CreateWorkout(workout)
+                        )
+                    }
+
+                    showDialog.value = true
 
                 },
             ) {
@@ -428,9 +450,12 @@ fun OptionCheckbox(
 @Composable
 fun LastNewPlanScreenPreview() {
     val navController = rememberNavController()
+    val planViewModel: PlanViewModel = hiltViewModel()
     LastNewPlanScreen(
         navController = navController,
         createPlanHandler = {},
+        addWorkoutHandler = {},
+        planViewModel = planViewModel,
         completionMessage = mutableStateOf("")
     )
 }
