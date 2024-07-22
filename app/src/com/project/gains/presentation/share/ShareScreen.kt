@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectable
@@ -52,8 +51,6 @@ import com.project.gains.presentation.components.getPreviousDestination
 import com.project.gains.presentation.exercises.ExerciseViewModel
 import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
-import com.project.gains.presentation.plan.events.ManagePlanEvent
-import com.project.gains.presentation.progress.ProgressViewModel
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.WorkoutViewModel
 import com.project.gains.util.getNameByRes

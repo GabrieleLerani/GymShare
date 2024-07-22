@@ -2,7 +2,7 @@ package com.project.gains.util
 
 import com.project.gains.R
 import com.project.gains.data.Categories
-import com.project.gains.data.ExerciseCategories
+import com.project.gains.data.ExerciseType
 import com.project.gains.data.Weekdays
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -77,8 +77,8 @@ fun getNameByRes(app : Int): String {
 
 }
 
-fun getExerciseCategory(category: String): ExerciseCategories {
-    return ExerciseCategories.valueOf(category.replaceFirstChar {
+fun getExerciseCategory(category: String): ExerciseType {
+    return ExerciseType.valueOf(category.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.ROOT
             ) else it.toString()

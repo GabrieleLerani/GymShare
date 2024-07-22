@@ -103,8 +103,6 @@ fun SearchExercisesScreen(
         false
     }
 
-
-
     val groupedExercises = searchedExercises.groupBy { it.name[0] } // group by first char
     //val groupedExercises = exercises.groupBy { it.name[0] } // group by first char
 
@@ -157,7 +155,7 @@ fun SearchExercisesScreen(
                     }
                 )
 
-
+                // TODO test it
                 ExerciseSearchBar(
                     modifier = Modifier
                         .semantics { traversalIndex = 0f },
@@ -165,13 +163,22 @@ fun SearchExercisesScreen(
                     selectedCategory = selectedCategory.toString(),
                     onSearchClicked = { query ->
                         searchViewModel.updateSearchQuery(query)
-                        val exercises = if (query.isNotBlank()) {
-                            allExercises?.filter {
-                                it.name.contains(query, ignoreCase = true)
-                            } ?: listOf()
-                        } else {
-                            allExercises
-                        }
+                        val exercises =
+                            if (query.isNotBlank() && selectedCategory != null) {
+                                    allExercises?.filter {
+                                        it.name.contains(query, ignoreCase = true) && it.type == selectedCategory
+                                    } ?: listOf()
+                            } else if (query.isNotBlank()) {
+                                allExercises?.filter {
+                                    it.name.contains(query, ignoreCase = true)
+                                } ?: listOf()
+                            } else if (selectedCategory != null) {
+                                allExercises?.filter {
+                                    it.type == selectedCategory
+                                } ?: listOf()
+                            } else {
+                                allExercises
+                            }
                         searchViewModel.updateSearchedExercises(exercises)
                     },
                     assignCategoryHandler = assignCategoryHandler
@@ -368,7 +375,6 @@ fun MultiSelectionContainer(
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
     val exerciseViewModel: ExerciseViewModel = hiltViewModel()
     val searchViewModel: SearchViewModel = hiltViewModel()

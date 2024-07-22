@@ -108,15 +108,6 @@ enum class Categories {
     User, Workout, Keyword, Social
 }
 
-enum class ExerciseCategories {
-    Chest, Back, Shoulders, Arms, Abdominals, Legs, Glutes, Calves, Forearms, Core
-}
-
-
-enum class Socials {
-    Facebook, TikTok, Instagram, X
-}
-
 data class Exercise(
     val name: String,
     val description: List<String>,  // Nullable Integer for resource ID
@@ -188,7 +179,7 @@ sealed class BottomNavItem(
     val title: String,
     val hasNews: Boolean,
     var badgeCount: Int? = null,
-    ) {
+) {
     data object Home : BottomNavItem(Route.HomeScreen.route, Icons.Filled.Home, Icons.Outlined.Home, "Home", false)
     data object Add : BottomNavItem(Route.NewPlanScreen.route, Icons.Filled.AddCircleOutline, Icons.Outlined.AddCircleOutline,"Add", false)
     data object Plan : BottomNavItem(Route.PlansProgressesScreen.route, Icons.Filled.Event, Icons.Outlined.Event,"Plan" , false)
@@ -218,23 +209,23 @@ fun generateSampleExercises(): MutableList<Exercise> {
         Exercise(
             "Dumbell Curl",
             description = listOf(
-                    "1. Stand upright with a dumbbell in each hand, arms fully extended by your sides, palms facing forward.",
-                    "2. Keep your elbows close to your torso and engage your core for stability.",
-                    "3. Begin the movement by flexing your elbows, curling the dumbbells towards your shoulders while keeping your upper arms stationary." ,
-                    "4. Continue to curl until the dumbbells are at shoulder level, and your biceps are fully contracted." ,
-                    "5. Hold the contracted position for a moment, then slowly lower the dumbbells back to the starting position with control." ,
-                    "6. Repeat for the desired number of repetitions." ,),
+                "1. Stand upright with a dumbbell in each hand, arms fully extended by your sides, palms facing forward.",
+                "2. Keep your elbows close to your torso and engage your core for stability.",
+                "3. Begin the movement by flexing your elbows, curling the dumbbells towards your shoulders while keeping your upper arms stationary." ,
+                "4. Continue to curl until the dumbbells are at shoulder level, and your biceps are fully contracted." ,
+                "5. Hold the contracted position for a moment, then slowly lower the dumbbells back to the starting position with control." ,
+                "6. Repeat for the desired number of repetitions." ,),
             gifResId = R.drawable.arms2,
             type = ExerciseType.ARMS,
             training = TrainingType.STRENGTH,
             sets = 4,
             totalTime = 90,
             warnings = listOf(
-                    "Use a controlled motion throughout the exercise, avoiding swinging or momentum." ,
-                    "Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists." ,
-                    "Focus on squeezing the biceps at the top of the movement to maximize muscle engagement." ,
-                    "Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing." ,
-                    "Choose an appropriate weight that allows you to perform the exercise with proper form and control.",),
+                "Use a controlled motion throughout the exercise, avoiding swinging or momentum." ,
+                "Keep your wrists straight and neutral to maximize bicep activation and reduce strain on the wrists." ,
+                "Focus on squeezing the biceps at the top of the movement to maximize muscle engagement." ,
+                "Exhale as you lift the weights and inhale as you lower them, maintaining steady breathing." ,
+                "Choose an appropriate weight that allows you to perform the exercise with proper form and control.",),
             R.raw.chest
         ),
         Exercise(
@@ -268,20 +259,20 @@ fun generateSampleExercises(): MutableList<Exercise> {
             sets = 4,
             totalTime = 90,
             warnings = listOf(
-                        "Keep your knees in line with your toes throughout the movement." ,
-                        "Avoid leaning forward excessively; maintain an upright posture." ,
-                        "Breathe in as you lower your body and exhale as you push back up.",),
+                "Keep your knees in line with your toes throughout the movement." ,
+                "Avoid leaning forward excessively; maintain an upright posture." ,
+                "Breathe in as you lower your body and exhale as you push back up.",),
             R.raw.chest
         ),
         Exercise(
             "Deadlift",
             description = listOf(
-                    "1. Stand with your feet hip-width apart, toes pointing forward." ,
-                    "2. Bend at your hips and knees to grip the barbell with your hands slightly wider than shoulder-width apart." ,
-                    "3. Keep your back straight and chest up as you lift the barbell by extending your hips and knees." ,
-                    "4. Stand up fully, bringing the barbell to hip level." ,
-                    "5. Lower the barbell back to the ground with control." ,
-                    "6. Repeat for the desired number of repetitions." ,),
+                "1. Stand with your feet hip-width apart, toes pointing forward." ,
+                "2. Bend at your hips and knees to grip the barbell with your hands slightly wider than shoulder-width apart." ,
+                "3. Keep your back straight and chest up as you lift the barbell by extending your hips and knees." ,
+                "4. Stand up fully, bringing the barbell to hip level." ,
+                "5. Lower the barbell back to the ground with control." ,
+                "6. Repeat for the desired number of repetitions." ,),
             gifResId = R.drawable.backk,
             type = ExerciseType.BACK,
             training = TrainingType.STRENGTH,
@@ -361,10 +352,10 @@ fun generateSampleExercises(): MutableList<Exercise> {
         Exercise(
             "Tricep Push Ups",
             description = listOf(  "1. Position your hands shoulder-width apart on a stable bench or chair." ,
-                    "2. Extend your legs out in front of you." ,
-                    "3. Lower your body by bending your elbows until your upper arms are parallel to the ground." ,
-                    "4. Push back up to the starting position." ,
-                    "5. Repeat for the desired number of repetitions." ,),
+                "2. Extend your legs out in front of you." ,
+                "3. Lower your body by bending your elbows until your upper arms are parallel to the ground." ,
+                "4. Push back up to the starting position." ,
+                "5. Repeat for the desired number of repetitions." ,),
             gifResId = R.drawable.arms3,
             type = ExerciseType.ARMS,
             training = TrainingType.STRENGTH,

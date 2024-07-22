@@ -159,9 +159,6 @@ fun SearchAppBar(
         onDispose { }
     }
 
-
-
-
 }
 
 
@@ -179,8 +176,6 @@ fun FeedSearchBar(
     val items = remember {
         mutableListOf("gabriele","gianmarco","carlo","curl", "planck") // dummy values
     }
-
-
 
     SearchBar(
 
@@ -272,12 +267,10 @@ fun ResearchFilter(
             FilterChip(
                 category = category,
                 isSelected = isSelected,
-                onCategorySelected = onCategorySelected,
-
-                )
+                onCategorySelected = onCategorySelected
+            )
         }
     }
-
 }
 
 @ExperimentalMaterialApi
@@ -337,11 +330,10 @@ fun ExerciseSearchBar(
             onQueryChange = { text = it },
             onSearch = {
                 onSearchClicked(text)
-                if (text.isNotBlank() && !items.contains(text)){
+                if (text.isNotBlank() && !items.contains(text)) {
                     items.add(text)
                 }
                 active = false
-
             },
             active = active,
             onActiveChange = { active = it},
@@ -369,7 +361,7 @@ fun ExerciseSearchBar(
                 }
 
             }
-        ){
+        ) {
 
             items.forEach {
                 Row(modifier = Modifier
@@ -393,14 +385,12 @@ fun ExerciseSearchBar(
             selectedCategory = selectedCategory.toString(),
             onCategorySelected = { category ->
                 assignCategoryHandler(ManageCategoriesEvent.AssignExerciseCategoryEvent(
-                    getExerciseCategory(category) ))
+                    getExerciseCategory(category)
+                ))
             }
         )
 
     }
-
-
-
 }
 
 @OptIn(ExperimentalMaterialApi::class)
