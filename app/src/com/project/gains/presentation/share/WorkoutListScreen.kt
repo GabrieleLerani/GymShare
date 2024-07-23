@@ -1,6 +1,6 @@
 package com.project.gains.presentation.share
 
-import android.util.Log
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

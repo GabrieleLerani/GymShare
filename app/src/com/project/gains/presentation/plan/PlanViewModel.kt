@@ -1,15 +1,14 @@
 package com.project.gains.presentation.plan
 
+
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.project.gains.data.Exercise
 import com.project.gains.data.Frequency
 import com.project.gains.data.Level
 import com.project.gains.data.Plan
-import com.project.gains.data.TrainingMetricType
 import com.project.gains.data.TrainingType
 import com.project.gains.data.Workout
-import com.project.gains.data.generateRandomPlan
 import com.project.gains.data.generateSamplePlans
 import com.project.gains.presentation.plan.events.ManagePlanEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,7 +40,8 @@ class PlanViewModel @Inject constructor() : ViewModel() {
 
     init {
         _plans.value = generateSamplePlans()
-        _selectedPlan.value = generateSamplePlans().get(0)
+        _selectedWorkouts.value = mutableListOf()
+        _selectedPlan.value = generateSamplePlans()[0]
         _selectedLvl.value = Level.BEGINNER
         _selectedTrainingType.value = TrainingType.STRENGTH
         _selectedFrequency.value = Frequency.THREE
@@ -49,11 +49,14 @@ class PlanViewModel @Inject constructor() : ViewModel() {
 
     // TODO check if required
     fun updateSelectedWorkouts(workouts: List<Workout>){
-        workouts.forEach {
-            _selectedWorkouts.value?.add(it)
-        }
-
+        _selectedWorkouts.value?.addAll(workouts)
     }
+
+    fun deleteSelectedWorkout(workout: Workout){
+        //Log.d("DEBUG", _selectedWorkouts.value?.remove(workout).toString())
+        _selectedWorkouts.value = _selectedWorkouts.value?.filter { it != workout } as MutableList<Workout>?
+    }
+
 
     fun onCreatePlanEvent(event: ManagePlanEvent) {
         when (event) {
