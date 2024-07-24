@@ -1,6 +1,6 @@
 package com.project.gains.presentation.explore.events
 
-import androidx.annotation.DrawableRes
+import android.net.Uri
 import com.project.gains.data.Categories
 import com.project.gains.data.Exercise
 import com.project.gains.data.Workout
@@ -16,5 +16,6 @@ sealed class SearchEvent {
     data class GymPostExerciseEvent(val exercise: Exercise, val social: Int,val username:String) : SearchEvent()
 
     data class GymPostProgressEvent( val social: Int,val username:String) : SearchEvent()
+    data class WorkoutPostEvent(val social: Int,val username:String, val imageUri: Uri?, val content: String) : SearchEvent()
 
 }

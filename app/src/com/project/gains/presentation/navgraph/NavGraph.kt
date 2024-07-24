@@ -298,6 +298,7 @@ fun NavGraph(
                     onPost = {navController.navigate(Route.FeedScreen.route)},
                     onExit = {navController.popBackStack()},
                     generalPostHandler = feedViewModel::onSearchEvent,
+                    workoutPostHandler = feedViewModel::onSearchEvent
                     )
             }
             composable(

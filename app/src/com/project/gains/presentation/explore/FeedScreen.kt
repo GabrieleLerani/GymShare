@@ -48,7 +48,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.project.gains.data.GymPost
+import com.project.gains.data.WorkoutPost
 import com.project.gains.presentation.components.FeedSearchBar
 import com.project.gains.presentation.components.LogoUser
 import com.project.gains.presentation.components.SearchViewModel
@@ -72,6 +74,7 @@ fun FeedScreen(
     val categories = searchViewModel.categories
     val selectedCategory by searchViewModel.selectedCategory.observeAsState()
     val gymPosts by feedViewModel.posts.observeAsState()
+    val workoutPosts by feedViewModel.workoutPosts.observeAsState()
     val listState = rememberLazyListState()
     val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 }}
     GainsAppTheme {
@@ -122,7 +125,13 @@ fun FeedScreen(
 
                     gymPosts?.forEach{gymPost ->
                         item {
-                            FeedPost(gymPost)
+                            GymPost(gymPost)
+                        }
+                    }
+
+                    workoutPosts?.forEach{workoutPost ->
+                        item {
+                            WorkoutPost(workoutPost)
                         }
                     }
                 }
@@ -135,9 +144,119 @@ fun FeedScreen(
 }
 
 
+@Composable
+fun WorkoutPost(workoutPost: WorkoutPost) {
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+
+        // Header Row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            // User Info Section
+            LogoUser(modifier = Modifier.size(60.dp), workoutPost.userResourceId) {
+                // Placeholder for user logo
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Column {
+                Text(
+                    text = workoutPost.username,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = workoutPost.time,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Spacer(modifier = Modifier.width(150.dp))
+            SocialMediaIcon(icon = workoutPost.randomSocialId, onClick = {}, isSelected = false)
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (workoutPost.imageUri != null){
+            AsyncImage(
+                model = workoutPost.imageUri,
+                contentDescription = "Post Image",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+
+
+        // Text Content Section
+        Text(
+            text = workoutPost.caption,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(vertical = 8.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        // Separator
+
+        // Interaction Section (Likes and Comments)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            // Likes Section
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Like Icon",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = workoutPost.likes,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Comments Section
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Comment,
+                    contentDescription = "Comment Icon",
+                    modifier = Modifier.size(24.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = workoutPost.comment,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+    Divider(color = Color.Gray, thickness = 0.2.dp, modifier = Modifier.fillMaxWidth())
+}
+
 
 @Composable
-fun FeedPost(gymPost: GymPost) {
+fun GymPost(gymPost: GymPost) {
+
 
     Column(
         modifier = Modifier

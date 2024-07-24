@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.project.gains.R
 import com.project.gains.data.Categories
 import com.project.gains.data.GymPost
+import com.project.gains.data.WorkoutPost
 import com.project.gains.data.generateRandomGymPost
 import com.project.gains.presentation.explore.events.SearchEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +17,13 @@ class FeedViewModel @Inject constructor() : ViewModel() {
     private val _posts = MutableLiveData<MutableList<GymPost>>()
     val posts: MutableLiveData<MutableList<GymPost>> = _posts
 
+    private val _workoutPosts = MutableLiveData<MutableList<WorkoutPost>>()
+    val workoutPosts: MutableLiveData<MutableList<WorkoutPost>> = _workoutPosts
+
+
     init {
         _posts.value = generateRandomGymPost(10).toMutableList()
+        _workoutPosts.value = mutableListOf()
     }
 
     fun onSearchEvent(event: SearchEvent) {
@@ -174,10 +180,13 @@ class FeedViewModel @Inject constructor() : ViewModel() {
             }
 
             is SearchEvent.GeneralPostEvent -> {
-                // TODO
-                Log.d("DEBUG","Event content: ${event.content}")
                 val post = GymPost(id ="1", userResourceId = R.drawable.pexels5, imageResourceId = R.drawable.pexels2, username = event.username, social = "Instagram", randomSocialId = R.drawable.instagram_icon, caption = event.content, time = "10:13", likes = "123", comment = "234")
                 _posts.value?.add(post)
+            }
+
+            is SearchEvent.WorkoutPostEvent -> {
+                val workoutPost = WorkoutPost(id ="1", userResourceId = R.drawable.pexels5, imageUri = event.imageUri, username = event.username, social = "Instagram", randomSocialId = R.drawable.instagram_icon, caption = event.content, time = "10:13", likes = "123", comment = "234")
+                _workoutPosts.value?.add(workoutPost)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.project.gains.presentation.share
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -55,12 +56,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import com.project.gains.data.Weekdays
-import com.project.gains.data.Workout
 import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.PlanViewModel
 import kotlinx.coroutines.launch
+import java.lang.StringBuilder
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -70,6 +70,7 @@ fun PostScreen(
     onPost: () -> Unit,
     onExit: () -> Unit,
     generalPostHandler: (SearchEvent.GeneralPostEvent) -> Unit,
+    workoutPostHandler: (SearchEvent.WorkoutPostEvent) -> Unit,
 ){
 
     var textState by remember { mutableStateOf(TextFieldValue("")) }
@@ -77,7 +78,7 @@ fun PostScreen(
     val scope = rememberCoroutineScope()
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val selectedWorkouts by planViewModel.selectedWorkouts.observeAsState(listOf())
+    val selectedWorkouts by planViewModel.selectedWorkouts.observeAsState(mutableListOf())
 
 
     BottomSheetScaffold(
@@ -99,14 +100,44 @@ fun PostScreen(
 
                     FilledTonalButton(
                         onClick = {
+                            if (selectedWorkouts.isNotEmpty()) {
 
-                            generalPostHandler(
-                                SearchEvent.GeneralPostEvent(
-                                    content = textState.text,
-                                    social = 1, // TODO image is not passed
-                                    username = "user 2",
+                                val content = StringBuilder()
+                                content.append(textState.text + "\n\n")
+                                selectedWorkouts.forEach { workout ->
+                                    content.append(workout.name).append(":\n")
+                                    workout.exercises.forEach { exercise ->
+                                        content.append("\t").append(exercise.name).append("\n")
+
+                                    }
+                                    content.append("\n\n")
+                                }
+
+                                val image = if (imageUri != null) {
+                                    imageUri
+                                } else {null}
+
+                                workoutPostHandler(
+                                    SearchEvent.WorkoutPostEvent(
+                                        social = 1,
+                                        username = "gabriele",
+                                        imageUri =  image,
+                                        content = content.toString()
+                                    )
                                 )
-                            )
+                                Log.d("DEBUG", "content : $content")
+
+                                selectedWorkouts.clear()
+                            }
+                            else {
+                                generalPostHandler(
+                                    SearchEvent.GeneralPostEvent(
+                                        content = textState.text,
+                                        social = 1, // TODO image is not passed
+                                        username = "user 2",
+                                    )
+                                )
+                            }
                             onPost()
                                   },
                         modifier = Modifier.padding(end = 8.dp),
@@ -344,7 +375,5 @@ fun prev(){
     val planViewModel : PlanViewModel = hiltViewModel()
     PostScreen(
         navController = rememberNavController(),
-        planViewModel = planViewModel, onPost = {  }, onExit = {  }) {
-        
-    }
+        planViewModel = planViewModel, onPost = {  }, onExit = {  }, workoutPostHandler = {}, generalPostHandler =  {})
 }

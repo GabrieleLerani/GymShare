@@ -1,5 +1,6 @@
 package com.project.gains.data
 
+import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Article
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -158,7 +159,22 @@ data class GymPost(
     val time:String,
     val likes : String,
     val comment:String
-    // Add other necessary properties
+
+)
+
+
+data class WorkoutPost(
+    val id: String,
+    val userResourceId: Int,
+    val imageUri: Uri?,
+    val username: String,
+    val social: String,
+    val randomSocialId: Int,
+    val caption: String,
+    val time:String,
+    val likes : String,
+    val comment:String
+
 )
 
 // Data class to hold chart data
