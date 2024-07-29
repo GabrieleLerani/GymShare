@@ -71,6 +71,9 @@ import com.project.gains.data.Workout
 import com.project.gains.presentation.components.ErrorMessage
 import com.project.gains.presentation.components.ExerciseItem
 import com.project.gains.presentation.components.FeedbackAlertDialog
+import com.project.gains.presentation.components.MenuItem
+import com.project.gains.presentation.components.MyDropdownMenu
+import com.project.gains.presentation.components.NumberPickerDialog
 import com.project.gains.presentation.components.PlanSlidingComponent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
@@ -452,19 +455,63 @@ fun ExerciseSelectionPage(
     deleteExerciseHandler: (ManageExercises.DeleteExercise) -> Unit,
     selectExerciseHandler: (ExerciseEvent.SelectIsToAdd) -> Unit,
 ) {
+
+    val showExerciseDialog = remember { mutableStateOf(false) }
+    val currentDialogExercise = remember { mutableStateOf("") }
+    val exerciseOptionsMap: MutableMap<String, Pair<Int, Int>> = mutableMapOf()
+
+
+    if (showExerciseDialog.value){
+        NumberPickerDialog(
+            onDismiss = { showExerciseDialog.value = false },
+            onConfirm = { sets, repetitions ->
+                exerciseOptionsMap[currentDialogExercise.value] = Pair(sets, repetitions)
+                println("Selected Sets: $sets, Repetitions: $repetitions")
+            }
+        )
+    }
+
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth().padding(bottom = 80.dp),
+            .fillMaxWidth()
+            .padding(bottom = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (selectedExercises.isNotEmpty()) {
             selectedExercises.forEach { exercise: Exercise ->
                 item {
+
                     AnimatedVisibility(
                         modifier = Modifier.fillMaxWidth(),
                         visible = !removedExercises.value.contains(exercise),
                         exit = shrinkVertically(animationSpec = tween(durationMillis = 200))
                     ) {
+
+
+                        val dropDownExerciseItem = listOf(
+                            MenuItem(
+                                text = "Options",
+                                icon = Icons.Default.Edit,
+                                onClick = {
+                                    currentDialogExercise.value = exercise.name
+                                    showExerciseDialog.value = true
+
+
+                                }
+                            ),
+                            MenuItem(
+                                text = "Delete",
+                                icon = Icons.Filled.Delete,
+                                onClick = {
+                                    scope.launch {
+                                        removedExercises.value += exercise
+                                        deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
+                                    }
+                                }
+                            )
+
+                        )
+
                         ExerciseItem(
                             modifier = Modifier
                                 //.weight(1f)
@@ -477,7 +524,8 @@ fun ExerciseSelectionPage(
                                     deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
                                 }
                             },
-                            mode = ExerciseButtonMode.REMOVE
+                            mode = ExerciseButtonMode.REMOVE,
+                            dropDownMenu = { MyDropdownMenu(menuItems = dropDownExerciseItem) }
                         )
                     }
                 }
@@ -502,18 +550,6 @@ fun ExerciseSelectionPage(
     }
 }
 
-@Composable
-fun Header() {
-    Text(
-        text = "Create your workout!",
-        style = MaterialTheme.typography.headlineMedium,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
-    Text(
-        text = "Manually add each exercise to your workout",
-        style = MaterialTheme.typography.bodySmall,
-    )
-}
 
 @Composable
 fun AddExerciseButton(onClick: () -> Unit) {

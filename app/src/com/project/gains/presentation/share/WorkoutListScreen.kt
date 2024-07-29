@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -64,7 +65,7 @@ fun WorkoutListScreen(
 
             // top app bar
             TopBar(
-                message = "Exercises",
+                message = "Workouts",
                 navigationIcon = {
                     if (multiSelectionState.isMultiSelectionModeEnabled){
                         IconButton(
@@ -98,6 +99,14 @@ fun WorkoutListScreen(
                             Icon(Icons.Default.Check, contentDescription = "select all exercises")
                         }
                     }
+                    else if (!multiSelectionState.isMultiSelectionModeEnabled){
+                        TextButton(onClick = {
+                            multiSelectionState.isMultiSelectionModeEnabled = true
+                        }) {
+                            Text(text = "Select")
+                        }
+                    }
+
 
                 }
             )

@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -152,6 +153,13 @@ fun SearchExercisesScreen(
                                 Icon(Icons.Default.Check, contentDescription = "select all exercises")
                             }
                         }
+                        else if (canSelectExercise && !multiSelectionState.isMultiSelectionModeEnabled){
+                            TextButton(onClick = {
+                                multiSelectionState.isMultiSelectionModeEnabled = true
+                            }) {
+                                Text(text = "Select")
+                            }
+                        }
 
                     }
                 )
@@ -251,7 +259,8 @@ fun SearchExercisesScreen(
                                             ExerciseButtonMode.SELECT
                                         } else {
                                             ExerciseButtonMode.NEXT
-                                        }
+                                        },
+                                        dropDownMenu = {}
                                     )
                                 }
                             }
@@ -273,7 +282,8 @@ fun SearchExercisesScreen(
                                         navController.navigate(Route.ExerciseDetailsScreen.route)
                                     },
                                     onRemove = {},
-                                    mode = ExerciseButtonMode.NEXT
+                                    mode = ExerciseButtonMode.NEXT,
+                                    dropDownMenu = {}
                                 )
                             }
 

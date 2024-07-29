@@ -202,8 +202,8 @@ fun ShareScreen(
                 if (apps?.isEmpty() == true ) {
                     Text(
                         text = "You have no linked apps to link an app go to settings -> sharing preferences or click the link apps button below",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.background(shape = RoundedCornerShape(16.dp), color = Color.LightGray).padding(16.dp)
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.background(shape = RoundedCornerShape(16.dp), color = MaterialTheme.colorScheme.secondaryContainer).padding(16.dp)
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     Button(
@@ -215,39 +215,6 @@ fun ShareScreen(
                             .height(55.dp),
                     ) {
                         Text(text = "Link apps")
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    val text = AnnotatedString.Builder().apply {
-                        pushStringAnnotation(
-                            tag = "LINK",
-                            annotation = "destination_page"
-                        )
-                        withStyle(
-                            style = SpanStyle(
-                                textDecoration = TextDecoration.Underline,
-                                color = Color.Blue
-                            )
-                        ) {
-                            append("Share via e-mail")
-                        }
-                        pop()
-                    }.toAnnotatedString()
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 5.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        ClickableText(
-                            text = text,
-                            onClick = { offset ->
-                                appName.value="Email"
-                                showDialog.value = true
-
-                            },
-
-                        )
                     }
                 } else  {
                     Button(

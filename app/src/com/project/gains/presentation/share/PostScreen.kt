@@ -125,7 +125,6 @@ fun PostScreen(
                                         content = content.toString()
                                     )
                                 )
-                                Log.d("DEBUG", "content : $content")
 
                                 selectedWorkouts.clear()
                             }

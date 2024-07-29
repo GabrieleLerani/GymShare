@@ -67,11 +67,6 @@ fun ExerciseDetailsScreen(
     val selectedExercise by exerciseViewModel.selectedExercise.observeAsState()
     val favoriteExercises by exerciseViewModel.favouriteExercises.observeAsState()
     val favorite = remember { mutableStateOf(false) }
-    val showDialog = remember { mutableStateOf(false) }
-
-    if (showDialog.value) {
-        showDialog.value = false
-    }
 
     var favoritesText = "Add to favorites"
     val favoritesIcon: ImageVector
@@ -92,12 +87,12 @@ fun ExerciseDetailsScreen(
                     removeFavouriteExerciseHandler(ExerciseEvent.DeleteExercise)
                     favorite.value = false
                     completionMessage.value = "Exercise removed from favorites!"
-                    showDialog.value = true
+
                 } else {
                     addFavouriteExerciseHandler(ExerciseEvent.AddExercise)
                     favorite.value = true
                     completionMessage.value = "Exercise added to favorites!"
-                    showDialog.value = true
+
                 }
             }
         ),

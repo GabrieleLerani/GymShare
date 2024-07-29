@@ -320,7 +320,7 @@ fun DynamicTopBar(
 
         Route.ShareScreen.route -> {
             TopBar(
-                message = "",
+                message = "Share",
                 navigationIcon = {
                     IconButton(onClick = {
                         navController.popBackStack()
