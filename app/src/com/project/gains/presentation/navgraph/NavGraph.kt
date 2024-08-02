@@ -328,7 +328,6 @@ fun NavGraph(
                     navController = navController,
                     musicHandler = workoutViewModel::onMusicEvent,
                     workoutViewModel = workoutViewModel,
-                    completionMessage = completionMessage,
                     videoDialogHandler = workoutViewModel::onVideoEvent,
                     shareContentViewModel = shareContentViewModel
                 )

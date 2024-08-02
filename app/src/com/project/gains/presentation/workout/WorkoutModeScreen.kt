@@ -5,10 +5,7 @@ import android.net.Uri
 import android.widget.VideoView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -16,13 +13,13 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -45,9 +42,11 @@ import com.project.gains.R
 import com.project.gains.data.Song
 import com.project.gains.presentation.events.MusicEvent
 import androidx.compose.material3.Snackbar
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.viewinterop.AndroidView
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.settings.ShareContentViewModel
@@ -61,7 +60,6 @@ fun WorkoutModeScreen(
     navController: NavController,
     musicHandler: (MusicEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
-    completionMessage: MutableState<String>,
     videoDialogHandler: (VideoEvent.VisibilityVideoEvent) -> Unit,
     shareContentViewModel: ShareContentViewModel
 ) {
@@ -70,52 +68,60 @@ fun WorkoutModeScreen(
     val showVideoDialog by workoutViewModel.showVideoDialog.observeAsState()
     val linkedApps by shareContentViewModel.linkedApps.observeAsState()
 
-    var currentExerciseIndex by remember { mutableStateOf(0) }
-    var timerState by remember { mutableStateOf(0) }
+    var currentExerciseIndex by remember { mutableIntStateOf(0) }
+    var timerState by remember { mutableIntStateOf(0) }
     var isTimerRunning by remember { mutableStateOf(false) }
-    var setsDone by remember { mutableStateOf(0) }
-    var restCountdown by remember { mutableStateOf(60) }
+    var setsDone by remember { mutableIntStateOf(0) }
+    var restCountdown by remember { mutableIntStateOf(60) }
     val rest = remember { mutableStateOf(false) }
 
     // Get the current exercise total time (dummy value 90 seconds for this example)
-    val currentExerciseTime = workout?.exercises?.get(currentExerciseIndex)?.totalTime ?: 90
-    val totalSets = workout?.exercises?.get(currentExerciseIndex)?.sets ?: 4
+    val currentExercise = workout?.exercises
+
+    val currentExerciseTime = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
+    val totalSets = currentExercise?.get(currentExerciseIndex)?.sets ?: 4
+
+    val isTimeExercise = currentExercise?.get(currentExerciseIndex)?.totalTime != -1
 
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
-    // Function to start the timer
-    LaunchedEffect(isTimerRunning) {
-        if (isTimerRunning) {
-            while (isTimerRunning) {
-                delay(1000L) // Update timer every second
-                if (rest.value) {
-                    if (restCountdown > 0) {
-                        restCountdown--
-                    } else {
-                        rest.value = false
-                        setsDone++
-                        if (setsDone >= totalSets) {
-                            if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
-                                currentExerciseIndex++
-                            } else {
-                                currentExerciseIndex = 0
+    if (isTimeExercise){
+        // Function to start the timer
+        LaunchedEffect(isTimerRunning) {
+            if (isTimerRunning) {
+                while (isTimerRunning) {
+                    delay(1000L) // Update timer every second
+                    if (rest.value) {
+                        if (restCountdown > 0) {
+                            restCountdown--
+                        } else {
+                            rest.value = false
+                            setsDone++
+                            if (setsDone >= totalSets) {
+                                if (currentExerciseIndex < currentExercise?.size!! - 1) {
+                                    currentExerciseIndex++
+                                } else {
+                                    currentExerciseIndex = 0
+                                }
+                                setsDone = 0
                             }
-                            setsDone = 0
+                            timerState = currentExerciseTime
                         }
-                        timerState = currentExerciseTime
-                    }
-                } else {
-                    if (timerState > 0) {
-                        timerState--
                     } else {
-                        rest.value = true
-                        restCountdown = 60
+                        if (timerState > 0) {
+                            timerState--
+                        } else {
+                            rest.value = true
+                            restCountdown = 60
+                        }
                     }
                 }
             }
         }
     }
+
+
 
     // Formatting the timer as MM:SS
     val minutes = timerState / 60
@@ -166,7 +172,7 @@ fun WorkoutModeScreen(
                     // Video Dialog
                     if (showVideoDialog == true) {
                         VideoAlertDialog(
-                            res = workout?.exercises?.get(currentExerciseIndex)?.videoId
+                            res = currentExercise?.get(currentExerciseIndex)?.videoId
                                 ?: R.raw.chest,
                             onDismiss = {
                                 videoDialogHandler(
@@ -179,10 +185,10 @@ fun WorkoutModeScreen(
                     } else {
                         Image(
                             painter = painterResource(
-                                id = workout?.exercises?.get(currentExerciseIndex)?.gifResId
+                                id = currentExercise?.get(currentExerciseIndex)?.gifResId
                                     ?: R.drawable.arms2
                             ),
-                            contentDescription = workout?.exercises?.get(
+                            contentDescription = currentExercise?.get(
                                 currentExerciseIndex
                             )?.name
                                 ?: "arms",
@@ -190,7 +196,7 @@ fun WorkoutModeScreen(
                             modifier = Modifier.fillMaxSize()
                         )
                         Text(
-                            text = workout?.exercises?.get(currentExerciseIndex)?.name
+                            text = currentExercise?.get(currentExerciseIndex)?.name
                                 ?: "arms",
                             color = Color.White,
                             fontSize = 24.sp,
@@ -249,20 +255,38 @@ fun WorkoutModeScreen(
                         Text("Sets Done", fontSize = 30.sp)
                     }
 
-                    // Timer
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            if (!rest.value) formattedTime else restTime,
-                            fontSize = 60.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            if (!rest.value) "Time Left" else "Rest Left",
-                            fontSize = 30.sp
-                        )
+                    if (isTimeExercise) {
+                        // Timer
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center)
+                        { // if you also want to center vertically) {
+                            Text(
+                                if (!rest.value) formattedTime else restTime,
+                                fontSize = 60.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                if (!rest.value) "Time Left" else "Rest Left",
+                                fontSize = 30.sp,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                    } else {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "x${currentExercise?.get(currentExerciseIndex)?.repetition}",
+                                fontSize = 60.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text("Repetition", fontSize = 30.sp)
+                        }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Action Row (Previous, Start/Stop, Next Buttons)
@@ -277,7 +301,7 @@ fun WorkoutModeScreen(
                             if (currentExerciseIndex > 0) {
                                 currentExerciseIndex--
                             } else {
-                                currentExerciseIndex = workout?.exercises?.size!! - 1
+                                currentExerciseIndex = currentExercise?.size!! - 1
                             }
                             isTimerRunning = false
                             timerState = currentExerciseTime
@@ -303,8 +327,8 @@ fun WorkoutModeScreen(
                     ) {
                         if (isTimerRunning) {
                             Icon(
-                                imageVector = Icons.Default.Stop,
-                                contentDescription = "Stop",
+                                imageVector = Icons.Default.Pause,
+                                contentDescription = "Pause",
                                 modifier = Modifier.size(60.dp)
                             )
                         } else {
@@ -319,7 +343,7 @@ fun WorkoutModeScreen(
                     // Next Exercise Button
                     Button(
                         onClick = {
-                            if (currentExerciseIndex < workout?.exercises?.size!! - 1) {
+                            if (currentExerciseIndex < currentExercise?.size!! - 1) {
                                 currentExerciseIndex++
                             } else {
                                 currentExerciseIndex = 0
@@ -577,17 +601,74 @@ fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun WorkoutModePreview() {
-    val workoutViewModel: WorkoutViewModel = hiltViewModel()
+    /*
     val shareContentViewModel: ShareContentViewModel = hiltViewModel()
-
+    val workoutViewModel: WorkoutViewModel = hiltViewModel()
+    */
     GainsAppTheme {
+        /*
         WorkoutModeScreen(
             rememberNavController(),
             musicHandler = {},
             workoutViewModel =  workoutViewModel,
-            completionMessage = mutableStateOf(""),
             videoDialogHandler =  {},
             shareContentViewModel = shareContentViewModel
-        )
+        )*/
+
+        Box(modifier = Modifier.fillMaxSize()){
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Sets Done Counter
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "2/4",
+                            fontSize = 60.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text("Sets", fontSize = 30.sp)
+                    }
+
+                    // repetition
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "x30",
+                            fontSize = 60.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text("Repetition", fontSize = 30.sp)
+                    }
+
+                }
+
+                // Timer
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center // if you also want to center vertically
+                ) {
+                    Text(
+                        text = "00:30",
+                        fontSize = 60.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center // ensure text itself is centered
+                    )
+                    Text(
+                        text = "time left",
+                        fontSize = 30.sp,
+                        textAlign = TextAlign.Center // ensure text itself is centered
+                    )
+                }
+
+            }
+
+
+        }
+
     }
 }

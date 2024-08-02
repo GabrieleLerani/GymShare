@@ -147,12 +147,11 @@ fun AddManualWorkout(
 
                 Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                // header that contains only written information
-                //Header()
+
 
                 Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                // TODO check error message if no exercise
+
                 if (inputInserted && selectedExercises.isEmpty()) {
                     ErrorMessage(message = "Please insert at least one exercise.")
                 }
@@ -466,6 +465,7 @@ fun ExerciseSelectionPage(
             onDismiss = { showExerciseDialog.value = false },
             onConfirm = { sets, repetitions ->
                 exerciseOptionsMap[currentDialogExercise.value] = Pair(sets, repetitions)
+                // TODO save sets and repetition for the current exercise
                 println("Selected Sets: $sets, Repetitions: $repetitions")
             }
         )
