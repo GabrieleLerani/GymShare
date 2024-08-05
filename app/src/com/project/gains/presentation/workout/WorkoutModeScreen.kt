@@ -210,10 +210,19 @@ fun WorkoutModeScreen(
                             Text(if (!rest.value) formattedTime else restTime, fontSize = 60.sp, fontWeight = FontWeight.Bold)
                             Text(if (!rest.value) "Time Left" else "Rest Left", fontSize = 30.sp)
                         }
-                    } else {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("x${currentExercise?.get(currentExerciseIndex)?.repetition}", fontSize = 60.sp, fontWeight = FontWeight.Bold)
-                            Text("Repetition", fontSize = 30.sp)
+                    }
+
+                    else {
+                        if (rest.value) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(restTime, fontSize = 60.sp, fontWeight = FontWeight.Bold)
+                                Text("Rest Left", fontSize = 30.sp)
+                            }
+                        } else {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("x${currentExercise?.get(currentExerciseIndex)?.repetition}", fontSize = 60.sp, fontWeight = FontWeight.Bold)
+                                Text("Repetition", fontSize = 30.sp)
+                            }
                         }
                     }
                 }
@@ -237,7 +246,7 @@ fun WorkoutModeScreen(
                         if (!isTimeExercise) {
                             Button(
                                 onClick = {
-                                    mediaPlayerSetDone.start()
+
                                     if (setsDone == (currentExercise?.get(currentExerciseIndex)?.sets?.minus(1) ?: 0)) {
                                         mediaPlayerWellDone.start()
                                         currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
@@ -247,11 +256,12 @@ fun WorkoutModeScreen(
                                         restCountdown = 60
                                         rest.value = false
                                     } else {
+                                        mediaPlayerSetDone.start()
                                         isTimerRunning = false
                                         timerState = currentExerciseTime
                                         setsDone += 1
-                                        restCountdown = 60
-                                        rest.value = true
+                                        restCountdown = 15
+                                        rest.value = false
                                     } },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                                 modifier = Modifier
@@ -293,7 +303,7 @@ fun WorkoutModeScreen(
                             onClick = {
                                 currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
                                 isTimerRunning = false
-                                //timerState = currentExerciseTime
+
                                 timerState = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
                                 setsDone = 0
                                 restCountdown = 60
@@ -309,8 +319,7 @@ fun WorkoutModeScreen(
                             onClick = {
                                 currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise!!.size
                                 isTimerRunning = false
-                                //timerState = currentExerciseTime
-                                timerState = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
+                                timerState = currentExercise[currentExerciseIndex].totalTime ?: 90
                                 setsDone = 0
                                 restCountdown = 60
                                 rest.value = false
@@ -318,7 +327,7 @@ fun WorkoutModeScreen(
                             modifier = Modifier.padding(bottom = 16.dp)
                         ) {
                             Icon(painter = painterResource(id = R.drawable.skip_next), contentDescription = "Next", modifier = Modifier.size(30.dp))
-                            Text(text = "Next", modifier = Modifier.padding(start = 4.dp))
+                            Text(text = "Skip", modifier = Modifier.padding(start = 4.dp))
                         }
                     }
 
