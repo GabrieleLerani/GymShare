@@ -1,7 +1,9 @@
 package com.project.gains.presentation.workout
 
 import android.annotation.SuppressLint
+import android.media.MediaPlayer
 import android.net.Uri
+import android.util.Log
 import android.widget.VideoView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,51 +12,42 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlayCircleOutline
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.project.gains.R
 import com.project.gains.data.Song
 import com.project.gains.presentation.events.MusicEvent
-import androidx.compose.material3.Snackbar
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.viewinterop.AndroidView
 import com.project.gains.presentation.components.TopBar
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.events.VideoEvent
-
 import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun WorkoutModeScreen(
     navController: NavController,
@@ -75,61 +68,54 @@ fun WorkoutModeScreen(
     var restCountdown by remember { mutableIntStateOf(60) }
     val rest = remember { mutableStateOf(false) }
 
-    // Get the current exercise total time (dummy value 90 seconds for this example)
     val currentExercise = workout?.exercises
-
     val currentExerciseTime = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
     val totalSets = currentExercise?.get(currentExerciseIndex)?.sets ?: 4
-
     val isTimeExercise = currentExercise?.get(currentExerciseIndex)?.totalTime != -1
 
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
+    val context = LocalContext.current
+    val mediaPlayerSetDone = remember { MediaPlayer.create(context, R.raw.completion_sound) }
+    val mediaPlayerCountDown = remember { MediaPlayer.create(context, R.raw.countdown) }
+    val mediaPlayerWellDone = remember { MediaPlayer.create(context, R.raw.well_done) }
+    val mediaPlayerStarted = remember { MediaPlayer.create(context, R.raw.started) }
 
-    if (isTimeExercise){
-        // Function to start the timer
-        LaunchedEffect(isTimerRunning) {
-            if (isTimerRunning) {
-                while (isTimerRunning) {
-                    delay(1000L) // Update timer every second
-                    if (rest.value) {
-                        if (restCountdown > 0) {
-                            restCountdown--
-                        } else {
-                            rest.value = false
-                            setsDone++
-                            if (setsDone >= totalSets) {
-                                if (currentExerciseIndex < currentExercise?.size!! - 1) {
-                                    currentExerciseIndex++
-                                } else {
-                                    currentExerciseIndex = 0
-                                }
-                                setsDone = 0
-                            }
-                            timerState = currentExerciseTime
+    LaunchedEffect(isTimerRunning) {
+        if (isTimerRunning) {
+            mediaPlayerStarted.start() // Play sound when the timer starts
+            while (isTimerRunning) {
+                delay(1000L)
+                if (rest.value) {
+                    if (restCountdown > 0) {
+                        restCountdown--
+                    } else {
+                        rest.value = false
+                        setsDone++
+                        if (setsDone >= totalSets) {
+                            currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise!!.size
+                            setsDone = 0
+                        }
+                        timerState = currentExerciseTime
+                    }
+                } else {
+                    if (timerState > 0) {
+                        timerState--
+                        if (timerState == 10) {
+                            mediaPlayerCountDown.start()
                         }
                     } else {
-                        if (timerState > 0) {
-                            timerState--
-                        } else {
-                            rest.value = true
-                            restCountdown = 60
-                        }
+                        rest.value = true
+                        restCountdown = 60
                     }
                 }
             }
         }
     }
 
+    Log.d("WorkoutModeScreen", "timerState: $timerState")
 
-
-    // Formatting the timer as MM:SS
-    val minutes = timerState / 60
-    val seconds = timerState % 60
-    val formattedTime = String.format("%02d:%02d", minutes, seconds)
+    val formattedTime = String.format("%02d:%02d", timerState / 60, timerState % 60)
+    Log.d("WorkoutModeScreen", "formattedTime: $formattedTime")
     val restTime = String.format("%02d", restCountdown)
-
-    // Snackbar host state
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
@@ -138,24 +124,18 @@ fun WorkoutModeScreen(
                 message = "Workout Mode",
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.Filled.Close,
-                            contentDescription = "Close Icon",
-                        )
+                        Icon(Icons.Filled.Close, contentDescription = "Close Icon")
                     }
                 },
                 actionIcon = {}
             )
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues = paddingValues)
+                .padding(paddingValues)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
             Column(
@@ -169,35 +149,20 @@ fun WorkoutModeScreen(
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
                 ) {
-                    // Video Dialog
                     if (showVideoDialog == true) {
                         VideoAlertDialog(
-                            res = currentExercise?.get(currentExerciseIndex)?.videoId
-                                ?: R.raw.chest,
-                            onDismiss = {
-                                videoDialogHandler(
-                                    VideoEvent.VisibilityVideoEvent(
-                                        false
-                                    )
-                                )
-                            }
+                            res = currentExercise?.get(currentExerciseIndex)?.videoId ?: R.raw.chest,
+                            onDismiss = { videoDialogHandler(VideoEvent.VisibilityVideoEvent(false)) }
                         )
                     } else {
                         Image(
-                            painter = painterResource(
-                                id = currentExercise?.get(currentExerciseIndex)?.gifResId
-                                    ?: R.drawable.arms2
-                            ),
-                            contentDescription = currentExercise?.get(
-                                currentExerciseIndex
-                            )?.name
-                                ?: "arms",
+                            painter = painterResource(id = currentExercise?.get(currentExerciseIndex)?.gifResId ?: R.drawable.arms2),
+                            contentDescription = currentExercise?.get(currentExerciseIndex)?.name ?: "arms",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
                         Text(
-                            text = currentExercise?.get(currentExerciseIndex)?.name
-                                ?: "arms",
+                            text = currentExercise?.get(currentExerciseIndex)?.name ?: "arms",
                             color = Color.White,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
@@ -209,28 +174,19 @@ fun WorkoutModeScreen(
                                 )
                                 .padding(20.dp)
                         )
-
                         IconButton(
-                            onClick = {
-                                videoDialogHandler(VideoEvent.VisibilityVideoEvent(true))
-                            },
-                            modifier = Modifier
-                                .align(Alignment.Center)
+                            onClick = { videoDialogHandler(VideoEvent.VisibilityVideoEvent(true)) },
+                            modifier = Modifier.align(Alignment.Center)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .background(
-                                        color = Color.Black,
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
+                                    .background(Color.Black, shape = RoundedCornerShape(16.dp))
                             ) {
                                 Icon(
                                     Icons.Filled.PlayCircleOutline,
                                     contentDescription = "Play Icon",
                                     tint = Color.White,
-                                    modifier = Modifier
-                                        .scale(6f)
-                                        .background(color = Color.Black)
+                                    modifier = Modifier.scale(6f)
                                 )
                             }
                         }
@@ -239,139 +195,144 @@ fun WorkoutModeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Counters Section
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Sets Done Counter
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            "${setsDone + 1}/$totalSets",
-                            fontSize = 60.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Text("${setsDone + 1}/$totalSets", fontSize = 60.sp, fontWeight = FontWeight.Bold)
                         Text("Sets Done", fontSize = 30.sp)
                     }
 
                     if (isTimeExercise) {
-                        // Timer
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center)
-                        { // if you also want to center vertically) {
-                            Text(
-                                if (!rest.value) formattedTime else restTime,
-                                fontSize = 60.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                            Text(
-                                if (!rest.value) "Time Left" else "Rest Left",
-                                fontSize = 30.sp,
-                                textAlign = TextAlign.Center
-                            )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(if (!rest.value) formattedTime else restTime, fontSize = 60.sp, fontWeight = FontWeight.Bold)
+                            Text(if (!rest.value) "Time Left" else "Rest Left", fontSize = 30.sp)
                         }
-
                     } else {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = "x${currentExercise?.get(currentExerciseIndex)?.repetition}",
-                                fontSize = 60.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Text("x${currentExercise?.get(currentExerciseIndex)?.repetition}", fontSize = 60.sp, fontWeight = FontWeight.Bold)
                             Text("Repetition", fontSize = 30.sp)
                         }
                     }
                 }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Action Row (Previous, Start/Stop, Next Buttons)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Previous Exercise Button
-                    Button(
-                        onClick = {
-                            if (currentExerciseIndex > 0) {
-                                currentExerciseIndex--
-                            } else {
-                                currentExerciseIndex = currentExercise?.size!! - 1
-                            }
-                            isTimerRunning = false
-                            timerState = currentExerciseTime
-                            setsDone = 0
-                            restCountdown = 60
-                            rest.value = false
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Previous",
-                            modifier = Modifier.size(60.dp)
-                        )
-                    }
 
-                    // Start/Stop Button
-                    Button(
-                        onClick = {
-                            isTimerRunning = !isTimerRunning
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+
+                    // Center Button Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (isTimerRunning) {
-                            Icon(
-                                imageVector = Icons.Default.Pause,
-                                contentDescription = "Pause",
-                                modifier = Modifier.size(60.dp)
-                            )
+                        if (!isTimeExercise) {
+                            Button(
+                                onClick = {
+                                    mediaPlayerSetDone.start()
+                                    if (setsDone == (currentExercise?.get(currentExerciseIndex)?.sets?.minus(1) ?: 0)) {
+                                        mediaPlayerWellDone.start()
+                                        currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
+                                        isTimerRunning = false
+                                        timerState = currentExerciseTime
+                                        setsDone = 0
+                                        restCountdown = 60
+                                        rest.value = false
+                                    } else {
+                                        isTimerRunning = false
+                                        timerState = currentExerciseTime
+                                        setsDone += 1
+                                        restCountdown = 60
+                                        rest.value = true
+                                    } },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                                modifier = Modifier
+                                    .padding(bottom = 16.dp)
+                                    .fillMaxWidth(0.8f)
+                            ) {
+                                Icon(Icons.Default.Check, contentDescription = "Done", modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 4.dp))
+                                Text("DONE", fontSize = 20.sp)
+                            }
                         } else {
-                            Icon(
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Start",
-                                modifier = Modifier.size(60.dp)
-                            )
+                            Button(
+                                onClick = { isTimerRunning = !isTimerRunning },
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
+                                modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth(0.8f)
+                            ) {
+                                if (isTimerRunning){
+                                    Icon(Icons.Default.Pause, contentDescription = "Pause")
+                                    Text("PAUSE", fontSize = 20.sp)
+                                } else {
+                                    Icon(Icons.Default.PlayArrow, contentDescription = "Start")
+                                    Text("START", fontSize = 20.sp)
+                                }
+
+                            }
                         }
                     }
 
-                    // Next Exercise Button
-                    Button(
-                        onClick = {
-                            if (currentExerciseIndex < currentExercise?.size!! - 1) {
-                                currentExerciseIndex++
-                            } else {
-                                currentExerciseIndex = 0
-                            }
-                            isTimerRunning = false
-                            timerState = currentExerciseTime
-                            setsDone = 0
-                            restCountdown = 60
-                            rest.value = false
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // Back and Forward Buttons Row
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Next",
-                            modifier = Modifier.size(60.dp)
-                        )
+                        FilledTonalButton(
+                            onClick = {
+                                currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
+                                isTimerRunning = false
+                                //timerState = currentExerciseTime
+                                timerState = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
+                                setsDone = 0
+                                restCountdown = 60
+                                rest.value = false
+                            },
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        ) {
+                            Icon(painter = painterResource(id = R.drawable.skip_previous), contentDescription = "Previous", modifier = Modifier.size(30.dp))
+                            Text(text = "Prev", modifier = Modifier.padding(start = 4.dp))
+                        }
+
+                        FilledTonalButton(
+                            onClick = {
+                                currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise!!.size
+                                isTimerRunning = false
+                                //timerState = currentExerciseTime
+                                timerState = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
+                                setsDone = 0
+                                restCountdown = 60
+                                rest.value = false
+                            },
+                            modifier = Modifier.padding(bottom = 16.dp)
+                        ) {
+                            Icon(painter = painterResource(id = R.drawable.skip_next), contentDescription = "Next", modifier = Modifier.size(30.dp))
+                            Text(text = "Next", modifier = Modifier.padding(start = 4.dp))
+                        }
                     }
+
                 }
+
             }
         }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = screenHeight - 120.dp)
+                .padding(top = LocalConfiguration.current.screenHeightDp.dp - 120.dp)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            // Music Snackbar
             MusicSnackbar(
                 snackbarHostState = snackbarHostState,
                 musicHandler = musicHandler,
@@ -387,25 +348,19 @@ fun MusicSnackbar(
     snackbarHostState: SnackbarHostState,
     musicHandler: (MusicEvent) -> Unit,
     currentSong: Song,
-    show:Boolean
+    show: Boolean
 ) {
     if (show) {
         val play = remember { mutableStateOf(false) }
         var currentTime by remember { mutableStateOf(0f) }
         val songTotalTime = 165f
 
-        // Simulate a timer to update the current playback position
         LaunchedEffect(play.value) {
             if (play.value) {
                 while (currentTime < songTotalTime && play.value) {
-                    delay(100L) // Shorter delay for finer granularity
-                    currentTime += 0.1f // Increment by 0.1 second
-
-                    // Adjust the timer to handle seconds incrementing correctly
-                    if (currentTime % 1.0f >= 0.9f) {
-                        currentTime = (currentTime - (currentTime % 1.0f)) + 1f
-                    }
-
+                    delay(100L)
+                    currentTime += 0.1f
+                    if (currentTime % 1.0f >= 0.9f) currentTime = (currentTime - (currentTime % 1.0f)) + 1f
                     if (currentTime >= songTotalTime) {
                         play.value = false
                         musicHandler(MusicEvent.Forward)
@@ -414,113 +369,43 @@ fun MusicSnackbar(
             }
         }
 
-        // Display music controls as a snackbar
         Snackbar(
             modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(20.dp)
-                )
+                .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
                 .height(110.dp),
-            action = { },
+            action = {},
             content = {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    Column (
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Column(modifier = Modifier.fillMaxSize()) {
                         Spacer(modifier = Modifier.height(5.dp))
-
                         Row {
-                            Icon(
-                                painter = painterResource(id = R.drawable.spotify_icon),
-                                contentDescription = "Spotify Icon",
-                                modifier = Modifier
-                                    .size(15.dp)
-                            )
+                            Icon(painter = painterResource(id = R.drawable.spotify_icon), contentDescription = "Spotify Icon", modifier = Modifier.size(15.dp))
                             Spacer(modifier = Modifier.width(16.dp))
-                            Text(
-                                text = "Spotify",
-                                style = MaterialTheme.typography.bodySmall
-                            )
+                            Text("Spotify", style = MaterialTheme.typography.bodySmall)
                         }
-
                         Spacer(modifier = Modifier.height(8.dp))
-
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.Start,
-                            ) {
-                                Text(
-                                    text = "Song: ${currentSong.title}",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 20.sp,
-                                    maxLines = 1,
-                                )
+                            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.Start) {
+                                Text("Song: ${currentSong.title}", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold, fontSize = 20.sp, maxLines = 1)
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = "Singer: ${currentSong.singer}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    fontSize = 20.sp,
-                                    maxLines = 1,
-                                )
+                                Text("Singer: ${currentSong.singer}", style = MaterialTheme.typography.bodySmall, fontSize = 20.sp, maxLines = 1)
                             }
-                            Row(
-                                horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                IconButton(
-                                    onClick = {
-                                        musicHandler(MusicEvent.Rewind)
-                                        currentTime = 0f
-                                    },
-                                    modifier = Modifier.size(50.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.FastRewind,
-                                        contentDescription = "Rewind",
-                                        modifier = Modifier.size(50.dp)
-                                    )
+                            Row(horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = { musicHandler(MusicEvent.Rewind); currentTime = 0f }, modifier = Modifier.size(50.dp)) {
+                                    Icon(Icons.Default.FastRewind, contentDescription = "Rewind", modifier = Modifier.size(50.dp))
                                 }
-                                IconButton(
-                                    onClick = {
-                                        play.value = !play.value
-                                        musicHandler(MusicEvent.Music)
-                                    },
-                                    modifier = Modifier.size(50.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = if (play.value) Icons.Default.Stop else Icons.Default.PlayArrow,
-                                        contentDescription = if (play.value) "Stop" else "Play",
-                                        modifier = Modifier.size(50.dp)
-                                    )
+                                IconButton(onClick = { play.value = !play.value; musicHandler(MusicEvent.Music) }, modifier = Modifier.size(50.dp)) {
+                                    Icon(if (play.value) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = if (play.value) "Stop" else "Play", modifier = Modifier.size(50.dp))
                                 }
-                                IconButton(
-                                    onClick = {
-                                        musicHandler(MusicEvent.Forward)
-                                        currentTime = 0f
-                                    },
-                                    modifier = Modifier.size(50.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.FastForward,
-                                        contentDescription = "Forward",
-                                        modifier = Modifier.size(50.dp)
-                                    )
+                                IconButton(onClick = { musicHandler(MusicEvent.Forward); currentTime = 0f }, modifier = Modifier.size(50.dp)) {
+                                    Icon(Icons.Default.FastForward, contentDescription = "Forward", modifier = Modifier.size(50.dp))
                                 }
                             }
                         }
-
                         Spacer(modifier = Modifier.height(8.dp))
-
                         androidx.compose.material.LinearProgressIndicator(
                             progress = currentTime / songTotalTime,
                             color = MaterialTheme.colorScheme.surface,
@@ -537,47 +422,26 @@ fun MusicSnackbar(
     }
 }
 
-private fun formatTime(time: Float): String {
-    val totalSeconds = time.toInt()
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return String.format("%02d:%02d", minutes, seconds)
-}
-
 @Composable
 fun VideoAlertDialog(res: Int, onDismiss: () -> Unit) {
     val context = LocalContext.current
-    val uri = remember {
-        Uri.parse("android.resource://" + context.packageName + "/" + res)
-    }
+    val uri = remember { Uri.parse("android.resource://" + context.packageName + "/" + res) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         VideoPlayer(uri = uri, modifier = Modifier
             .fillMaxHeight()
             .align(Alignment.CenterHorizontally))
     }
 
-    Box (
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
         IconButton(
             onClick = onDismiss,
             modifier = Modifier
                 .padding(start = 16.dp, top = 16.dp)
-                .background(
-                    color = Color.White.copy(alpha = 0.7f),
-                    shape = MaterialTheme.shapes.small
-                )
+                .background(Color.White.copy(alpha = 0.7f), shape = MaterialTheme.shapes.small)
                 .align(Alignment.TopStart)
         ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Dismiss",
-            )
+            Icon(Icons.Default.Close, contentDescription = "Dismiss")
         }
     }
 }
@@ -601,74 +465,81 @@ fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun WorkoutModePreview() {
-    /*
-    val shareContentViewModel: ShareContentViewModel = hiltViewModel()
-    val workoutViewModel: WorkoutViewModel = hiltViewModel()
-    */
-    GainsAppTheme {
-        /*
-        WorkoutModeScreen(
-            rememberNavController(),
-            musicHandler = {},
-            workoutViewModel =  workoutViewModel,
-            videoDialogHandler =  {},
-            shareContentViewModel = shareContentViewModel
-        )*/
+    var currentExerciseIndex by remember { mutableStateOf(0) }
+    var isTimerRunning by remember { mutableStateOf(false) }
+    var timerState by remember { mutableStateOf(90) }
+    var setsDone by remember { mutableStateOf(0) }
+    var restCountdown by remember { mutableStateOf(60) }
+    val rest = remember { mutableStateOf(false) }
+    val currentExerciseSize = 5 // Dummy size for preview
+    val currentExerciseTime = 90 // Dummy time for preview
 
-        Box(modifier = Modifier.fillMaxSize()){
+    GainsAppTheme {
+
+        Box(modifier = Modifier.fillMaxSize()) {
+
             Column {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Sets Done Counter
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            "2/4",
-                            fontSize = 60.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text("Sets", fontSize = 30.sp)
+                    Button(
+                        onClick = {
+                            currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExerciseSize - 1
+                            isTimerRunning = false
+                            timerState = currentExerciseTime
+                            setsDone = 0
+                            restCountdown = 60
+                            rest.value = false
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous", modifier = Modifier.size(60.dp))
                     }
 
-                    // repetition
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            "x30",
-                            fontSize = 60.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text("Repetition", fontSize = 30.sp)
+                    Button(
+                        onClick = { isTimerRunning = !isTimerRunning },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Icon(if (isTimerRunning) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = if (isTimerRunning) "Pause" else "Start", modifier = Modifier.size(60.dp))
                     }
 
+                    Button(
+                        onClick = {
+                            currentExerciseIndex = (currentExerciseIndex + 1) % currentExerciseSize
+                            isTimerRunning = false
+                            timerState = currentExerciseTime
+                            setsDone = 0
+                            restCountdown = 60
+                            rest.value = false
+                        },
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next", modifier = Modifier.size(60.dp))
+                    }
                 }
-
-                // Timer
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center // if you also want to center vertically
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        text = "00:30",
-                        fontSize = 60.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center // ensure text itself is centered
-                    )
-                    Text(
-                        text = "time left",
-                        fontSize = 30.sp,
-                        textAlign = TextAlign.Center // ensure text itself is centered
-                    )
+                    Text("00:30", fontSize = 60.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Text("time left", fontSize = 30.sp, textAlign = TextAlign.Center)
                 }
-
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text("00:30", fontSize = 60.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Text("time left", fontSize = 30.sp, textAlign = TextAlign.Center)
+                }
             }
-
-
         }
-
     }
 }

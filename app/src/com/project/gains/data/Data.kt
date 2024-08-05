@@ -344,7 +344,7 @@ fun generateSampleExercises(): MutableList<Exercise> {
             type = ExerciseType.CORE,
             training = TrainingType.STRENGTH,
             sets = 4,
-            totalTime = 90,
+            totalTime = 15,
             warnings = listOf(  "Engage your core and glutes to maintain a straight line." ,
                 "Avoid letting your hips sag or rise too high." ,
                 "Breathe steadily throughout the hold.",),
