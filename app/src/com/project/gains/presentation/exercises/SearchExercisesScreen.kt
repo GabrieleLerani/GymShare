@@ -22,14 +22,11 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -254,14 +251,12 @@ fun SearchExercisesScreen(
                                             selectExerciseHandler(ExerciseEvent.SelectExercise(ex))
                                             navController.navigate(Route.ExerciseDetailsScreen.route)
                                         },
-                                        onRemove = {},
                                         mode = if (multiSelectionState.isMultiSelectionModeEnabled) {
                                             ExerciseButtonMode.SELECT
                                         } else {
                                             ExerciseButtonMode.NEXT
-                                        },
-                                        dropDownMenu = {}
-                                    )
+                                        }
+                                    ) {}
                                 }
                             }
                             // if user comes from simple exercise search
@@ -281,10 +276,8 @@ fun SearchExercisesScreen(
                                         selectExerciseHandler(ExerciseEvent.SelectExercise(ex))
                                         navController.navigate(Route.ExerciseDetailsScreen.route)
                                     },
-                                    onRemove = {},
-                                    mode = ExerciseButtonMode.NEXT,
-                                    dropDownMenu = {}
-                                )
+                                    mode = ExerciseButtonMode.NEXT
+                                ) {}
                             }
 
 

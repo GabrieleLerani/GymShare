@@ -121,10 +121,8 @@ fun WorkoutScreen(
                                 exerciseHandler(ExerciseEvent.SelectExercise(exercise))
                                 navController.navigate(Route.ExerciseDetailsScreen.route)
                             },
-                            onRemove = {},
-                            mode = ExerciseButtonMode.NEXT,
-                            dropDownMenu = {}
-                        )
+                            mode = ExerciseButtonMode.NEXT
+                        ) {}
                     }
                 }
 

@@ -74,7 +74,7 @@ import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.MenuItem
 import com.project.gains.presentation.components.MyDropdownMenu
 import com.project.gains.presentation.components.NumberPickerDialog
-import com.project.gains.presentation.components.PlanSlidingComponent
+import com.project.gains.presentation.components.SlidingComponent
 import com.project.gains.presentation.exercises.events.ExerciseEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.plan.events.ManageExercises
@@ -138,7 +138,7 @@ fun AddManualWorkout(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                PlanSlidingComponent(
+                SlidingComponent(
                     inactiveColor = MaterialTheme.colorScheme.secondaryContainer,
                     activeColor = MaterialTheme.colorScheme.primary,
                     pagerState = pagerState,
@@ -518,15 +518,8 @@ fun ExerciseSelectionPage(
                                 .padding(top = 8.dp, bottom = 8.dp),
                             exercise = exercise,
                             onItemClick = {},
-                            onRemove = {
-                                scope.launch {
-                                    removedExercises.value += exercise
-                                    deleteExerciseHandler(ManageExercises.DeleteExercise(exercise = exercise))
-                                }
-                            },
-                            mode = ExerciseButtonMode.REMOVE,
-                            dropDownMenu = { MyDropdownMenu(menuItems = dropDownExerciseItem) }
-                        )
+                            mode = ExerciseButtonMode.REMOVE
+                        ) { MyDropdownMenu(menuItems = dropDownExerciseItem) }
                     }
                 }
             }

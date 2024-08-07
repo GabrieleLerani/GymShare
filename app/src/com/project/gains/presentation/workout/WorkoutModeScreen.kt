@@ -7,44 +7,74 @@ import android.util.Log
 import android.widget.VideoView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlayCircleOutline
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.TaskAlt
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.project.gains.R
 import com.project.gains.data.Song
-import com.project.gains.presentation.events.MusicEvent
+import com.project.gains.presentation.components.FeedbackAlertDialog
 import com.project.gains.presentation.components.TopBar
+import com.project.gains.presentation.components.WorkoutCompletedDialog
+import com.project.gains.presentation.components.WorkoutModeSlidingComponent
+import com.project.gains.presentation.events.MusicEvent
+import com.project.gains.presentation.exercises.events.ExerciseEvent
+import com.project.gains.presentation.navgraph.Route
 import com.project.gains.presentation.settings.ShareContentViewModel
 import com.project.gains.presentation.workout.events.VideoEvent
-import com.project.gains.theme.GainsAppTheme
 import kotlinx.coroutines.delay
 
 @SuppressLint("RememberReturnType")
@@ -54,6 +84,7 @@ fun WorkoutModeScreen(
     musicHandler: (MusicEvent) -> Unit,
     workoutViewModel: WorkoutViewModel,
     videoDialogHandler: (VideoEvent.VisibilityVideoEvent) -> Unit,
+    selectExerciseHandler:(ExerciseEvent.SelectExercise) -> Unit,
     shareContentViewModel: ShareContentViewModel
 ) {
     val currentSong by workoutViewModel.currentSong.observeAsState()
@@ -78,52 +109,73 @@ fun WorkoutModeScreen(
     val mediaPlayerCountDown = remember { MediaPlayer.create(context, R.raw.countdown) }
     val mediaPlayerWellDone = remember { MediaPlayer.create(context, R.raw.well_done) }
     val mediaPlayerStarted = remember { MediaPlayer.create(context, R.raw.started) }
+    val mediaPlayerRest = remember { MediaPlayer.create(context, R.raw.rest) }
+
+
+    val formattedTime = String.format("%02d:%02d", timerState / 60, timerState % 60)
+    val restTime = String.format("%02d:%02d", restCountdown / 60, timerState % 60)
+    val snackbarHostState = remember { SnackbarHostState() }
+    var showWorkoutCompletedDialog by remember { mutableStateOf(false) }
+    var showFeedbackDialog by remember { mutableStateOf(false) }
+
+
+    Log.d("WorkoutModeScreen", "currentExerciseIndex: $currentExerciseIndex")
 
     LaunchedEffect(isTimerRunning) {
         if (isTimerRunning) {
-            mediaPlayerStarted.start() // Play sound when the timer starts
+
+            if (timerState == currentExerciseTime){
+                mediaPlayerStarted.start() // Play sound when the timer starts
+            }
+
             while (isTimerRunning) {
                 delay(1000L)
                 if (rest.value) {
+
+                    // play sound when the rest countdown is 5
+                    if (restCountdown - 1 == 5) {
+                        mediaPlayerCountDown.start()
+                    }
                     if (restCountdown > 0) {
                         restCountdown--
-                    } else {
+                    }
+
+                    else {
                         rest.value = false
-                        setsDone++
-                        if (setsDone >= totalSets) {
-                            currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise!!.size
-                            setsDone = 0
-                        }
                         timerState = currentExerciseTime
                     }
                 } else {
                     if (timerState > 0) {
                         timerState--
-                        if (timerState == 10) {
+                        if (timerState == 5) {
                             mediaPlayerCountDown.start()
                         }
                     } else {
-                        rest.value = true
-                        restCountdown = 60
+                        mediaPlayerRest.start()
+                        rest.value = true // set rest value to true
+                         // increase sets done
+                        setsDone++
+                        if (setsDone == totalSets) {
+                            if (currentExercise != null) {
+                                currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise.size
+                            }
+                            isTimerRunning = false
+                            setsDone = 0
+                        }
+                        restCountdown = 10 // set the rest countdown
                     }
                 }
             }
         }
     }
 
-    Log.d("WorkoutModeScreen", "timerState: $timerState")
-
-    val formattedTime = String.format("%02d:%02d", timerState / 60, timerState % 60)
-    Log.d("WorkoutModeScreen", "formattedTime: $formattedTime")
-    val restTime = String.format("%02d", restCountdown)
-    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         topBar = {
             TopBar(
                 message = "Workout Mode",
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { showFeedbackDialog = true }) {
                         Icon(Icons.Filled.Close, contentDescription = "Close Icon")
                     }
                 },
@@ -132,6 +184,37 @@ fun WorkoutModeScreen(
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { paddingValues ->
+
+        // Dialog to show completion
+        if (showWorkoutCompletedDialog) {
+            WorkoutCompletedDialog(
+                onDismissRequest = { showWorkoutCompletedDialog = false },
+                onConfirmation = {
+                    showWorkoutCompletedDialog = false
+                    //navController.navigate(Route.HomeScreen.route)
+                    navController.popBackStack()
+                                 },
+                dialogTitle = "Well done",
+                dialogText = "You have completed your workout",
+                icon = Icons.Default.TaskAlt
+            )
+        }
+
+        // Dialog to ask if user really wants to leave
+        if (showFeedbackDialog) {
+            FeedbackAlertDialog(
+                onDismissRequest = { showFeedbackDialog = false },
+                onConfirm = {
+                    showFeedbackDialog = false
+                    navController.popBackStack()
+                },
+                title = "Leave Workout",
+                text = "Do you really want to leave the workout session?",
+                icon = Icons.Default.Info
+            )
+        }
+
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -143,12 +226,29 @@ fun WorkoutModeScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
+
+
+                WorkoutModeSlidingComponent(
+                    inactiveColor = MaterialTheme.colorScheme.secondaryContainer,
+                    activeColor = MaterialTheme.colorScheme.primary,
+                    count = currentExerciseIndex,
+                    totalCount = workout?.exercises?.size ?: 1,
+                    modifier = Modifier.padding(20.dp),
+                )
+
                 Box(
                     modifier = Modifier
                         .height(200.dp)
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp))
+                        .clickable {
+                            currentExercise?.get(currentExerciseIndex)?.let { exercise ->
+                                selectExerciseHandler(ExerciseEvent.SelectExercise(exercise))
+                                navController.navigate(Route.ExerciseDetailsScreen.route)
+                            }
+                        }
                 ) {
+
                     if (showVideoDialog == true) {
                         VideoAlertDialog(
                             res = currentExercise?.get(currentExerciseIndex)?.videoId ?: R.raw.chest,
@@ -180,13 +280,13 @@ fun WorkoutModeScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .background(Color.Black, shape = RoundedCornerShape(16.dp))
+                                    .background(MaterialTheme.colorScheme.tertiary, shape = RoundedCornerShape(16.dp))
                             ) {
                                 Icon(
-                                    Icons.Filled.PlayCircleOutline,
+                                    modifier =Modifier.size(50.dp),
+                                    imageVector = Icons.Filled.PlayCircleOutline,
                                     contentDescription = "Play Icon",
-                                    tint = Color.White,
-                                    modifier = Modifier.scale(6f)
+                                    tint = MaterialTheme.colorScheme.onTertiary
                                 )
                             }
                         }
@@ -201,28 +301,21 @@ fun WorkoutModeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("${setsDone + 1}/$totalSets", fontSize = 60.sp, fontWeight = FontWeight.Bold)
-                        Text("Sets Done", fontSize = 30.sp)
+                        Text("${setsDone}/$totalSets", fontSize = 40.sp, fontWeight = FontWeight.Bold)
+                        Text("Sets Done", style = MaterialTheme.typography.headlineMedium)
                     }
 
                     if (isTimeExercise) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(if (!rest.value) formattedTime else restTime, fontSize = 60.sp, fontWeight = FontWeight.Bold)
+                            Text(if (!rest.value) formattedTime else restTime, fontSize = 40.sp, fontWeight = FontWeight.Bold)
                             Text(if (!rest.value) "Time Left" else "Rest Left", fontSize = 30.sp)
                         }
                     }
 
                     else {
-                        if (rest.value) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(restTime, fontSize = 60.sp, fontWeight = FontWeight.Bold)
-                                Text("Rest Left", fontSize = 30.sp)
-                            }
-                        } else {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("x${currentExercise?.get(currentExerciseIndex)?.repetition}", fontSize = 60.sp, fontWeight = FontWeight.Bold)
-                                Text("Repetition", fontSize = 30.sp)
-                            }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("x${currentExercise?.get(currentExerciseIndex)?.repetition}", fontSize = 40.sp, fontWeight = FontWeight.Bold)
+                            Text("Repetition", style = MaterialTheme.typography.headlineMedium)
                         }
                     }
                 }
@@ -249,12 +342,19 @@ fun WorkoutModeScreen(
 
                                     if (setsDone == (currentExercise?.get(currentExerciseIndex)?.sets?.minus(1) ?: 0)) {
                                         mediaPlayerWellDone.start()
-                                        currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
-                                        isTimerRunning = false
-                                        timerState = currentExerciseTime
-                                        setsDone = 0
-                                        restCountdown = 60
-                                        rest.value = false
+
+                                        val isLastExercise = (currentExerciseIndex + 1) % currentExercise!!.size == 0
+                                        if (isLastExercise) {
+                                            showWorkoutCompletedDialog = true
+                                        } else {
+                                            currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise.size
+                                            isTimerRunning = false
+                                            timerState = currentExerciseTime
+                                            setsDone = 0
+                                            restCountdown = 60
+                                            rest.value = false
+                                        }
+
                                     } else {
                                         mediaPlayerSetDone.start()
                                         isTimerRunning = false
@@ -275,7 +375,12 @@ fun WorkoutModeScreen(
                             }
                         } else {
                             Button(
-                                onClick = { isTimerRunning = !isTimerRunning },
+                                onClick = {
+                                    if (isTimerRunning){
+                                        mediaPlayerCountDown.stop()
+                                    }
+                                    isTimerRunning = !isTimerRunning
+                                          },
                                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary),
                                 modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth(0.8f)
                             ) {
@@ -303,7 +408,6 @@ fun WorkoutModeScreen(
                             onClick = {
                                 currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
                                 isTimerRunning = false
-
                                 timerState = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
                                 setsDone = 0
                                 restCountdown = 60
@@ -361,7 +465,7 @@ fun MusicSnackbar(
 ) {
     if (show) {
         val play = remember { mutableStateOf(false) }
-        var currentTime by remember { mutableStateOf(0f) }
+        var currentTime by remember { mutableFloatStateOf(0f) }
         val songTotalTime = 165f
 
         LaunchedEffect(play.value) {
@@ -391,6 +495,16 @@ fun MusicSnackbar(
                             Icon(painter = painterResource(id = R.drawable.spotify_icon), contentDescription = "Spotify Icon", modifier = Modifier.size(15.dp))
                             Spacer(modifier = Modifier.width(16.dp))
                             Text("Spotify", style = MaterialTheme.typography.bodySmall)
+                        }
+                        IconButton(onClick = { /* Do something */ }) {
+                            Icon(
+                                modifier =Modifier.size(50.dp),
+                                imageVector = Icons.Filled.PlayCircleOutline,
+                                contentDescription = "Play Icon",
+                                tint = MaterialTheme.colorScheme.onPrimary
+
+                            )
+
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
@@ -468,87 +582,4 @@ fun VideoPlayer(uri: Uri, modifier: Modifier = Modifier) {
         },
         modifier = modifier
     )
-}
-
-@SuppressLint("UnrememberedMutableState")
-@Preview(showBackground = true)
-@Composable
-fun WorkoutModePreview() {
-    var currentExerciseIndex by remember { mutableStateOf(0) }
-    var isTimerRunning by remember { mutableStateOf(false) }
-    var timerState by remember { mutableStateOf(90) }
-    var setsDone by remember { mutableStateOf(0) }
-    var restCountdown by remember { mutableStateOf(60) }
-    val rest = remember { mutableStateOf(false) }
-    val currentExerciseSize = 5 // Dummy size for preview
-    val currentExerciseTime = 90 // Dummy time for preview
-
-    GainsAppTheme {
-
-        Box(modifier = Modifier.fillMaxSize()) {
-
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExerciseSize - 1
-                            isTimerRunning = false
-                            timerState = currentExerciseTime
-                            setsDone = 0
-                            restCountdown = 60
-                            rest.value = false
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous", modifier = Modifier.size(60.dp))
-                    }
-
-                    Button(
-                        onClick = { isTimerRunning = !isTimerRunning },
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    ) {
-                        Icon(if (isTimerRunning) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = if (isTimerRunning) "Pause" else "Start", modifier = Modifier.size(60.dp))
-                    }
-
-                    Button(
-                        onClick = {
-                            currentExerciseIndex = (currentExerciseIndex + 1) % currentExerciseSize
-                            isTimerRunning = false
-                            timerState = currentExerciseTime
-                            setsDone = 0
-                            restCountdown = 60
-                            rest.value = false
-                        },
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    ) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next", modifier = Modifier.size(60.dp))
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("00:30", fontSize = 60.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                    Text("time left", fontSize = 30.sp, textAlign = TextAlign.Center)
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text("00:30", fontSize = 60.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                    Text("time left", fontSize = 30.sp, textAlign = TextAlign.Center)
-                }
-            }
-        }
-    }
 }

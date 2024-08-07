@@ -29,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -110,7 +110,7 @@ fun OnBoardingScreenSlidingComponent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PlanSlidingComponent(
+fun SlidingComponent(
     inactiveColor: Color,
     activeColor: Color,
     pagerState: PagerState,
@@ -147,10 +147,51 @@ fun PlanSlidingComponent(
     }
 }
 
+@Composable
+fun WorkoutModeSlidingComponent(
+    inactiveColor: Color,
+    activeColor: Color,
+    count: Int,
+    totalCount: Int,
+    modifier : Modifier
+) {
+
+    val targetProgress = (count + 1) / totalCount.toFloat()
+    val animatedProgress by animateFloatAsState(
+        targetValue = targetProgress,
+        animationSpec = tween(durationMillis = 500),
+        label = "effect"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        // Text showing the current page out of the total count
+        Text(
+            text = "${count + 1} of $totalCount",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        LinearProgressIndicator(
+            strokeCap = StrokeCap.Round,
+            progress = animatedProgress,
+            color = activeColor,
+            backgroundColor = inactiveColor,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+        )
+
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true)
 @Composable
-fun PreviewSlidingComponent2() {
+fun PreviewSlidingComponent() {
     val pagerState = rememberPagerState(pageCount = { 6 })
 
     Column(
@@ -160,7 +201,7 @@ fun PreviewSlidingComponent2() {
             .fillMaxSize()
             .padding(20.dp)
     ) {
-        PlanSlidingComponent(
+        SlidingComponent(
             inactiveColor = Color.Gray,
             activeColor = Color.Blue,
             pagerState = pagerState,
