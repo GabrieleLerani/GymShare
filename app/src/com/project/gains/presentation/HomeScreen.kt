@@ -33,6 +33,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -179,9 +180,11 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                     .fillMaxSize()
             ) {
 
+
                 TextItemWithButton(
                     title = title,
-                    onClick = { navController.navigate(Route.SearchExerciseScreen.route) }
+                    onClick = { navController.navigate(Route.SearchExerciseScreen.route) },
+                    showIcon = items.isNotEmpty()
                 )
 
                 LazyRow(
@@ -251,9 +254,12 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                 modifier = Modifier
                     .fillMaxSize()
             ) {
+
+                // if there are items, show the preview button to add a new workout
                 TextItemWithButton(
                     title = title,
-                    onClick = { navController.navigate(Route.NewPlanScreen.route) }
+                    onClick = { navController.navigate(Route.NewPlanScreen.route) },
+                    showIcon = items2.isNotEmpty()
                 )
 
                 LazyRow(
@@ -301,36 +307,29 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
     }
 }
 
-@Composable
-fun TextItem(title: String) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.headlineMedium, // Make it bigger and bold
-        color = MaterialTheme.colorScheme.onSurface, // Use a color that stands out
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 20.dp, top = 20.dp, bottom = 15.dp)
-    )
-}
 
 @Composable
-fun TextItemWithButton(title: String, onClick: () -> Unit) {
+fun TextItemWithButton(title: String, onClick: () -> Unit, showIcon: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 20.dp, top = 20.dp, bottom = 15.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
+        //horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.align(Alignment.CenterVertically)
         )
-        Button(
-            onClick = onClick,
-        ) {
-            Icon(Icons.Default.AddCircle, contentDescription = null)
+        if (showIcon) {
+            IconButton(
+                onClick = onClick,
+                modifier = Modifier.align(Alignment.CenterVertically)
+            ) {
+                Icon(Icons.Default.AddCircle, contentDescription = null)
+            }
         }
     }
 }
