@@ -24,12 +24,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -176,7 +178,11 @@ fun HorizontalScrollScreenExercise(navController: NavController, title: String, 
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                TextItem(title = title)
+
+                TextItemWithButton(
+                    title = title,
+                    onClick = { navController.navigate(Route.SearchExerciseScreen.route) }
+                )
 
                 LazyRow(
                     modifier = Modifier
@@ -245,7 +251,10 @@ fun HorizontalScrollScreenWorkout(navController: NavController, title: String, i
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                TextItem(title = title)
+                TextItemWithButton(
+                    title = title,
+                    onClick = { navController.navigate(Route.NewPlanScreen.route) }
+                )
 
                 LazyRow(
                     modifier = Modifier
@@ -302,6 +311,28 @@ fun TextItem(title: String) {
             .fillMaxWidth()
             .padding(start = 20.dp, top = 20.dp, bottom = 15.dp)
     )
+}
+
+@Composable
+fun TextItemWithButton(title: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, top = 20.dp, bottom = 15.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Button(
+            onClick = onClick,
+        ) {
+            Icon(Icons.Default.AddCircle, contentDescription = null)
+        }
+    }
 }
 
 @Composable

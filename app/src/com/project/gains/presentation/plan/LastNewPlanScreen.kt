@@ -119,83 +119,12 @@ fun LastNewPlanScreen(
 
             item {
                 Text(
-                    text = "Choose if you want to have music while training",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            RoundedCornerShape(16.dp)
-                        )
-                        .border(
-                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                )
-            }
-
-            item {
-                OptionCheckbox(
-                    option = allOptions[0],
-                    isChecked = selectedMusic.value,
-                    onCheckedChange = {
-                        selectedMusic.value = it
-                        onOptionSelected(allOptions[0], it)
-                    }
-                )
-            }
-
-            item {
-                Text(
-                    text = "Choose if you want to have backup on your workout",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            RoundedCornerShape(16.dp)
-                        )
-                        .border(
-                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
-                )
-            }
-
-            item {
-                OptionCheckbox(
-                    option = allOptions[1],
-                    isChecked = selectedBackup.value,
-                    onCheckedChange = {
-                        selectedBackup.value = it
-                        onOptionSelected(allOptions[1], it)
-                    }
-                )
-            }
-
-            item {
-                Text(
                     text = "Choose the metrics to track in your progress",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            RoundedCornerShape(16.dp)
-                        )
-                        .border(
-                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
+                        .padding(top = 16.dp, bottom = 16.dp)
                 )
             }
 
@@ -236,23 +165,16 @@ fun LastNewPlanScreen(
             }
 
             item {
+
                 Text(
                     text = "Choose the muscle groups to include in your plan",
-                    style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                        .background(
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                            RoundedCornerShape(16.dp)
-                        )
-                        .border(
-                            border = BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface),
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
+                        .padding(top = 16.dp, bottom = 16.dp)
                 )
+
             }
 
             item {
@@ -327,20 +249,29 @@ fun LastNewPlanScreen(
                 )
             }
 
-            item { Spacer(modifier = Modifier.height(10.dp)) }
-
             item {
-                Row(
+                Text(
+                    text = "Choose if you want to have music while training",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = Dimension.MediumPadding2)
-                        .navigationBarsPadding(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {}
+                        .padding(top = 16.dp, bottom = 16.dp)
+                )
             }
 
-            item { Spacer(modifier = Modifier.height(10.dp)) }
+            item {
+                OptionCheckbox(
+                    option = allOptions[0],
+                    isChecked = selectedMusic.value,
+                    onCheckedChange = {
+                        selectedMusic.value = it
+                        onOptionSelected(allOptions[0], it)
+                    }
+                )
+            }
+
+            item { Spacer(modifier = Modifier.height(120.dp)) }
 
         }
 
@@ -398,47 +329,49 @@ fun OptionCheckbox(
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = if (isChecked) {
-            MaterialTheme.colorScheme.onTertiary
-        } else {
             MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surface
         },
         border = BorderStroke(
-            width = 0.5.dp,
+            width = 1.dp,
             color = if (isChecked) {
                 MaterialTheme.colorScheme.primary
             } else {
                 MaterialTheme.colorScheme.outline
-            }),
+            }
+        ),
         modifier = Modifier
             .clip(MaterialTheme.shapes.small)
             .clickable(onClick = { onCheckedChange(!isChecked) })
             .padding(bottom = 10.dp)
-
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp),
+                .padding(start = 16.dp,end = 4.dp, bottom = 4.dp, top = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = option.name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (isChecked) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
                 modifier = Modifier.weight(1f)
             )
 
-            Box(Modifier.padding(8.dp)) {
-                Checkbox(
-                    checked = isChecked,
-                    onCheckedChange = { onCheckedChange(it) },
-                    colors = CheckboxDefaults.colors(
-                        checkmarkColor = MaterialTheme.colorScheme.onPrimary,
-                        uncheckedColor = MaterialTheme.colorScheme.primary,
-                        checkedColor = MaterialTheme.colorScheme.primary
-                    )
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = { onCheckedChange(it) },
+                colors = CheckboxDefaults.colors(
+                    checkmarkColor = MaterialTheme.colorScheme.onPrimary,
+                    uncheckedColor = MaterialTheme.colorScheme.primary,
+                    checkedColor = MaterialTheme.colorScheme.primary
                 )
-            }
+            )
         }
     }
 }

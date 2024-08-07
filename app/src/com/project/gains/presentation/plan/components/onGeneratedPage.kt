@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -26,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -62,7 +64,6 @@ fun OnGeneratedPage(
     navController: NavController,
     planOptionsHandler: (ManagePlanEvent.SetPlanOptions) -> Unit
 ) {
-
     val selectedLevel = remember { mutableStateOf(Level.BEGINNER) }
     val selectedTraining = remember { mutableStateOf(TrainingType.STRENGTH) }
     val selectedFrequency = remember { mutableStateOf(Frequency.THREE) }
@@ -74,6 +75,7 @@ fun OnGeneratedPage(
 
     // Track if an option has been selected
     val isOptionSelected = remember { mutableStateOf(false) }
+    val selectedItemIndex = remember { mutableStateOf(-1) }
 
     Box(modifier = Modifier
         .padding(16.dp)
@@ -101,14 +103,18 @@ fun OnGeneratedPage(
                     }
                 }
 
-                items(rememberPage.pages) { content ->
-                    GeneralCard(imageResId = content.image, title = content.title) {
+                item {
+                    RadioButtonList(
+                        items = rememberPage.pages.map { it.title },
+                        selectedItemIndex = selectedItemIndex.value
+                    ) { index ->
                         scope.launch {
                             isOptionSelected.value = true
+                            selectedItemIndex.value = index
                             when (pagerState.currentPage) {
-                                0 -> selectedLevel.value = content.level
-                                1 -> selectedTraining.value = content.trainingType
-                                2 -> selectedFrequency.value = content.frequency
+                                0 -> selectedLevel.value = rememberPage.pages[index].level
+                                1 -> selectedTraining.value = rememberPage.pages[index].trainingType
+                                2 -> selectedFrequency.value = rememberPage.pages[index].frequency
                             }
                         }
                     }
@@ -161,13 +167,44 @@ fun OnGeneratedPage(
 }
 
 @Composable
-fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
+fun RadioButtonList(
+    items: List<String>,
+    selectedItemIndex: Int,
+    onItemSelected: (Int) -> Unit
+) {
+    Column {
+        items.forEachIndexed { index, item ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onItemSelected(index) }
+                    .padding(vertical = 8.dp)
+            ) {
+                RadioButton(
+                    selected = selectedItemIndex == index,
+                    onClick = { onItemSelected(index) }
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = item, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+    }
+}
+
+
+
+@Composable
+fun GeneralCard(imageResId: Int, title: String, selected: Boolean, onItemClick: () -> Unit) {
+    val backgroundColor = if (selected) MaterialTheme.colorScheme.primary else Color.Gray
+    val contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .height(150.dp)
-            .background(Color.Gray, RoundedCornerShape(16.dp))
+            .background(backgroundColor, RoundedCornerShape(16.dp))
             .clickable {
                 onItemClick()
             }
@@ -193,7 +230,7 @@ fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
         )
         Text(
             text = title,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = contentColor,
             fontSize = 20.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier
@@ -202,6 +239,7 @@ fun GeneralCard(imageResId: Int, title: String, onItemClick: () -> Unit) {
         )
     }
 }
+
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -217,7 +255,7 @@ fun PreviewOnGeneratedPage() {
             PlanPage(image = R.drawable.pexels1, title = "Page 3", level = Level.EXPERT, trainingType = TrainingType.CALISTHENICS, frequency = Frequency.FOUR)
         )
     )
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { page.pages.size })//rememberPagerState(initialPage = 0)
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { page.pages.size })
 
     val navController = rememberNavController()
     val planOptionsHandler: (ManagePlanEvent.SetPlanOptions) -> Unit = {}

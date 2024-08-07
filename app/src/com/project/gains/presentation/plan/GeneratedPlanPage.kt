@@ -53,6 +53,9 @@ val pages = listOf(
     PlanPages(
             "Select workouts per week",
     mutableListOf(
+        PlanPage( title = Frequency.ONE.toString(),
+            image = R.drawable.pexels1,
+            frequency = Frequency.ONE),
         PlanPage( title = Frequency.TWO.toString(),
             image = R.drawable.pexels1,
             frequency = Frequency.TWO),
@@ -62,6 +65,15 @@ val pages = listOf(
         PlanPage( title = Frequency.FOUR.toString(),
             image = R.drawable.pexels3,
             frequency = Frequency.FOUR),
+        PlanPage( title = Frequency.FIVE.toString(),
+            image = R.drawable.pexels3,
+            frequency = Frequency.FIVE),
+        PlanPage( title = Frequency.SIX.toString(),
+            image = R.drawable.pexels3,
+            frequency = Frequency.SIX),
+        PlanPage( title = Frequency.SEVEN.toString(),
+            image = R.drawable.pexels3,
+            frequency = Frequency.SEVEN),
+        )
     )
-)
 )

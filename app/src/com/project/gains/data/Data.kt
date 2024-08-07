@@ -102,7 +102,7 @@ enum class Weekdays {
 }
 
 enum class Frequency {
-    TWO,THREE,FOUR
+    ONE,TWO,THREE,FOUR,FIVE,SIX,SEVEN
 }
 
 enum class Categories {
