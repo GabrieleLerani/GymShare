@@ -260,11 +260,6 @@ fun PostScreen(
                     )
                 }
 
-
-
-
-
-
             }
 
         }

@@ -186,7 +186,7 @@ class FeedViewModel @Inject constructor() : ViewModel() {
 
             is SearchEvent.WorkoutPostEvent -> {
                 val workoutPost = WorkoutPost(id ="1", userResourceId = R.drawable.pexels5, imageUri = event.imageUri, username = event.username, social = "Instagram", randomSocialId = R.drawable.instagram_icon, caption = event.content, time = "10:13", likes = "123", comment = "234")
-                _workoutPosts.value?.add(workoutPost)
+                _workoutPosts.value?.add(0,workoutPost)
             }
         }
     }

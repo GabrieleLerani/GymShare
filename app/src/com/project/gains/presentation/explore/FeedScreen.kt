@@ -123,17 +123,19 @@ fun FeedScreen(
                     state = listState
                 ) {
 
+                    workoutPosts?.forEach{workoutPost ->
+                        item {
+                            WorkoutPost(workoutPost)
+                        }
+                    }
+
                     gymPosts?.forEach{gymPost ->
                         item {
                             GymPost(gymPost)
                         }
                     }
 
-                    workoutPosts?.forEach{workoutPost ->
-                        item {
-                            WorkoutPost(workoutPost)
-                        }
-                    }
+
                 }
 
             }
