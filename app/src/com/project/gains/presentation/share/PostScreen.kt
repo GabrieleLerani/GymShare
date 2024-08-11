@@ -140,7 +140,7 @@ fun PostScreen(
                             onPost()
                                   },
                         modifier = Modifier.padding(end = 8.dp),
-                        enabled = textState.text.isNotEmpty() || imageUri != null
+                        enabled = textState.text.isNotEmpty() || imageUri != null || selectedWorkouts.isNotEmpty()
                     ) {
                         Text("Post")
                     }
