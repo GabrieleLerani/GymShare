@@ -87,7 +87,7 @@ fun getExerciseCategory(category: String): ExerciseType {
 }
 
 fun getFeedCategory(category: String): Categories {
-    return if (category.equals("null", ignoreCase = true)) {
+    return if (category.equals("null", ignoreCase = true) || category.isEmpty()) {
         Categories.Default
     } else {
         Categories.valueOf(category.replaceFirstChar {

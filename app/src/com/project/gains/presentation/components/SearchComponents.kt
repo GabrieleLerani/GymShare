@@ -283,8 +283,10 @@ fun FilterChip(
 ) {
     androidx.compose.material3.FilterChip(
         onClick = {
-
-            onCategorySelected(category)
+            if (isSelected) {
+                onCategorySelected("")
+            } else
+                onCategorySelected(category)
                   },
         label = {
             Text(text = category)
