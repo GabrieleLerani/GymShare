@@ -174,8 +174,9 @@ fun FeedSearchBar(
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     val items = remember {
-        mutableListOf("gabriele","gianmarco","carlo","curl", "planck") // dummy values
+        mutableListOf("curl", "planck") // dummy values
     }
+
 
     SearchBar(
 
@@ -183,7 +184,7 @@ fun FeedSearchBar(
         query = text,
         onQueryChange = { text = it },
         onSearch = {
-            searchGymPostHandler(SearchEvent.SearchGymPostEvent(text = text, selectedCategory = selectedCategory?.let { it1 ->
+            searchGymPostHandler(SearchEvent.SearchGymPostEvent(text = text, selectedCategory =  selectedCategory?.let { it1 ->
                 getFeedCategory(
                     it1
                 )

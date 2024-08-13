@@ -33,52 +33,69 @@ class FeedViewModel @Inject constructor() : ViewModel() {
                 val temporalPosts = _posts.value ?: mutableListOf()
                 val results: MutableList<GymPost> = mutableListOf()
 
-                when (event.selectedCategory) {
-                    Categories.User -> {
-                        temporalPosts.forEach { post ->
-                            if (post.username.contains(event.text)) {
-                                results.add(post)
+                if (event.selectedCategory == null) {
+                    results.addAll(temporalPosts)
+                } else {
+                    when (event.selectedCategory) {
+
+
+
+                        Categories.User -> {
+                            temporalPosts.forEach { post ->
+                                if (post.username.contains(event.text)) {
+                                    results.add(post)
+                                }
                             }
                         }
-                    }
 
-                    Categories.Workout -> {
-                        temporalPosts.forEach { post ->
-                            // TODO whenever a new post is added to the system, insert the "Workout" string inside the caption automatically
-                            if (post.caption.contains(event.text) && post.caption.contains("Workout")) {
-                                results.add(post)
+                        Categories.Workout -> {
+                            temporalPosts.forEach { post ->
+                                // TODO whenever a new post is added to the system, insert the "Workout" string inside the caption automatically
+                                if (post.caption.contains(event.text) && post.caption.contains("Workout")) {
+                                    results.add(post)
+                                }
                             }
                         }
-                    }
 
-                    Categories.Keyword -> {
-                        temporalPosts.forEach { post ->
-                            if (post.caption.contains(event.text)) {
-                                results.add(post)
+                        Categories.Keyword -> {
+                            temporalPosts.forEach { post ->
+                                if (post.caption.contains(event.text)) {
+                                    results.add(post)
+                                }
                             }
                         }
-                    }
 
-                    Categories.Social -> {
-                        temporalPosts.forEach { post ->
-                            if (post.social.contains(event.text)) {
-                                results.add(post)
+                        Categories.Social -> {
+                            temporalPosts.forEach { post ->
+                                if (post.social.contains(event.text)) {
+                                    results.add(post)
+                                }
                             }
                         }
-                    }
 
-                    else -> {
-                        temporalPosts.forEach { post ->
-                            if (post.username.contains(event.text) ||
-                                post.caption.contains(event.text) && post.caption.contains("Workout") ||
-                                post.caption.contains(event.text) ||
-                                post.social.contains(event.text)
-                            ) {
-                                results.add(post)
+                        // TODO check if you can remove
+                        Categories.Default -> {
+                            results.addAll(temporalPosts)
+                        }
+
+                        else -> {
+                            temporalPosts.forEach { post ->
+                                if (post.username.contains(event.text) ||
+                                    post.caption.contains(event.text) && post.caption.contains("Workout") ||
+                                    post.caption.contains(event.text) ||
+                                    post.social.contains(event.text)
+                                ) {
+                                    results.add(post)
+                                }
                             }
                         }
                     }
                 }
+
+
+
+
+
 
                 _posts.value = results.toMutableList()
             }

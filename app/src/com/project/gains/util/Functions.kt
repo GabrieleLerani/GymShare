@@ -87,9 +87,13 @@ fun getExerciseCategory(category: String): ExerciseType {
 }
 
 fun getFeedCategory(category: String): Categories {
-    return Categories.valueOf(category.replaceFirstChar {
+    return if (category.equals("null", ignoreCase = true)) {
+        Categories.Default
+    } else {
+        Categories.valueOf(category.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.ROOT
             ) else it.toString()
         })
+    }
 }

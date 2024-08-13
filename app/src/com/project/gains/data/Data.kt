@@ -106,7 +106,7 @@ enum class Frequency {
 }
 
 enum class Categories {
-    User, Workout, Keyword, Social
+    User, Workout, Keyword, Social, Default
 }
 
 data class Exercise(
