@@ -91,10 +91,15 @@ fun ExerciseItem(
     dropDownMenu: @Composable () -> Unit
 ) {
 
+    val clickableModifier = if (mode == ExerciseButtonMode.NEXT) {
+        Modifier.clickable { onItemClick(exercise) }
+    } else {
+        Modifier
+    }
 
     ListItem(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth().then(clickableModifier),
         leadingContent = {
             Image(
                 painter = painterResource(id = exercise.gifResId ?: R.drawable.logo),
@@ -114,7 +119,6 @@ fun ExerciseItem(
             when (mode) {
                 ExerciseButtonMode.REMOVE -> {
                     dropDownMenu()
-                    //DeleteExerciseButton(onClick = onRemove)
 
                 }
                 ExerciseButtonMode.NEXT -> {

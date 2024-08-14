@@ -171,6 +171,8 @@ fun FeedSearchBar(
     searchGymPostHandler: (SearchEvent.SearchGymPostEvent) -> Unit,
     resetGymPostHandler: (SearchEvent.ResetPostEvent) -> Unit,
     assignCategoryHandler: (ManageCategoriesEvent.AssignCategoryEvent) -> Unit){
+
+
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     val items = remember {
@@ -189,7 +191,11 @@ fun FeedSearchBar(
                     it1
                 )
             }))
-            items.add(text)
+
+            // add only if not blank
+            if (text.isNotBlank() && !items.contains(text)) {
+                items.add(text)
+            }
             active = false
 
         },
@@ -390,69 +396,9 @@ fun ExerciseSearchBar(
                 assignCategoryHandler(ManageCategoriesEvent.AssignExerciseCategoryEvent(
                     getExerciseCategory(category)
                 ))
+                onSearchClicked(text)
             }
         )
 
     }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Preview(showBackground = true)
-@Composable
-fun ResearchFilterPreview() {
-    var selectedCategory by remember { mutableStateOf(Categories.User) }
-
-    ResearchFilter(
-        categories = listOf(Categories.User.toString(), Categories.Workout.toString(), Categories.Keyword.toString(), Categories.Social.toString(),Categories.Social.toString(),Categories.Social.toString()),
-        selectedCategory = selectedCategory.toString(),
-        onCategorySelected = { category ->
-            selectedCategory = getFeedCategory(category)
-        }
-    )
-}
-
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-@Preview
-fun SearchAppBarPreview() {
-    Scaffold {
-
-        SearchAppBar(
-            value = "",
-            placeholder = "Some random text",
-            onValueChange = {},
-            onCloseClicked = {},
-            onSearchClicked = {},
-            onClick = {},
-            enabled = true
-        )
-
-    }
-
-}
-
-@Composable
-@Preview
-fun FeedSearchBarPreview(){
-
-    FeedSearchBar(
-        modifier = Modifier,
-        categories = listOf(Categories.User.toString()),
-        selectedCategory = null,
-        searchGymPostHandler = {},
-        resetGymPostHandler = {}) {
-
-    }
-}
-
-@Composable
-@Preview
-fun ExPrev(){
-
-    ExerciseSearchBar(
-        modifier = Modifier,
-        categories = listOf(Categories.User.toString(), Categories.Workout.toString(), Categories.Keyword.toString(), Categories.Social.toString(),Categories.Social.toString(),Categories.Social.toString()),
-        selectedCategory = null,
-        onSearchClicked = {},
-        assignCategoryHandler = {})
 }

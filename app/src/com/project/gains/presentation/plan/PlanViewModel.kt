@@ -47,13 +47,13 @@ class PlanViewModel @Inject constructor() : ViewModel() {
         _selectedFrequency.value = Frequency.THREE
     }
 
-    // TODO check if required
+
     fun updateSelectedWorkouts(workouts: List<Workout>){
         _selectedWorkouts.value?.addAll(workouts)
     }
 
     fun deleteSelectedWorkout(workout: Workout){
-        //Log.d("DEBUG", _selectedWorkouts.value?.remove(workout).toString())
+
         _selectedWorkouts.value = _selectedWorkouts.value?.filter { it != workout } as MutableList<Workout>?
     }
 

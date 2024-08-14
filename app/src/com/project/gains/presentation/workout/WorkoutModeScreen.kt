@@ -406,7 +406,10 @@ fun WorkoutModeScreen(
                     ) {
                         FilledTonalButton(
                             onClick = {
-                                currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
+                                //currentExerciseIndex = if (currentExerciseIndex > 0) currentExerciseIndex - 1 else currentExercise!!.size - 1
+                                if (currentExerciseIndex > 0) {
+                                    currentExerciseIndex -= 1
+                                }
                                 isTimerRunning = false
                                 timerState = currentExercise?.get(currentExerciseIndex)?.totalTime ?: 90
                                 setsDone = 0
@@ -421,7 +424,12 @@ fun WorkoutModeScreen(
 
                         FilledTonalButton(
                             onClick = {
-                                currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise!!.size
+
+                                if (currentExerciseIndex + 1 < currentExercise!!.size) {
+                                    currentExerciseIndex += 1
+                                }
+
+                                //currentExerciseIndex = (currentExerciseIndex + 1) % currentExercise!!.size
                                 isTimerRunning = false
                                 timerState = currentExercise[currentExerciseIndex].totalTime ?: 90
                                 setsDone = 0

@@ -78,12 +78,16 @@ fun getNameByRes(app : Int): String {
 }
 
 fun getExerciseCategory(category: String): ExerciseType {
-    return ExerciseType.valueOf(category.replaceFirstChar {
+
+    return if (category.equals("null", ignoreCase = true) || category.isEmpty()) {
+        ExerciseType.DEFAULT
+    } else {
+        ExerciseType.valueOf(category.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.ROOT
             ) else it.toString()
         })
-
+    }
 }
 
 fun getFeedCategory(category: String): Categories {

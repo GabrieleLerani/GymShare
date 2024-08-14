@@ -22,7 +22,7 @@ import kotlin.random.Random
 
 // structures
 
-// TODO dummy list for testing
+
 val exercises = listOf(
     Exercise(
         name = "Push-Up",
@@ -83,7 +83,7 @@ enum class Level {
 }
 
 enum class ExerciseType {
-    CHEST, BACK, LEGS, ARMS, SHOULDERS, CORE
+    CHEST, BACK, LEGS, ARMS, SHOULDERS, CORE, DEFAULT
 }
 
 enum class TrainingMetricType {
@@ -652,7 +652,7 @@ fun generateRandomPlan(
                     training = trainingType,
                     sets = 4,
                     totalTime = 90,
-                    videoId = R.raw.chest // Assuming you have a method to map ExerciseType to R.drawable
+                    videoId = R.raw.chest
                 )
             )
         }
@@ -672,6 +672,7 @@ fun getExerciseGif(exerciseType: ExerciseType): Int {
         ExerciseType.CORE -> R.drawable.abs2
         ExerciseType.SHOULDERS -> R.drawable.shoulders
         ExerciseType.BACK -> R.drawable.back2
+        ExerciseType.DEFAULT -> 1
     }
 }
 

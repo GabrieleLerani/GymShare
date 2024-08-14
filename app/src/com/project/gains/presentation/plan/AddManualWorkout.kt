@@ -465,8 +465,7 @@ fun ExerciseSelectionPage(
             onDismiss = { showExerciseDialog.value = false },
             onConfirm = { sets, repetitions ->
                 exerciseOptionsMap[currentDialogExercise.value] = Pair(sets, repetitions)
-                // TODO save sets and repetition for the current exercise
-                println("Selected Sets: $sets, Repetitions: $repetitions")
+
             }
         )
     }

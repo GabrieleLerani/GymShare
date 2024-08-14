@@ -84,7 +84,7 @@ class LocalUserManagerImpl(
 
     }
 
-    // TODO test
+
     override suspend fun saveLinkedSocial(apps: List<Int>) {
         val appStrings = gson.toJson(apps)
         dataStore.edit { preferences ->
@@ -92,7 +92,7 @@ class LocalUserManagerImpl(
         }
     }
 
-    // TODO test
+
     override suspend fun getLinkedSocial(): List<Int> {
         val preferences = runBlocking {
             dataStore.data.first()

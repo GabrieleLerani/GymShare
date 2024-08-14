@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
@@ -24,14 +25,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.filled.AddComment
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,6 +64,7 @@ import com.project.gains.presentation.components.events.ManageCategoriesEvent
 import com.project.gains.presentation.explore.events.SearchEvent
 import com.project.gains.presentation.navgraph.Route
 import com.project.gains.theme.GainsAppTheme
+import kotlinx.coroutines.delay
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -77,6 +83,13 @@ fun FeedScreen(
     val workoutPosts by feedViewModel.workoutPosts.observeAsState()
     val listState = rememberLazyListState()
     val isFabExpanded by remember { derivedStateOf { listState.firstVisibleItemIndex == 0 }}
+    var isLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isLoading) {
+        delay(900) // Simulate loading delay
+        isLoading = false
+    }
+
     GainsAppTheme {
 
         Scaffold(
@@ -96,7 +109,7 @@ fun FeedScreen(
 
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 expanded = isFabExpanded,
-                //modifier = Modifier.padding(8.dp)
+
             )}
         ) {
 
@@ -110,38 +123,78 @@ fun FeedScreen(
                         .semantics { traversalIndex = 0f },
                     categories = categories,
                     selectedCategory = selectedCategory.toString(),
-                    searchGymPostHandler = searchGymPostHandler,
+                    searchGymPostHandler = { event ->
+                        isLoading = true
+                        searchGymPostHandler(event)
+                                           },
                     resetGymPostHandler = resetGymPostHandler,
                     assignCategoryHandler = assignCategoryHandler
                 )
 
-                LazyColumn(
-                    modifier = Modifier.semantics { traversalIndex = 1f },
-                    contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    state = listState
-                ) {
-
-                    workoutPosts?.forEach{workoutPost ->
-                        item {
-                            WorkoutPost(workoutPost)
-                        }
+                // show loading indicator
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.width(56.dp),
+                            color = MaterialTheme.colorScheme.secondary,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
                     }
+                } else {
 
-                    gymPosts?.forEach{gymPost ->
-                        item {
-                            GymPost(gymPost)
-                        }
-                    }
-
-
+                    SearchResult(
+                        listState = listState,
+                        gymPosts = gymPosts,
+                        workoutPosts = workoutPosts
+                    )
                 }
 
             }
         }
 
 
+    }
+}
+
+
+@Composable
+fun SearchResult(listState: LazyListState, workoutPosts: List<WorkoutPost>?, gymPosts: List<GymPost>?) {
+
+    if (workoutPosts != null && gymPosts != null && workoutPosts.isEmpty() && gymPosts.isEmpty()){
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ){
+            Text(
+                text = "No results found",
+                fontSize = 16.sp,
+                modifier = Modifier.padding(16.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
+    } else {
+        LazyColumn(
+            modifier = Modifier.semantics { traversalIndex = 1f },
+            contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = listState
+        ) {
+            workoutPosts?.forEach { workoutPost ->
+                item { WorkoutPost(workoutPost) }
+            }
+            gymPosts?.forEach { gymPost ->
+                item { GymPost(gymPost) }
+            }
+        }
     }
 }
 

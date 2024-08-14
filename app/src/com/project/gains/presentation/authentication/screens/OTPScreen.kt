@@ -87,7 +87,7 @@ fun OTPScreen(
                     textAlign = TextAlign.Center
                 )
 
-                // TODO substitute it with a notification
+
                 Text(
                     text = correctOTP.toString(),
                     style = MaterialTheme.typography.labelMedium,

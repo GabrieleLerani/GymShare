@@ -50,7 +50,7 @@ class FeedViewModel @Inject constructor() : ViewModel() {
 
                         Categories.Workout -> {
                             temporalPosts.forEach { post ->
-                                // TODO whenever a new post is added to the system, insert the "Workout" string inside the caption automatically
+
                                 if (post.caption.contains(event.text) && post.caption.contains("Workout")) {
                                     results.add(post)
                                 }

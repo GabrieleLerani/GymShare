@@ -161,7 +161,7 @@ fun SearchExercisesScreen(
                     }
                 )
 
-                // TODO test it
+
                 ExerciseSearchBar(
                     modifier = Modifier
                         .semantics { traversalIndex = 0f },
@@ -190,55 +190,90 @@ fun SearchExercisesScreen(
                     assignCategoryHandler = assignCategoryHandler
                 )
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .semantics { traversalIndex = 1f },
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
+                if (searchedExercises.isEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = "Exercise not found", style = MaterialTheme.typography.bodyLarge)
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .semantics { traversalIndex = 1f },
+                        contentPadding = PaddingValues(bottom = 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
 
-                    groupedExercises.forEach {(initial, exercise) ->
+                        groupedExercises.forEach {(initial, exercise) ->
 
-                        if (searchQuery.isBlank()) {
-                            stickyHeader {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(color = MaterialTheme.colorScheme.tertiary)) {
-                                    Text(
-                                        modifier = Modifier.padding(start = 16.dp),
-                                        text = initial.toString().uppercase(Locale.ROOT),
-                                        style = MaterialTheme.typography.headlineSmall,
-                                        color = MaterialTheme.colorScheme.onTertiary)
+                            if (searchQuery.isBlank()) {
+                                stickyHeader {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(color = MaterialTheme.colorScheme.tertiary)) {
+                                        Text(
+                                            modifier = Modifier.padding(start = 16.dp),
+                                            text = initial.toString().uppercase(Locale.ROOT),
+                                            style = MaterialTheme.typography.headlineSmall,
+                                            color = MaterialTheme.colorScheme.onTertiary)
+                                    }
                                 }
                             }
-                        }
 
-                        items(exercise) { ex ->
+                            items(exercise) { ex ->
 
-                            // if user comes from Manual workout he can select exercise
-                            if (canSelectExercise){
-                                MultiSelectionContainer(
-                                    onCheckedChange = {
-                                        if (!selectedExercises.contains(ex)) {
-                                            selectedExercises.add(ex)
-                                        }
-                                        else {
-                                            selectedExercises.remove(ex)
-                                        }
-                                    },
-                                    isEnabled = multiSelectionState.isMultiSelectionModeEnabled,
-                                    multiSelectionModeStatus = {
-                                        multiSelectionState.isMultiSelectionModeEnabled = it
-                                    })
-                                {
+                                // if user comes from Manual workout he can select exercise
+                                if (canSelectExercise){
+                                    MultiSelectionContainer(
+                                        onCheckedChange = {
+                                            if (!selectedExercises.contains(ex)) {
+                                                selectedExercises.add(ex)
+                                            }
+                                            else {
+                                                selectedExercises.remove(ex)
+                                            }
+                                        },
+                                        isEnabled = multiSelectionState.isMultiSelectionModeEnabled,
+                                        multiSelectionModeStatus = {
+                                            multiSelectionState.isMultiSelectionModeEnabled = it
+                                        })
+                                    {
 
+                                        ExerciseItem(
+                                            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+                                            exercise = ex,
+
+                                            onItemClick = { exerciseToAdd ->
+                                                searchViewModel.updateSearchedExercises(
+                                                    searchedExercises.toMutableList().apply {
+                                                        if (!this.contains(exerciseToAdd)){
+                                                            add(exerciseToAdd)
+                                                        }
+
+                                                    }
+                                                )
+                                                selectExerciseHandler(ExerciseEvent.SelectExercise(ex))
+                                                navController.navigate(Route.ExerciseDetailsScreen.route)
+                                            },
+                                            mode = if (multiSelectionState.isMultiSelectionModeEnabled) {
+                                                ExerciseButtonMode.SELECT
+                                            } else {
+                                                ExerciseButtonMode.NEXT
+                                            }
+                                        ) {}
+                                    }
+                                }
+                                // if user comes from simple exercise search
+                                else {
                                     ExerciseItem(
                                         modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
                                         exercise = ex,
-
                                         onItemClick = { exerciseToAdd ->
                                             searchViewModel.updateSearchedExercises(
                                                 searchedExercises.toMutableList().apply {
@@ -251,41 +286,20 @@ fun SearchExercisesScreen(
                                             selectExerciseHandler(ExerciseEvent.SelectExercise(ex))
                                             navController.navigate(Route.ExerciseDetailsScreen.route)
                                         },
-                                        mode = if (multiSelectionState.isMultiSelectionModeEnabled) {
-                                            ExerciseButtonMode.SELECT
-                                        } else {
-                                            ExerciseButtonMode.NEXT
-                                        }
+                                        mode = ExerciseButtonMode.NEXT
                                     ) {}
                                 }
-                            }
-                            // if user comes from simple exercise search
-                            else {
-                                ExerciseItem(
-                                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-                                    exercise = ex,
-                                    onItemClick = { exerciseToAdd ->
-                                        searchViewModel.updateSearchedExercises(
-                                            searchedExercises.toMutableList().apply {
-                                                if (!this.contains(exerciseToAdd)){
-                                                    add(exerciseToAdd)
-                                                }
 
-                                            }
-                                        )
-                                        selectExerciseHandler(ExerciseEvent.SelectExercise(ex))
-                                        navController.navigate(Route.ExerciseDetailsScreen.route)
-                                    },
-                                    mode = ExerciseButtonMode.NEXT
-                                ) {}
-                            }
 
+                            }
 
                         }
 
                     }
-
                 }
+
+
+
             }
         }
     }
@@ -327,7 +341,11 @@ fun MultiSelectionContainer(
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(
-                onClick = {},
+                onClick = {
+                    selected = !selected
+                    onCheckedChange()
+
+                },
                 onLongClick = {
                     multiSelectionModeStatus(true)
                 }
@@ -336,7 +354,7 @@ fun MultiSelectionContainer(
     ) {
         content()
         AnimatedVisibility(
-            modifier = Modifier.padding(8.dp),//.background(checkboxBackground),
+            modifier = Modifier.padding(8.dp),
             visible = isEnabled,
             enter = slideInHorizontally(initialOffsetX = { it / 2 }) + fadeIn(),
             exit = slideOutHorizontally(targetOffsetX = { it / 2 }) + fadeOut()
