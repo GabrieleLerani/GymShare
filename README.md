@@ -2,6 +2,11 @@
 
 GainsApp is a fitness application designed to help users create and follow workout plans. The app supports various training types, including strength training, calisthenics, and CrossFit. Users can view exercise details, follow workout instructions, and track their progress.
 
+
+![Screenshot from 2024-09-02 16-39-37](https://github.com/user-attachments/assets/cb880eef-15e2-4583-9aee-255ad773791b)
+![Screenshot from 2024-09-02 16-39-48](https://github.com/user-attachments/assets/99581cfb-db38-4ad3-8529-33c1de694200)
+![Screenshot from 2024-09-02 16-40-01](https://github.com/user-attachments/assets/1686f11f-5616-4f5a-8a66-258c14db9e4c)
+
 ## Features
 
 - **Workout Plans**: Generate random workout plans based on training type and muscle groups.
