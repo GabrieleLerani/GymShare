@@ -493,26 +493,20 @@ fun MusicSnackbar(
         Snackbar(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(20.dp))
-                .height(110.dp),
+                .height(150.dp),
             action = {},
             content = {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Column(modifier = Modifier.fillMaxSize()) {
                         Spacer(modifier = Modifier.height(5.dp))
                         Row {
-                            Icon(painter = painterResource(id = R.drawable.spotify_icon), contentDescription = "Spotify Icon", modifier = Modifier.size(15.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.spotify_icon),
+                                contentDescription = "Spotify Icon",
+                                modifier = Modifier.size(15.dp)
+                            )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text("Spotify", style = MaterialTheme.typography.bodySmall)
-                        }
-                        IconButton(onClick = { /* Do something */ }) {
-                            Icon(
-                                modifier =Modifier.size(50.dp),
-                                imageVector = Icons.Filled.PlayCircleOutline,
-                                contentDescription = "Play Icon",
-                                tint = MaterialTheme.colorScheme.onPrimary
-
-                            )
-
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Row(
